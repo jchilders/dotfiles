@@ -1,10 +1,10 @@
-$stdin.each { |x|
+$stdin.each do |x|
     pattern = %r{ ... some crazy pattern ... }
     if x =~ pattern
         d=Regexp.last_match
         # d[0] = whole match, d[1] = first sub, d.captures = array of subs
         puts " some crazy output #{d[2]} #{d[1]} \n"
     end
-}
+end
 
 
