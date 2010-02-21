@@ -112,6 +112,8 @@ function pathmunge () {
 
 pathmunge /sbin
 pathmunge /usr/sbin
+pathmunge /opt/local/bin
+pathmunge /opt/local/sbin
 pathmunge /usr/local/sbin after
 pathmunge /usr/local/bin after
 pathmunge /dmadmin/scripts
