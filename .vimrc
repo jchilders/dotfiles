@@ -25,7 +25,7 @@ set directory=~/backup
 colorscheme elflord
 source $VIMRUNTIME/vimrc_example.vim
 if has("gui_running")
-  set lines=70 columns=110
+	set lines=70 columns=110
 endif
 set incsearch		" do incremental searching
 
@@ -70,10 +70,10 @@ endfunction
 imap <Tab> <C-R>=SuperTab()<CR>
 
 
-" Autoident after pasting
-nnoremap <leader>p p                                                               
-nnoremap <leader>P P                                                               
-nnoremap p p'[v']=                                                                 
+" Autoindent after pasting
+nnoremap <leader>p p
+nnoremap <leader>P P
+nnoremap p p'[v']=
 nnoremap P P'[v']=
 
 " Save/load folds on document close/open
@@ -117,10 +117,15 @@ augroup END
 " map <F6> :s/\(<[A-Za-z]\s*.\{-}%\@<!>\)\(.\{-}\)\(<\/\)/\1<%= t('\2') -%>\3<Return>
 " let g:surround_{char2nr('=')} = "<%= t('\r') -%>" " Surround with ERB <%= %>
 
-" Line numbering goodness
-set rnu
-au InsertEnter * :set nu
-au InsertLeave * :set rnu
-au FocusLost * :set nu
-au FocusGained * :set rnu
+" Relative line numbering goodness
+" use Ctrl+L to toggle the line number counting method
+function! g:ToggleNuMode()
+  if(&rnu == 1)
+    set nornu
+  else
+    set rnu
+  endif
+endfunc
+nnoremap <C-L> :call g:ToggleNuMode()<cr>
+set rnu " on by default
 
