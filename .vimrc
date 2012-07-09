@@ -27,13 +27,17 @@ source $VIMRUNTIME/vimrc_example.vim
 if has("gui_running")
 	set lines=70 columns=110
 endif
+
 set incsearch		" do incremental searching
+set hlsearch
+set ignorecase
+set smartcase
+set showmatch
 
 " Switch syntax highlighting on, when the terminal has colors
 " Also switch on highlighting the last used search pattern.
 syntax on
 set background=dark
-set hlsearch
 set ai
 filetype on           " Enable filetype detection
 filetype indent on    " Enable filetype-specific indenting
@@ -127,5 +131,6 @@ function! g:ToggleNuMode()
   endif
 endfunc
 nnoremap <C-L> :call g:ToggleNuMode()<cr>
+
 set rnu " on by default
 
