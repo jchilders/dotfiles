@@ -1,4 +1,23 @@
-# Zsh startup, cobbled together.
+# If not running interactively, do not do anything
+#[[ $- != *i* ]] && return
+#[[ $TERM != screen* ]] && exec tmux
+
+# Path to your oh-my-zsh configuration.
+ZSH=$HOME/.oh-my-zsh
+
+# Look in ~/.oh-my-zsh/themes/
+ZSH_THEME="robbyrussell"
+
+# Uncomment following line if you want to disable autosetting terminal title.
+DISABLE_AUTO_TITLE="true"
+
+# Uncomment following line if you want red dots to be displayed while waiting for completion
+COMPLETION_WAITING_DOTS="true"
+
+# Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
+plugins=(git ruby)
+
+source $ZSH/oh-my-zsh.sh
 
 ## Options section
 # directory stuff
@@ -12,136 +31,47 @@ setopt correct clobber interactive_comments no_mail_warning short_loops
 # zle
 setopt nobeep zle
 
-## Completion section - from http://zshwiki.org/home/examples/compquickstart
-# simple completions
-# complete only dirs (or symlinks to dirs in some cases) for certain commands
-zmodload zsh/complist
-autoload -U compinit && compinit
-
-zstyle ':completion:*' max-errors 2
-zstyle ':completion:::::' completer _complete _approximate
-zstyle -e ':completion:*:approximate:*' max-errors 'reply=( $(( ($#PREFIX + $#SUFFIX) / 3 )) )'
-zstyle ':completion:*:descriptions' format "- %d -"
-zstyle ':completion:*:corrections' format "- %d - (errors %e})"
-zstyle ':completion:*:default' list-prompt '%S%M matches%s'
-zstyle ':completion:*' group-name ''
-zstyle ':completion:*:manuals' separate-sections true
-zstyle ':completion:*' menu select=3
-zstyle ':completion:*' verbose yes
-zstyle ':completion:*' use-cache on
-zstyle ':completion:*' users resolve
-
-if [[ -f $HOME/.ssh/known_hosts ]]; then
-  hosts=(${${${${(f)"$(<$HOME/.ssh/known_hosts)"}:#[0-9]*}%%\ *}%%,*})
-  zstyle ':completion:*:hosts' hosts $hosts
-fi
-
-zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
-
-## Bindkey section
-# vi-mode by default
-bindkey -v
-# in menu selection, use ^o instead of ^m to go into a menu'ed directory
-bindkey -M menuselect '^o' accept-and-infer-next-history
-# emacs-esque things i'm used to
 bindkey "" history-incremental-search-backward
-bindkey "_" insert-last-word
-bindkey "" end-of-line
-bindkey "" beginning-of-line
 
-# number of lines kept in history
-export HISTSIZE=1000
-# number of lines saved in the history after logout
-export SAVEHIST=1000
-# location of history
-export HISTFILE=$HOME/.zhistory
+export PATH=/bin:/usr/sbin:/sbin:/usr/local/sbin:/usr/local/bin:/usr/bin:~/scripts:
 
-# crazy scripts to source
-source $HOME/.zsh/windowtitle.zsh
+alias 	ll='ls -alGp'
+alias 	l='ls -alGp'
+alias	vvi='vi'
+alias   wn='cd ~/workspace/newsroom'
+alias   wf='cd ~/workspace/ford'
 
-## alias section
-alias d="screen -d main; screen -x main"
-alias jump='ssh -t launchpad002 ssh'
+bindkey -v
 
-## function section, for things longer than aliases
-function rmssh () {
-    sed -ie "$1d" ~/.ssh/known_hosts
+export LSCOLORS=dxfxcxdxbxegedabagacad
+
+# Wieck Stuff
+export ENVIRONMENT='development'
+export WIECK_PROJECT_PATH=~/workspace
+export PORT_PATH=~/workspace/
+export PGDATA=/usr/local/var/postgres
+export JAVA_OPTS="-Xmx1024m -d32"
+
+# Find a file or directory with a pattern in name. Case insensitive.
+function ff() {
+    find . -type d -iname '*'$*'*' ;
+    find . -type f -iname '*'$*'*' ;
 }
 
-function hpre() {
-    awk -v h="$1" '{printf("%24s | %s\n", h,$0);}'
+# Search all jar files in the current directory and below for the given string
+# ffjar <pattern>
+function ffjar() { 
+  jars=(./**/*.jar(.))
+  print "Searching ${#jars[*]} jars for '${*}'..."
+  for jar in ${jars}; do
+    for line in $(unzip -l ${jar}); do
+      if [[ "$line" =~ .*${*}.* ]]; then
+        print "${jar}: ${line}"
+      fi
+    done
+  done
 }
 
-function hj() {
-    [[ $# -lt 3 ]] && return -1
-    jot -w "${1}%03d" $(($3-$2+1)) $2 $3
-}
-
-function d() {
-    if [[ -z $1 ]] ; then s=main
-    else 
-        s=$1
-    fi
-    screen -d $s
-    screen -x $s
-}
-    
-function fss() {
-    [[ ! -z $SSH_AUTH_SOCK ]] && echo "SSH_AUTH_SOCK=$SSH_AUTH_SOCK" > ~/ssh.sh || echo "No SSH_AUTH_SOCK variable here"
-}
-
-function ss() {
-    source ~/ssh.sh
-}
-
-# from RH /etc/profile
-function pathmunge () {
-	if ! echo $PATH | egrep -q "(^|:)$1($|:)" ; then
-	   if [ "$2" = "after" ] ; then
-              if [[ -d $1 ]]; then
-                 PATH=$PATH:$1
-              fi
-	   else
-              if [[ -d $1 ]]; then
-                 PATH=$1:$PATH
-              fi
-	   fi
-	fi
-}
-
-
-pathmunge /sbin
-pathmunge /usr/sbin
-pathmunge /opt/local/bin
-pathmunge /opt/local/sbin
-pathmunge /usr/local/sbin after
-pathmunge /usr/local/bin after
-pathmunge /dmadmin/scripts
-pathmunge /root/tools/bin
-
-unset pathmunge
-
-# variables to set
-TZ="America/Los_Angeles"
-PS1="[%n@%3m %40<...<%~]%# " 
-
-
-if [[ `uname` == "Darwin" ]]; then
-	# for osx desktops only
-	MANPATH=/usr/local/man:/usr/share/man:/opt/local/man
-	CLICOLOR=1
-	export CLICOLOR
-	# convenient aliases
-	alias restartvpn="sudo /System/Library/StartupItems/CiscoVPN/CiscoVPN restart"
-fi
-
-hasvim=`which vim 2>/dev/null`
-if [[ $? == 0 ]]; then
-        VISUAL=$hasvim
-        SVN_EDITOR=$hasvim
-else
-        VISUAL=`which vi`
-        SVN_EDITOR=$VISUAL
-fi
-
-export TZ PS1 PATH VISUAL SVN_EDITOR
+PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
+export PATH=$PATH:/usr/local/rvm/bin
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"
