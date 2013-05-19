@@ -1,12 +1,24 @@
-# If not running interactively, do not do anything
-#[[ $- != *i* ]] && return
-#[[ $TERM != screen* ]] && exec tmux
-
 # Path to your oh-my-zsh configuration.
 ZSH=$HOME/.oh-my-zsh
 
+# Set name of the theme to load.
 # Look in ~/.oh-my-zsh/themes/
-ZSH_THEME="robbyrussell"
+# Optionally, if you set this to "random", it'll load a random theme each
+# time that oh-my-zsh is loaded.
+#ZSH_THEME="robbyrussell"
+ZSH_THEME="jaischeema"
+
+# Set to this to use case-sensitive completion
+# CASE_SENSITIVE="true"
+
+# Comment this out to disable bi-weekly auto-update checks
+# DISABLE_AUTO_UPDATE="true"
+
+# Uncomment to change how many often would you like to wait before auto-updates occur? (in days)
+# export UPDATE_ZSH_DAYS=13
+
+# Uncomment following line if you want to disable colors in ls
+# DISABLE_LS_COLORS="true"
 
 # Uncomment following line if you want to disable autosetting terminal title.
 DISABLE_AUTO_TITLE="true"
@@ -15,47 +27,26 @@ DISABLE_AUTO_TITLE="true"
 COMPLETION_WAITING_DOTS="true"
 
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
-plugins=(git ruby)
+# Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
+# Example format: plugins=(rails git textmate ruby lighthouse)
+plugins=(git)
 
 source $ZSH/oh-my-zsh.sh
 
-## Options section
-# directory stuff
-setopt autocd autopushd pushd_ignore_dups pushd_silent
-# completion
-setopt always_to_end auto_menu no_nomatch
-# history
-setopt append_history hist_find_nodups hist_ignore_dups 
-# i/o
-setopt correct clobber interactive_comments no_mail_warning short_loops
-# zle
-setopt nobeep zle
+export PATH=/usr/local/opt/ruby/bin:/usr/local/bin:/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:$PATH
+export PATH=/usr/local/bin:/usr/bin:$PATH
+export PATH=/usr/local/opt/ruby/bin:$PATH # Gems
+export PATH=/usr/local/sqlplus:$PATH
+export SSL_CERT_FILE=/usr/share/.cacert.pem
 
-bindkey "" history-incremental-search-backward
-
-export PATH=/bin:/usr/sbin:/sbin:/usr/local/sbin:/usr/local/bin:/usr/bin:~/scripts:
-
-alias 	ll='ls -alGp'
-alias 	l='ls -alGp'
-alias	vvi='vi'
-alias   wn='cd ~/workspace/newsroom'
-alias   wf='cd ~/workspace/ford'
+alias   ll='ls -alGp'
+alias   l='ls -alGp'
+alias   vvi='vi'
 
 bindkey -v
 
-export LSCOLORS=dxfxcxdxbxegedabagacad
-
-# Wieck Stuff
-export ENVIRONMENT='development'
-export WIECK_PROJECT_PATH=~/workspace
-export PORT_PATH=~/workspace/
-export PGDATA=/usr/local/var/postgres
-export JAVA_OPTS="-Xmx1024m -d32"
-
-# Find a file or directory with a pattern in name. Case insensitive.
-function ff() {
-    find . -type d -iname '*'$*'*' ;
-    find . -type f -iname '*'$*'*' ;
+function ff() { 
+  mdfind -onlyin . -name $*
 }
 
 # Search all jar files in the current directory and below for the given string
@@ -72,6 +63,11 @@ function ffjar() {
   done
 }
 
-PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
-export PATH=$PATH:/usr/local/rvm/bin
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"
+function cvs_branches() {
+  cvs log -h|awk -F"[.:]" '/^\t/&&$(NF-1)==0{print $1}'|sort -u
+}
+
+# PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
+#export SSL_CERT_FILE=/usr/local/opt/curl-ca-bundle/share/ca-bundle.crt
+
+# sudo mount -t cifs -o domain=MASERGY,user=jchilders '\\mtxfs03\Departments' /mnt/mtxfs03/departments/
