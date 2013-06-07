@@ -1,0 +1,44 @@
+[user]
+	name = James Childers
+	email = james.childers@gmail.com
+[core]
+    whitespace=fix,-indent-with-non-tab,trailing-space,cr-at-eol
+    excludesfile = ~/.gitignore
+[color]
+    ui = auto
+[color "branch"]
+    current = yellow reverse
+    local = yellow
+    remote = green
+[color "diff"]
+    meta = yellow bold
+    frag = magenta bold
+    old = red bold
+    new = green bold
+    whitespace = red reverse
+[color "status"]
+    added = yellow
+    changed = green
+    untracked = cyan
+
+[alias]
+    l = log --graph --abbrev-commit --decorate --date=relative --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all
+    st = status -sb
+    di = diff
+    co = checkout
+    ci = commit
+    br = branch
+    sta = stash
+    wc = whatchanged
+    edit-unmerged = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; vim `f`"
+    add-unmerged = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; git add `f`"
+
+[github]
+	user = jchilders
+	token = c2930cf6f3fbe6af773b4c259e3f8507
+[merge]
+	tool = vimdiff
+[push]
+	default = matching
+[diff]
+    algorithm = patience
