@@ -4,6 +4,7 @@
 [core]
     whitespace=fix,-indent-with-non-tab,trailing-space,cr-at-eol
     excludesfile = ~/.gitignore
+    pager = less -X -F
 [color]
     ui = auto
 [color "branch"]
