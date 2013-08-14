@@ -29,7 +29,7 @@ COMPLETION_WAITING_DOTS="true"
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(git)
+plugins=(git gradle)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -39,9 +39,18 @@ export PATH=/usr/local/opt/ruby/bin:$PATH # Gems
 export PATH=/usr/local/sqlplus:$PATH
 export SSL_CERT_FILE=/usr/share/.cacert.pem
 
+export CATALINA_HOME=/usr/local/Cellar/tomcat/7.0.39/libexec
+export ENV=development
+
 alias   ll='ls -alGp'
 alias   l='ls -alGp'
 alias   vvi='vi'
+alias   tc='cd /usr/local/Cellar/tomcat/7.0.39/libexec'
+
+# SWA aliases
+alias   oqs='cd /Users/jchilders/workspace/swa/oqs/trunk'
+alias   lcs='cd /Users/jchilders/workspace/swa/lcs/trunk'
+alias   spt='cd /Users/jchilders/workspace/swa/spt/trunk'
 
 bindkey -v
 
@@ -54,20 +63,22 @@ function ff() {
 function ffjar() { 
   jars=(./**/*.jar(.))
   print "Searching ${#jars[*]} jars for '${*}'..."
-  for jar in ${jars}; do
-    for line in $(unzip -l ${jar}); do
-      if [[ "$line" =~ .*${*}.* ]]; then
-        print "${jar}: ${line}"
-      fi
-    done
-  done
+  parallel --tag unzip -l ::: ${jars} | ack ${*} | awk '{print $1, ": ", $5}'
 }
 
-function cvs_branches() {
-  cvs log -h|awk -F"[.:]" '/^\t/&&$(NF-1)==0{print $1}'|sort -u
+function cstart() {
+  catalina start
+}
+function cstop() {
+  catalina stop
 }
 
 # PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
-#export SSL_CERT_FILE=/usr/local/opt/curl-ca-bundle/share/ca-bundle.crt
+
+# export SSL_CERT_FILE=/usr/local/opt/curl-ca-bundle/share/ca-bundle.crt
 
 # sudo mount -t cifs -o domain=MASERGY,user=jchilders '\\mtxfs03\Departments' /mnt/mtxfs03/departments/
+#
+# Common SWA mount points
+# mkdir /Volumes/Apps && mount_smbfs //x205504@sy4-f9hdgx1/Apps /Volumes/Apps
+#
