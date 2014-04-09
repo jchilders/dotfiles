@@ -6,19 +6,10 @@ ZSH=$HOME/.oh-my-zsh
 # Optionally, if you set this to "random", it'll load a random theme each
 # time that oh-my-zsh is loaded.
 #ZSH_THEME="robbyrussell"
-ZSH_THEME="jaischeema"
+ZSH_THEME="af-magic"
 
 # Set to this to use case-sensitive completion
-# CASE_SENSITIVE="true"
-
-# Comment this out to disable bi-weekly auto-update checks
-# DISABLE_AUTO_UPDATE="true"
-
-# Uncomment to change how many often would you like to wait before auto-updates occur? (in days)
-# export UPDATE_ZSH_DAYS=13
-
-# Uncomment following line if you want to disable colors in ls
-# DISABLE_LS_COLORS="true"
+CASE_SENSITIVE="true"
 
 # Uncomment following line if you want to disable autosetting terminal title.
 DISABLE_AUTO_TITLE="true"
@@ -33,26 +24,34 @@ plugins=(git gradle)
 
 source $ZSH/oh-my-zsh.sh
 
-export PATH=/usr/local/opt/ruby/bin:/usr/local/bin:/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:$PATH
+#export PATH=/usr/local/opt/ruby/bin:/usr/local/bin:/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:$PATH
+export PATH=/usr/local/bin:/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:$PATH
 export PATH=/usr/local/bin:/usr/bin:$PATH
 export PATH=/usr/local/opt/ruby/bin:$PATH # Gems
 export PATH=/usr/local/sqlplus:$PATH
 export SSL_CERT_FILE=/usr/share/.cacert.pem
 
+# see: /usr/libexec/java_home
+export JAVA_HOME=/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home
+#export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0.jdk/Contents/Home
 export CATALINA_HOME=/usr/local/Cellar/tomcat/7.0.39/libexec
-export ENV=development
+
+# fix problem with sed on Mavericks
+export LC_CTYPE=C
+export LANG=C
 
 alias   ll='ls -alGp'
 alias   l='ls -alGp'
 alias   vvi='vi'
 alias   tc='cd /usr/local/Cellar/tomcat/7.0.39/libexec'
 
-# SWA aliases
-alias   oqs='cd /Users/jchilders/workspace/swa/oqs/trunk'
-alias   lcs='cd /Users/jchilders/workspace/swa/lcs/trunk'
-alias   spt='cd /Users/jchilders/workspace/swa/spt/trunk'
+# dairy.com aliases
+alias   jb='cd /Users/jchilders/jboss-4.0.5.GA'
+alias   jbf='cd /Users/jchilders/jboss-4.0.5.GA/server/matrix/deploy/fusion.ear/fusion.war'
+alias   fusion='cd /Users/jchilders/workspace/dairy/momentx/branches/Yukio_BRANCH/fusion'
 
-bindkey -v
+# Fix prob with git svn on Mavericks
+export PERL5LIB='/Library/Developer/CommandLineTools/Library/Perl/5.16/darwin-thread-multi-2level/'
 
 function ff() { 
   mdfind -onlyin . -name $*
@@ -60,10 +59,11 @@ function ff() {
 
 # Search all jar files in the current directory and below for the given string
 # ffjar <pattern>
+# Requires GNU parallel and the_silver_searcher
 function ffjar() { 
-  jars=(./**/*.jar(.))
+  jars=(./**/*.jar)
   print "Searching ${#jars[*]} jars for '${*}'..."
-  parallel --tag unzip -l ::: ${jars} | ack ${*} | awk '{print $1, ":", $5}'
+  parallel --no-notice --tag unzip -l ::: ${jars} | ag ${*} | awk '{print $1, ":", $5}'
 }
 
 function cstart() {
@@ -73,29 +73,8 @@ function cstop() {
   catalina stop
 }
 
-
-# http://jeroenjanssens.com/2013/08/16/quickly-navigate-your-filesystem-from-the-command-line.html
-export MARKPATH=$HOME/.marks
-function jump { 
-    cd -P "$MARKPATH/$1" 2>/dev/null || echo "No such mark: $1"
-}
-function mark { 
-    mkdir -p "$MARKPATH"; ln -s "$(pwd)" "$MARKPATH/$1"
-}
-function unmark { 
-    rm -i "$MARKPATH/$1"
-}
-function marks {
-    \ls -l "$MARKPATH" | tail -n +2 | sed 's/  / /g' | cut -d' ' -f9- | awk -F ' -> ' '{printf "%-10s -> %s\n", $1, $2}'
-}
-function _completemarks {
-    reply=($(ls $MARKPATH))
-}
-
-compctl -K _completemarks jump
-compctl -K _completemarks unmark
-
-# PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
+bindkey -v
+bindkey '^R' history-incremental-search-backward
 
 # export SSL_CERT_FILE=/usr/local/opt/curl-ca-bundle/share/ca-bundle.crt
 
@@ -103,4 +82,4 @@ compctl -K _completemarks unmark
 #
 # Common SWA mount points
 # mkdir /Volumes/Apps && mount_smbfs //x205504@sy4-f9hdgx1/Apps /Volumes/Apps
-#
+
