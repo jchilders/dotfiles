@@ -24,34 +24,31 @@ plugins=(git gradle)
 
 source $ZSH/oh-my-zsh.sh
 
-#export PATH=/usr/local/opt/ruby/bin:/usr/local/bin:/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:$PATH
 export PATH=/usr/local/bin:/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:$PATH
 export PATH=/usr/local/bin:/usr/bin:$PATH
 export PATH=/usr/local/opt/ruby/bin:$PATH # Gems
 export PATH=/usr/local/sqlplus:$PATH
+
 export SSL_CERT_FILE=/usr/share/.cacert.pem
 
 # see: /usr/libexec/java_home
-export JAVA_HOME=/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home
+#export JAVA_HOME=/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.7.0_67.jdk/Contents/Home
 #export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0.jdk/Contents/Home
+
 export CATALINA_HOME=/usr/local/Cellar/tomcat/7.0.39/libexec
 
-# fix problem with sed on Mavericks
+# Fix prob with sed on Mavericks
 export LC_CTYPE=C
 export LANG=C
+
+# Fix prob with git svn on Mavericks
+export PERL5LIB='/Library/Developer/CommandLineTools/Library/Perl/5.16/darwin-thread-multi-2level/'
 
 alias   ll='ls -alGp'
 alias   l='ls -alGp'
 alias   vvi='vi'
 alias   tc='cd /usr/local/Cellar/tomcat/7.0.39/libexec'
-
-# dairy.com aliases
-alias   jb='cd /Users/jchilders/jboss-4.0.5.GA'
-alias   jbf='cd /Users/jchilders/jboss-4.0.5.GA/server/matrix/deploy/fusion.ear/fusion.war'
-alias   fusion='cd /Users/jchilders/workspace/dairy/momentx/branches/Yukio_BRANCH/fusion'
-
-# Fix prob with git svn on Mavericks
-export PERL5LIB='/Library/Developer/CommandLineTools/Library/Perl/5.16/darwin-thread-multi-2level/'
 
 function ff() { 
   mdfind -onlyin . -name $*
@@ -79,7 +76,6 @@ bindkey '^R' history-incremental-search-backward
 # export SSL_CERT_FILE=/usr/local/opt/curl-ca-bundle/share/ca-bundle.crt
 
 # sudo mount -t cifs -o domain=MASERGY,user=jchilders '\\mtxfs03\Departments' /mnt/mtxfs03/departments/
-#
-# Common SWA mount points
-# mkdir /Volumes/Apps && mount_smbfs //x205504@sy4-f9hdgx1/Apps /Volumes/Apps
 
+
+export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
