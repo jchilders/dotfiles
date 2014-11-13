@@ -5,13 +5,37 @@ set shiftwidth=4
 set expandtab
 set smarttab
 set tabstop=4
+" Statusline stuff
+set statusline =%#identifier#
+set statusline+=[%t]    "tail of the filename
+set statusline+=%*
+set statusline+=%y      "filetype
+
+"read only flag
+set statusline+=%#identifier#
+set statusline+=%r
+set statusline+=%*
+
+"modified flag
+set statusline+=%#identifier#
+set statusline+=%m
+set statusline+=%*
+
+set statusline+=%=      "left/right separator
+
+set statusline+=%c,     "cursor column
+set statusline+=%l/%L   "cursor line/total lines
+set statusline+=\ %P    "percent through file
+set laststatus=2
+
 " always display status line
 set laststatus=2
+
 set incsearch
 
 " Keep backups in separate directory from current
-set backupdir=~/backup
-set directory=~/backup
+set backupdir=~/vimbak
+set directory=~/vimbak
 
 " Switch syntax highlighting on, when the terminal has colors
 " Also switch on highlighting the last used search pattern.
@@ -20,8 +44,13 @@ set background=dark
 set hlsearch
 set ai
 
+set scrolloff=5
+
 " Pathogen: https://github.com/tpope/vim-pathogen
 execute pathogen#infect()
+
+set background=dark
+colorscheme elflord
 
 filetype on           " Enable filetype detection
 filetype indent on    " Enable filetype-specific indenting
@@ -70,3 +99,18 @@ set pastetoggle=<Leader>p
 vnoremap <silent> y y`]
 vnoremap <silent> p p`]
 nnoremap <silent> p p`]
+
+map <Leader>rb :call VimuxRunCommand("clear; rspec " . bufname("%"))<CR>
+
+function! VimuxSlime()
+  call VimuxOpenRunner()
+  call VimuxSendText(@v)
+  call VimuxSendKeys("Enter")
+endfunction
+
+ " If text is selected, save it in the v buffer and send that buffer it to tmux
+ vmap <Leader>vs "vy :call VimuxSlime()<CR>
+
+ " Select current paragraph and send it to tmux
+ nmap <Leader>vs vip<Leader>vs<CR>
+
