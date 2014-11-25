@@ -89,7 +89,7 @@ nnoremap <Leader>l :call g:ToggleNuMode()<cr>
 
 set rnu " on by default
 
-nnoremap <Leader>w :w<CR>
+nnoremap <Leader>w :wa<CR>
 
 nnoremap <Leader>p :set invpaste paste?<CR>
 imap <Leader>p <C-O>:set invpaste paste?<CR>

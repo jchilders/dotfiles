@@ -51,6 +51,7 @@ alias   tc='cd /usr/local/Cellar/tomcat/7.0.39/libexec'
 alias   sms='cd ~/workspace/sms'
 alias   pamt='SMS_TEST_USERNAME=''pam_client_test'' SMS_TEST_PASSWORD=''password'' rake'
 alias   remora='REMORA_DB_USERNAME=''sms_user'' REMORA_DB_PASSWORD=''password'' rails s'
+alias   rmrc='REMORA_DB_USERNAME=''sms_user'' REMORA_DB_PASSWORD=''password'' rails console'
 alias   rmrmig='REMORA_DB_USERNAME=''sms_user'' REMORA_DB_PASSWORD=''password'' rake db:migrate'
 alias   rmrt='REMORA_DB_USERNAME=''sms_user'' REMORA_DB_PASSWORD=''password'' rspec --fail-fast'
 
