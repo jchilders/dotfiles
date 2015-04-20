@@ -29,13 +29,13 @@ set statusline+=\ %P    "percent through file
 set laststatus=2
 
 " always display status line
-set laststatus=2
+set laststatus=3
 
 set incsearch
 
 " Keep backups in separate directory from current
-set backupdir=~/vimbak
-set directory=~/vimbak
+set backupdir=~/.vimbak
+set directory=~/.vimbak
 
 " Switch syntax highlighting on, when the terminal has colors
 " Also switch on highlighting the last used search pattern.
@@ -90,6 +90,7 @@ nnoremap <Leader>l :call g:ToggleNuMode()<cr>
 set rnu " on by default
 
 nnoremap <Leader>w :wa<CR>
+nnoremap <Leader>W :wqa<CR>
 
 nnoremap <Leader>p :set invpaste paste?<CR>
 imap <Leader>p <C-O>:set invpaste paste?<CR>

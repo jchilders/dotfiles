@@ -31,10 +31,10 @@ export PATH=/usr/local/sqlplus:$PATH
 # export SSL_CERT_FILE=/usr/share/.cacert.pem
 
 # see: /usr/libexec/java_home
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.7.0_67.jdk/Contents/Home
-#export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0.jdk/Contents/Home
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.7.0_25.jdk/Contents/Home
+#export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_05.jdk/Contents/Home
 
-export JRUBY_OPTS="--headless --1.9 -J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-XX:PermSize=356m -J-XX:NewSize=356m -J-XX:MaxNewSize=512m -J-XX:MaxPermSize=512m -J-Xms2048m -J-Xmx2048m"
+export JRUBY_OPTS="--headless --1.9 -J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-XX:PermSize=356m -J-XX:NewSize=356m -J-XX:MaxNewSize=512m -J-XX:MaxPermSize=512m -J-Xms4096m -J-Xmx4096m"
 export CATALINA_HOME=/usr/local/Cellar/tomcat/7.0.39/libexec
 
 # Fix issue w/ oh-my-zsh cursor not being positioned correctly
@@ -59,6 +59,16 @@ function rmr() {
     REMORA_DB_USERNAME='sms_user' REMORA_DB_PASSWORD='password' $1 $2
 }
 
+function bi() {
+    bundle install && say -r 400 'Bundle install done'
+}
+
+# Kill all Java processes named 'Main'
+# Kills JRuby on Rails
+function kr() {
+    jps | ag Main | awk '{print $1}' | xargs kill
+}
+
 function ff() { 
   mdfind -onlyin . -name $*
 }
@@ -70,13 +80,6 @@ function ffjar() {
   jars=(./**/*.jar)
   print "Searching ${#jars[*]} jars for '${*}'..."
   parallel --no-notice --tag unzip -l ::: ${jars} | ag ${*} | awk '{print $1, ":", $5}'
-}
-
-function cstart() {
-  catalina start
-}
-function cstop() {
-  catalina stop
 }
 
 bindkey -v
