@@ -40,11 +40,13 @@ set directory=~/.vimbak
 " Switch syntax highlighting on, when the terminal has colors
 " Also switch on highlighting the last used search pattern.
 syntax on
-set background=dark
+"set background=dark
 set hlsearch
 set ai
 
 set scrolloff=5
+
+source $VIMRUNTIME/macros/matchit.vim
 
 " Pathogen: https://github.com/tpope/vim-pathogen
 execute pathogen#infect()
@@ -64,6 +66,8 @@ au BufRead,BufNewFile *.js,*.rb,*.rhtml,*.erb,*.rake,*.yml,Gemfile,*.gradle set 
 au BufRead,BufNewFile *.js,*.rb,*.rhtml,*.erb,*.rake,*.yml,Gemfile,*.gradle set softtabstop=2
 au BufRead,BufNewFile *.js,*.rb,*.rhtml,*.erb,*.rake,*.yml,Gemfile,*.gradle set tabstop=2
 au BufRead,BufNewFile *.rb,*.rhtml,*.erb,*.rake,*.yml,Gemfile set ft=ruby
+" Restore cursor to where it was when the file was closed
+ au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 
 " For commenting a line in HTML/XML format
 " map <F8> :set nohls<Return>:s/\S.*$/<!--&-->/g<Return>
@@ -109,9 +113,22 @@ function! VimuxSlime()
   call VimuxSendKeys("Enter")
 endfunction
 
- " If text is selected, save it in the v buffer and send that buffer it to tmux
- vmap <Leader>vs "vy :call VimuxSlime()<CR>
+" If text is selected, save it in the v buffer and send that buffer it to tmux
+vmap <Leader>vs "vy :call VimuxSlime()<CR>
 
- " Select current paragraph and send it to tmux
- nmap <Leader>vs vip<Leader>vs<CR>
+" Select current paragraph and send it to tmux
+nmap <Leader>vs vip<Leader>vs<CR>
+
+" https://github.com/jonas/tig
+function! s:tig_status()
+  !tig status
+endfunction
+
+map <Leader>s :TigStatus<CR><CR>
+command! TigStatus call s:tig_status()
+
+nnoremap <Leader>rs :sp ~/temp/scratch.rb<CR>GG
+
+let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+
 
