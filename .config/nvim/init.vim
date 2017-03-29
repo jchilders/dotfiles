@@ -121,7 +121,6 @@ nnoremap <Leader>rs :sp ~/temp/scratch.rb<CR>GG
 " :PlugInstall to refresh
 call plug#begin('~/.config/nvim/plugs')
 Plug 'Xuyuanp/nerdtree-git-plugin'
-Plug 'airblade/vim-gitgutter'
 Plug 'benmills/vimux'
 Plug 'ervandew/supertab'
 Plug 'kien/ctrlp.vim'
@@ -130,7 +129,7 @@ Plug 'neomake/neomake'
 Plug 'scrooloose/nerdcommenter'
 Plug 'scrooloose/nerdtree'
 Plug 'slim-template/vim-slim'
-Plug 'tpope/vim-fugitive'
+Plug 'airblade/vim-gitgutter'
 call plug#end()
 
 function! VimuxSlime()
@@ -162,25 +161,18 @@ let NERDTreeShowLineNumbers=1 " enable line numbers
 
 map <C-n> :NERDTreeToggle<CR>
 
+let g:gitgutter_sign_column_always = 1
+
 " Run neomake linters on everything except what is in the blacklist
 let blacklist = ['scratch.rb', 'routes.rb']
 autocmd! BufWritePost * if index(blacklist, expand("%:t")) < 0 | Neomake
 
-let g:neomake_open_list = 2
-" let g:neomake_typescript_nglint_maker = {
-    " \ 'exe': 'ng',
-    " \ 'args': ['lint'],
-    " \ 'errorformat': '%f[%l\, %c]: %m',
-    " \ }
-" let g:neomake_typescript_ngbuild_maker = {
-    " \ 'exe': 'ng',
-    " \ 'args': ['build', '--base-href', '/ng2/', '--progress', 'false'],
-    " \ 'errorformat': '%f (%l\,%c): %m)',
-    " \ }
-" let g:neomake_typescript_enabled_makers = ['nglint']
-" let g:neomake_typescript_enabled_makers = ['nglint', 'ngbuild']
+let g:neomake_error_sign = {'texthl': 'Constant', }
+let g:neomake_warning_sign = {'texthl': 'EndOfBuffer', }
+highlight SignColumn ctermbg=black guibg=black
+au VimEnter * highlight link NeomakeWarning NONE
+au VimEnter * highlight link NeomakeError NONE
 
-" let g:neomake_list_height=5
 if filereadable("rubocop")
   let g:neomake_ruby_enabled_makers = ['rubocop']
 endif
