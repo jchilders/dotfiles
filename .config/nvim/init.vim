@@ -1,9 +1,7 @@
 set nocompatible
 set fileformat=unix
-
 " use spaces instead of tabs
-set expandtab
-set smarttab
+set tabstop=2 softtabstop=0 expandtab shiftwidth=2 smarttab
 
 " Statusline stuff
 set statusline =%#identifier#
@@ -44,13 +42,14 @@ set ai
 
 set scrolloff=5
 
+set inccommand=nosplit
+
+set hidden
+
 source $VIMRUNTIME/macros/matchit.vim
 
-" Pathogen: https://github.com/tpope/vim-pathogen
-execute pathogen#infect()
-
 set background=dark
-colorscheme elflord
+colorscheme ron
 
 filetype on           " Enable filetype detection
 filetype indent on    " Enable filetype-specific indenting
@@ -112,7 +111,27 @@ vnoremap <silent> y y`]
 vnoremap <silent> p p`]
 nnoremap <silent> p p`]
 
+" Clear previously highlighted search
+nnoremap <Leader>cs :let @/ = ""<CR>
+
 map <Leader>rb :call VimuxRunCommand("clear; rspec " . bufname("%"))<CR>
+nnoremap <Leader>rs :sp ~/temp/scratch.rb<CR>GG
+
+" https://github.com/junegunn/vim-plug
+" :PlugInstall to refresh
+call plug#begin('~/.config/nvim/plugs')
+Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'airblade/vim-gitgutter'
+Plug 'benmills/vimux'
+Plug 'ervandew/supertab'
+Plug 'kien/ctrlp.vim'
+Plug 'mhartington/vim-angular2-snippets'
+Plug 'neomake/neomake'
+Plug 'scrooloose/nerdcommenter'
+Plug 'scrooloose/nerdtree'
+Plug 'slim-template/vim-slim'
+Plug 'tpope/vim-fugitive'
+call plug#end()
 
 function! VimuxSlime()
   call VimuxOpenRunner()
@@ -120,24 +139,11 @@ function! VimuxSlime()
   call VimuxSendKeys("Enter")
 endfunction
 
-" Clear previously highlighted search
-nnoremap <Leader>ch :let @/ = ""<CR>
-
 " If text is selected, save it in the v buffer and send that buffer to tmux
 vmap <Leader>vs "vy :call VimuxSlime()<CR>
 
 " Select current paragraph and send it to tmux
 nmap <Leader>vs vip<Leader>vs<CR>
-
-" https://github.com/jonas/tig
-function! s:tig_status()
-  !tig status
-endfunction
-
-map <Leader>s :TigStatus<CR><CR>
-command! TigStatus call s:tig_status()
-
-nnoremap <Leader>rs :sp ~/temp/scratch.rb<CR>GG
 
 " ctrl-p stuff
 let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
@@ -146,12 +152,36 @@ set wildignore+=*/node_modules/*
 " Add spaces after comment delimiters by default
 let g:NERDSpaceDelims = 1
 
+" Load nerdtree if no files specified
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 
-" requires ack.vim plugin
-" git clone https://github.com/mileszs/ack.vim.git ~/.vim/bundle/ack.vim
-if executable('ag')
-  let g:ackprg = 'ag --vimgrep --smart-case'
-end
-cnoreabbrev Ag Ack
-cnoreabbrev ag Ack
+let NERDTreeShowHidden = 1    " show hidden files
+let NERDTreeQuitOnOpen = 1    " Hide NERDTree when opening a file
+let NERDTreeShowLineNumbers=1 " enable line numbers
+
+map <C-n> :NERDTreeToggle<CR>
+
+" Run neomake linters on everything except what is in the blacklist
+let blacklist = ['scratch.rb', 'routes.rb']
+autocmd! BufWritePost * if index(blacklist, expand("%:t")) < 0 | Neomake
+
+let g:neomake_open_list = 2
+" let g:neomake_typescript_nglint_maker = {
+    " \ 'exe': 'ng',
+    " \ 'args': ['lint'],
+    " \ 'errorformat': '%f[%l\, %c]: %m',
+    " \ }
+" let g:neomake_typescript_ngbuild_maker = {
+    " \ 'exe': 'ng',
+    " \ 'args': ['build', '--base-href', '/ng2/', '--progress', 'false'],
+    " \ 'errorformat': '%f (%l\,%c): %m)',
+    " \ }
+" let g:neomake_typescript_enabled_makers = ['nglint']
+" let g:neomake_typescript_enabled_makers = ['nglint', 'ngbuild']
+
+" let g:neomake_list_height=5
+if filereadable("rubocop")
+  let g:neomake_ruby_enabled_makers = ['rubocop']
+endif
 

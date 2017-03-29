@@ -19,46 +19,86 @@ COMPLETION_WAITING_DOTS="true"
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(git rails)
+plugins=(git rails tmux rake-fast docker z)
 
 source $ZSH/oh-my-zsh.sh
 
-export PATH=/usr/local/bin:/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:$PATH
+export PATH=/usr/local/bin:/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/sbin:/usr/local/bin:$PATH
 export PATH=/usr/local/bin:/usr/bin:$PATH
 export PATH=/usr/local/opt/ruby/bin:$PATH # Gems
-export PATH=/usr/local/sqlplus:$PATH
-
-# export SSL_CERT_FILE=/usr/share/.cacert.pem
+export PATH=/usr/local/instantclient_11_2:$PATH
+export PATH=/Users/jchilders/workspace/git-map:$PATH
 
 # see: /usr/libexec/java_home
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.7.0_67.jdk/Contents/Home
-#export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0.jdk/Contents/Home
+export JAVA_HOME=$(/usr/libexec/java_home -v 1.8)
 
-export JRUBY_OPTS="--headless --1.9 -J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-XX:PermSize=356m -J-XX:NewSize=356m -J-XX:MaxNewSize=512m -J-XX:MaxPermSize=512m -J-Xms2048m -J-Xmx2048m"
-export CATALINA_HOME=/usr/local/Cellar/tomcat/7.0.39/libexec
+export JRUBY_OPTS="--headless -J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-XX:MaxNewSize=512m -J-Xms2048m -J-Xmx2048m --dev"
+# export JRUBY_OPTS="$JRUBY_OPTS --2.0" # for pam_client
+export JRUBY_OPTS="$JRUBY_OPTS -X+O" # added for nokogiri gem
+#export CATALINA_HOME="/usr/local/Cellar/tomcat7/7.0.68"
+unset CATALINA_HOME # do this to get working w/ older ver of Tomcat installed via homebrew
+alias cstart='catalina start'
+alias cstop='catalina stop'
+
+# For MRI to work with SMS
+# https://github.com/CINBCUniversal/sms/wiki/How-to-replatform
+export DYLD_LIBRARY_PATH=/opt/oracle/instantclient_11_2
+#export OCI_DIR=$DYLD_LIBRARY_PATH
+export OCI_DIR=$(brew --prefix)/lib
+export NLS_LANG='American_America.UTF8'
 
 # Fix issue w/ oh-my-zsh cursor not being positioned correctly
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 
+export LESS="-RXF" # Colorized, don't clear screen, exit if < 1 pg
 setopt rcquotes # Use two single quotes to escape quotes when used inside a string
 
 alias   ll='ls -alGp'
 alias   l='ls -alGp'
-alias   vvi='vi'
-alias   tc='cd /usr/local/Cellar/tomcat/7.0.39/libexec'
+alias   ag='ag --pager less' 
 
-alias   sms='cd ~/workspace/sms'
-alias   pamt='SMS_TEST_USERNAME=''pam_client_test'' SMS_TEST_PASSWORD=''password'' rake'
-alias   remora='REMORA_DB_USERNAME=''sms_user'' REMORA_DB_PASSWORD=''password'' rails s'
-alias   rmrc='REMORA_DB_USERNAME=''sms_user'' REMORA_DB_PASSWORD=''password'' rails console'
-alias   rmrmig='REMORA_DB_USERNAME=''sms_user'' REMORA_DB_PASSWORD=''password'' rake db:migrate'
-alias   rmrt='REMORA_DB_USERNAME=''sms_user'' REMORA_DB_PASSWORD=''password'' rspec --fail-fast'
+alias   rdbm='rake db:migrate ; say -r 300 DB migrate done'
+#alias   rdbm='rake db:migrate'
+alias   rdbms='rake db:migrate:status ; say -r 300 DB status done'
+#alias   rdbms='rake db:migrate:status'
 
-function rmr() {
-    REMORA_DB_USERNAME='sms_user' REMORA_DB_PASSWORD='password' $1 $2
+alias   taildev='ssh -t webuser@smsdev.inbcu.com ''tail -f /opt/www/tomcat/sms/logs/sms.log'''
+alias   tailqa='ssh -n webuser@smsqa.inbcu.com ''tail -f /opt/www/tomcat/sms/logs/sms.log'''
+
+alias   vssh='cd ~/workspace/sms ; TERM=xterm-color vagrant ssh ; cd -'
+
+alias   vi='nvim'
+
+export REMORA_DB_USERNAME=sms_user
+export REMORA_DB_PASSWORD=password
+export ORACLE_SYSTEM_PASSWORD=password
+
+# Agency Gateway API app env vars
+export PORT=5000
+export UNICORN_WORKERS=2
+
+export CLASSPATH=./lib/log4j-1.2.17.jar
+
+alias   bi='bundle install'
+# function bi() {
+  # bundle install
+  # rc=$?
+  # if [[ $rc != 0 ]] then
+      # say -r 300 -v Thomas 'Bun dull install failed'
+  # else
+      # say -r 300 -v Thomas 'Bun dull install done'
+  # fi
+  # return $rc
+# }
+
+function rdm() {
+  rake db:migrate
+  say -r 400 'rake DB migrate done'
 }
 
+# NOTE: Spotlight does not index hidden directories! e.g.: ~/.vim
+# THIS SUCKS.
 function ff() { 
   mdfind -onlyin . -name $*
 }
@@ -72,11 +112,35 @@ function ffjar() {
   parallel --no-notice --tag unzip -l ::: ${jars} | ag ${*} | awk '{print $1, ":", $5}'
 }
 
-function cstart() {
-  catalina start
+# Kill all Java processes
+function kr() {
+  jps | ag Main | awk '{print $1}' | xargs kill
 }
-function cstop() {
-  catalina stop
+
+# Rails shortcuts
+alias rs='bundle exec rails s webrick'
+
+function rc() {
+  rails console
+  if [ $? -ne 0 ]; then
+    say -r 500 "NO"
+  fi
+}
+
+function rsp() {
+  bin/rspec --fail-fast $1 
+  if [ $? -ne 0 ]; then
+    say -r 400 "Tests failed"
+  else
+    say -r 400 "Tests passed"
+  fi
+}
+
+
+# Edit the latest migration
+function vilm() {
+  a=(db/migrate/*)
+  vi ${a[@]: -1}
 }
 
 bindkey -v
@@ -86,4 +150,93 @@ bindkey '^R' history-incremental-search-backward
 
 # sudo mount -t cifs -o domain=MASERGY,user=jchilders '\\mtxfs03\Departments' /mnt/mtxfs03/departments/
 
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
 export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
+
+###-begin-ng-completion###
+#
+# ng command completion script
+#
+# Installation: ng completion 1>> ~/.bashrc 2>>&1
+#           or  ng completion 1>> ~/.zshrc 2>>&1
+#
+
+ng_opts='b build completion doc e2e g generate get github-pages:deploy gh-pages:deploy h help i init install lint make-this-awesome new s serve server set t test v version -h --help'
+
+build_opts='--aot --base-href --environment --output-path --suppress-sizes --target --watch --watcher -bh -dev -e -o -prod -t -w'
+generate_opts='class component directive enum module pipe route service c cl d e m p r s --help'
+github_pages_deploy_opts='--base-href --environment --gh-token --gh-username --message --skip-build --target --user-page -bh -e -t'
+help_opts='--json --verbose -v'
+init_opts='--dry-run inline-style inline-template --link-cli --mobile --name --prefix --routing --skip-bower --skip-npm --source-dir --style --verbose -d -is -it -lc -n -p -sb -sd -sn -v'
+new_opts='--directory --dry-run inline-style inline-template --link-cli --mobile --prefix --routing --skip-bower --skip-git --skip-npm --source-dir --style --verbose -d -dir -is -it -lc -p -sb -sd -sg -sn -v'
+serve_opts='--aot --environment --host --live-reload --live-reload-base-url --live-reload-host --live-reload-live-css --live-reload-port --open --port --proxy-config --ssl --ssl-cert --ssl-key --target --watcher -H -e -lr -lrbu -lrh -lrp -o -p -pc -t -w'
+set_opts='--global -g'
+test_opts='--browsers --build --code-coverage --colors --lint --log-level --port --reporters --watch -cc -l -w'
+
+version_opts='--verbose'
+
+if test ".$(type -t complete 2>/dev/null || true)" = ".builtin"; then
+  _ng_completion() {
+    local cword pword opts
+
+    COMPREPLY=()
+    cword=${COMP_WORDS[COMP_CWORD]}
+    pword=${COMP_WORDS[COMP_CWORD - 1]}
+
+    case ${pword} in
+      ng) opts=$ng_opts ;;
+      b|build) opts=$build_opts ;;
+      g|generate) opts=$generate_opts ;;
+      gh-pages:deploy|github-pages:deploy) opts=$github_pages_deploy_opts ;;
+      h|help|-h|--help) opts=$help_opts ;;
+      init) opts=$init_opts ;;
+      new) opts=$new_opts ;;
+      s|serve|server) opts=$serve_opts ;;
+      set) opts=$set_opts ;;
+      t|test) opts=$test_opts ;;
+      v|version) opts=$version_opts ;;
+      *) opts='' ;;
+    esac
+
+    COMPREPLY=( $(compgen -W '${opts}' -- $cword) )
+
+    return 0
+  }
+
+  complete -o default -F _ng_completion ng
+elif test ".$(type -w compctl 2>/dev/null || true)" = ".compctl: builtin" ; then
+  _ng_completion () {
+    local words cword opts
+    read -Ac words
+    read -cn cword
+    let cword-=1
+
+    case $words[cword] in
+      ng) opts=$ng_opts ;;
+      b|build) opts=$build_opts ;;
+      g|generate) opts=$generate_opts ;;
+      gh-pages:deploy|github-pages:deploy) opts=$github_pages_deploy_opts ;;
+      h|help|-h|--help) opts=$help_opts ;;
+      init) opts=$init_opts ;;
+      new) opts=$new_opts ;;
+      s|serve|server) opts=$serve_opts ;;
+      set) opts=$set_opts ;;
+      t|test) opts=$test_opts ;;
+      v|version) opts=$version_opts ;;
+      *) opts='' ;;
+    esac
+
+    setopt shwordsplit
+    reply=($opts)
+    unset shwordsplit
+  }
+
+  compctl -K _ng_completion ng
+else
+  echo "Shell builtin command 'complete' or 'compctl' is redefined; cannot perform ng completion."
+  return 1
+fi
+
+###-end-ng-completion###
+
