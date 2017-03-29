@@ -28,7 +28,7 @@ set statusline+=%l/%L   "cursor line/total lines
 set statusline+=\ %P    "percent through file
 
 " always display status line
-set laststatus=2
+set laststatus=3
 
 " Keep backups in separate directory from current
 set backupdir=~/.vimbak
