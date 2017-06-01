@@ -111,32 +111,40 @@ vnoremap <silent> y y`]
 vnoremap <silent> p p`]
 nnoremap <silent> p p`]
 
-" Clear previously highlighted search
-nnoremap <Leader>cs :let @/ = ""<CR>
-
 map <Leader>rb :call VimuxRunCommand("clear; rspec " . bufname("%"))<CR>
 nnoremap <Leader>rs :sp ~/temp/scratch.rb<CR>GG
+nnoremap <Leader>bp Obinding.pry<ESC>:w<CR>
 
 " https://github.com/junegunn/vim-plug
 " :PlugInstall to refresh
 call plug#begin('~/.config/nvim/plugs')
 Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'airblade/vim-gitgutter'
 Plug 'benmills/vimux'
 Plug 'ervandew/supertab'
 Plug 'kien/ctrlp.vim'
-Plug 'mhartington/vim-angular2-snippets'
-Plug 'neomake/neomake'
+Plug 'w0rp/ale'
 Plug 'scrooloose/nerdcommenter'
 Plug 'scrooloose/nerdtree'
 Plug 'slim-template/vim-slim'
-Plug 'airblade/vim-gitgutter'
+Plug 'tpope/vim-fugitive'
+Plug 'Shougo/neocomplete'
+Plug 'Shougo/neosnippet'
+Plug 'Shougo/neosnippet-snippets'
 call plug#end()
+
+let g:neosnippet#snippets_directory='~/.config/nvim/plugs/neosnippet-snippets/neosnippets'
+
 
 function! VimuxSlime()
   call VimuxOpenRunner()
   call VimuxSendText(@v)
   call VimuxSendKeys("Enter")
 endfunction
+
+imap <C-k>     <Plug>(neosnippet_expand_or_jump)
+smap <C-k>     <Plug>(neosnippet_expand_or_jump)
+xmap <C-k>     <Plug>(neosnippet_expand_target)
 
 " If text is selected, save it in the v buffer and send that buffer to tmux
 vmap <Leader>vs "vy :call VimuxSlime()<CR>
@@ -163,17 +171,26 @@ map <C-n> :NERDTreeToggle<CR>
 
 let g:gitgutter_sign_column_always = 1
 
-" Run neomake linters on everything except what is in the blacklist
-let blacklist = ['scratch.rb', 'routes.rb']
-autocmd! BufWritePost * if index(blacklist, expand("%:t")) < 0 | Neomake
+" ALE stuff
+highlight ALEErrorSign ctermbg=black guibg=black ctermfg=red guifg=red
+highlight ALEWarningSign ctermbg=black guibg=black ctermfg=blue guifg=blue
+let g:ale_sign_error = '!>'
+let g:ale_sign_warning = '~>'
 
-let g:neomake_error_sign = {'texthl': 'Constant', }
-let g:neomake_warning_sign = {'texthl': 'EndOfBuffer', }
-highlight SignColumn ctermbg=black guibg=black
-au VimEnter * highlight link NeomakeWarning NONE
-au VimEnter * highlight link NeomakeError NONE
+" UltiSnips stuff
+" set runtimepath+=~/.config/nvim/vim-snippets/snippets
 
-if filereadable("rubocop")
-  let g:neomake_ruby_enabled_makers = ['rubocop']
-endif
+let g:UltiSnipsExpandTrigger="<C-j>"
+let g:UltiSnipsJumpForwardTrigger="<C-b>"
+let g:UltiSnipsJumpBackwardTrigger="<C-z>"
+
+" If you want :UltiSnipsEdit to split your window.
+let g:UltiSnipsEditSplit="vertical"
+
+
+" Clear previously highlighted search
+nnoremap <Leader>cs :let @/ = ''<CR>
+
+" Replace single quotes with doubles
+nnoremap <Leader>rq :s/'/"/g<CR>:let @/ = ''<CR>
 
