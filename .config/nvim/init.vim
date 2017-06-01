@@ -60,9 +60,6 @@ au FileType text setlocal textwidth=80
 au BufNewFile,BufRead *.json set ft=javascript 
 au BufNewFile,BufRead *.gradle set ft=groovy 
 au BufNewFile,BufRead *.axlsx set ft=ruby 
-set shiftwidth=2
-set softtabstop=2
-set tabstop=2
 au BufRead,BufNewFile *.rb,*.rhtml,*.erb,*.rake,*.yml,Gemfile,*.jbuilder set ft=ruby
 " Restore cursor to where it was when the file was closed
  au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
@@ -118,28 +115,26 @@ nnoremap <Leader>bp Obinding.pry<ESC>:w<CR>
 " https://github.com/junegunn/vim-plug
 " :PlugInstall to refresh
 call plug#begin('~/.config/nvim/plugs')
+Plug 'Shougo/neocomplete'
+Plug 'Shougo/neosnippet'
+Plug 'Shougo/neosnippet-snippets'
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'airblade/vim-gitgutter'
 Plug 'benmills/vimux'
 Plug 'ervandew/supertab'
 Plug 'kien/ctrlp.vim'
-Plug 'w0rp/ale'
 Plug 'scrooloose/nerdcommenter'
 Plug 'scrooloose/nerdtree'
 Plug 'slim-template/vim-slim'
 Plug 'tpope/vim-fugitive'
-Plug 'Shougo/neocomplete'
-Plug 'Shougo/neosnippet'
-Plug 'Shougo/neosnippet-snippets'
+Plug 'w0rp/ale'
 call plug#end()
 
 let g:neosnippet#snippets_directory='~/.config/nvim/plugs/neosnippet-snippets/neosnippets'
 
-
 function! VimuxSlime()
   call VimuxOpenRunner()
   call VimuxSendText(@v)
-  call VimuxSendKeys("Enter")
 endfunction
 
 imap <C-k>     <Plug>(neosnippet_expand_or_jump)
@@ -186,7 +181,6 @@ let g:UltiSnipsJumpBackwardTrigger="<C-z>"
 
 " If you want :UltiSnipsEdit to split your window.
 let g:UltiSnipsEditSplit="vertical"
-
 
 " Clear previously highlighted search
 nnoremap <Leader>cs :let @/ = ''<CR>
