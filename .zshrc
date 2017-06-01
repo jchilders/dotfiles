@@ -6,6 +6,8 @@ ZSH=$HOME/.oh-my-zsh
 # Optionally, if you set this to "random", it'll load a random theme each
 # time that oh-my-zsh is loaded.
 ZSH_THEME="superjarin" # Ruby friendly
+# ZSH_THEME="theunraveler" # minimalistic
+# ZSH_THEME="sunaku"
 
 # Set to this to use case-sensitive completion
 CASE_SENSITIVE="true"
@@ -19,7 +21,7 @@ COMPLETION_WAITING_DOTS="true"
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(git rails tmux rake-fast docker z)
+plugins=(git rails tmux rake-fast z grunt)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -27,15 +29,12 @@ export PATH=/usr/local/bin:/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/sbi
 export PATH=/usr/local/bin:/usr/bin:$PATH
 export PATH=/usr/local/opt/ruby/bin:$PATH # Gems
 export PATH=/usr/local/instantclient_11_2:$PATH
-export PATH=/Users/jchilders/workspace/git-map:$PATH
 
 # see: /usr/libexec/java_home
 export JAVA_HOME=$(/usr/libexec/java_home -v 1.8)
 
 export JRUBY_OPTS="--headless -J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-XX:MaxNewSize=512m -J-Xms2048m -J-Xmx2048m --dev"
-# export JRUBY_OPTS="$JRUBY_OPTS --2.0" # for pam_client
 export JRUBY_OPTS="$JRUBY_OPTS -X+O" # added for nokogiri gem
-#export CATALINA_HOME="/usr/local/Cellar/tomcat7/7.0.68"
 unset CATALINA_HOME # do this to get working w/ older ver of Tomcat installed via homebrew
 alias cstart='catalina start'
 alias cstop='catalina stop'
@@ -58,17 +57,15 @@ alias   ll='ls -alGp'
 alias   l='ls -alGp'
 alias   ag='ag --pager less' 
 
-alias   rdbm='rake db:migrate ; say -r 300 DB migrate done'
-#alias   rdbm='rake db:migrate'
-alias   rdbms='rake db:migrate:status ; say -r 300 DB status done'
-#alias   rdbms='rake db:migrate:status'
-
 alias   taildev='ssh -t webuser@smsdev.inbcu.com ''tail -f /opt/www/tomcat/sms/logs/sms.log'''
 alias   tailqa='ssh -n webuser@smsqa.inbcu.com ''tail -f /opt/www/tomcat/sms/logs/sms.log'''
 
 alias   vssh='cd ~/workspace/sms ; TERM=xterm-color vagrant ssh ; cd -'
 
 alias   vi='nvim'
+
+alias   gprd='rvm use ruby-2.3.0; ruby ~/scripts/gprd'
+alias   gcb='git rev-parse --abbrev-ref HEAD | pbcopy'
 
 export REMORA_DB_USERNAME=sms_user
 export REMORA_DB_PASSWORD=password
@@ -80,27 +77,27 @@ export UNICORN_WORKERS=2
 
 export CLASSPATH=./lib/log4j-1.2.17.jar
 
-alias   bi='bundle install'
-# function bi() {
-  # bundle install
-  # rc=$?
-  # if [[ $rc != 0 ]] then
-      # say -r 300 -v Thomas 'Bun dull install failed'
-  # else
-      # say -r 300 -v Thomas 'Bun dull install done'
-  # fi
-  # return $rc
-# }
-
-function rdm() {
-  rake db:migrate
-  say -r 400 'rake DB migrate done'
+# alias   bi='bundle install'
+function bi() {
+  bundle install
+  rc=$?
+  if [[ $rc != 0 ]] then
+      say -r 300 -v Thomas 'Bun dull install failed'
+  else
+      say -r 300 -v Thomas 'Bun dull install done'
+  fi
 }
 
 # NOTE: Spotlight does not index hidden directories! e.g.: ~/.vim
 # THIS SUCKS.
+
 function ff() { 
-  mdfind -onlyin . -name $*
+  mdfind -onlyin . -name $1
+  # if [ $? -eq 0 ]; then
+    # echo 'Using find ...'
+    # # print -l (#i)($1)**/*
+    # find . -iname "$1*"
+  # fi
 }
 
 # Search all jar files in the current directory and below for the given string
@@ -118,17 +115,22 @@ function kr() {
 }
 
 # Rails shortcuts
-alias rs='bundle exec rails s webrick'
+alias   rdbm='rails db:migrate ; say -r 300 DB migrate done'
+alias   rc='rails console'
+alias   rs='rails s webrick'
+alias   rdbms='rake db:migrate:status ; say -r 300 DB status done'
 
-function rc() {
-  rails console
-  if [ $? -ne 0 ]; then
-    say -r 500 "NO"
+unalias rails
+function rails() {
+  bundle check &>/dev/null
+  if [[ $? -ne 0 ]]; then
+    bundle install
   fi
+  _rails_command $@
 }
 
 function rsp() {
-  bin/rspec --fail-fast $1 
+  bin/rspec --fail-fast --tty $1 
   if [ $? -ne 0 ]; then
     say -r 400 "Tests failed"
   else
@@ -239,4 +241,8 @@ else
 fi
 
 ###-end-ng-completion###
+
+# Done per post-install instructions after doing 'brew install nvm'
+export NVM_DIR="$HOME/.nvm"
+. "/usr/local/opt/nvm/nvm.sh"
 
