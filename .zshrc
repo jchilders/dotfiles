@@ -34,7 +34,10 @@ export PATH=/usr/local/instantclient_11_2:$PATH
 export JAVA_HOME=$(/usr/libexec/java_home -v 1.8)
 
 export JRUBY_OPTS="--headless -J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-XX:MaxNewSize=512m -J-Xms2048m -J-Xmx2048m --dev"
-export JRUBY_OPTS="$JRUBY_OPTS -X+O" # added for nokogiri gem
+# export JRUBY_OPTS="$JRUBY_OPTS -X+O" # added for nokogiri gem
+export JRUBY_OPTS="$JRUBY_OPTS --profile.html --profile.out sms-profile.html"
+export JRUBY_OPTS="$JRUBY_OPTS -J-Xrunhprof:cpu=samples"
+
 unset CATALINA_HOME # do this to get working w/ older ver of Tomcat installed via homebrew
 alias cstart='catalina start'
 alias cstop='catalina stop'
@@ -77,7 +80,6 @@ export UNICORN_WORKERS=2
 
 export CLASSPATH=./lib/log4j-1.2.17.jar
 
-# alias   bi='bundle install'
 function bi() {
   bundle install
   rc=$?
@@ -90,7 +92,6 @@ function bi() {
 
 # NOTE: Spotlight does not index hidden directories! e.g.: ~/.vim
 # THIS SUCKS.
-
 function ff() { 
   mdfind -onlyin . -name $1
   # if [ $? -eq 0 ]; then
@@ -116,9 +117,17 @@ function kr() {
 
 # Rails shortcuts
 alias   rdbm='rails db:migrate ; say -r 300 DB migrate done'
-alias   rc='rails console'
+# alias   rc='rails console'
 alias   rs='rails s webrick'
 alias   rdbms='rake db:migrate:status ; say -r 300 DB status done'
+
+unalias rc
+function rc() {
+  old_opts=${JRUBY_OPTS}
+  export JRUBY_OPTS="--headless -J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-XX:MaxNewSize=512m -J-Xms2048m -J-Xmx2048m --dev"
+  rails console
+  export JRUBY_OPTS=${old_opts}
+}
 
 unalias rails
 function rails() {

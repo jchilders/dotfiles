@@ -128,6 +128,7 @@ Plug 'scrooloose/nerdtree'
 Plug 'slim-template/vim-slim'
 Plug 'tpope/vim-fugitive'
 Plug 'w0rp/ale'
+Plug 'vim-airline/vim-airline'
 call plug#end()
 
 let g:neosnippet#snippets_directory='~/.config/nvim/plugs/neosnippet-snippets/neosnippets'
@@ -188,3 +189,5 @@ nnoremap <Leader>cs :let @/ = ''<CR>
 " Replace single quotes with doubles
 nnoremap <Leader>rq :s/'/"/g<CR>:let @/ = ''<CR>
 
+" vim-airline stuff
+let g:airline_powerline_fonts = 1
