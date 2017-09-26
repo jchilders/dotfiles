@@ -60,7 +60,8 @@ au FileType text setlocal textwidth=80
 au BufNewFile,BufRead *.json set ft=javascript 
 au BufNewFile,BufRead *.gradle set ft=groovy 
 au BufNewFile,BufRead *.axlsx set ft=ruby 
-au BufRead,BufNewFile *.rb,*.rhtml,*.erb,*.rake,*.yml,Gemfile,*.jbuilder set ft=ruby
+au BufRead,BufNewFile *.rb,*.rhtml,*.rake,*.yml,Gemfile,*.jbuilder set ft=ruby
+au BufRead,BufNewFile *.erb set ft=eruby
 " Restore cursor to where it was when the file was closed
  au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 
@@ -127,7 +128,7 @@ Plug 'scrooloose/nerdcommenter'
 Plug 'scrooloose/nerdtree'
 Plug 'slim-template/vim-slim'
 Plug 'tpope/vim-fugitive'
-Plug 'w0rp/ale'
+Plug 'neomake/neomake'
 Plug 'vim-airline/vim-airline'
 call plug#end()
 
@@ -167,14 +168,19 @@ map <C-n> :NERDTreeToggle<CR>
 
 let g:gitgutter_sign_column_always = 1
 
-" ALE stuff
-highlight ALEErrorSign ctermbg=black guibg=black ctermfg=red guifg=red
-highlight ALEWarningSign ctermbg=black guibg=black ctermfg=blue guifg=blue
-let g:ale_sign_error = '!>'
-let g:ale_sign_warning = '~>'
+" Run neomake linters on everything except what is in the blacklist
+let blacklist = ['scratch.rb', 'routes.rb']
+autocmd! BufWritePost * if index(blacklist, expand("%:t")) < 0 | Neomake
 
-" UltiSnips stuff
-" set runtimepath+=~/.config/nvim/vim-snippets/snippets
+let g:neomake_error_sign = {'texthl': 'Constant', }
+let g:neomake_warning_sign = {'texthl': 'EndOfBuffer', }
+highlight SignColumn ctermbg=black guibg=black
+au VimEnter * highlight link NeomakeWarning NONE
+au VimEnter * highlight link NeomakeError NONE
+
+if filereadable("rubocop")
+	let g:neomake_ruby_enabled_makers = ['rubocop']
+endif
 
 let g:UltiSnipsExpandTrigger="<C-j>"
 let g:UltiSnipsJumpForwardTrigger="<C-b>"
@@ -188,6 +194,12 @@ nnoremap <Leader>cs :let @/ = ''<CR>
 
 " Replace single quotes with doubles
 nnoremap <Leader>rq :s/'/"/g<CR>:let @/ = ''<CR>
+
+" Insert `binding.pry` to line below cursor
+nnoremap <Leader>bp obinding.pry<ESC>:w<ENTER>
+
+" Insert `binding.pry` to line above cursor
+nnoremap <Leader>bP Obinding.pry<ESC>:w<ENTER>
 
 " vim-airline stuff
 let g:airline_powerline_fonts = 1

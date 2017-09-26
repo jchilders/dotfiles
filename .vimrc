@@ -28,7 +28,7 @@ set statusline+=%l/%L   "cursor line/total lines
 set statusline+=\ %P    "percent through file
 
 " always display status line
-set laststatus=3
+set laststatus=2
 
 " Keep backups in separate directory from current
 set backupdir=~/.vimbak
@@ -64,7 +64,8 @@ au BufNewFile,BufRead *.axlsx set ft=ruby
 set shiftwidth=2
 set softtabstop=2
 set tabstop=2
-au BufRead,BufNewFile *.rb,*.rhtml,*.erb,*.rake,*.yml,Gemfile,*.jbuilder set ft=ruby
+au BufRead,BufNewFile *.rb,*.rhtml,*.rake,*.yml,Gemfile,*.jbuilder set ft=ruby
+au BufRead,BufNewFile *.erb set ft=eruby
 " Restore cursor to where it was when the file was closed
  au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 

@@ -35,8 +35,8 @@ export JAVA_HOME=$(/usr/libexec/java_home -v 1.8)
 
 export JRUBY_OPTS="--headless -J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-XX:MaxNewSize=512m -J-Xms2048m -J-Xmx2048m --dev"
 # export JRUBY_OPTS="$JRUBY_OPTS -X+O" # added for nokogiri gem
-export JRUBY_OPTS="$JRUBY_OPTS --profile.html --profile.out sms-profile.html"
-export JRUBY_OPTS="$JRUBY_OPTS -J-Xrunhprof:cpu=samples"
+# export JRUBY_OPTS="$JRUBY_OPTS --profile.html --profile.out sms-profile.html"
+# export JRUBY_OPTS="$JRUBY_OPTS -J-Xrunhprof:cpu=samples"
 
 unset CATALINA_HOME # do this to get working w/ older ver of Tomcat installed via homebrew
 alias cstart='catalina start'
@@ -67,7 +67,7 @@ alias   vssh='cd ~/workspace/sms ; TERM=xterm-color vagrant ssh ; cd -'
 
 alias   vi='nvim'
 
-alias   gprd='rvm use ruby-2.3.0; ruby ~/scripts/gprd'
+alias   gprd='rvm use ruby-2.3.0; ruby ~/scripts/gprd; rvm use jruby-9.1.5.0'
 alias   gcb='git rev-parse --abbrev-ref HEAD | pbcopy'
 
 export REMORA_DB_USERNAME=sms_user
@@ -75,10 +75,13 @@ export REMORA_DB_PASSWORD=password
 export ORACLE_SYSTEM_PASSWORD=password
 
 # Agency Gateway API app env vars
-export PORT=5000
+# export PORT=5000
 export UNICORN_WORKERS=2
 
 export CLASSPATH=./lib/log4j-1.2.17.jar
+
+# git completion. See: /usr/local/share/zsh/site-functions
+fpath=(~/.zsh $fpath)
 
 function bi() {
   bundle install
@@ -116,18 +119,18 @@ function kr() {
 }
 
 # Rails shortcuts
-alias   rdbm='rails db:migrate ; say -r 300 DB migrate done'
-# alias   rc='rails console'
+alias   rdbm='rake db:migrate ; say -r 300 DB migrate done'
+alias   rc='rails console'
 alias   rs='rails s webrick'
 alias   rdbms='rake db:migrate:status ; say -r 300 DB status done'
 
-unalias rc
-function rc() {
-  old_opts=${JRUBY_OPTS}
-  export JRUBY_OPTS="--headless -J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-XX:MaxNewSize=512m -J-Xms2048m -J-Xmx2048m --dev"
-  rails console
-  export JRUBY_OPTS=${old_opts}
-}
+# unalias rc
+# function rc() {
+  # old_opts=${JRUBY_OPTS}
+  # export JRUBY_OPTS="--headless -J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-XX:MaxNewSize=512m -J-Xms2048m -J-Xmx2048m --dev"
+  # rails console
+  # export JRUBY_OPTS=${old_opts}
+# }
 
 unalias rails
 function rails() {
@@ -147,21 +150,14 @@ function rsp() {
   fi
 }
 
-
 # Edit the latest migration
 function vilm() {
   a=(db/migrate/*)
-  vi ${a[@]: -1}
+  vi -o ${a[@]: -2}
 }
 
-bindkey -v
+bindkey -v # vi mode
 bindkey '^R' history-incremental-search-backward
-
-# export SSL_CERT_FILE=/usr/local/opt/curl-ca-bundle/share/ca-bundle.crt
-
-# sudo mount -t cifs -o domain=MASERGY,user=jchilders '\\mtxfs03\Departments' /mnt/mtxfs03/departments/
-
-test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
 export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
 
