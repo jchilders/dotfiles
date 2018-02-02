@@ -8,47 +8,34 @@ set statusline =%#identifier#
 set statusline+=[%t]    "tail of the filename
 set statusline+=%*
 set statusline+=%y      "filetype
-
-"read only flag
 set statusline+=%#identifier#
 set statusline+=%r
 set statusline+=%*
-
-"modified flag
 set statusline+=%#identifier#
 set statusline+=%m
 set statusline+=%*
-
 set statusline+=%=      "left/right separator
-
 set statusline+=%c,     "cursor column
 set statusline+=%l/%L   "cursor line/total lines
 set statusline+=\ %P    "percent through file
-
 " always display status line
 set laststatus=2
 
 " Keep backups in separate directory from current
 set backupdir=~/.vimbak
 set directory=~/.vimbak
+set hlsearch
+set incsearch
+set ai
+set scrolloff=5
+set inccommand=nosplit
+set hidden
+set background=dark
 
 " Switch syntax highlighting on, when the terminal has colors
 " Also switch on highlighting the last used search pattern.
 syntax on
-"set background=dark
-set hlsearch
-set incsearch
-set ai
 
-set scrolloff=5
-
-set inccommand=nosplit
-
-set hidden
-
-source $VIMRUNTIME/macros/matchit.vim
-
-set background=dark
 colorscheme ron
 
 filetype on           " Enable filetype detection
@@ -63,7 +50,7 @@ au BufNewFile,BufRead *.axlsx set ft=ruby
 au BufRead,BufNewFile *.rb,*.rhtml,*.rake,*.yml,Gemfile,*.jbuilder set ft=ruby
 au BufRead,BufNewFile *.erb set ft=eruby
 " Restore cursor to where it was when the file was closed
- au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 
 " For commenting a line in HTML/XML format
 " map <F8> :set nohls<Return>:s/\S.*$/<!--&-->/g<Return>
@@ -78,8 +65,8 @@ let mapleader = ","
 
 " Allows you to easily change the current word and all occurrences to
 " something else. 
-nnoremap <Leader>cc :%s/\<<C-r><C-w>\>/<C-r><C-w>
-vnoremap <Leader>cc y:%s/<C-r>"/<C-r>"
+nnoremap <Leader>cw :%s/\<<C-r><C-w>\>/<C-r><C-w>
+vnoremap <Leader>cw y:%s/<C-r>"/<C-r>"
 
 " Ctrl-C to auto-close XML-ish tags
 imap <silent> <C-c> </<C-X><C-O><C-X>
@@ -110,38 +97,29 @@ vnoremap <silent> p p`]
 nnoremap <silent> p p`]
 
 map <Leader>rb :call VimuxRunCommand("clear; rspec " . bufname("%"))<CR>
-nnoremap <Leader>rs :sp ~/temp/scratch.rb<CR>GG
-nnoremap <Leader>bp Obinding.pry<ESC>:w<CR>
+nnoremap <Leader>rs :sp ~/temp/scratch.rb<CR>
 
 " https://github.com/junegunn/vim-plug
 " :PlugInstall to refresh
 call plug#begin('~/.config/nvim/plugs')
-Plug 'Shougo/neocomplete'
-Plug 'Shougo/neosnippet'
-Plug 'Shougo/neosnippet-snippets'
-Plug 'Xuyuanp/nerdtree-git-plugin'
+" Plug 'Shougo/neocomplete'
+Plug 'adelarsq/vim-matchit'
 Plug 'airblade/vim-gitgutter'
 Plug 'benmills/vimux'
 Plug 'ervandew/supertab'
 Plug 'kien/ctrlp.vim'
 Plug 'scrooloose/nerdcommenter'
-Plug 'scrooloose/nerdtree'
-Plug 'slim-template/vim-slim'
+" Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-fugitive'
 Plug 'neomake/neomake'
-Plug 'vim-airline/vim-airline'
+Plug 'dag/vim-fish'           " fish syntax highlighting
+Plug 'slim-template/vim-slim' " slim syntax highlighting
 call plug#end()
-
-let g:neosnippet#snippets_directory='~/.config/nvim/plugs/neosnippet-snippets/neosnippets'
 
 function! VimuxSlime()
   call VimuxOpenRunner()
   call VimuxSendText(@v)
 endfunction
-
-imap <C-k>     <Plug>(neosnippet_expand_or_jump)
-smap <C-k>     <Plug>(neosnippet_expand_or_jump)
-xmap <C-k>     <Plug>(neosnippet_expand_target)
 
 " If text is selected, save it in the v buffer and send that buffer to tmux
 vmap <Leader>vs "vy :call VimuxSlime()<CR>
@@ -156,16 +134,6 @@ set wildignore+=*/node_modules/*
 " Add spaces after comment delimiters by default
 let g:NERDSpaceDelims = 1
 
-" Load nerdtree if no files specified
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
-
-let NERDTreeShowHidden = 1    " show hidden files
-let NERDTreeQuitOnOpen = 1    " Hide NERDTree when opening a file
-let NERDTreeShowLineNumbers=1 " enable line numbers
-
-map <C-n> :NERDTreeToggle<CR>
-
 let g:gitgutter_sign_column_always = 1
 
 " Run neomake linters on everything except what is in the blacklist
@@ -179,17 +147,11 @@ au VimEnter * highlight link NeomakeWarning NONE
 au VimEnter * highlight link NeomakeError NONE
 
 if filereadable("rubocop")
-	let g:neomake_ruby_enabled_makers = ['rubocop']
+  let g:neomake_ruby_enabled_makers = ['rubocop']
 endif
 
-let g:UltiSnipsExpandTrigger="<C-j>"
-let g:UltiSnipsJumpForwardTrigger="<C-b>"
-let g:UltiSnipsJumpBackwardTrigger="<C-z>"
-
-" If you want :UltiSnipsEdit to split your window.
-let g:UltiSnipsEditSplit="vertical"
-
 " Clear previously highlighted search
+" doesn't work w/ neovim?
 nnoremap <Leader>cs :let @/ = ''<CR>
 
 " Replace single quotes with doubles
