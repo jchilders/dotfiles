@@ -1,93 +1,48 @@
-function fish_prompt --description 'Write out the prompt'
-	set -l last_status $status
+function fish_prompt
+	set -l last_command_status $status
+  set -l cwd
 
-    if not set -q __fish_git_prompt_show_informative_status
-        set -g __fish_git_prompt_show_informative_status 1
-    end
-    if not set -q __fish_git_prompt_hide_untrackedfiles
-        set -g __fish_git_prompt_hide_untrackedfiles 1
-    end
+  if test "$theme_short_path" = 'yes'
+    set cwd (basename (prompt_pwd))
+  else
+    set cwd (prompt_pwd)
+  end
 
-    if not set -q __fish_git_prompt_color_branch
-        set -g __fish_git_prompt_color_branch magenta --bold
-    end
-    if not set -q __fish_git_prompt_showupstream
-        set -g __fish_git_prompt_showupstream "informative"
-    end
-    if not set -q __fish_git_prompt_char_upstream_ahead
-        set -g __fish_git_prompt_char_upstream_ahead "↑"
-    end
-    if not set -q __fish_git_prompt_char_upstream_behind
-        set -g __fish_git_prompt_char_upstream_behind "↓"
-    end
-    if not set -q __fish_git_prompt_char_upstream_prefix
-        set -g __fish_git_prompt_char_upstream_prefix ""
-    end
+  set -l ahead    "↑"
+  set -l behind   "↓"
+  set -l diverged "⥄ "
+  set -l dirty    "⨯"
+  set -l none     "✓"
 
-    if not set -q __fish_git_prompt_char_stagedstate
-        set -g __fish_git_prompt_char_stagedstate "●"
-    end
-    if not set -q __fish_git_prompt_char_dirtystate
-        set -g __fish_git_prompt_char_dirtystate "✚"
-    end
-    if not set -q __fish_git_prompt_char_untrackedfiles
-        set -g __fish_git_prompt_char_untrackedfiles "…"
-    end
-    if not set -q __fish_git_prompt_char_conflictedstate
-        set -g __fish_git_prompt_char_conflictedstate "✖"
-    end
-    if not set -q __fish_git_prompt_char_cleanstate
-        set -g __fish_git_prompt_char_cleanstate "✔"
+  set -l normal_color     (set_color normal)
+  set -l success_color    (set_color $fish_pager_color_progress ^/dev/null; or set_color cyan)
+  set -l error_color      (set_color $fish_color_error ^/dev/null; or set_color red --bold)
+  set -l directory_color  (set_color 62A)
+  set -l repository_color (set_color $fish_color_cwd ^/dev/null; or set_color green)
+
+  echo -n -s $directory_color $cwd
+
+  if git_is_repo
+    if test "$theme_short_path" = 'yes'
+      set root_folder (command git rev-parse --show-toplevel ^/dev/null)
+      set parent_root_folder (dirname $root_folder)
+      set cwd (echo $PWD | sed -e "s|$parent_root_folder/||")
     end
 
-    if not set -q __fish_git_prompt_color_dirtystate
-        set -g __fish_git_prompt_color_dirtystate blue
-    end
-    if not set -q __fish_git_prompt_color_stagedstate
-        set -g __fish_git_prompt_color_stagedstate yellow
-    end
-    if not set -q __fish_git_prompt_color_invalidstate
-        set -g __fish_git_prompt_color_invalidstate red
-    end
-    if not set -q __fish_git_prompt_color_untrackedfiles
-        set -g __fish_git_prompt_color_untrackedfiles $fish_color_normal
-    end
-    if not set -q __fish_git_prompt_color_cleanstate
-        set -g __fish_git_prompt_color_cleanstate green --bold
-    end
+    echo -n -s $success_color "[" $normal_color
 
-    if not set -q __fish_prompt_normal
-        set -g __fish_prompt_normal (set_color normal)
+    if git_is_touched
+      echo -n -s $dirty
+    else
+      echo -n -s (git_ahead $ahead $behind $diverged $none)
     end
+    echo -n -s $success_color "]"
+  end
 
-    set -l color_cwd
-    set -l prefix
-    set -l suffix
-    switch "$USER"
-        case root toor
-            if set -q fish_color_cwd_root
-                set color_cwd $fish_color_cwd_root
-            else
-                set color_cwd $fish_color_cwd
-            end
-            set suffix '#'
-        case '*'
-            set color_cwd $fish_color_cwd
-            set suffix '$'
-    end
-
-    # PWD
-    set_color $color_cwd
-    echo -n (prompt_pwd)
-    set_color normal
-
-    printf '%s ' (__fish_vcs_prompt)
-
-    if not test $last_status -eq 0
-        set_color $fish_color_error
-    end
-
-    echo -n "$suffix "
-
-    set_color normal
+  if test $last_command_status -eq 0
+    echo -n -s $success_color
+  else
+    echo -n -s $error_color
+  end
+  echo -n -s " \$ " $normal_color
 end
