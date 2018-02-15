@@ -1,3 +1,4 @@
+# Defined in /var/folders/9m/1d95x8t52qn38sp9v8k_yg380000gn/T//fish.EVhNVo/fish_prompt.fish @ line 2
 function fish_prompt
 	set -l last_command_status $status
   set -l cwd
@@ -17,7 +18,7 @@ function fish_prompt
   set -l normal_color     (set_color normal)
   set -l success_color    (set_color $fish_pager_color_progress ^/dev/null; or set_color cyan)
   set -l error_color      (set_color $fish_color_error ^/dev/null; or set_color red --bold)
-  set -l directory_color  (set_color 62A)
+  set -l directory_color  (set_color 67916c)
   set -l repository_color (set_color $fish_color_cwd ^/dev/null; or set_color green)
 
   echo -n -s $directory_color $cwd
@@ -29,7 +30,7 @@ function fish_prompt
       set cwd (echo $PWD | sed -e "s|$parent_root_folder/||")
     end
 
-    echo -n -s $success_color "[" $normal_color
+    echo -n -s $success_color " [" $normal_color
 
     if git_is_touched
       echo -n -s $dirty
