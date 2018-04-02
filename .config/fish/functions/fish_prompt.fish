@@ -30,20 +30,22 @@ function fish_prompt
       set cwd (echo $PWD | sed -e "s|$parent_root_folder/||")
     end
 
-    echo -n -s $success_color " [" $normal_color
+    # echo -n -s $success_color " [" $normal_color
+    echo -n -s $normal_color " [" $success_color
 
     if git_is_touched
       echo -n -s $dirty
     else
       echo -n -s (git_ahead $ahead $behind $diverged $none)
     end
-    echo -n -s $success_color "]"
+    echo -n -s $normal_color "] "
   end
 
   if test $last_command_status -eq 0
-    echo -n -s $success_color
+    echo -n -s $normal_color
   else
     echo -n -s $error_color
   end
-  echo -n -s " \$ " $normal_color
+  echo -n -s "\$" $normal_color
+  echo -n -s " "
 end
