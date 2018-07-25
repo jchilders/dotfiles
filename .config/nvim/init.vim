@@ -3,6 +3,8 @@ set fileformat=unix
 " use spaces instead of tabs
 set tabstop=2 softtabstop=0 expandtab shiftwidth=2 smarttab
 
+let mapleader = ","
+
 " Statusline stuff
 set statusline =%#identifier#
 set statusline+=[%t]    "tail of the filename
@@ -22,13 +24,15 @@ set statusline+=\ %P    "percent through file
 set laststatus=2
 
 " Keep backups in separate directory from current
-set backupdir=~/.vimbak
-set directory=~/.vimbak
-set hlsearch
-set incsearch
+" Double trailing slashes prevents name collisions
+set backupdir=~/.vimbak//
+set directory=~/.vimbak//
+set undodir=~/.vimback//
+
+" set incsearch
+set inccommand=nosplit
 set ai
 set scrolloff=5
-set inccommand=nosplit
 set hidden
 set background=dark
 
@@ -37,6 +41,12 @@ set background=dark
 syntax on
 
 colorscheme ron
+
+set hlsearch
+hi Search cterm=NONE ctermfg=grey
+hi Search cterm=NONE ctermbg=blue
+hi Folded ctermfg=Black
+hi Folded ctermbg=DarkGrey
 
 filetype on           " Enable filetype detection
 filetype indent on    " Enable filetype-specific indenting
@@ -60,16 +70,24 @@ au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g
 " For quoting attributes in HTML/XML
 "map <F9> :%s/\([^&^?]\)\(\<[[:alnum:]-]\{-}\)=\([[:alnum:]-#%]\+\)/\1\2="\3"/g<Return>
 
-" Custom mappings
-let mapleader = ","
-
 " Allows you to easily change the current word and all occurrences to
 " something else. 
 nnoremap <Leader>cw :%s/\<<C-r><C-w>\>/<C-r><C-w>
 vnoremap <Leader>cw y:%s/<C-r>"/<C-r>"
 
 " Ctrl-C to auto-close XML-ish tags
-imap <silent> <C-c> </<C-X><C-O><C-X>
+" imap <silent> <C-c> </<C-X><C-O><C-X>
+
+function! VimuxSlime()
+  call VimuxOpenRunner()
+  call VimuxSendText(@v)
+endfunction
+
+" If text is selected, save it in the v buffer and send that buffer to tmux
+vmap <Leader>vs "vy :call VimuxSlime()<CR>
+
+" Send current line (technicaly paragraph) to adjacent tmux pane
+nmap <Leader>vs vip<Leader>vs<CR>
 
 " Relative line numbering goodness
 " use <Leader>L to toggle the line number counting method
@@ -81,6 +99,13 @@ function! g:ToggleNuMode()
   endif
 endfunc
 nnoremap <Leader>l :call g:ToggleNuMode()<cr>
+
+" Ruby-specific stuff
+nnoremap <Leader>bp obinding.pry<ESC>:w<ENTER>
+nnoremap <Leader>bP Obinding.pry<ESC>:w<ENTER>
+
+nnoremap <Leader>rp oputs "-=-=> "<ESC>i
+nnoremap <Leader>rP Oputs "-=-=> "<ESC>i
 
 set rnu " on by default
 
@@ -102,39 +127,33 @@ nnoremap <Leader>rs :sp ~/temp/scratch.rb<CR>
 " https://github.com/junegunn/vim-plug
 " :PlugInstall to refresh
 call plug#begin('~/.config/nvim/plugs')
-" Plug 'Shougo/neocomplete'
-Plug 'adelarsq/vim-matchit'
-Plug 'airblade/vim-gitgutter'
-Plug 'benmills/vimux'
-Plug 'ervandew/supertab'
-Plug 'kien/ctrlp.vim'
-Plug 'scrooloose/nerdcommenter'
-" Plug 'tpope/vim-endwise'
-Plug 'tpope/vim-fugitive'
-Plug 'neomake/neomake'
-Plug 'dag/vim-fish'           " fish syntax highlighting
-Plug 'slim-template/vim-slim' " slim syntax highlighting
+  Plug 'adelarsq/vim-matchit'
+  Plug 'airblade/vim-gitgutter'
+  Plug 'benmills/vimux'
+  Plug 'darfink/vim-plist'
+  Plug 'ervandew/supertab'
+  Plug 'kien/ctrlp.vim'
+  Plug 'scrooloose/nerdcommenter'
+  Plug 'tpope/vim-fugitive'
+  Plug 'tpope/vim-rails'
+  Plug 'leafgarland/typescript-vim'
+  Plug 'neomake/neomake'
+  Plug 'dag/vim-fish'           " fish syntax highlighting
+  " Plug 'slim-template/vim-slim' " slim syntax highlighting
+  " Plug 'talek/vorax4'           " Oracle IDE
 call plug#end()
 
-function! VimuxSlime()
-  call VimuxOpenRunner()
-  call VimuxSendText(@v)
-endfunction
-
-" If text is selected, save it in the v buffer and send that buffer to tmux
-vmap <Leader>vs "vy :call VimuxSlime()<CR>
-
-" Select current paragraph and send it to tmux
-nmap <Leader>vs vip<Leader>vs<CR>
-
-" ctrl-p stuff
+" ctrlp stuff
 let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
 set wildignore+=*/node_modules/*
+nnoremap <silent> <C-c> :CtrlP ~/workspace/agency_gateway/ag_client<ENTER>
+
 
 " Add spaces after comment delimiters by default
 let g:NERDSpaceDelims = 1
 
-let g:gitgutter_sign_column_always = 1
+" vim-gitgutter: always show sign column
+set signcolumn=yes
 
 " Run neomake linters on everything except what is in the blacklist
 let blacklist = ['scratch.rb', 'routes.rb']
@@ -157,11 +176,18 @@ nnoremap <Leader>cs :let @/ = ''<CR>
 " Replace single quotes with doubles
 nnoremap <Leader>rq :s/'/"/g<CR>:let @/ = ''<CR>
 
-" Insert `binding.pry` to line below cursor
-nnoremap <Leader>bp obinding.pry<ESC>:w<ENTER>
-
-" Insert `binding.pry` to line above cursor
-nnoremap <Leader>bP Obinding.pry<ESC>:w<ENTER>
-
 " vim-airline stuff
 let g:airline_powerline_fonts = 1
+
+" vorax (SQL IDE) stuff
+" https://github.com/talek/vorax4/wiki
+" Following is to try and get vorax to work under jruby
+" let g:ruby_host_prog = '~/.rvm/gems/ruby-2.3.0/bin/neovim-ruby-host'
+
+" Speed up startup time for vim-ruby
+" https://github.com/vim-ruby/vim-ruby/issues/248
+let g:ruby_path = '/Users/jchilders/.rvm/rubies/ruby-2.3.0/'
+nnoremap <Leader>vc :VORAXConnect sms_user/password@localhost:1521/xe<ENTER>
+
+" `vim --cmd 'profile start initvim-profiling.result' --cmd 'profile! file
+" *.vim' app/models/budget.rb`
