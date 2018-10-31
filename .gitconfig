@@ -4,7 +4,10 @@
 [core]
   whitespace=fix,-indent-with-non-tab,trailing-space,cr-at-eol
 	excludesfile = /Users/jchilders/.gitignore_global
-  pager = less -X -F
+  ; pager = less -X -F
+[pager]
+  diff = diff-so-fancy | less --tabs=1,5 -RFX
+  show = diff-so-fancy | less --tabs=1,5 -RFX
 [color]
   ui = auto
 [color "branch"]
@@ -27,15 +30,29 @@
   ll = log --pretty=format:'%Cred%h%Creset%C(yellow)%d%Creset %s %Cgreen(%cr)%C(bold blue)<%an>%Creset' --decorate --numstat
   st = status -sb
   di = diff
-  devdiff = !git diff --name-status $(git rev-parse --abbrev-ref HEAD)..develop
+  dif = diff
+  dff = diff
+  cb = ! git rev-parse --abbrev-ref HEAD | tr -d '\n' | pbcopy
   co = checkout
   ci = commit
   br = branch
   sta = stash
   wc = whatchanged
-  restore = !git checkout $(git rev-list -n 1 HEAD -- "$1")^ -- "$1"
+
+  # undo last commit
+  undo = !git reset --hard remotes/origin/$(git rev-parse --abbrev-ref HEAD)
+ 
   # in case of accidental `git git status`
 	git = !exec git
+
+  # https://davidwalsh.name/pull-down-pr
+  # usage: git pr 1234
+	pr = "!f() { git fetch -fu origin refs/pull/$1/head:pr/$1 && git checkout pr/$1; }; f"
+
+  pr-clean = "!git checkout develop ; "
+  
+  ; git for-each-ref refs/heads/pr/* --format=\"%(refname)\" | while read ref ; do branch=${ref#refs/heads/} ; git branch -D $branch ; done
+
 [merge]
 	tool = vimdiff
 [push]
@@ -45,3 +62,5 @@
 	tool = vimdiff
 [rerere]
 	enabled = true
+[rebase]
+  autoStash = true

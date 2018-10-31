@@ -34,6 +34,8 @@ alias   vi='nvim'
 alias   vim='nvim'
 alias   ff='mdfind -onlyin . -name $1'
 
+alias   cat='bat'
+
 set -x CLASSPATH ./lib/log4j-1.2.17.jar # For SMS
 set -g fish_user_paths "/usr/local/opt/mongodb@3.4/bin" $fish_user_paths
 set -g fish_user_paths "/usr/local/opt/qt@5.5/bin" $fish_user_paths

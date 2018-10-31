@@ -1,0 +1,11 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhist_cnt =9
+let g:netrw_dirhist_1='/Users/jchilders/workspace/pam_client/db/migrate'
+let g:netrw_dirhist_2='/Users/jchilders/workspace/sms/app/services'
+let g:netrw_dirhist_3='/Users/jchilders/workspace/sms/app/views/budget_shift_mailer'
+let g:netrw_dirhist_4='/Users/jchilders/workspace/sms'
+let g:netrw_dirhist_5='/Users/jchilders/.config/fish/functions'
+let g:netrw_dirhist_6='/Users/jchilders/.config/fish'
+let g:netrw_dirhist_7='/Users/jchilders/.config/fish/functions'
+let g:netrw_dirhist_8='/Users/jchilders/.zsh'
+let g:netrw_dirhist_9='/Users/jchilders'
