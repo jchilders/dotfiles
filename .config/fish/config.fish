@@ -1,14 +1,17 @@
 set --universal fish_greeting ""
 
+# https://github.com/mnacamura/z-fish
+source /Users/jchilders/workspace/z-fish/z.fish
+
 # https://fishshell.com/docs/current/index.html#editor
 set -g fish_key_bindings fish_vi_key_bindings
 
 # https://github.com/michaeldfallen/git-radar#customise-your-prompt
 set --universal --export GIT_RADAR_FORMAT "%{branch} %{changes}"
-# set --local GIT_RADAR_FORMAT "-=> %{branch} %{(:local} %{changes:)}"
+set --local GIT_RADAR_FORMAT "-=> %{branch} %{(:local} %{changes:)}"
 
 set --local paths ~/bin /usr/local/bin /usr/local/sbin
-set PATH ~/.local/bin /usr/local/bin /usr/local/sbin /bin /usr/sbin $PATH
+set PATH /usr/local/bin /usr/local/sbin /bin /usr/sbin $PATH
 
 # Agency Gateway stuff
 set --universal --export UNICORN_WORKERS 1
@@ -33,9 +36,4 @@ alias   rdbms='rake db:migrate:status'
 alias   vi='nvim'
 alias   vim='nvim'
 alias   ff='mdfind -onlyin . -name $1'
-
 alias   cat='bat'
-
-set -x CLASSPATH ./lib/log4j-1.2.17.jar # For SMS
-set -g fish_user_paths "/usr/local/opt/mongodb@3.4/bin" $fish_user_paths
-set -g fish_user_paths "/usr/local/opt/qt@5.5/bin" $fish_user_paths
