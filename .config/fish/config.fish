@@ -25,6 +25,7 @@ function __check_rvm --on-variable PWD --description 'Do rvm stuff on directory 
 end
 
 alias   bi='bundle install'
+alias   cat='bat'
 alias   l='ls -alGp'
 alias   rc='rails console'
 alias   rs='rails s'
@@ -32,9 +33,6 @@ alias   rdbm='rake db:migrate'
 alias   rdbms='rake db:migrate:status'
 alias   vi='nvim'
 alias   vim='nvim'
-alias   ff='mdfind -onlyin . -name $1'
-
-alias   cat='bat'
 
 set -x CLASSPATH ./lib/log4j-1.2.17.jar # For SMS
 set -g fish_user_paths "/usr/local/opt/mongodb@3.4/bin" $fish_user_paths
