@@ -1,29 +1,34 @@
 set --universal fish_greeting ""
 
-# https://github.com/mnacamura/z-fish
-source /Users/jchilders/workspace/z-fish/z.fish
-
 # https://fishshell.com/docs/current/index.html#editor
 set -g fish_key_bindings fish_vi_key_bindings
 
 # https://github.com/michaeldfallen/git-radar#customise-your-prompt
 set --universal --export GIT_RADAR_FORMAT "%{branch} %{changes}"
-set --local GIT_RADAR_FORMAT "-=> %{branch} %{(:local} %{changes:)}"
+# set --local GIT_RADAR_FORMAT "-=> %{branch} %{(:local} %{changes:)}"
 
-set --local paths ~/bin /usr/local/bin /usr/local/sbin
-set PATH /usr/local/bin /usr/local/sbin /bin /usr/sbin $PATH
+set -g fish_user_paths /usr/local/sbin $fish_user_paths
+set -g fish_user_paths ~/.local/bin $fish_user_paths
+
+# Qt5.5 and its qmake binary is required by capybara-webkit gem
+# http://download.qt.io/archive/qt/5.5/5.5.1/
+# https://stackoverflow.com/questions/33728905/qt-creator-project-error-xcode-not-set-up-properly-you-may-need-to-confirm-t/35098040#35098040
+set -g fish_user_paths ~/Qt5.5.1/5.5/clang_64/bin $fish_user_paths
+
+# MySQL Stuff
+set --universal --export DYLD_LIBRARY_PATH /usr/local/mysql/lib
 
 # Agency Gateway stuff
 set --universal --export UNICORN_WORKERS 1
-set --universal --export PORT 5000
+# Port to run AG UI on
+# see: ~/.config/fish/fish_variables
+# set --universal --export PORT 4200
 
 # Remora (PAM Admin) stuff
 set --universal --export REMORA_DB_USERNAME sms_user
 
 # rvm stuff
-rvm default
-chrvm
-function __check_rvm --on-variable PWD --description 'Do rvm stuff on directory change'
+function __check_rvm --on-variable PWD --description 'Change Ruby version on directory change'
   chrvm
 end
 
@@ -38,5 +43,5 @@ alias   vi='nvim'
 alias   vim='nvim'
 
 set -x CLASSPATH ./lib/log4j-1.2.17.jar # For SMS
-set -g fish_user_paths "/usr/local/opt/mongodb@3.4/bin" $fish_user_paths
-set -g fish_user_paths "/usr/local/opt/qt@5.5/bin" $fish_user_paths
+
+test -s /Users/jchilders/.nvm-fish/nvm.fish; and source /Users/jchilders/.nvm-fish/nvm.fish

@@ -147,12 +147,3 @@ set wildignore+=*/node_modules/*
 " Add spaces after comment delimiters by default
 let g:NERDSpaceDelims = 1
 
-
-" requires ack.vim plugin
-" git clone https://github.com/mileszs/ack.vim.git ~/.vim/bundle/ack.vim
-if executable('ag')
-  let g:ackprg = 'ag --vimgrep --smart-case'
-end
-cnoreabbrev Ag Ack
-cnoreabbrev ag Ack
-

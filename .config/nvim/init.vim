@@ -4,6 +4,9 @@ set fileformat=unix
 set tabstop=2 softtabstop=0 expandtab shiftwidth=2 smarttab
 
 let mapleader = ","
+imap jk <Esc>
+imap jkw <Esc>:wa<CR>
+imap kj <Esc>:wa<CR>
 
 " Statusline stuff
 set statusline =%#identifier#
@@ -107,7 +110,7 @@ nnoremap <Leader>bP Obinding.pry<ESC>:w<ENTER>
 nnoremap <Leader>rp oputs "-=-=> "<ESC>i
 nnoremap <Leader>rP Oputs "-=-=> "<ESC>i
 
-set rnu " on by default
+set rnu " on by default. <Leader>l to turn off
 
 nnoremap <Leader>w :wa<CR>
 nnoremap <Leader>W :wqa<CR>
@@ -121,6 +124,9 @@ vnoremap <silent> y y`]
 vnoremap <silent> p p`]
 nnoremap <silent> p p`]
 
+" Clear previously highlighted search ('clear find')
+nnoremap <Leader>cf :let @/ = ''<CR>
+
 map <Leader>rb :call VimuxRunCommand("clear; rspec " . bufname("%"))<CR>
 nnoremap <Leader>rs :sp ~/temp/scratch.rb<CR>
 
@@ -129,18 +135,13 @@ nnoremap <Leader>rs :sp ~/temp/scratch.rb<CR>
 call plug#begin('~/.config/nvim/plugs')
   Plug 'adelarsq/vim-matchit'
   Plug 'airblade/vim-gitgutter'
-  Plug 'benmills/vimux'
-  Plug 'darfink/vim-plist'
+  Plug 'benmills/vimux' " Pipe to tmux
   Plug 'ervandew/supertab'
   Plug 'kien/ctrlp.vim'
   Plug 'scrooloose/nerdcommenter'
-  Plug 'tpope/vim-fugitive'
-  Plug 'tpope/vim-rails'
-  Plug 'leafgarland/typescript-vim'
+  Plug 'tpope/vim-fugitive' " :Gblame
   Plug 'neomake/neomake'
-  Plug 'dag/vim-fish'           " fish syntax highlighting
-  " Plug 'slim-template/vim-slim' " slim syntax highlighting
-  " Plug 'talek/vorax4'           " Oracle IDE
+  Plug 'dag/vim-fish'
 call plug#end()
 
 " ctrlp stuff
@@ -148,12 +149,15 @@ let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
 set wildignore+=*/node_modules/*
 nnoremap <silent> <C-c> :CtrlP ~/workspace/agency_gateway/ag_client<ENTER>
 
-
 " Add spaces after comment delimiters by default
 let g:NERDSpaceDelims = 1
 
 " vim-gitgutter: always show sign column
 set signcolumn=yes
+
+" Run neomake when writing or reading a buffer, and on changes in insert and
+" normal mode (after 1s; no delay when writing).
+call neomake#configure#automake('nrwi', 500)
 
 " Run neomake linters on everything except what is in the blacklist
 let blacklist = ['scratch.rb', 'routes.rb']
@@ -169,25 +173,13 @@ if filereadable("rubocop")
   let g:neomake_ruby_enabled_makers = ['rubocop']
 endif
 
-" Clear previously highlighted search
-" doesn't work w/ neovim?
-nnoremap <Leader>cs :let @/ = ''<CR>
-
 " Replace single quotes with doubles
 nnoremap <Leader>rq :s/'/"/g<CR>:let @/ = ''<CR>
 
-" vim-airline stuff
-let g:airline_powerline_fonts = 1
-
-" vorax (SQL IDE) stuff
-" https://github.com/talek/vorax4/wiki
-" Following is to try and get vorax to work under jruby
-" let g:ruby_host_prog = '~/.rvm/gems/ruby-2.3.0/bin/neovim-ruby-host'
-
 " Speed up startup time for vim-ruby
 " https://github.com/vim-ruby/vim-ruby/issues/248
-let g:ruby_path = '/Users/jchilders/.rvm/rubies/ruby-2.3.0/'
-nnoremap <Leader>vc :VORAXConnect sms_user/password@localhost:1521/xe<ENTER>
+" let g:ruby_path = '/Users/jchilders/.rvm/rubies/ruby-2.3.0/'
 
-" `vim --cmd 'profile start initvim-profiling.result' --cmd 'profile! file
-" *.vim' app/models/budget.rb`
+" Use following command to profile vim startup time. Identify slow plugins, etc.
+" vim --cmd 'profile start initvim-profiling.result' --cmd 'profile! file *.vim' app/controllers/api/v1/notifications_controller.rb
+
