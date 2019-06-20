@@ -4,6 +4,8 @@ set fileformat=unix
 set tabstop=2 softtabstop=0 expandtab shiftwidth=2 smarttab
 
 let mapleader = ","
+
+" Since new MBPs don't have an escape key except in that stupid Touch Bar...
 imap jk <Esc>
 imap jkw <Esc>:wa<CR>
 imap kj <Esc>:wa<CR>
@@ -39,8 +41,6 @@ set scrolloff=5
 set hidden
 set background=dark
 
-" Switch syntax highlighting on, when the terminal has colors
-" Also switch on highlighting the last used search pattern.
 syntax on
 
 colorscheme ron
@@ -62,6 +62,7 @@ au BufNewFile,BufRead *.gradle set ft=groovy
 au BufNewFile,BufRead *.axlsx set ft=ruby 
 au BufRead,BufNewFile *.rb,*.rhtml,*.rake,*.yml,Gemfile,*.jbuilder set ft=ruby
 au BufRead,BufNewFile *.erb set ft=eruby
+
 " Restore cursor to where it was when the file was closed
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 
@@ -73,11 +74,6 @@ au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g
 " For quoting attributes in HTML/XML
 "map <F9> :%s/\([^&^?]\)\(\<[[:alnum:]-]\{-}\)=\([[:alnum:]-#%]\+\)/\1\2="\3"/g<Return>
 
-" Allows you to easily change the current word and all occurrences to
-" something else. 
-nnoremap <Leader>cw :%s/\<<C-r><C-w>\>/<C-r><C-w>
-vnoremap <Leader>cw y:%s/<C-r>"/<C-r>"
-
 " Ctrl-C to auto-close XML-ish tags
 " imap <silent> <C-c> </<C-X><C-O><C-X>
 
@@ -86,14 +82,15 @@ function! VimuxSlime()
   call VimuxSendText(@v)
 endfunction
 
+" Send current block (lines around cursor with a blank line before & after) to
+" adjacent tmux pane
+nmap <Leader>vs vip<Leader>vs<CR>
+
 " If text is selected, save it in the v buffer and send that buffer to tmux
 vmap <Leader>vs "vy :call VimuxSlime()<CR>
 
-" Send current line (technicaly paragraph) to adjacent tmux pane
-nmap <Leader>vs vip<Leader>vs<CR>
+set rnu " relative line numbering on by default. <Leader>l to toggle
 
-" Relative line numbering goodness
-" use <Leader>L to toggle the line number counting method
 function! g:ToggleNuMode()
   if(&rnu == 1)
     set nornu
@@ -101,16 +98,20 @@ function! g:ToggleNuMode()
     set rnu
   endif
 endfunc
+
+" use <Leader>L to toggle the line number counting method
 nnoremap <Leader>l :call g:ToggleNuMode()<cr>
 
 " Ruby-specific stuff
+
+" open Ruby scratchpad
+nnoremap <Leader>rs :sp ~/temp/scratch.rb<CR>
+
 nnoremap <Leader>bp obinding.pry<ESC>:w<ENTER>
 nnoremap <Leader>bP Obinding.pry<ESC>:w<ENTER>
 
 nnoremap <Leader>rp oputs "-=-=> "<ESC>i
 nnoremap <Leader>rP Oputs "-=-=> "<ESC>i
-
-set rnu " on by default. <Leader>l to turn off
 
 nnoremap <Leader>w :wa<CR>
 nnoremap <Leader>W :wqa<CR>
@@ -125,10 +126,28 @@ vnoremap <silent> p p`]
 nnoremap <silent> p p`]
 
 " Clear previously highlighted search ('clear find')
-nnoremap <Leader>cf :let @/ = ''<CR>
+nnoremap <silent> <Leader>cf :let @/ = ''<CR>
 
-map <Leader>rb :call VimuxRunCommand("clear; rspec " . bufname("%"))<CR>
-nnoremap <Leader>rs :sp ~/temp/scratch.rb<CR>
+" Autoclose parens, etc.
+inoremap ( ()<Left>
+inoremap { {}<Left>
+inoremap [ []<Left>
+inoremap " ""<Left>
+
+" Replace single quotes with doubles
+nnoremap <silent> <Leader>rq :set nohlsearch<CR>:s/'/"/g<CR>:set hlsearch<CR>
+" Replace double quotes with singles
+nnoremap <silent> <Leader>rQ :set nohlsearch<CR>:s/"/'/g<CR>:set hlsearch<CR>
+
+" Change all occurrences of current word
+nnoremap <Leader>cw :%s/\<<C-r><C-w>\>/
+
+" Tab to switch to next open buffer
+nnoremap <Tab> :bnext<cr>
+" Shift + Tab to switch to previous open buffer
+nnoremap <S-Tab> :bprevious<cr>
+" leader key twice to cycle between last two open buffers
+nnoremap <leader><leader> <c-^>
 
 " https://github.com/junegunn/vim-plug
 " :PlugInstall to refresh
@@ -136,12 +155,12 @@ call plug#begin('~/.config/nvim/plugs')
   Plug 'adelarsq/vim-matchit'
   Plug 'airblade/vim-gitgutter'
   Plug 'benmills/vimux' " Pipe to tmux
+  Plug 'dag/vim-fish'
   Plug 'ervandew/supertab'
   Plug 'kien/ctrlp.vim'
+  Plug 'neomake/neomake'
   Plug 'scrooloose/nerdcommenter'
   Plug 'tpope/vim-fugitive' " :Gblame
-  Plug 'neomake/neomake'
-  Plug 'dag/vim-fish'
 call plug#end()
 
 " ctrlp stuff
@@ -156,7 +175,7 @@ let g:NERDSpaceDelims = 1
 set signcolumn=yes
 
 " Run neomake when writing or reading a buffer, and on changes in insert and
-" normal mode (after 1s; no delay when writing).
+" normal mode
 call neomake#configure#automake('nrwi', 500)
 
 " Run neomake linters on everything except what is in the blacklist
@@ -173,13 +192,9 @@ if filereadable("rubocop")
   let g:neomake_ruby_enabled_makers = ['rubocop']
 endif
 
-" Replace single quotes with doubles
-nnoremap <Leader>rq :s/'/"/g<CR>:let @/ = ''<CR>
-
 " Speed up startup time for vim-ruby
 " https://github.com/vim-ruby/vim-ruby/issues/248
 " let g:ruby_path = '/Users/jchilders/.rvm/rubies/ruby-2.3.0/'
 
 " Use following command to profile vim startup time. Identify slow plugins, etc.
 " vim --cmd 'profile start initvim-profiling.result' --cmd 'profile! file *.vim' app/controllers/api/v1/notifications_controller.rb
-
