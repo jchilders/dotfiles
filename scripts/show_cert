@@ -1,0 +1,9 @@
+#!/bin/bash
+#
+# Show server's certificate in a human-readable form.
+#
+# Usage: $ show-cert HOST [PORT]
+#
+exec <&- # close stdin to suppress `read:errno=0` from openssl
+exec openssl x509 -noout -text \
+     -in <(openssl s_client -connect "$1":"${2:-443}" -showcerts)
