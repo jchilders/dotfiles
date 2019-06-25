@@ -39,14 +39,9 @@ alias   vim='nvim'
 
 set -x CLASSPATH ./lib/log4j-1.2.17.jar # For SMS
 
-# rvm stuff
-function __check_rvm --on-event fish_prompt --description 'Change Ruby version if .ruby-version is present'
-  if test -e .ruby-version
-    cat .ruby-version | ruby --disable=gems -e 'exit(ARGF.read.match(/(\d(\.|\b)){1,}/)[0] == RUBY_VERSION)'
-    if test $status -ne 0
-      rvm use (cat .ruby-version) > /dev/null
-    end
-  end
+# Point at correct Ruby ver on new window
+if test -e .ruby-version
+  rvm > /dev/null
 end
 
 # nvm stuff

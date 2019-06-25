@@ -46,7 +46,7 @@ syntax on
 colorscheme ron
 
 set hlsearch
-hi Search cterm=NONE ctermfg=grey
+hi Search cterm=NONE ctermfg=white
 hi Search cterm=NONE ctermbg=blue
 hi Folded ctermfg=Black
 hi Folded ctermbg=DarkGrey
@@ -191,10 +191,6 @@ au VimEnter * highlight link NeomakeError NONE
 if filereadable("rubocop")
   let g:neomake_ruby_enabled_makers = ['rubocop']
 endif
-
-" Speed up startup time for vim-ruby
-" https://github.com/vim-ruby/vim-ruby/issues/248
-" let g:ruby_path = '/Users/jchilders/.rvm/rubies/ruby-2.3.0/'
 
 " Use following command to profile vim startup time. Identify slow plugins, etc.
 " vim --cmd 'profile start initvim-profiling.result' --cmd 'profile! file *.vim' app/controllers/api/v1/notifications_controller.rb
