@@ -5,16 +5,12 @@ set tabstop=2 softtabstop=0 expandtab shiftwidth=2 smarttab
 
 let mapleader = ","
 
-" Since new MBPs don't have an escape key except in that stupid Touch Bar...
-imap jk <Esc>
-imap jkw <Esc>:wa<CR>
-imap kj <Esc>:wa<CR>
-
 " Statusline stuff
 set statusline =%#identifier#
 set statusline+=[%t]    "tail of the filename
 set statusline+=%*
 set statusline+=%y      "filetype
+set statusline+=%{ObsessionStatus()}
 set statusline+=%#identifier#
 set statusline+=%r
 set statusline+=%*
@@ -77,6 +73,23 @@ au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g
 " Ctrl-C to auto-close XML-ish tags
 " imap <silent> <C-c> </<C-X><C-O><C-X>
 
+" https://github.com/junegunn/vim-plug
+" :PlugInstall to install new
+" :PlugUpdate to get lastest
+" :PlugClean to remove old/unused plugins
+call plug#begin('~/.config/nvim/plugs')
+  Plug 'adelarsq/vim-matchit'
+  Plug 'airblade/vim-gitgutter'
+  Plug 'benmills/vimux' " Pipe to tmux
+  Plug 'ctrlpvim/ctrlp.vim'
+  Plug 'dag/vim-fish'
+  Plug 'ervandew/supertab'
+  Plug 'neomake/neomake'
+  Plug 'scrooloose/nerdcommenter'
+  Plug 'tpope/vim-fugitive' " :Gblame
+  Plug 'tpope/vim-obsession' " save/restore sessions(layouts)
+call plug#end()
+
 function! VimuxSlime()
   call VimuxOpenRunner()
   call VimuxSendText(@v)
@@ -89,6 +102,20 @@ nmap <Leader>vs vip<Leader>vs<CR>
 " If text is selected, save it in the v buffer and send that buffer to tmux
 vmap <Leader>vs "vy :call VimuxSlime()<CR>
 
+" Run current spec in adjacent tmux pane
+nnoremap <Leader>vt :call RunSpec()<CR>
+nnoremap <Leader>vT :call RunSpec()<CR>
+function! RunSpec()
+  let curr_line = line(".")
+  let curr_file = bufname("%")
+  if match(curr_file, '_spec.rb$') == -1 
+    let curr_file = system("alt " . curr_file)
+    call VimuxRunCommand("rspec " . curr_file)
+  else
+    call VimuxRunCommand("rspec " . curr_file . ":" . curr_line)
+  endif
+endfunction
+
 set rnu " relative line numbering on by default. <Leader>l to toggle
 
 function! g:ToggleNuMode()
@@ -99,17 +126,18 @@ function! g:ToggleNuMode()
   endif
 endfunc
 
-" use <Leader>L to toggle the line number counting method
+" Since new MBPs don't have an escape key except in that stupid Touch Bar...
+imap jk <Esc>
+imap jkw <Esc>:wa<CR>
+imap kj <Esc>:wa<CR>
+
+" Toggle relative line numbering
 nnoremap <Leader>l :call g:ToggleNuMode()<cr>
 
 " Ruby-specific stuff
-
-" open Ruby scratchpad
 nnoremap <Leader>rs :sp ~/temp/scratch.rb<CR>
-
 nnoremap <Leader>bp obinding.pry<ESC>:w<ENTER>
 nnoremap <Leader>bP Obinding.pry<ESC>:w<ENTER>
-
 nnoremap <Leader>rp oputs "-=-=> "<ESC>i
 nnoremap <Leader>rP Oputs "-=-=> "<ESC>i
 
@@ -120,27 +148,66 @@ nnoremap <Leader>p :set invpaste paste?<CR>
 imap <Leader>p <C-O>:set invpaste paste?<CR>
 set pastetoggle=<Leader>p
 
+" Copy visual selection to clipboard
+vnoremap <C-c> "*y
+
 " Auto jump to end of pasted text
 vnoremap <silent> y y`]
 vnoremap <silent> p p`]
 nnoremap <silent> p p`]
 
 " Clear previously highlighted search ('clear find')
+" (`@/` is the register storing the last search pattern)
 nnoremap <silent> <Leader>cf :let @/ = ''<CR>
 
-" Autoclose parens, etc.
-inoremap ( ()<Left>
-inoremap { {}<Left>
-inoremap [ []<Left>
-inoremap " ""<Left>
+nnoremap <silent> <Leader>rq :call ReplaceQuotes()<CR>
 
-" Replace single quotes with doubles
-nnoremap <silent> <Leader>rq :set nohlsearch<CR>:s/'/"/g<CR>:set hlsearch<CR>
-" Replace double quotes with singles
-nnoremap <silent> <Leader>rQ :set nohlsearch<CR>:s/"/'/g<CR>:set hlsearch<CR>
+" Toggle single/double quotes
+function! ReplaceQuotes()
+  let save_pos = getpos(".")
+  set nohlsearch
+  let curr_line = getline('.')
+
+  if curr_line =~ "'"
+    call setline(line('.'), substitute(getline('.'), "'", '\"', 'g'))
+  end
+  
+  if curr_line =~ '"'
+    call setline(line('.'), substitute(getline('.'), '\"', "'", 'g'))
+  end
+
+  set hlsearch
+  call setpos('.', save_pos)
+  let @/ = ''
+endfunction
 
 " Change all occurrences of current word
-nnoremap <Leader>cw :%s/\<<C-r><C-w>\>/
+nnoremap <Leader>cw :call GlobalChangeCurrentWord()<CR>
+function! GlobalChangeCurrentWord()
+  let save_pos = getpos(".")
+  let word = expand("<cword>")
+  call inputsave()
+  let replacement = input('Replace with: ')
+  call inputrestore()
+
+  execute "%s/" . word . "/" .replacement. "/g"
+
+  call setpos('.', save_pos)
+endfunction
+
+" Run a given vim command on the results of alt from a given path.
+" depends on `alt`: https://github.com/uptech/alt
+function! AltCommand(path, vim_command)
+  let l:alternate = system("alt " . a:path)
+  if empty(l:alternate)
+    echo "No alternate file for " . a:path . " exists!"
+  else
+    exec a:vim_command . " " . l:alternate
+  endif
+endfunction
+
+" Find the alternate file for the current path and open it
+nnoremap <leader>. :w<cr>:call AltCommand(expand('%'), ':e')<cr>
 
 " Tab to switch to next open buffer
 nnoremap <Tab> :bnext<cr>
@@ -149,23 +216,11 @@ nnoremap <S-Tab> :bprevious<cr>
 " leader key twice to cycle between last two open buffers
 nnoremap <leader><leader> <c-^>
 
-" https://github.com/junegunn/vim-plug
-" :PlugInstall to refresh
-call plug#begin('~/.config/nvim/plugs')
-  Plug 'adelarsq/vim-matchit'
-  Plug 'airblade/vim-gitgutter'
-  Plug 'benmills/vimux' " Pipe to tmux
-  Plug 'dag/vim-fish'
-  Plug 'ervandew/supertab'
-  Plug 'kien/ctrlp.vim'
-  Plug 'neomake/neomake'
-  Plug 'scrooloose/nerdcommenter'
-  Plug 'tpope/vim-fugitive' " :Gblame
-call plug#end()
-
 " ctrlp stuff
-let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
 set wildignore+=*/node_modules/*
+set wildignore+=*/ng2-src/*
+
+" Open ag_client file from anywhere
 nnoremap <silent> <C-c> :CtrlP ~/workspace/agency_gateway/ag_client<ENTER>
 
 " Add spaces after comment delimiters by default
