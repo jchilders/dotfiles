@@ -4,8 +4,10 @@
 [core]
   whitespace=fix,-indent-with-non-tab,trailing-space,cr-at-eol
 	excludesfile = /Users/jchilders/.gitignore_global
+	editor = nvim
   ; pager = less -X -F
 [pager]
+  ; https://github.com/so-fancy/diff-so-fancy
   diff = diff-so-fancy | less --tabs=1,5 -RFX
   show = diff-so-fancy | less --tabs=1,5 -RFX
 [color]
@@ -37,6 +39,7 @@
   ci = commit
   br = branch
   sta = stash
+  sw = switch
   wc = whatchanged
 
   # undo last commit

@@ -1,0 +1,15 @@
+{
+  "solargraph.diagnostics": true,
+  "codeLens.enable": true,
+  "diagnostic.infoSign":            "ⓘ",
+  "diagnostic.hintSign":            "↣",
+  "diagnostic.warningSign":         "‼",
+  "diagnostic.errorSign":           "💢",
+  "diagnostic.enable":              true,
+  "diagnostic.signOffset":          9999999,
+  "diagnostic.highlightOffset":     9999999,
+  "diagnostic.refreshOnInsertMode": true,
+  "git.enableGutters": true,
+  "git.addGBlameToVirtualText": false,
+  "git.addGBlameToBufferVar": true
+}
