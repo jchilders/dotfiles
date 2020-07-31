@@ -7,7 +7,7 @@
 	editor = nvim
   ; pager = less -X -F
 [pager]
-  ; https://github.com/so-fancy/diff-so-fancy
+  ; brew install diff-so-fancy
   diff = diff-so-fancy | less --tabs=1,5 -RFX
   show = diff-so-fancy | less --tabs=1,5 -RFX
 [color]
@@ -67,3 +67,5 @@
 	enabled = true
 [rebase]
   autoStash = true
+[pull]
+	rebase = true
