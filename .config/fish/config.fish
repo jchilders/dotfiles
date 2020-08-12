@@ -1,12 +1,6 @@
 # https://fishshell.com/docs/current/index.html#editor
 set -g fish_key_bindings fish_vi_key_bindings
 
-# PAM/SMS/Remora/PAM API stuff
-set -x CLASSPATH ./lib/log4j-1.2.17.jar
-set --universal --export REMORA_DB_USERNAME sms_user
-# set --global --export DYLD_LIBRARY_PATH /opt/oracle/instantclient_11_2
-set --global REMORA_TEST_USERNAME pam_client_test
-
 # Use vim when creating/editing PRs using gh (GitHub CLI tool)
 set -x EDITOR nvim
 
@@ -21,7 +15,7 @@ alias   rs='rails s'
 alias   rdbm='rake db:migrate'
 alias   rdbms='rake db:migrate:status'
 alias   vi='nvim'
-# alias   vim='nvim'
+alias   vim='nvim'
 
 # nvm stuff
 #test -s /Users/jchilders/.nvm-fish/nvm.fish; and source /Users/jchilders/.nvm-fish/nvm.fish
