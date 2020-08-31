@@ -1,6 +1,6 @@
 [user]
 	name = James Childers
-	email = childers@railroad19.com
+	email = james.childers@gmail.com
 [core]
   whitespace=fix,-indent-with-non-tab,trailing-space,cr-at-eol
 	excludesfile = /Users/jchilders/.gitignore_global
