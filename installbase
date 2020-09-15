@@ -1,12 +1,12 @@
 # Homebrew
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 
-# The basics
-brew install tmux gpg nbim z ag bat tree
-
 brew install fish
-curl -L https://get.oh-my.fish | fish
 
+# The basics
+brew install tmux gpg nvim z ag bat tree
+
+curl -L https://get.oh-my.fish | fish
 omf install z
 
 # rvm
