@@ -5,6 +5,10 @@ set tabstop=2 softtabstop=0 expandtab shiftwidth=2 smarttab
 
 let mapleader = ","
 
+" use jk for esc
+imap jk <Esc>
+vmap jk <Esc>
+
 " Statusline stuff
 set statusline =%#identifier#
 set statusline+=[%t]    "tail of the filename

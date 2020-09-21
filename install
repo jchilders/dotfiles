@@ -21,6 +21,9 @@ curl -sSL https://get.rvm.io | bash -s stable
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
 fish -c 'omf install nvm'
 
+gem install solargraph  # solargraph Ruby LSP server
+gem install neovim      # neovim plugin for Ruby
+
 # dotfiles
 if [ ! -d "$HOME/workspace" ]
 then

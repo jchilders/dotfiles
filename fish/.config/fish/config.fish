@@ -1,15 +1,17 @@
 # https://fishshell.com/docs/current/index.html#editor
 set -g fish_key_bindings fish_vi_key_bindings
 
+# Turn off greeting
+set fish_greeting
+
 # Use vim when creating/editing PRs using gh (GitHub CLI tool)
 set -x EDITOR nvim
 set -x NVM_DIR $HOME/.nvm
 
 set -x DISABLE_SPRING 1
 
-# set -x APP_ENV test
-# set -x RACK_ENV test
-# set -x RAILS_ENV test
+# GTL stuff
+# set -x DB_PORT 3307
 
 alias   bcon='bin/console'
 alias   bi='bundle install'
@@ -26,3 +28,4 @@ if type -q rvm
   rvm default
   __handle_rvmrc_stuff
 end
+set -g fish_user_paths "/usr/local/sbin" $fish_user_paths
