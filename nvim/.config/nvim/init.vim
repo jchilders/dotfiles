@@ -127,7 +127,8 @@ call plug#begin('~/.config/nvim/plugs')
   Plug 'benmills/vimux'
   Plug 'darfink/vim-plist'
   Plug 'ervandew/supertab'
-  Plug 'kien/ctrlp.vim'
+  Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+  Plug 'junegunn/fzf.vim'
   Plug 'scrooloose/nerdcommenter'
   Plug 'tpope/vim-fugitive'
   Plug 'tpope/vim-rails'
@@ -138,9 +139,18 @@ call plug#begin('~/.config/nvim/plugs')
   " Plug 'talek/vorax4'           " Oracle IDE
 call plug#end()
 
-" ctrlp stuff
-let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
-set wildignore+=*/node_modules/*
+" [Buffers] Jump to the existing window if possible
+let g:fzf_buffers_jump = 1
+
+" ruby stuff
+" `gem install neovim` having been previously run
+let g:ruby_host_prog = '~/.rvm/rubies/ruby-2.6.5/bin/ruby'
+nnoremap <C-p> :Files<CR>
+nnoremap <silent> <Leader>ac :Files app/controllers<CR>
+nnoremap <silent> <Leader>am :Files app/models<CR>
+nnoremap <silent> <Leader>b  :Buffers<CR>
+nnoremap <silent> <Leader>st :GFiles?<CR>
+nnoremap <silent> <Leader>h  :History<CR>
 
 " Add spaces after comment delimiters by default
 let g:NERDSpaceDelims = 1
@@ -163,7 +173,7 @@ if filereadable("rubocop")
 endif
 
 " Clear previously highlighted search ('clear find')
-nnoremap <Leader>cf :let @/ = ''<CR>
+nnoremap <silent> <Leader>cf :let @/ = ''<CR>
 
 " Replace single quotes with doubles
 nnoremap <Leader>rq :s/'/"/g<CR>:let @/ = ''<CR>
