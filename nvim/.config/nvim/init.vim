@@ -9,6 +9,11 @@ let mapleader = ","
 imap jk <Esc>
 vmap jk <Esc>
 
+" Fix slow startup when loading ruby files
+" see: https://github.com/vim-ruby/vim-ruby/issues/33
+let g:ruby_host_prog = '/usr/bin/ruby'
+let g:ruby_path = join(split(glob($MY_RUBY_HOME.'/lib/ruby/*.*')."\n".glob($MY_RUBY_HOME.'/lib/rubysite_ruby/*'),"\n"),',')
+
 " Statusline stuff
 set statusline =%#identifier#
 set statusline+=[%t]    "tail of the filename
@@ -95,15 +100,7 @@ function! g:ToggleNuMode()
 endfunc
 nnoremap <Leader>l :call g:ToggleNuMode()<cr>
 
-" Ruby-specific stuff
-nnoremap <Leader>bp obinding.pry<ESC>:w<ENTER>
-nnoremap <Leader>bP Obinding.pry<ESC>:w<ENTER>
-
-nnoremap <Leader>rp oputs "-=-=> "<ESC>i
-nnoremap <Leader>rP Oputs "-=-=> "<ESC>i
-
-map <Leader>rb :call VimuxRunCommand("clear; rspec " . bufname("%"))<CR>
-nnoremap <Leader>rs :sp ~/temp/scratch.rb<CR>
+" Ruby-specific stuff moved to after/ftplugin/ruby.vim
 
 set rnu " on by default
 
@@ -146,10 +143,6 @@ nnoremap <silent> <Leader>b  :Buffers<CR>
 nnoremap <silent> <Leader>st :GFiles?<CR>
 nnoremap <silent> <Leader>h  :History<CR>
 
-" ruby stuff
-" `gem install neovim` having been previously run
-let g:ruby_host_prog = '~/.rvm/rubies/ruby-2.6.5/bin/ruby'
-
 " Add spaces after comment delimiters by default
 let g:NERDSpaceDelims = 1
 
@@ -179,14 +172,13 @@ nnoremap <silent> <Leader><Leader> :b#<CR>
 nnoremap <Leader>rq :s/'/"/g<CR>:let @/ = ''<CR>
 
 " vim-airline stuff
-let g:airline_powerline_fonts = 1
+" let g:airline_powerline_fonts = 1
 
 " in init.vim
 " lua vim.api.nvim_command [[autocmd CursorHold   * lua require'utils'.blameVirtText()]]
 " lua vim.api.nvim_command [[autocmd CursorMoved  * lua require'utils'.clearBlameVirtText()]]
 " lua vim.api.nvim_command [[autocmd CursorMovedI * lua require'utils'.clearBlameVirtText()]]
 
-hi! link GitLens Comment
+" hi! link GitLens Comment
 
 " `vim --cmd 'profile start initvim-profiling.result' --cmd 'profile! file
-" *.vim' app/models/budget.rb`

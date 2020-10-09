@@ -6,32 +6,25 @@
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 
 brew install fish
-curl -L https://get.oh-my.fish | fish
 
 # The basics
 brew install tmux gpg nvim ag bat fzf stow tree diff-so-fancy exa
 
-ln 
-
-fish -c 'omf install z'
-fich -c 'omf install https://github.com/jethrokuan/fzf'
-
-# rvm
-curl -sSL https://get.rvm.io | bash -s stable
-
-# https://github.com/oh-my-fish/plugin-rvm
-# Abandoned?
-omf install rvm
-omg install z
-
-# nvm
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
-fish -c 'omf install nvm'
+# fisher plugin manager - https://github.com/jorgebucaran/fisher
+curl https://git.io/fisher --create-dirs -sLo ~/.config/fish/functions/fisher.fish
+fisher add jethrokuan/z
+fisher add jethrokuan/fzf
 
 gem install solargraph  # solargraph Ruby LSP server
 gem install neovim      # neovim plugin for Ruby
 
-# dotfiles
+# rvm
+curl -sSL https://get.rvm.io | bash -s stable
+
+# tide customizable prompt
+# curl -sL git.io/tide | source && tide_install
+
+# dotfiles git repo
 if [ ! -d "$HOME/workspace" ]
 then
   mkdir $HOME/workspace
