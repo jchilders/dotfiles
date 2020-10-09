@@ -102,6 +102,9 @@ nnoremap <Leader>bP Obinding.pry<ESC>:w<ENTER>
 nnoremap <Leader>rp oputs "-=-=> "<ESC>i
 nnoremap <Leader>rP Oputs "-=-=> "<ESC>i
 
+map <Leader>rb :call VimuxRunCommand("clear; rspec " . bufname("%"))<CR>
+nnoremap <Leader>rs :sp ~/temp/scratch.rb<CR>
+
 set rnu " on by default
 
 nnoremap <silent> <Leader>w :wa<CR>
@@ -116,41 +119,36 @@ vnoremap <silent> y y`]
 vnoremap <silent> p p`]
 nnoremap <silent> p p`]
 
-map <Leader>rb :call VimuxRunCommand("clear; rspec " . bufname("%"))<CR>
-nnoremap <Leader>rs :sp ~/temp/scratch.rb<CR>
-
 " https://github.com/junegunn/vim-plug
 " :PlugInstall to refresh
 call plug#begin('~/.config/nvim/plugs')
   Plug 'adelarsq/vim-matchit'
   Plug 'airblade/vim-gitgutter'
   Plug 'benmills/vimux'
+  Plug 'dag/vim-fish'           " fish syntax highlighting
   Plug 'darfink/vim-plist'
   Plug 'ervandew/supertab'
   Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
   Plug 'junegunn/fzf.vim'
+  Plug 'leafgarland/typescript-vim'
+  Plug 'neomake/neomake'
   Plug 'scrooloose/nerdcommenter'
   Plug 'tpope/vim-fugitive'
   Plug 'tpope/vim-rails'
-  Plug 'leafgarland/typescript-vim'
-  Plug 'neomake/neomake'
-  Plug 'dag/vim-fish'           " fish syntax highlighting
-  " Plug 'slim-template/vim-slim' " slim syntax highlighting
-  " Plug 'talek/vorax4'           " Oracle IDE
 call plug#end()
 
-" [Buffers] Jump to the existing window if possible
+" fzf stuff
 let g:fzf_buffers_jump = 1
-
-" ruby stuff
-" `gem install neovim` having been previously run
-let g:ruby_host_prog = '~/.rvm/rubies/ruby-2.6.5/bin/ruby'
 nnoremap <C-p> :Files<CR>
 nnoremap <silent> <Leader>ac :Files app/controllers<CR>
 nnoremap <silent> <Leader>am :Files app/models<CR>
 nnoremap <silent> <Leader>b  :Buffers<CR>
 nnoremap <silent> <Leader>st :GFiles?<CR>
 nnoremap <silent> <Leader>h  :History<CR>
+
+" ruby stuff
+" `gem install neovim` having been previously run
+let g:ruby_host_prog = '~/.rvm/rubies/ruby-2.6.5/bin/ruby'
 
 " Add spaces after comment delimiters by default
 let g:NERDSpaceDelims = 1
@@ -161,7 +159,6 @@ set signcolumn=yes
 " Run neomake linters on everything except what is in the blacklist
 let blacklist = ['scratch.rb', 'routes.rb']
 autocmd! BufWritePost * if index(blacklist, expand("%:t")) < 0 | Neomake
-
 let g:neomake_error_sign = {'texthl': 'Constant', }
 let g:neomake_warning_sign = {'texthl': 'EndOfBuffer', }
 highlight SignColumn ctermbg=black guibg=black
@@ -175,11 +172,21 @@ endif
 " Clear previously highlighted search ('clear find')
 nnoremap <silent> <Leader>cf :let @/ = ''<CR>
 
+" Toggle next/previous buffers
+nnoremap <silent> <Leader><Leader> :b#<CR>
+
 " Replace single quotes with doubles
 nnoremap <Leader>rq :s/'/"/g<CR>:let @/ = ''<CR>
 
 " vim-airline stuff
 let g:airline_powerline_fonts = 1
+
+" in init.vim
+" lua vim.api.nvim_command [[autocmd CursorHold   * lua require'utils'.blameVirtText()]]
+" lua vim.api.nvim_command [[autocmd CursorMoved  * lua require'utils'.clearBlameVirtText()]]
+" lua vim.api.nvim_command [[autocmd CursorMovedI * lua require'utils'.clearBlameVirtText()]]
+
+hi! link GitLens Comment
 
 " `vim --cmd 'profile start initvim-profiling.result' --cmd 'profile! file
 " *.vim' app/models/budget.rb`

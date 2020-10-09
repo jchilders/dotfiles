@@ -1,51 +1,19 @@
-# Defined in /var/folders/9m/1d95x8t52qn38sp9v8k_yg380000gn/T//fish.EVhNVo/fish_prompt.fish @ line 2
-function fish_prompt
-	set -l last_command_status $status
-  set -l cwd
+function fish_prompt --description 'Created by tide configure'
+    set -g _tide_last_pipestatus $pipestatus
+    set -g _tide_last_status $status
 
-  if test "$theme_short_path" = 'yes'
-    set cwd (basename (prompt_pwd))
-  else
-    set cwd (prompt_pwd)
-  end
+    if test "$tide_print_newline_before_prompt" = 'true'
+        printf '%b' '\n'
+    end
 
-  set -l ahead    "↑"
-  set -l behind   "↓"
-  set -l diverged "⥄ "
-  set -l dirty    "⨯"
-  set -l none     "✓"
+    set_color $tide_prompt_connection_color
+    string repeat --no-newline --max $COLUMNS $tide_prompt_connection_icon
+    printf '%b' '\r'
 
-  set -l normal_color     (set_color normal)
-  set -l success_color    (set_color $fish_pager_color_progress ^/dev/null; or set_color cyan)
-  set -l error_color      (set_color $fish_color_error ^/dev/null; or set_color red --bold)
-  set -l directory_color  (set_color 67916c)
-  set -l repository_color (set_color $fish_color_cwd ^/dev/null; or set_color green)
+    _tide_right_prompt
+    _tide_left_prompt
+end
 
-  echo -n -s $directory_color $cwd
-
-  # if git_is_repo
-    # if test "$theme_short_path" = 'yes'
-      # set root_folder (command git rev-parse --show-toplevel ^/dev/null)
-      # set parent_root_folder (dirname $root_folder)
-      # set cwd (echo $PWD | sed -e "s|$parent_root_folder/||")
-    # end
-
-    # # echo -n -s $success_color " [" $normal_color
-    # echo -n -s $normal_color " [" $success_color
-
-    # if git_is_touched
-      # echo -n -s $dirty
-    # else
-      # echo -n -s (git_ahead $ahead $behind $diverged $none)
-    # end
-    # echo -n -s $normal_color "] "
-  # end
-
-  if test $last_command_status -eq 0
-    echo -n -s $normal_color
-  else
-    echo -n -s $error_color
-  end
-  echo -n -s "\$" $normal_color
-  echo -n -s " "
+function fish_right_prompt
+    printf '%s' $_tide_fish_right_prompt_display
 end

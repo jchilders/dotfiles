@@ -4,28 +4,28 @@ set -g fish_key_bindings fish_vi_key_bindings
 # Turn off greeting
 set fish_greeting
 
+set -x DISABLE_SPRING 1
 # Use vim when creating/editing PRs using gh (GitHub CLI tool)
 set -x EDITOR nvim
 set -x NVM_DIR $HOME/.nvm
+set -x JAVA_OPTS '-Xms2048m -Xmx2048m'
 
-set -x DISABLE_SPRING 1
+abbr --add bi bundle install
+abbr --add gd git diff
+abbr --add gst git status -sb
+abbr --add rc rails console
+abbr --add rs rails server
+abbr --add rdbm rake db:migrate
+abbr --add rdbms rake db:migrate:status
 
 # GTL stuff
 # set -x DB_PORT 3307
-
-alias   bcon='bin/console'
-alias   bi='bundle install'
-alias   cat='bat'
-alias   l='ls -alGp'
-alias   rc='rails console'
-alias   rs='rails s'
-alias   rdbm='rake db:migrate'
-alias   rdbms='rake db:migrate:status'
-alias   vi='nvim'
-alias   vim='nvim'
+abbr --add db ./docker-build.sh
+abbr --add drs ./docker-run.sh script/server -p
 
 if type -q rvm
   rvm default
   __handle_rvmrc_stuff
 end
-set -g fish_user_paths "/usr/local/sbin" $fish_user_paths
+
+set -gx PATH /usr/local/sbin /usr/local/bin $PATH
