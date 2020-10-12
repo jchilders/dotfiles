@@ -122,6 +122,7 @@ call plug#begin('~/.config/nvim/plugs')
   Plug 'adelarsq/vim-matchit'
   Plug 'airblade/vim-gitgutter'
   Plug 'benmills/vimux'
+  Plug 'cespare/vim-toml'
   Plug 'dag/vim-fish'           " fish syntax highlighting
   Plug 'darfink/vim-plist'
   Plug 'ervandew/supertab'

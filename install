@@ -5,7 +5,8 @@
 # Homebrew
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 
-brew install fish
+brew install fish        # shell
+brew install starship    # prompt
 
 # The basics
 brew install tmux gpg nvim ag bat fzf stow tree diff-so-fancy exa
@@ -14,15 +15,13 @@ brew install tmux gpg nvim ag bat fzf stow tree diff-so-fancy exa
 curl https://git.io/fisher --create-dirs -sLo ~/.config/fish/functions/fisher.fish
 fisher add jethrokuan/z
 fisher add jethrokuan/fzf
+fisher add decors/fish-colored-man # colored man pages
 
 gem install solargraph  # solargraph Ruby LSP server
 gem install neovim      # neovim plugin for Ruby
 
 # rvm
 curl -sSL https://get.rvm.io | bash -s stable
-
-# tide customizable prompt
-# curl -sL git.io/tide | source && tide_install
 
 # dotfiles git repo
 if [ ! -d "$HOME/workspace" ]

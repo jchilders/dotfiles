@@ -23,6 +23,12 @@ abbr --add rdbms rake db:migrate:status
 abbr --add db ./docker-build.sh
 abbr --add drs ./docker-run.sh script/server -p
 
+# Docker
+abbr --add dbld  docker build .
+abbr --add dps   docker ps
+abbr --add dimg  docker image
+abbr --add dcom  docker-compose
+
 if type -q rvm
   rvm default
   __handle_rvmrc_stuff
@@ -37,3 +43,6 @@ set --prepend fish_complete_path fish_complete_path[1] $fisher_path/completions
 for file in $fisher_path/conf.d/*.fish
   builtin source $file 2>/dev/null
 end
+
+# brew install starship
+starship init fish | source
