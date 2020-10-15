@@ -2,7 +2,7 @@
 
 # This is a WIP; not fully tested
 
-# Homebrew
+# homebrew
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 
 brew install fish        # shell
