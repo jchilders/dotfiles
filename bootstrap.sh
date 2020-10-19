@@ -3,13 +3,20 @@
 # This is a WIP; not fully tested
 
 # homebrew
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+if ! command -v brew &> /dev/null
+then
+  curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh
+fi
 
 brew install fish        # shell
 brew install starship    # prompt
 
 # The basics
 brew install tmux gpg nvim ag bat fzf stow tree diff-so-fancy exa
+
+# If installing neovim from source:
+#   make CMAKE_BUILD_TYPE=RelWithDebInfo
+#   sudo make CMAKE_INSTALL_PREFIX=/usr/local install
 
 # fisher plugin manager - https://github.com/jorgebucaran/fisher
 curl https://git.io/fisher --create-dirs -sLo ~/.config/fish/functions/fisher.fish
@@ -40,3 +47,4 @@ cd dotfiles
 stow --target=$HOME tmux
 stow --target=$HOME fish
 stow --target=$HOME nvim
+stow --target=$HOME git
