@@ -12,11 +12,15 @@ brew install fish        # shell
 brew install starship    # prompt
 
 # The basics
-brew install tmux gpg nvim ag bat fzf stow tree diff-so-fancy exa
+brew install git tmux gpg nvim ag bat fzf stow tree exa
+brew install git-delta
 
 # If installing neovim from source:
-#   make CMAKE_BUILD_TYPE=RelWithDebInfo
-#   sudo make CMAKE_INSTALL_PREFIX=/usr/local install
+#  make distclean
+#  make CMAKE_BUILD_TYPE=RelWithDebInfo
+#  sudo make CMAKE_INSTALL_PREFIX=/usr/local install
+
+nvim +PlugInstall
 
 # fisher plugin manager - https://github.com/jorgebucaran/fisher
 curl https://git.io/fisher --create-dirs -sLo ~/.config/fish/functions/fisher.fish

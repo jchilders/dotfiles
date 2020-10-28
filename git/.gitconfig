@@ -1,15 +1,14 @@
 [user]
 	name = James Childers
 	email = james.childers@gmail.com
+
 [core]
-  whitespace=fix,-indent-with-non-tab,trailing-space,cr-at-eol
-	excludesfile = /Users/jchilders/.gitignore_global
-	editor = nvim
-  ; pager = less -X -F
-[pager]
-  ; brew install diff-so-fancy
-  diff = diff-so-fancy | less --tabs=1,5 -RFX
-  show = diff-so-fancy | less --tabs=1,5 -RFX
+  whitespace = fix,-indent-with-non-tab,trailing-space,cr-at-eol
+  excludesfile = /Users/jchilders/.gitignore_global
+  editor = nvim
+  pager = delta
+[delta]
+  line-numbers = true
 [color]
   ui = auto
 [color "branch"]
@@ -62,7 +61,7 @@
 	default = current
 [diff]
   algorithm = patience
-	tool = vimdiff
+  colorMoved = default
 [rerere]
 	enabled = true
 [rebase]
