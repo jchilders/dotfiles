@@ -34,8 +34,6 @@ if type -q rvm
   __handle_rvmrc_stuff
 end
 
-set -gx PATH /usr/local/sbin /usr/local/bin $PATH
-
 # https://github.com/jorgebucaran/fisher
 set -g fisher_path $__fish_config_dir/fisher_plugins
 set --prepend fish_function_path $fisher_path/functions
@@ -46,3 +44,4 @@ end
 
 # brew install starship
 starship init fish | source
+set -g fish_user_paths "/usr/local/opt/mysql@5.6/bin" $fish_user_paths

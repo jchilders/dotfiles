@@ -6,10 +6,7 @@ set ts=2
 
 set noswapfile
 set noundofile
-
-" Keep backups in separate directory from current
-" Double trailing slashes prevents name collisions
-set backupdir=~/.vimbak//
+set nobackup
 
 set ai
 set fileformat=unix
