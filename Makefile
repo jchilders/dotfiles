@@ -5,7 +5,7 @@ SHELL:=/bin/zsh
 
 .PHONY: install
 
-install: -macos -homebrew -default-formula -fish -nerd -rvm-install -stow ## Install all things
+install: -macos -homebrew -default-formula -fish -nerd -ruby -stow -neovim ## Install all the things
 
 macos: ## macOS-specific pieces
 	-xcode-select --install
@@ -14,13 +14,13 @@ macos: ## macOS-specific pieces
 homebrew: ## Install homebrew
 	curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh | /bin/bash
 
-default-formula: ## Install default homebrew formulas
-	brew install git tmux gpg ag bat fzf stow tree exa git-delta
+default-formula: ## Install default homebrew formulae
+	brew install git tmux gpg ag bat fzf stow tree exa git-delta starship
 
-fish: -fish-install -fish-sh-add -fish-chsh ## Install fish & set default shell
+fish: -fish-install -fish-sh-add -fish-chsh -fisher-install ## Install fish & set default shell
 
 fish-install: ## Install fish shell
-	brew install fish starship
+	brew install fish
 
 FISH = $(shell which fish)
 FISH_IN_ETC = $(shell cat /etc/shells | grep -Fq '$(FISH)'; echo $$?)
@@ -31,13 +31,21 @@ ifneq (0,$(FISH_IN_ETC))
 endif
 	
 fish-chsh: ## Change user's shell to fish
-	$(info Changing user's shell to $(FISH))
+	$(info Changing shell to $(FISH))
 	$(shell chsh -s $(FISH))
+
+fisher-install: ## Install fisher plugin manager
+	curl https://git.io/fisher --create-dirs -sLo ~/.config/fish/functions/fisher.fish
+	fish --command 'fisher install jethrokuan/z'
+	fish --command 'fisher install jethrokuan/fzf'
+	fish --command 'fisher install decors/fish-colored-man'
 
 nerd: ## Install nerd font (Needed for prompt)
 	curl -OL https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/AnonymousPro.zip
 	unzip -n AnonymousPro.zip -x 'Anonymice Nerd Font Complete Windows Compatible.ttf' 'Anonymice Nerd Font Complete Mono Windows Compatible.ttf' -d $$HOME/Library/Fonts
 	rm AnonymousPro.zip
+
+neovim: -neovim-install -neovim-plugs ## Install NeoVim & plugins
 
 neovim-install: ## Clone & build neovim from source
 	@if [ ! -d "$$HOME/workspace/neovim" ]; then \
@@ -55,6 +63,8 @@ neovim-install: ## Clone & build neovim from source
 neovim-plugs: ## Install neovim plugins
 	nvim --headless +PlugInstall +qa
 
+ruby: -rvm-install -ruby-gems ## Install Ruby-related items
+
 RVM_EXISTS = $(shell which -s rvm &>/dev/null; echo $$?)
 rvm-install: ## Install Ruby Version Manager
 	@if [[ `which rvm &>/dev/null && $?` != 0 ]]; then \
@@ -62,6 +72,9 @@ rvm-install: ## Install Ruby Version Manager
 	else \
 	  print 'RVM already installed. Doing nothing'; \
 	fi
+
+ruby-gems: ## Install default gems
+	gem install solargraph neovim
 
 stow: ## Link config files
 	stow -v -R --target=$$HOME tmux
@@ -106,7 +119,11 @@ fish-rm: ## Remove fish
 fish-sh-rm: ## Remove fish from /etc/shells
 	sudo sed -i '' '/fish/d' /etc/shells
 
-fish-clean: -fish-rm -fish-sh-rm -zsh-chsh ## Remove fish & reset default shell
+fisher-rm: ## Uninstall fisher plugin manager
+	rm ~/.config/fish/functions/fisher.fish
+	rm -rf ~/.config/fish/fisher_plugins
+
+fish-clean: -fish-rm -fish-sh-rm -zsh-chsh -fisher-rm ## Remove fish & reset default shell
 
 ##@ Helpers
 
