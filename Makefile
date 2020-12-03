@@ -68,6 +68,7 @@ stow: ## Link config files
 	stow -v -R --target=$$HOME fish
 	stow -v -R --target=$$HOME nvim
 	stow -v -R --target=$$HOME git
+	stow -v -R --target=$$HOME ruby
 
 ##@ Clean
 
