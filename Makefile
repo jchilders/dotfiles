@@ -74,6 +74,7 @@ rvm-install: ## Install Ruby Version Manager
 	fi
 
 ruby-gems: ## Install default gems
+	rvm gemset use global
 	gem install solargraph neovim
 
 stow: ## Link config files

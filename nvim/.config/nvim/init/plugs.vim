@@ -8,7 +8,7 @@ Plug 'autozimu/LanguageClient-neovim', {
 	\ 'do': 'bash install.sh',
 	\ }
 Plug 'benmills/vimux'
-" Plug 'cespare/vim-toml'
+Plug 'cespare/vim-toml'
 Plug 'dag/vim-fish'           " fish syntax highlighting
 Plug 'darfink/vim-plist'
 Plug 'ervandew/supertab'
