@@ -20,4 +20,5 @@ nnoremap <Leader>rp oputs "-=-=> "<ESC>i
 nnoremap <Leader>rP Oputs "-=-=> "<ESC>i
 
 " [Tags] Command to generate tags file
-let g:fzf_tags_command = 'ripper-tags --recursive'
+let g:fzf_tags_command = 'ripper-tags --recursive --exclude=vendor'
+" autocmd BufWritePost *.rb call system('ripper-tags -R --exclude=vendor')

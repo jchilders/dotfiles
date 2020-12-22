@@ -18,11 +18,6 @@ abbr --add rs rails server
 abbr --add rdbm rake db:migrate
 abbr --add rdbms rake db:migrate:status
 
-# GTL stuff
-# set -x DB_PORT 3307
-abbr --add db ./docker-build.sh
-abbr --add drs ./docker-run.sh script/server -p
-
 # Docker
 abbr --add dbld  docker build .
 abbr --add dps   docker ps
@@ -42,6 +37,12 @@ for file in $fisher_path/conf.d/*.fish
   builtin source $file 2>/dev/null
 end
 
+# Custom bindings
+bind -M insert \cs __fzf_search_git_status
+
+set --export FZF_DEFAULT_OPTS --layout=reverse --height=10% --no-clear
+
 # brew install starship
 starship init fish | source
+
 set -g fish_user_paths "/usr/local/opt/mysql@5.6/bin" $fish_user_paths

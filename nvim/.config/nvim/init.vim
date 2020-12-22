@@ -17,13 +17,28 @@ VimLoad init/mappings.vim
 VimLoad init/fzf.vim
 " LuaLoad init/treesitter.lua
 
+" Start terminal windows in insert mode
+autocmd TermOpen * startinsert
+
+" Exit terminal mode
+tnoremap <Esc><Esc> <C-\><C-n>
+
+let g:neoterm_callbacks = {}
+function! g:neoterm_callbacks.before_new()
+	if winwidth('.') > 100
+		let g:neoterm_default_mod = 'botright vertical'
+	else
+		let g:neoterm_default_mod = 'botright'
+	end
+endfunction
+
 nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
 nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
 nnoremap <silent> <C-o> :call LanguageClient_contextMenu()<CR>
 
-let g:LanguageClient_serverCommands = {
-	\ 'ruby': ['~/.rvm/gems/jruby-1.7.27/bin/solargraph', 'stdio'],
-	\ }
+" let g:LanguageClient_serverCommands = {
+	" \ 'ruby': ['~/.rvm/gems/jruby-1.7.27/bin/solargraph', 'stdio'],
+	" \ }
  
 inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
  

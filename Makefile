@@ -15,9 +15,9 @@ homebrew: ## Install homebrew
 	curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh | /bin/bash
 
 default-formula: ## Install default homebrew formulae
-	brew install git tmux gpg ag bat fzf stow tree exa git-delta starship
+	brew install git tmux gpg ag bat fzf stow tree exa git-delta starship fd
 
-fish: -fish-install -fish-sh-add -fish-chsh -fisher-install ## Install fish & set default shell
+fish: -fish-install -fish-sh-add -fish-chsh -fish-fisher -fish-finalize ## Install fish & set default shell
 
 fish-install: ## Install fish shell
 	brew install fish
@@ -34,11 +34,14 @@ fish-chsh: ## Change user's shell to fish
 	$(info Changing shell to $(FISH))
 	$(shell chsh -s $(FISH))
 
-fisher-install: ## Install fisher plugin manager
+fish-fisher: ## Install fisher plugin manager
 	curl https://git.io/fisher --create-dirs -sLo ~/.config/fish/functions/fisher.fish
 	fish --command 'fisher install jethrokuan/z'
-	fish --command 'fisher install jethrokuan/fzf'
+	fish --command 'fisher install PatrickF1/fzf.fish'
 	fish --command 'fisher install decors/fish-colored-man'
+
+fish-finalize: ## Things to run after fish has been installed
+	fish --command 'fish_update_completions'
 
 nerd: ## Install nerd font (Needed for prompt)
 	curl -OL https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/AnonymousPro.zip
@@ -75,7 +78,7 @@ rvm-install: ## Install Ruby Version Manager
 
 ruby-gems: ## Install default gems
 	rvm gemset use global
-	gem install solargraph neovim
+	gem install solargraph neovim ripper-tags
 
 stow: ## Link config files
 	stow -v -R --target=$$HOME tmux
@@ -116,6 +119,7 @@ zsh-chsh: ## Change user's shell to zsh
 
 fish-rm: ## Remove fish
 	brew uninstall fish
+	rm -rf ~/.local/share/fish
 
 fish-sh-rm: ## Remove fish from /etc/shells
 	sudo sed -i '' '/fish/d' /etc/shells

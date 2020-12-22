@@ -4,7 +4,6 @@ let mapleader = ","
 imap jk <Esc>
 vmap jk <Esc>
 
-" Fix slow startup when loading ruby files
 nnoremap <silent> <Leader>w :wa<CR>
 nnoremap <silent> <Leader>W :wqa<CR>
 
@@ -15,16 +14,16 @@ vmap <silent> <C-c> "+y
 nnoremap <Leader>cw :%s/\<<C-r><C-w>\>/<C-r><C-w>
 vnoremap <Leader>cw y:%s/<C-r>"/<C-r>"
 
-function! VimuxSlime()
-  call VimuxOpenRunner()
-  call VimuxSendText(@v)
-endfunction
+" Send selected text to terminal
+" vmap <silent> <Leader>vs "vy :call VimuxSlime()<CR>
+vmap <silent> <Leader>vs :TREPLSendSelection<CR>
 
-" If text is selected, save it in the v buffer and send that buffer to tmux
-vmap <silent> <Leader>vs "vy :call VimuxSlime()<CR>
+" Send current line to terminal
+" nmap <silent> <Leader>vs vip<Leader>vs<CR>
+nmap <silent> <Leader>vs :TREPLSendLine<CR>
 
-" Send current line (technicaly paragraph) to adjacent tmux pane
-nmap <silent> <Leader>vs vip<Leader>vs<CR>
+" gxip to send current paragraph/block to terminal
+nmap gx <Plug>(neoterm-repl-send)
 
 " use <Leader>L to toggle the displaying relative line number
 function! g:ToggleNuMode()
