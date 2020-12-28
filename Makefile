@@ -50,18 +50,23 @@ nerd: ## Install nerd font (Needed for prompt)
 
 neovim: -neovim-install -neovim-plugs ## Install NeoVim & plugins
 
-neovim-install: ## Clone & build neovim from source
-	@if [ ! -d "$$HOME/workspace/neovim" ]; then \
-	  git clone https://github.com/neovim/neovim.git $$HOME/workspace/neovim; \
+NEOVIM_SRC_DIR = "$$HOME/workspace/neovim"
+
+neovim-install: ## Compile, build, and install neovim from source
+ifeq (, $(shell which cmake))
+	$(shell brew install cmake)
+endif
+ifeq (, $(shell which automake))
+	$(shell brew install automake)
+endif
+	@if [ -d $(NEOVIM_SRC_DIR) ]; then \
+		git -C $(NEOVIM_SRC_DIR) pull; \
+	else; \
+	  git clone https://github.com/neovim/neovim.git $(NEOVIM_SRC_DIR); \
 	fi; \
-	if [[ `which neovim &>/dev/null && $?` != 0 ]]; then \
-	  brew install cmake automake; \
-	  cd $$HOME/workspace/neovim; \
-	  make distclean; \
-	  make CMAKE_BUILD_TYPE=RelWithDebInfo; \
-	  sudo make CMAKE_INSTALL_PREFIX=/usr/local install; \
-	  ln -s /usr/local/bin/nvim /usr/local/bin/vi
-	fi
+	$(MAKE) -C $(NEOVIM_SRC_DIR) CMAKE_BUILD_TYPE=RelWithDebInfo; \
+	sudo $(MAKE) -C $(NEOVIM_SRC_DIR) CMAKE_INSTALL_PREFIX=/usr/local install; \
+	ln -s /usr/local/bin/nvim /usr/local/bin/vi; \
 
 neovim-plugs: ## Install neovim plugins
 	nvim --headless +PlugInstall +qa
@@ -91,48 +96,44 @@ stow: ## Link config files
 
 .PHONY: clean
 
-clean: -homebrew-rm -nerd-rm -rvm-rm -neovim-rm -misc-rm -fish-clean ## Uninstall all the things
+clean: -homebrew-clean -nerd-clean -rvm-clean -neovim-clean -misc-clean -fish-clean ## Uninstall all the things
 
-homebrew-rm: ## Uninstall homebrew
+homebrew-clean: ## Uninstall homebrew
 	curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall.sh | /bin/zsh
 	rm -r /usr/local/var/homebrew
 
-rvm-rm: ## Uninstall rvm
+rvm-clean: ## Uninstall rvm
 	rvm implode
 	rm -rf $HOME/.rvm
 
-nerd-rm: ## Uninstall nerd fonts
+nerd-clean: ## Uninstall nerd fonts
 	rm $$HOME/Library/Fonts/Anonymice*.ttf
 
-neovim-rm: ## Uninstall neovim
+neovim-clean: ## Uninstall neovim
 	-sudo rm /usr/local/bin/nvim
 	-sudo rm /usr/local/bin/vi
 	-sudo rm -r /usr/local/lib/nvim
 	-sudo rm -r /usr/local/share/nvim
 
-misc-rm: ## Uninstall misc files
+misc-clean: ## Uninstall misc files
 	-rm -rf ~/.gnupg
 	-rm -rf ~/.config
 
 zsh-chsh: ## Change user's shell to zsh
 	chsh -s $(shell which zsh)
 
-fish-rm: ## Remove fish
+fish-sh-clean: ## Remove fish
 	brew uninstall fish
 	rm -rf ~/.local/share/fish
-
-fish-sh-rm: ## Remove fish from /etc/shells
 	sudo sed -i '' '/fish/d' /etc/shells
 
-fisher-rm: ## Uninstall fisher plugin manager
+fisher-clean: ## Uninstall fisher plugin manager
 	rm ~/.config/fish/functions/fisher.fish
 	rm -rf ~/.config/fish/fisher_plugins
 
-fish-clean: -fish-rm -fish-sh-rm -zsh-chsh -fisher-rm ## Remove fish & reset default shell
+fish-clean: -fish-clean -fish-sh-clean -zsh-chsh -fisher-clean ## Remove fish & reset default shell
 
 ##@ Helpers
-
-.PHONY: help
 
 help:  ## Display this help
 	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m\033[0m\n"} /^[a-zA-Z_-]+:.*?##/ { printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
