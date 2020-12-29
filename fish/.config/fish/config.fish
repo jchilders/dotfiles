@@ -4,11 +4,13 @@ set -g fish_key_bindings fish_vi_key_bindings
 # Turn off greeting
 set fish_greeting
 
-set -x DISABLE_SPRING 1
+# set -x DISABLE_SPRING 1
 # Use vim when creating/editing PRs using gh (GitHub CLI tool)
 set -x EDITOR nvim
 set -x NVM_DIR $HOME/.nvm
 set -x JAVA_OPTS '-Xms2048m -Xmx2048m'
+
+set -gx XDG_CONFIG_HOME ~/.config/
 
 abbr --add bi bundle install
 abbr --add gd git diff
@@ -40,7 +42,7 @@ end
 # Custom bindings
 bind -M insert \cs __fzf_search_git_status
 
-set --export FZF_DEFAULT_OPTS --layout=reverse --height=10% --no-clear
+set --export FZF_DEFAULT_OPTS --layout=reverse --height=15% --no-clear -i
 
 # brew install starship
 starship init fish | source

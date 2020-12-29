@@ -52,7 +52,10 @@ neovim: -neovim-install -neovim-plugs ## Install NeoVim & plugins
 
 NEOVIM_SRC_DIR = "$$HOME/workspace/neovim"
 
-neovim-install: ## Compile, build, and install neovim from source
+# Have to build from source rather than just doing 'brew install neovim --HEAD`
+# because of an issue with upstream luajit. See:
+# https://github.com/neovim/neovim/issues/13529#issuecomment-744375133
+neovim-install: ## Install neovim
 ifeq (, $(shell which cmake))
 	$(shell brew install cmake)
 endif
@@ -66,10 +69,11 @@ endif
 	fi; \
 	$(MAKE) -C $(NEOVIM_SRC_DIR) CMAKE_BUILD_TYPE=RelWithDebInfo; \
 	sudo $(MAKE) -C $(NEOVIM_SRC_DIR) CMAKE_INSTALL_PREFIX=/usr/local install; \
-	ln -s /usr/local/bin/nvim /usr/local/bin/vi; \
+	ln -s /usr/local/bin/nvim /usr/local/bin/vi
 
 neovim-plugs: ## Install neovim plugins
-	nvim --headless +PlugInstall +qa
+	curl -fLo "$${XDG_CONFIG_HOME:-$$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+	nvim --headless +PlugInstall +UpdateRemotePlugins +qa
 
 ruby: -rvm-install -ruby-gems ## Install Ruby-related items
 
@@ -85,12 +89,16 @@ ruby-gems: ## Install default gems
 	rvm gemset use global
 	gem install solargraph neovim ripper-tags
 
+# TODO: Use XDG_CONFIG_HOME
+# zsh:
+#   > test -d $XDG_CONFIG_HOME ; echo $?
+#   0
 stow: ## Link config files
-	stow -v -R --target=$$HOME tmux
-	stow -v -R --target=$$HOME fish
-	stow -v -R --target=$$HOME nvim
-	stow -v -R --target=$$HOME git
-	stow -v -R --target=$$HOME ruby
+	stow --restow --target=$$HOME tmux
+	stow --restow --target=$$HOME fish
+	stow --restow --target=$$XDG_CONFIG_HOME/nvim nvim
+	stow --restow --target=$$HOME git
+	stow --restow --target=$$HOME ruby
 
 ##@ Clean
 
@@ -114,6 +122,8 @@ neovim-clean: ## Uninstall neovim
 	-sudo rm /usr/local/bin/vi
 	-sudo rm -r /usr/local/lib/nvim
 	-sudo rm -r /usr/local/share/nvim
+	brew unlink neovim
+	stow --delete --target=$$XDG_CONFIG_HOME/nvim nvim
 
 misc-clean: ## Uninstall misc files
 	-rm -rf ~/.gnupg

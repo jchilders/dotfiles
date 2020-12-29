@@ -1,6 +1,13 @@
+" Fix slow loading
+" see: https://github.com/vim-ruby/vim-ruby/issues/33
+" let g:ruby_host_prog = '/usr/bin/ruby'
+" let g:ruby_host_prog = '/Users/jchilders/.rvm/rubies/ruby-2.6.5/bin/ruby'
+" let g:ruby_path = join(split(glob($MY_RUBY_HOME.'/lib/ruby/*.*')."\n".glob($MY_RUBY_HOME.'/lib/rubysite_ruby/*'),"\n"),',')
+
 " Run current spec in adjacent tmux pane
 nnoremap <Leader>rt :w<CR>:call RunSpec()<CR> " run current line
 nnoremap <Leader>rT :w<CR>:call RunSpec()<CR> " run entire spec
+" TODO: Fix. Not using Vimux any longer
 function! RunSpec()
   let curr_line = line(".")
   let curr_file = bufname("%")
@@ -12,13 +19,8 @@ function! RunSpec()
   endif
 endfunction
 
-" Ruby-specific stuff
 nnoremap <Leader>rs :sp ~/temp/scratch.rb<CR>
 nnoremap <Leader>bp obinding.pry<ESC>:w<ENTER>
 nnoremap <Leader>bP Obinding.pry<ESC>:w<ENTER>
 nnoremap <Leader>rp oputs "-=-=> "<ESC>i
 nnoremap <Leader>rP Oputs "-=-=> "<ESC>i
-
-" [Tags] Command to generate tags file
-let g:fzf_tags_command = 'ripper-tags --recursive --exclude=vendor'
-" autocmd BufWritePost *.rb call system('ripper-tags -R --exclude=vendor')
