@@ -24,7 +24,7 @@ function! g:ToggleNuMode()
 endfunc
 nnoremap <Leader>l :call g:ToggleNuMode()<cr>
 
-" Clear previously highlighted search ('clear find')
+" Clear previously highlighted search ("clear find")
 nnoremap <silent> <Leader>cf :let @/ = ''<CR>
 
 " Toggle next/previous buffers
@@ -33,7 +33,17 @@ nnoremap <silent> <Leader><Leader> :b#<CR>
 " Replace single quotes with doubles
 nnoremap <Leader>rq :s/'/"/g<CR>:let @/ = ''<CR>
 
-" lsp
-imap <C-o> <Plug>(completion_trigger)
+" LSP
 
-inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
+" Show attached LSP clients for current buffer
+nnoremap <silent> <leader>gc :lua print(vim.inspect(vim.lsp.buf_get_clients()))<CR>
+
+" Change (rename) symbol under cursor ('change symbol')
+nnoremap <silent> <Leader>cs :lua vim.lsp.buf.rename()
+
+nnoremap <C-p> <cmd>Telescope find_files<cr>
+nnoremap <C-b> <cmd>Telescope buffers<cr>
+nnoremap <C-o> <cmd>Telescope current_buffer_tags<cr>
+nnoremap <C-s> <cmd>Telescope git_status<cr>
+nnoremap <leader>fw <cmd>Telescope lsp_references<cr>
+nnoremap <leader>sit <cmd>Telescope treesitter<cr>

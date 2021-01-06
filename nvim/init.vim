@@ -8,12 +8,18 @@ VimLoad basic
 VimLoad plugs
 VimLoad statusline
 VimLoad mappings
-VimLoad deoplete
-VimLoad fzf
-VimLoad lsp
+
+" VimLoad deoplete
+" VimLoad fzf
+
+LuaLoad telescope.nvim
+LuaLoad nvim-lspconfig
+
 VimLoad neoterm
 LuaLoad illuminate
-" LuaLoad treesitter
+
+VimLoad treesitter
+LuaLoad treesitter
 
 " https://youtu.be/YCy3wCyz4Vg?t=162
 " set cot=menuone,noinsert,noselect shm+=c

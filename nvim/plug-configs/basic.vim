@@ -2,20 +2,23 @@ set expandtab
 set noet
 set softtabstop=2
 set sw=2
-set ts=2
+set ts=4
 
 set noswapfile
 set noundofile
 set nobackup
 
 set ai
+set cursorline				" highlight current line
 set fileformat=unix
 set hidden
+set hlsearch				" highlight current search
 set inccommand=nosplit
-set relativenumber " on by default
+set relativenumber			" on by default
 set scrolloff=5
 set signcolumn=yes
-set hlsearch
+
+colorscheme molokai
 
 hi Folded ctermfg=Black ctermbg=DarkGrey
 hi Search cterm=NONE ctermfg=white ctermbg=DarkBlue
