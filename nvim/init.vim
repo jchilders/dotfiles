@@ -7,7 +7,6 @@ command! -nargs=1 LuaLoad exec 'luafile '.s:home.'/plug-configs/'.'<args>'.'.lua
 VimLoad basic
 VimLoad plugs
 VimLoad statusline
-VimLoad mappings
 
 " VimLoad deoplete
 " VimLoad fzf
@@ -20,6 +19,8 @@ LuaLoad illuminate
 
 VimLoad treesitter
 LuaLoad treesitter
+
+VimLoad mappings
 
 " https://youtu.be/YCy3wCyz4Vg?t=162
 " set cot=menuone,noinsert,noselect shm+=c

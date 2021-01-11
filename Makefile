@@ -15,7 +15,7 @@ homebrew: ## Install homebrew
 	curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh | /bin/bash
 
 default-formula: ## Install default homebrew formulae
-	brew install git tmux gpg ag bat fzf stow tree exa git-delta starship fd
+	brew install git tmux gpg bat fzf rg stow tree exa git-delta starship fd
 
 fish: -fish-install -fish-sh-add -fish-chsh -fish-fisher -fish-finalize ## Install fish & set default shell
 

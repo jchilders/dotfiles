@@ -38,12 +38,21 @@ nnoremap <Leader>rq :s/'/"/g<CR>:let @/ = ''<CR>
 " Show attached LSP clients for current buffer
 nnoremap <silent> <leader>gc :lua print(vim.inspect(vim.lsp.buf_get_clients()))<CR>
 
-" Change (rename) symbol under cursor ('change symbol')
-nnoremap <silent> <Leader>cs :lua vim.lsp.buf.rename()
+" Change (rename) symbol under cursor ('change current symbol')
+nnoremap <silent> <Leader>ccs :lua vim.lsp.buf.rename()<cr>
 
 nnoremap <C-p> <cmd>Telescope find_files<cr>
 nnoremap <C-b> <cmd>Telescope buffers<cr>
 nnoremap <C-o> <cmd>Telescope current_buffer_tags<cr>
 nnoremap <C-s> <cmd>Telescope git_status<cr>
-nnoremap <leader>fw <cmd>Telescope lsp_references<cr>
+" 'find symbol'
+nnoremap <leader>fs <cmd>Telescope lsp_references<cr>
 nnoremap <leader>sit <cmd>Telescope treesitter<cr>
+
+" Use <Tab> and <S-Tab> to navigate through popup menu
+inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+imap <silent> <c-p> <Plug>(completion_trigger)
+
+" Set completeopt to have a better completion experience
+set completeopt=menuone,noinsert,noselect
