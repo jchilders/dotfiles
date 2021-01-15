@@ -17,8 +17,14 @@ abbr --add ga git add
 abbr --add gd git diff
 abbr --add gst git status -sb
 bind -M insert \cs __fzf_search_git_status
-complete -c git -a diff -n '__fzf_search_git_status' -d '`git diff <tab>` to complete via git status'
-complete -c git -a add -n '__fzf_search_git_status' -d '`git add <tab>` to complete via git status'
+
+# WIP
+# This allows for tab completion for `git diff`, but has issues:
+#   1. Puts cursor at beginning of filename after selecting it from the fzf window
+#   2. Brings up fish's default completion after selection
+#   3. Because of (2), you have to hit enter twice to get it to work
+# complete -c git -a '(__fzf_search_git_status)' -n '__fish_git_using_command diff' --no-files
+complete -x -c git -a '(__fzf_file_from_git_status)' -n '__fish_git_using_command diff'
 
 # Ruby/Rails
 abbr --add bi bundle install
