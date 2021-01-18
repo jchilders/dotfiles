@@ -9,7 +9,6 @@ call plug#begin('~/.config/nvim/plugs')
 	Plug 'adelarsq/vim-matchit'
 	Plug 'airblade/vim-gitgutter'
 	Plug 'cespare/vim-toml'
-	Plug 'dag/vim-fish'
 	Plug 'darfink/vim-plist'
 
 	Plug 'neovim/nvim-lspconfig'

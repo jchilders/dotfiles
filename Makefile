@@ -5,7 +5,7 @@ SHELL:=/bin/zsh
 
 .PHONY: install
 
-install: -macos -homebrew -default-formula -fish -nerd -ruby -stow -neovim ## Install all the things
+install: -macos -homebrew -default-formula -nerd -ruby -stow -neovim ## Install all the things
 
 macos: ## macOS-specific pieces
 	-xcode-select --install
@@ -16,32 +16,6 @@ homebrew: ## Install homebrew
 
 default-formula: ## Install default homebrew formulae
 	brew install git tmux gpg bat fzf rg stow tree exa git-delta starship fd
-
-fish: -fish-install -fish-sh-add -fish-chsh -fish-fisher -fish-finalize ## Install fish & set default shell
-
-fish-install: ## Install fish shell
-	brew install fish
-
-FISH = $(shell which fish)
-FISH_IN_ETC = $(shell cat /etc/shells | grep -Fq '$(FISH)'; echo $$?)
-
-fish-sh-add: ## Add fish to /etc/shells
-ifneq (0,$(FISH_IN_ETC))
-  $(shell which fish | sudo tee -a /etc/shells)
-endif
-	
-fish-chsh: ## Change user's shell to fish
-	$(info Changing shell to $(FISH))
-	$(shell chsh -s $(FISH))
-
-fish-fisher: ## Install fisher plugin manager
-	curl https://git.io/fisher --create-dirs -sLo ~/.config/fish/functions/fisher.fish
-	fish --command 'fisher install jethrokuan/z'
-	fish --command 'fisher install PatrickF1/fzf.fish'
-	fish --command 'fisher install decors/fish-colored-man'
-
-fish-finalize: ## Things to run after fish has been installed
-	fish --command 'fish_update_completions'
 
 nerd: ## Install nerd font (Needed for prompt)
 	curl -OL https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/AnonymousPro.zip
@@ -95,16 +69,16 @@ ruby-gems: ## Install default gems
 #   0
 stow: ## Link config files
 	stow --restow --target=$$HOME tmux
-	stow --restow --target=$$HOME fish
 	stow --restow --target=$$XDG_CONFIG_HOME/nvim nvim
 	stow --restow --target=$$HOME git
 	stow --restow --target=$$HOME ruby
+	stow --restow --target=$$HOME zsh
 
 ##@ Clean
 
 .PHONY: clean
 
-clean: -homebrew-clean -nerd-clean -rvm-clean -neovim-clean -misc-clean -fish-clean ## Uninstall all the things
+clean: -homebrew-clean -nerd-clean -rvm-clean -neovim-clean -misc-clean ## Uninstall all the things
 
 homebrew-clean: ## Uninstall homebrew
 	curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall.sh | /bin/zsh
@@ -128,20 +102,6 @@ neovim-clean: ## Uninstall neovim
 misc-clean: ## Uninstall misc files
 	-rm -rf ~/.gnupg
 	-rm -rf ~/.config
-
-zsh-chsh: ## Change user's shell to zsh
-	chsh -s $(shell which zsh)
-
-fish-sh-clean: ## Remove fish
-	brew uninstall fish
-	rm -rf ~/.local/share/fish
-	sudo sed -i '' '/fish/d' /etc/shells
-
-fisher-clean: ## Uninstall fisher plugin manager
-	rm ~/.config/fish/functions/fisher.fish
-	rm -rf ~/.config/fish/fisher_plugins
-
-fish-clean: -fish-clean -fish-sh-clean -zsh-chsh -fisher-clean ## Remove fish & reset default shell
 
 ##@ Helpers
 
