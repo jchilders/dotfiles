@@ -15,7 +15,8 @@ homebrew: ## Install homebrew
 	curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh | /bin/bash
 
 default-formula: ## Install default homebrew formulae
-	brew install git tmux gpg bat fzf rg stow tree exa git-delta starship fd
+	brew install bat exa git gpg fd fzf rg git-delta starship stow tree tmux
+	brew install olets/tap/zsh-abbr
 
 nerd: ## Install nerd font (Needed for prompt)
 	curl -OL https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/AnonymousPro.zip
