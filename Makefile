@@ -75,6 +75,10 @@ stow: ## Link config files
 	stow --restow --target=$$HOME ruby
 	stow --restow --target=$$HOME zsh
 
+zinit: ## Install plugin manager for zsh
+	mkdir ~/.zinit
+	git clone https://github.com/zdharma/zinit.git ~/.zinit/bin
+
 ##@ Clean
 
 .PHONY: clean
