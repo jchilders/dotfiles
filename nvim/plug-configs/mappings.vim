@@ -41,12 +41,12 @@ nnoremap <silent> <leader>gc :lua print(vim.inspect(vim.lsp.buf_get_clients()))<
 " Change (rename) symbol under cursor ('change current symbol')
 nnoremap <silent> <Leader>ccs :lua vim.lsp.buf.rename()<cr>
 
-nnoremap <C-p> <cmd>Telescope find_files<cr>
-nnoremap <C-b> <cmd>Telescope buffers<cr>
-nnoremap <C-o> <cmd>Telescope current_buffer_tags<cr>
-nnoremap <C-s> <cmd>Telescope git_status<cr>
+nnoremap <C-o>f <cmd>Telescope find_files<cr>
+nnoremap <C-o>b <cmd>Telescope buffers<cr>
+nnoremap <C-o>t <cmd>Telescope current_buffer_tags<cr>
+nnoremap <C-o>s <cmd>Telescope git_status<cr>
 " 'find symbol'
-nnoremap <leader>fs <cmd>Telescope lsp_references<cr>
+nnoremap <C-o>r <cmd>Telescope lsp_references<cr>
 nnoremap <leader>sit <cmd>Telescope treesitter<cr>
 
 " Use <Tab> and <S-Tab> to navigate through popup menu

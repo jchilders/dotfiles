@@ -15,7 +15,7 @@ homebrew: ## Install homebrew
 	curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh | /bin/bash
 
 default-formula: ## Install default homebrew formulae
-	brew install bat exa git gpg fd fzf rg git-delta starship stow tree tmux
+	brew install bat exa git git-delta gpg fd fzf rg rust starship stow tree tmux
 	brew install olets/tap/zsh-abbr
 
 nerd: ## Install nerd font (Needed for prompt)

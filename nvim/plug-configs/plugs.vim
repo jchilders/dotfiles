@@ -26,9 +26,8 @@ call plug#begin('~/.config/nvim/plugs')
 	Plug 'scrooloose/nerdcommenter'
 	Plug 'tpope/vim-fugitive'
 	Plug 'tpope/vim-rails'
-	Plug 'RRethy/vim-illuminate'					" highlight word under cursor
+	Plug 'RRethy/vim-illuminate'		  " highlight word under cursor
 
 	" Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 	" Plug 'etordera/deoplete-ruby'
-
 call plug#end()

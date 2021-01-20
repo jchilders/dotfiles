@@ -13,6 +13,9 @@ source /usr/local/share/zsh-abbr/zsh-abbr.zsh
 # prompt
 eval "$(starship init zsh)"
 
+# Do not write duplicates to history
+setopt HIST_IGNORE_ALL_DUPS
+
 abbr add gd='git diff' > /dev/null 2>&1
 abbr add gst='git status -sb' --force > /dev/null 2>&1
 
@@ -42,19 +45,30 @@ zinit load zsh-users/zsh-syntax-highlighting
 # TODO: Move these into separate files
 # TODO: DRY this stuff up
 
+# WIP
+__fuzzy_get_file() {
+  IFS=$'\n' out=("$(git status -s | fzf --query="$1" --preview='bat -f {-1}')")
+  local file=$(head -2 <<< "$out" | tail -1 | awk ' { print $2 } ')
+}
+
+# show diff of file selected from from git status
 # edit from selected from git status
 fuzzy_edit_from_git_status() {
+  # __fuzzy_get_file
+  # echo "file: '${file}'"
   IFS=$'\n' out=("$(git status -s | fzf --query="$1" --preview='bat -f {-1}')")
   file=$(head -2 <<< "$out" | tail -1 | awk ' { print $2 } ')
   if [ -n "$file" ]; then
-	${EDITOR:-nvim} "$file"
+	local cmd="${EDITOR:-nvim} '$file'"
+	print -s $cmd  # Add to history
+	eval "$cmd"
   fi
   zle reset-prompt
 }
 zle -N fuzzy_edit_from_git_status
 bindkey '^os' fuzzy_edit_from_git_status
 
-# show diff of file selected from from git status
+
 fuzzy_diff_from_git_status() {
   IFS=$'\n' out=("$(git status -s | fzf --query="$1" --preview='bat -f {-1}')")
   file=$(head -2 <<< "$out" | tail -1 | awk ' { print $2 } ')
@@ -84,7 +98,7 @@ fuzzy_edit_rails_controller() {
 	zle reset-prompt
 	return
   fi
-  IFS=$'\n' file=$(fd --type=file . 'app/controllers' | fzf)
+  IFS=$'\n' file=$(fd --type=file . 'app/controllers' | fzf --query="$1" --preview='bat -f {-1}')
   if [ -n "$file" ]; then
 	${EDITOR:-nvim} "$file"
   fi
@@ -99,7 +113,7 @@ fuzzy_edit_rails_model() {
 	zle reset-prompt
 	return
   fi
-  IFS=$'\n' file=$(fd --type=file . 'app/models' | fzf)
+  IFS=$'\n' file=$(fd --type=file . 'app/models' | fzf --query="$1" --preview='bat -f {-1}')
   if [ -n "$file" ]; then
 	${EDITOR:-nvim} "$file"
   fi
@@ -109,7 +123,7 @@ zle -N fuzzy_edit_rails_model
 bindkey '^om' fuzzy_edit_rails_model
 
 fuzzy_edit_file() {
-  IFS=$'\n' file=$(fd --hidden $1 | fzf)
+  IFS=$'\n' file=$(fd --type=file $1 | fzf --query="$1" --preview='bat -f {-1}')
   if [ -n "$file" ]; then
 	local cmd="${EDITOR:-nvim} '$file'"
 	eval "$cmd"
