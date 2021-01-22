@@ -12,7 +12,6 @@ call plug#begin('~/.config/nvim/plugs')
 	Plug 'darfink/vim-plist'
 
 	Plug 'neovim/nvim-lspconfig'
-	Plug 'nvim-lua/completion-nvim'       " Tab completion
 	Plug 'nvim-lua/diagnostic-nvim'
 	Plug 'nvim-lua/popup.nvim'            " Lua impl of vim popup_* functions
 	Plug 'nvim-lua/plenary.nvim'          " Core Lua functions
@@ -26,7 +25,6 @@ call plug#begin('~/.config/nvim/plugs')
 	Plug 'scrooloose/nerdcommenter'
 	Plug 'tpope/vim-fugitive'
 	Plug 'tpope/vim-rails'
-	Plug 'RRethy/vim-illuminate'		  " highlight word under cursor
 
 	" Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 	" Plug 'etordera/deoplete-ruby'

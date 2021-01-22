@@ -25,9 +25,6 @@ hi Folded ctermfg=Black ctermbg=DarkGrey
 hi Search cterm=NONE ctermfg=white ctermbg=DarkBlue
 hi SignColumn ctermbg=black
 
-" Use completion-nvim in every buffer
-autocmd BufEnter * lua require'completion'.on_attach()
-
 " Restore cursor to where it was when the file was closed
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 

@@ -1,5 +1,5 @@
 set statusline =%#identifier#
-set statusline+=[%t]    "tail of the filename
+set statusline+=[%t]    "tail of the filename (extension)
 set statusline+=%*
 set statusline+=%y      "filetype
 set statusline+=%#identifier#

@@ -14,7 +14,7 @@ vmap <silent> <C-c> "+y
 nnoremap <Leader>cw :%s/\<<C-r><C-w>\>/<C-r><C-w>
 vnoremap <Leader>cw y:%s/<C-r>"/<C-r>"
 
-" use <Leader>L to toggle the displaying relative line number
+" <Leader>l - toggle showing relative line numbers in the gutter
 function! g:ToggleNuMode()
   if(&rnu == 1)
     set nornu
@@ -48,11 +48,3 @@ nnoremap <C-o>s <cmd>Telescope git_status<cr>
 " 'find symbol'
 nnoremap <C-o>r <cmd>Telescope lsp_references<cr>
 nnoremap <leader>sit <cmd>Telescope treesitter<cr>
-
-" Use <Tab> and <S-Tab> to navigate through popup menu
-inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-imap <silent> <c-p> <Plug>(completion_trigger)
-
-" Set completeopt to have a better completion experience
-set completeopt=menuone,noinsert,noselect

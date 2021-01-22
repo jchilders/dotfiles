@@ -15,11 +15,11 @@ LuaLoad telescope.nvim
 LuaLoad nvim-lspconfig
 
 VimLoad neoterm
-LuaLoad illuminate
 
 VimLoad treesitter
 LuaLoad treesitter
 
+" needs to be last to make sure ours take priority
 VimLoad mappings
 
 " https://youtu.be/YCy3wCyz4Vg?t=162
