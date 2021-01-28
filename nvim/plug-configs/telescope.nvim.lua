@@ -13,6 +13,7 @@ require('telescope').setup{
 	  '--column',
 	  '--smart-case'
 	},
+	results_height = 0.30,
 	prompt_position = "top",
 	prompt_prefix = ">",
 	sorting_strategy = "ascending",

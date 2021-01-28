@@ -8,8 +8,8 @@ VimLoad basic
 VimLoad plugs
 VimLoad statusline
 
-" VimLoad deoplete
-" VimLoad fzf
+VimLoad nvim-compe
+VimLoad fzf
 
 LuaLoad telescope.nvim
 LuaLoad nvim-lspconfig

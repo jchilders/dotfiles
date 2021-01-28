@@ -1,5 +1,21 @@
 # Turn on vi mode
-bindkey -v
+# bindkey -v
+
+# SCRATCH STUFF
+# function _accept-line-with-echo {
+    # echo "Executing: $BUFFER"
+    # zle .accept-line
+# }
+# zle -N accept-line _accept-line-with-echo
+
+# just_run_vi() {
+  # local cmd="vim"
+  # zle -U $cmd
+  # zle accept-line
+# }
+# zle -N just_run_vi
+# bindkey '^ov' just_run_vi
+# END SCRATCH STUFF
 
 # plugin manager
 # https://github.com/zdharma/zinit
@@ -15,6 +31,8 @@ eval "$(starship init zsh)"
 
 # Do not write duplicates to history
 setopt HIST_IGNORE_ALL_DUPS
+
+abbr add bi='bundle install' > /dev/null 2>&1
 
 abbr add gd='git diff' > /dev/null 2>&1
 abbr add gst='git status -sb' --force > /dev/null 2>&1
@@ -35,15 +53,28 @@ else
   export EDITOR='nvim'
 fi
 
-export FZF_DEFAULT_OPTS="--height 30% --layout=reverse --border --tiebreak=end --info=inline --select-1"
 export PATH="$PATH:$HOME/.rvm/bin"
+export FZF_DEFAULT_OPTS="--height 30% --layout=reverse --border --tiebreak=end --info=inline --select-1"
+export FZF_DEFAULT_COMMAND="fd"
 
 # Plugins
 zinit load zsh-users/zsh-syntax-highlighting
 
+source '/Users/jchilders/workspace/dotfiles/zsh/fzf-bindings.zsh'
+
 # Custom functions
 # TODO: Move these into separate files
 # TODO: DRY this stuff up
+
+function myls {
+	[[ "$CONTEXT" = cont ]] && return
+	zle push-input
+	zle -R
+	zle accept-line
+	print -n $(exa --color=always --all --oneline)
+}
+zle -N myls
+bindkey '^[l' myls
 
 # WIP
 __fuzzy_get_file() {
@@ -68,12 +99,11 @@ fuzzy_edit_from_git_status() {
 zle -N fuzzy_edit_from_git_status
 bindkey '^os' fuzzy_edit_from_git_status
 
-
 fuzzy_diff_from_git_status() {
   IFS=$'\n' out=("$(git status -s | fzf --query="$1" --preview='bat -f {-1}')")
   file=$(head -2 <<< "$out" | tail -1 | awk ' { print $2 } ')
   if [ -n "$file" ]; then
-	git diff "$file"
+	git diff $file
   fi
   zle reset-prompt
 }
@@ -85,7 +115,7 @@ fuzzy_add_from_git_status() {
   IFS=$'\n' out=("$(git status -s | fzf --query="$1" --preview='bat -f {-1}')")
   file=$(head -2 <<< "$out" | tail -1 | awk ' { print $2 } ')
   if [ -n "$file" ]; then
-	git add "$file"
+	git add $file
   fi
   zle reset-prompt
 }
@@ -100,14 +130,16 @@ fuzzy_edit_rails_controller() {
   fi
   IFS=$'\n' file=$(fd --type=file . 'app/controllers' | fzf --query="$1" --preview='bat -f {-1}')
   if [ -n "$file" ]; then
-	${EDITOR:-nvim} "$file"
+	local cmd="${EDITOR:-nvim} '$file'"
+	# zle kill-whole-line
+	zle -U $cmd
+	# zle -R
+	zle accept-line
   fi
-  zle reset-prompt
 }
 zle -N fuzzy_edit_rails_controller
 bindkey '^oc' fuzzy_edit_rails_controller
 
-# edit a file from app/models
 fuzzy_edit_rails_model() {
   if [[ ! -d ./app/models ]]; then
 	zle reset-prompt
@@ -115,7 +147,9 @@ fuzzy_edit_rails_model() {
   fi
   IFS=$'\n' file=$(fd --type=file . 'app/models' | fzf --query="$1" --preview='bat -f {-1}')
   if [ -n "$file" ]; then
-	${EDITOR:-nvim} "$file"
+	local cmd="${EDITOR:-nvim} '$file'"
+	print -s $cmd  # Add to history
+	eval "$cmd"
   fi
   zle reset-prompt
 }
