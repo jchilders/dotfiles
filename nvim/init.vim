@@ -19,10 +19,7 @@ VimLoad neoterm
 VimLoad treesitter
 LuaLoad treesitter
 
-" needs to be last to make sure ours take priority
+" Needs to be last to ensure that our mappings take priority
 VimLoad mappings
-
-" https://youtu.be/YCy3wCyz4Vg?t=162
-" set cot=menuone,noinsert,noselect shm+=c
 
 " `vim --cmd 'profile start initvim-profiling.result' --cmd 'profile! file

@@ -68,12 +68,15 @@ ruby-gems: ## Install default gems
 # zsh:
 #   > test -d $XDG_CONFIG_HOME ; echo $?
 #   0
+cwd := $(shell pwd)
+cfgd := $$HOME/.config
 stow: ## Link config files
 	stow --restow --target=$$HOME tmux
-	stow --restow --target=$$XDG_CONFIG_HOME/nvim nvim
+	stow --restow --target=$(cfgd)/nvim nvim
 	stow --restow --target=$$HOME git
 	stow --restow --target=$$HOME ruby
-	stow --restow --target=$$HOME zsh
+	ln -s $(cwd)/.zshenv $$HOME/.zshenv
+	stow --restow --target=$(cfgd)/zsh zsh
 
 zinit: ## Install plugin manager for zsh
 	mkdir ~/.zinit
@@ -107,6 +110,10 @@ neovim-clean: ## Uninstall neovim
 misc-clean: ## Uninstall misc files
 	-rm -rf ~/.gnupg
 	-rm -rf ~/.config
+
+zsh-clean: ## Uninstall zsh-related items
+	-rm $$HOME/.zshenv
+	stow --delete --target=$$XDG_CONFIG_HOME/zsh zsh
 
 ##@ Helpers
 

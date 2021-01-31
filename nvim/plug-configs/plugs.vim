@@ -19,7 +19,7 @@ call plug#begin('~/.config/nvim/plugs')
   Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
   Plug 'kassio/neoterm'
-  Plug 'TaDaa/vimade'                   " fade inactive windows
+  " Plug 'TaDaa/vimade'                   " fade inactive windows
   Plug 'scrooloose/nerdcommenter'
   Plug 'tpope/vim-fugitive'
   Plug 'tpope/vim-rails'
