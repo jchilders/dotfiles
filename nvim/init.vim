@@ -1,8 +1,8 @@
 let s:home = fnamemodify(resolve(expand('<sfile>:p')), ':h')
 exec 'set rtp+='.s:home
 
-command! -nargs=1 VimLoad exec 'source '.s:home.'/plug-configs/'.'<args>'.'.vim'
-command! -nargs=1 LuaLoad exec 'luafile '.s:home.'/plug-configs/'.'<args>'.'.lua'
+command! -nargs=1 VimLoad exec 'source '.s:home.'/config/'.'<args>'.'.vim'
+command! -nargs=1 LuaLoad exec 'luafile '.s:home.'/config/'.'<args>'.'.lua'
 
 VimLoad basic
 VimLoad plugs
