@@ -1,8 +1,8 @@
 set expandtab
-set noet
 set softtabstop=2
-set sw=2
-set ts=4
+set shiftwidth=2
+set tabstop=4
+set smarttab
 
 set noswapfile
 set noundofile

@@ -5,8 +5,9 @@
 " let g:ruby_path = join(split(glob($MY_RUBY_HOME.'/lib/ruby/*.*')."\n".glob($MY_RUBY_HOME.'/lib/rubysite_ruby/*'),"\n"),',')
 
 " Run current spec in adjacent tmux pane
-nnoremap <Leader>rt :w<CR>:call RunSpec()<CR> " run current line
-nnoremap <Leader>rT :w<CR>:call RunSpec()<CR> " run entire spec
+nnoremap <Leader>rt <cmd>w<CR><cmd>call RunSpec()<CR> " run current line
+nnoremap <Leader>rT <cmd>w<CR><cmd>call RunSpec()<CR> " run entire spec
+
 " TODO: Fix. Not using Vimux any longer
 function! RunSpec()
   let curr_line = line(".")

@@ -1,5 +1,4 @@
 # # Custom functions/widgets
-# TODO: DRY this stuff up
 
 function myls {
 	[[ "$CONTEXT" = cont ]] && return

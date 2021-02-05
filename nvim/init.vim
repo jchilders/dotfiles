@@ -1,3 +1,4 @@
+" Set s:home to current directory and add to runtimepath
 let s:home = fnamemodify(resolve(expand('<sfile>:p')), ':h')
 exec 'set rtp+='.s:home
 
@@ -16,10 +17,11 @@ LuaLoad nvim-lspconfig
 
 VimLoad neoterm
 
-VimLoad treesitter
-LuaLoad treesitter
+" VimLoad treesitter
+" LuaLoad treesitter
 
 " Needs to be last to ensure that our mappings take priority
 VimLoad mappings
+VimLoad terminal
 
 " `vim --cmd 'profile start initvim-profiling.result' --cmd 'profile! file
