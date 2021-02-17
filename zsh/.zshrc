@@ -31,7 +31,7 @@ eval "$(starship init zsh)"
 foreach file (
   aliases.zsh
   exports.zsh
-  fzf-bindings.zsh
+  fzf-widgets.zsh
   settings.zsh
   widgets.zsh
 ) {

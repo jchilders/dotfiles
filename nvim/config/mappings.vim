@@ -46,9 +46,9 @@ nmap <silent> <Leader>ccs <cmd>lua vim.lsp.buf.rename()<cr>
 
 nmap <C-o>b <cmd>Telescope buffers<cr>
 nmap <C-o>f <cmd>Telescope find_files<cr>
-nmap <C-o>t <cmd>Telescope current_buffer_tags<cr>
-nmap <C-o>s <cmd>Telescope git_status<cr>
 nmap <C-o>r <cmd>Telescope lsp_references<cr>
+nmap <C-o>s <cmd>Telescope lsp_document_symbols<cr>
+nmap <C-o>t <cmd>Telescope current_buffer_tags<cr>
 nmap <leader>sit <cmd>Telescope treesitter<cr>
 
 nmap<Leader>rl <Plug>(Luadev-Runline)<cr>
