@@ -25,6 +25,13 @@
 # z - fast directory switching
 . /usr/local/etc/profile.d/z.sh
 
+# when no args are given to z, or z returns no results, use fzf
+unalias z &> /dev/null
+z() {
+  [ $# -gt 0 ] && _z "$*" && return
+  cd "$(_z -l 2>&1 | fzf --nth 2.. +s --tac --query "${*##-* }" | sed 's/^[0-9,.]* *//')" || exit 1
+}
+
 # prompt
 eval "$(starship init zsh)"
 

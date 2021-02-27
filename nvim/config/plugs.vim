@@ -25,4 +25,10 @@ call plug#begin('~/.config/nvim/plugs')
   Plug 'tpope/vim-rails'
 
   Plug 'hrsh7th/nvim-compe'				" LSP-based completions
+
+  Plug 'vim-airline/vim-airline'
+  Plug 'vim-airline/vim-airline-themes'
+  Plug 'embark-theme/vim', { 'as': 'embark' }
+
+  Plug 'sainnhe/edge'
 call plug#end()

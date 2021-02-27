@@ -9,6 +9,11 @@ VimLoad basic
 VimLoad plugs
 VimLoad statusline
 
+colorscheme embark
+let g:airline_theme='violet'
+let g:airline#extensions#tabline#enabled = 1
+let g:airline_powerline_fonts = 1
+
 VimLoad nvim-compe
 VimLoad fzf
 
@@ -17,8 +22,8 @@ LuaLoad nvim-lspconfig
 
 VimLoad neoterm
 
-" VimLoad treesitter
-" LuaLoad treesitter
+VimLoad treesitter
+LuaLoad treesitter
 
 " Needs to be last to ensure that our mappings take priority
 VimLoad mappings
