@@ -29,6 +29,10 @@ nmap <Leader>l <cmd>call g:ToggleNuMode()<cr>
 " Clear previously highlighted search ("clear find")
 nmap <silent> <Leader>cf <cmd>let @/ = ''<CR>
 
+" Remap * to search word under cursor, but do not immediately advance to next match
+nnoremap <silent>*
+    \ :let @/='\<<C-R>=expand("<cword>")<CR>\>'<CR>:set hls<CR>
+
 " Toggle next/previous buffers
 nmap <silent> <Leader><Leader> <cmd>b#<CR>
 
