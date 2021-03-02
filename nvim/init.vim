@@ -7,20 +7,12 @@ command! -nargs=1 LuaLoad exec 'luafile '.s:home.'/config/'.'<args>'.'.lua'
 
 VimLoad basic
 VimLoad plugs
-VimLoad statusline
+VimLoad looknfeel
 
-colorscheme embark
-let g:airline_theme='violet'
-let g:airline#extensions#tabline#enabled = 1
-let g:airline_powerline_fonts = 1
-
+" VimLoad neoterm
 VimLoad nvim-compe
-VimLoad fzf
-
-LuaLoad telescope.nvim
 LuaLoad nvim-lspconfig
-
-VimLoad neoterm
+LuaLoad telescope.nvim
 
 VimLoad treesitter
 LuaLoad treesitter
