@@ -30,5 +30,7 @@ call plug#begin('~/.config/nvim/plugs')
   Plug 'vim-airline/vim-airline-themes'
   Plug 'embark-theme/vim', { 'as': 'embark' }
 
+  Plug 'AndrewRadev/splitjoin.vim'      " Smart split/join code blocks
+
   Plug 'sainnhe/edge'
 call plug#end()

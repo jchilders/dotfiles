@@ -36,6 +36,9 @@ bindkey '^od' fuzzy_diff_from_git_status
 # git add file selected from from git status
 function fuzzy_add_from_git_status {
   __fuzzy_search_git_status_and_eval "git add"
+  echo "${found_file} added to index"
+  echo
+  git status -sb
 }
 zle -N fuzzy_add_from_git_status
 bindkey '^oa' fuzzy_add_from_git_status

@@ -1,5 +1,7 @@
 This repo was originally created to help me get new laptops spun up. I was doing many of the same steps over and over again, and [grew tired of it](https://m.xkcd.com/1205/). It is targeted towards Ruby on Rails development.
 
+The core stack is tmux, zsh, and neovim.
+
 # Installation
 
 ```
@@ -56,7 +58,7 @@ These widgets are available at the prompt.
 |`^om` | Fuzzy find Rails model & edit |
 |`^ov` | Fuzzy find Rails view & edit |
 |`^t` | Fuzzy find file and append to current cursor position |
-|`^r` | Fuzzy search command history (`^r<enter>` runs last command) |
+|`^r` | Fuzzy search command history (`^r<enter>` to run last command) |
 
 ### Aliases
 Defined in `zsh/config/aliases.zsh`
