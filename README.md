@@ -1,4 +1,4 @@
-This repo was originally created to help me get new laptops spun up. I was doing many of the same steps over and over again, and [grew tired of it](https://m.xkcd.com/1205/). It is targeted towards Ruby on Rails development.
+This repo was originally created to help me get new laptops spun up. I was doing many of the same steps over and over again, and [grew tired of it](https://xkcd.com/1205/). It is targeted towards Ruby on Rails development.
 
 The core stack is tmux, zsh, and neovim.
 
@@ -64,7 +64,7 @@ These widgets are available at the prompt.
 Defined in `zsh/config/aliases.zsh`
 
 | alias | description |
-| :-----: | :---------- |
+| :---: | :---------- |
 |`bi` | `bundle install` |
 |`gcb` | Copies current branch name to pasteboard (clipboard) |
 |`gd` | `git diff` |
@@ -79,7 +79,7 @@ Defined in `zsh/config/aliases.zsh`
 Leader key is `,`.
 
 ### Mappings
-See `nvim/config/mappings.vim` for complete list.
+See `nvim/config/mappings.vim` for a more complete list. Ruby-specific mappings are kept in `nvim/after/ftplugin/ruby.vim`.
 
 | mapping | description | provided by |
 | :-----: | :---------- | :---------: |
@@ -88,6 +88,7 @@ See `nvim/config/mappings.vim` for complete list.
 | `^or` | Find referencess to current symbol | telescope.nvim |
 | `^os` | Go to symbol (method, global, etc.) | telescope.nvim |
 | `,ccs` | Change (rename) current symbol | neovim LSP |
+| `,fmt` | Format current buffer | neovim LSP |
 | `gJ` | Join code block | splitjoin.vim |
 | `gS` | Split code block | splitjoin.vim |
 

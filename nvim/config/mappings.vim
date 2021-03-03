@@ -54,6 +54,4 @@ nmap <C-o>r <cmd>Telescope lsp_references<cr>
 nmap <C-o>s <cmd>Telescope lsp_document_symbols<cr>
 nmap <C-o>t <cmd>Telescope current_buffer_tags<cr>
 nmap <leader>sit <cmd>Telescope treesitter<cr>
-
-nmap<Leader>rl <Plug>(Luadev-Runline)<cr>
-vmap<Leader>rb <Plug>(Luadev-Run)<cr>
+nmap <leader>fmt <cmd>lua vim.lsp.buf.formatting_sync(nil, 1000)<cr>
