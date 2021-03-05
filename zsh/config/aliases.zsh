@@ -11,5 +11,6 @@ abbr add gst='git status -sb' --force > /dev/null 2>&1
 
 abbr add rc='rails console' --force> /dev/null 2>&1
 abbr add rdbm='rake db:migrate' > /dev/null 2>&1
-abbr add rdbms='rake db:migrate:status'> /dev/null 2>&1
+abbr add rdbmt='rake db:migrate RAILS_ENV=test' > /dev/null 2>&1
+abbr add rdbmst='rake db:migrate:status RAILS_ENV=test'> /dev/null 2>&1
 abbr add rs='rails server' --force> /dev/null 2>&1

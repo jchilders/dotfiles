@@ -1,6 +1,7 @@
 -- in utils.lua
 local M = {}
 local api = vim.api
+
 function M.blameVirtText()
   local ft = vim.fn.expand('%:h:t') -- get the current file extension
   if ft == '' then -- if we are in a scratch buffer or unknown filetype
@@ -29,6 +30,28 @@ end
 
 function M.clearBlameVirtText() -- important for clearing out the text when our cursor moves
   api.nvim_buf_clear_namespace(0, 2, 0, -1)
+end
+
+function M.runCurrentSpec()
+  api.nvim_buf_clear_namespace(0, 2, 0, -1) -- clear out virtual text from namespace 2 (the namespace we will set later)
+  local currFile = vim.fn.expand('%')
+  local currLine = api.nvim_win_get_cursor(0)
+  print(M.dumpTable(currLine))
+  fileLoc = string.format('Curr: %s:%d', currFile, currLine[1])
+  api.nvim_buf_set_virtual_text(0, 2, currLine[1] - 1, {{ text,'GitLens' }}, {}) -- set virtual text for namespace 2 with the content from git and assign it to the higlight group 'GitLens'
+end
+
+function M.dumpTable(table)
+   if type(table) == 'table' then
+      local s = '{ '
+      for k,v in pairs(table) do
+         if type(k) ~= 'number' then k = '"'..k..'"' end
+         s = s .. '['..k..'] = ' .. M.dumpTable(v) .. ','
+      end
+      return s .. '} '
+   else
+      return tostring(table)
+   end
 end
 
 return M

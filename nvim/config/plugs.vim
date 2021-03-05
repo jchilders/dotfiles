@@ -19,6 +19,7 @@ call plug#begin('~/.config/nvim/plugs')
   Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
   Plug 'kassio/neoterm'
+  Plug 'vim-test/vim-test'
   " Plug 'TaDaa/vimade'                   " fade inactive windows
   Plug 'scrooloose/nerdcommenter'
   Plug 'tpope/vim-fugitive'
@@ -31,6 +32,4 @@ call plug#begin('~/.config/nvim/plugs')
   Plug 'embark-theme/vim', { 'as': 'embark' }
 
   Plug 'AndrewRadev/splitjoin.vim'      " Smart split/join code blocks
-
-  Plug 'sainnhe/edge'
 call plug#end()

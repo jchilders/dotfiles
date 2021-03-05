@@ -9,16 +9,19 @@ VimLoad basic
 VimLoad plugs
 VimLoad looknfeel
 
-" VimLoad neoterm
+VimLoad neoterm
+LuaLoad neoterm
 VimLoad nvim-compe
 LuaLoad nvim-lspconfig
 LuaLoad telescope.nvim
-
 VimLoad treesitter
 LuaLoad treesitter
 
+" Maps ,tt to what is defined here
+" Tmap rspec echo 'hi'
+
 " Needs to be last to ensure that our mappings take priority
 VimLoad mappings
-VimLoad terminal
+" VimLoad terminal
 
 " `vim --cmd 'profile start initvim-profiling.result' --cmd 'profile! file

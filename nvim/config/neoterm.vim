@@ -1,15 +1,10 @@
 " Start terminal windows in insert mode
 autocmd TermOpen * startinsert
 
-" Exit terminal mode
-tnoremap <Esc><Esc> <C-\><C-n>
-
-" Send selected text to terminal
-" vmap <silent> <Leader>vs "vy :call VimuxSlime()<CR>
+" Send visually selected text to terminal
 vmap <silent> <Leader>vs :TREPLSendSelection<CR>
 
 " Send current line to terminal
-" nmap <silent> <Leader>vs vip<Leader>vs<CR>
 nmap <silent> <Leader>vs :TREPLSendLine<CR>
 
 " gxip to send current paragraph/block to terminal
