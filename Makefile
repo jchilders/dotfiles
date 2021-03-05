@@ -77,6 +77,7 @@ stow: ## Link config files
 	stow --restow --target=$$HOME ruby
 	ln -s $(cwd)/.zshenv $$HOME/.zshenv
 	stow --restow --target=$(cfgd)/zsh zsh
+	stow --restow --target=$(cfgd)/ starship/*
 
 zinit: ## Install plugin manager for zsh
 	mkdir ~/.zinit

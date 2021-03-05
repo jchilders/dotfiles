@@ -1,0 +1,6 @@
+add_newline = false
+format = "$directory($git_branch)$env_var$status$ruby$character"
+
+[character]
+success_symbol = "[➜](bold green)"
+error_symbol = "[➜](bold red)"
