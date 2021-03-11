@@ -8,17 +8,15 @@ command! -nargs=1 LuaLoad exec 'luafile '.s:home.'/config/'.'<args>'.'.lua'
 VimLoad basic
 VimLoad plugs
 VimLoad looknfeel
+" LuaLoad colors  
 
 VimLoad neoterm
 LuaLoad neoterm
-VimLoad nvim-compe
+" VimLoad nvim-compe
 LuaLoad nvim-lspconfig
 LuaLoad telescope.nvim
 VimLoad treesitter
 LuaLoad treesitter
-
-" Maps ,tt to what is defined here
-" Tmap rspec echo 'hi'
 
 " Needs to be last to ensure that our mappings take priority
 VimLoad mappings

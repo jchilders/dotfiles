@@ -19,13 +19,15 @@ call plug#begin('~/.config/nvim/plugs')
   Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
   Plug 'kassio/neoterm'
-  Plug 'vim-test/vim-test'
   " Plug 'TaDaa/vimade'                   " fade inactive windows
   Plug 'scrooloose/nerdcommenter'
   Plug 'tpope/vim-fugitive'
   Plug 'tpope/vim-rails'
 
   Plug 'hrsh7th/nvim-compe'				" LSP-based completions
+
+  Plug 'vim-test/vim-test'
+  Plug 'rcarriga/vim-ultest'
 
   Plug 'vim-airline/vim-airline'
   Plug 'vim-airline/vim-airline-themes'

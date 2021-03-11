@@ -5,7 +5,7 @@ SHELL:=/bin/zsh
 
 .PHONY: install
 
-install: -macos -homebrew -default-formula -nerd -ruby -stow -neovim ## Install all the things
+install: -macos -homebrew -default-formula -nerd -ruby -python -stow -neovim ## Install all the things
 
 macos: ## macOS-specific pieces
 	-xcode-select --install
@@ -14,9 +14,10 @@ macos: ## macOS-specific pieces
 homebrew: ## Install homebrew
 	curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh | /bin/bash
 
-default-formula: ## Install default homebrew formulae
-	brew install bat exa git git-delta gpg fd fzf rg rust starship stow tree tmux
-	brew install olets/tap/zsh-abbr
+default-formulae: ## Install default homebrew formulae
+	-brew install bat exa git git-delta gpg fd fzf rg python rust starship stow tree tmux
+	-brew install olets/tap/zsh-abbr
+	-brew install docker docker-compose
 
 nerd: ## Install nerd font (Needed for prompt)
 	curl -OL https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/AnonymousPro.zip
@@ -63,6 +64,12 @@ rvm-install: ## Install Ruby Version Manager
 ruby-gems: ## Install default gems
 	rvm gemset use global
 	gem install solargraph neovim ripper-tags
+
+python: -python-packages ## Install Python-related items
+
+# The pynvim package is needed by the vim-ultest plugin
+python-packages: ## Install Python packages
+	-python3 -m pip install --user --upgrade pynvim
 
 # TODO: Use XDG_CONFIG_HOME
 # zsh:

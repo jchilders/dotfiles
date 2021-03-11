@@ -48,5 +48,13 @@ unset file
 
 source /usr/local/share/zsh-abbr/zsh-abbr.zsh
 
+# Source the completions installed by homebrew
+if type brew &>/dev/null; then
+  FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
+
+  autoload -Uz compinit
+  compinit
+fi
+
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 export PATH="$PATH:$HOME/.rvm/bin"

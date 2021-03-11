@@ -30,4 +30,4 @@ au BufNewFile,BufRead *.json set ft=javascript
 let g:NERDSpaceDelims = 1
 
 " https://github.com/vim-test/vim-test#strategies
-let test#strategy = "neovim"
+" let test#strategy = "neovim"

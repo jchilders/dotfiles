@@ -1,4 +1,4 @@
-This repo was originally created to help me get new laptops spun up. I was doing many of the same steps over and over again, and [grew tired of it](https://xkcd.com/1205/). It is targeted towards Ruby on Rails development.
+This repo was originally created to just track my dotfiles, and has evolved into something that allows me to get new laptops spun up. I was doing many of the same steps over and over again, and [grew tired of it](https://xkcd.com/1205/). It is targeted towards Ruby on Rails development under macOS.
 
 The core stack is tmux, zsh, and neovim.
 

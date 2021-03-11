@@ -5,7 +5,7 @@ alias gcb="git rev-parse --abbrev-ref HEAD | tr -d '\n' | pbcopy"
 source /usr/local/share/zsh-abbr/zsh-abbr.zsh
 
 abbr add bi='bundle install' > /dev/null 2>&1
-
+abbr add dcom='docker-compose' > /dev/null 2>&1
 abbr add gd='git diff' > /dev/null 2>&1
 abbr add gst='git status -sb' --force > /dev/null 2>&1
 

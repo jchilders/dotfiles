@@ -14,17 +14,19 @@ vmap <silent> <C-c> "+y
 nmap <Leader>cw :%s/\<<C-r><C-w>\>/<C-r><C-w>
 vmap <Leader>cw y:%s/<C-r>"/<C-r>"
 
-" <Leader>l - toggle showing relative line numbers in the gutter
-function! g:ToggleNuMode()
+" <Leader>l - toggle gutter
+function! g:ToggleGutter()
   if(&rnu == 1)
     set nornu
     set nonu
+    set signcolumn=no
   else
     set nu
     set rnu
+    set signcolumn=yes
   endif
 endfunc
-nmap <Leader>l <cmd>call g:ToggleNuMode()<cr>
+nmap <Leader>l <cmd>call g:ToggleGutter()<cr>
 
 " Clear previously highlighted search ("clear find")
 nmap <silent> <Leader>cf <cmd>let @/ = ''<CR>
@@ -63,8 +65,16 @@ nmap <leader>fmt <cmd>lua vim.lsp.buf.formatting_sync(nil, 1000)<cr>
 nmap <silent> <Leader>ccs <cmd>lua vim.lsp.buf.rename()<cr>
 
 " Run specs/tests
-nmap <silent> <leader>tn :TestNearest<CR>
-nmap <silent> <leader>tf :TestFile<CR>
+nmap <silent> <leader>tf <Plug>(ultest-run-file)
+nmap <silent> <leader>tF <Plug>(ultest-stop-file)
+nmap <silent> <leader>tn <Plug>(ultest-run-nearest)
+nmap <silent> <leader>tN <Plug>(ultest-stop-nearest)
+nmap <silent> <leader>to <Plug>(ultest-output-show)
 nmap <silent> <leader>ts :TestSuite<CR>
-nmap <silent> <leader>tl :TestLast<CR>
-nmap <silent> <leader>tg :TestVisit<CR>
+" test results
+nmap <silent> <leader>tr <Plug>(ultest-summary-toggle)
+
+" Next failure
+nmap ]t <Plug>(ultest-next-fail)
+" Previous failure
+nmap [t <Plug>(ultest-prev-fail)
