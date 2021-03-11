@@ -12,9 +12,7 @@ VimLoad looknfeel
 
 VimLoad neoterm
 LuaLoad neoterm
-" VimLoad nvim-compe
 LuaLoad nvim-lspconfig
-LuaLoad telescope.nvim
 VimLoad treesitter
 LuaLoad treesitter
 

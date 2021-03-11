@@ -13,13 +13,9 @@ call plug#begin('~/.config/nvim/plugs')
 
   Plug 'neovim/nvim-lspconfig'
   Plug 'nvim-lua/diagnostic-nvim'
-  Plug 'nvim-lua/popup.nvim'            " Lua impl of vim popup_* functions
-  Plug 'nvim-lua/plenary.nvim'          " Core Lua functions
-  Plug 'nvim-telescope/telescope.nvim'  " Fuzzy finder
   Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
   Plug 'kassio/neoterm'
-  " Plug 'TaDaa/vimade'                   " fade inactive windows
   Plug 'scrooloose/nerdcommenter'
   Plug 'tpope/vim-fugitive'
   Plug 'tpope/vim-rails'
