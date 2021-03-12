@@ -18,6 +18,7 @@ LuaLoad treesitter
 
 " Needs to be last to ensure that our mappings take priority
 VimLoad mappings
-" VimLoad terminal
+VimLoad mappings.fzf
+VimLoad mappings.ultest
 
 " `vim --cmd 'profile start initvim-profiling.result' --cmd 'profile! file

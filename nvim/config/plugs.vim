@@ -20,6 +20,9 @@ call plug#begin('~/.config/nvim/plugs')
   Plug 'tpope/vim-fugitive'
   Plug 'tpope/vim-rails'
 
+  Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+  Plug 'junegunn/fzf.vim'
+
   Plug 'hrsh7th/nvim-compe'				" LSP-based completions
 
   Plug 'vim-test/vim-test'
