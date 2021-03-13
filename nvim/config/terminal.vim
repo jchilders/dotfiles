@@ -29,3 +29,8 @@ nmap <leader>rc <cmd>call <SID>rails_console()<cr>
 " Append current line to rails console
 " :call append(0, g:some_var)
 
+if has('nvim')
+  " Make esc leave terminal mode
+  tnoremap <leader><Esc> <C-\><C-n>
+  tnoremap <Esc><Esc> <C-\><C-n>
+endif

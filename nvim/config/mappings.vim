@@ -1,3 +1,5 @@
+"   Plugin keymaps will all be found in `./after/plugin/*`
+
 let mapleader = ","
 
 " use jk for esc
@@ -14,7 +16,8 @@ vmap <silent> <C-c> "+y
 nmap <Leader>cw :%s/\<<C-r><C-w>\>/<C-r><C-w>
 vmap <Leader>cw y:%s/<C-r>"/<C-r>"
 
-" <Leader>l - toggle gutter
+" <Leader>l - toggle gutter. Use when you need to copy text to pasteboard, but don't want
+" extra stuff getting in the way
 function! g:ToggleGutter()
   if(&rnu == 1)
     set nornu
@@ -28,22 +31,25 @@ function! g:ToggleGutter()
 endfunc
 nmap <Leader>l <cmd>call g:ToggleGutter()<cr>
 
-" Clear previously highlighted search ("clear find")
-nmap <silent> <Leader>cf <cmd>let @/ = ''<CR>
-
 " Remap * to search word under cursor, but do not immediately advance to next match
 nnoremap <silent>*
     \ :let @/='\<<C-R>=expand("<cword>")<CR>\>'<CR>:set hls<CR>
 
+" Clears hlsearch after doing a search, otherwise just does normal <CR> stuff
+nnoremap <expr> <CR> {-> v:hlsearch ? ":nohl\<CR>" : "\<CR>"}()
+
 " Toggle next/previous buffers
 nmap <silent> <Leader><Leader> <cmd>b#<CR>
+
+" For moving quickly up and down,
+" Goes to the first line above/below that isn't whitespace
+" Thanks to: http://vi.stackexchange.com/a/213
+nnoremap gj :let _=&lazyredraw<CR>:set lazyredraw<CR>/\%<C-R>=virtcol(".")<CR>v\S<CR>:nohl<CR>:let &lazyredraw=_<CR>
+nnoremap gk :let _=&lazyredraw<CR>:set lazyredraw<CR>?\%<C-R>=virtcol(".")<CR>v\S<CR>:nohl<CR>:let &lazyredraw=_<CR>
 
 " Replace single quotes with doubles
 nmap <Leader>rq <cmd>s/'/"/g<CR><cmd>let @/ = ''<CR>
 nmap <Leader>rq2 <cmd>s/"/'/g<CR><cmd>let @/ = ''<CR>
-
-" Exit terminal mode
-tnoremap <Esc><Esc> <C-\><C-n>
 
 " Show attached LSP clients for current buffer
 nmap <silent> <leader>gc <cmd>lua print(vim.inspect(vim.lsp.buf_get_clients()))<CR>

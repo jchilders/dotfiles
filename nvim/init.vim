@@ -8,15 +8,18 @@ command! -nargs=1 LuaLoad exec 'luafile '.s:home.'/config/'.'<args>'.'.lua'
 VimLoad basic
 VimLoad plugs
 VimLoad looknfeel
-" LuaLoad colors  
+LuaLoad colors
 
-VimLoad neoterm
-LuaLoad neoterm
+" VimLoad neoterm
+" LuaLoad neoterm
 LuaLoad nvim-lspconfig
-VimLoad treesitter
-LuaLoad treesitter
+LuaLoad telescope.nvim
+LuaLoad nvim-completion
 
-" Needs to be last to ensure that our mappings take priority
+" VimLoad treesitter
+" LuaLoad treesitter
+
+" Mappings need to be last to ensure that ours take priority
 VimLoad mappings
 VimLoad mappings.fzf
 VimLoad mappings.ultest

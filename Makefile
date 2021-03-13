@@ -26,7 +26,9 @@ nerd: ## Install nerd font (Needed for prompt)
 
 neovim: -neovim-install -neovim-plugs ## Install NeoVim & plugins
 
-NEOVIM_SRC_DIR = "$$HOME/workspace/neovim"
+cfgd := $$HOME/.config
+NEOVIM_SRC_DIR := "$$HOME/workspace/neovim"
+XDG_CONFIG_HOME := $$HOME/.config
 
 # Have to build from source rather than just doing 'brew install neovim --HEAD`
 # because of an issue with upstream luajit. See:
@@ -43,12 +45,16 @@ endif
 	else; \
 	  git clone https://github.com/neovim/neovim.git $(NEOVIM_SRC_DIR); \
 	fi; \
+	$(MAKE) -C $(NEOVIM_SRC_DIR) distclean
 	$(MAKE) -C $(NEOVIM_SRC_DIR) CMAKE_BUILD_TYPE=RelWithDebInfo; \
 	sudo $(MAKE) -C $(NEOVIM_SRC_DIR) CMAKE_INSTALL_PREFIX=/usr/local install; \
 	ln -s /usr/local/bin/nvim /usr/local/bin/vi
 
 neovim-plugs: ## Install neovim plugins
-	curl -fLo "$${XDG_CONFIG_HOME:-$$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+	mkdir $(XDG_CONFIG_HOME)/nvim
+	stow --restow --target=$(cfgd)/nvim nvim
+	sh -c 'curl -fLo $(HOME)/.local/share/nvim/site/autoload/plug.vim --create-dirs \
+	       https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 	nvim --headless +PlugInstall +UpdateRemotePlugins +qa
 
 ruby: -rvm-install -ruby-gems ## Install Ruby-related items
@@ -76,10 +82,8 @@ python-packages: ## Install Python packages
 #   > test -d $XDG_CONFIG_HOME ; echo $?
 #   0
 cwd := $(shell pwd)
-cfgd := $$HOME/.config
 stow: ## Link config files
 	stow --restow --target=$$HOME tmux
-	stow --restow --target=$(cfgd)/nvim nvim
 	stow --restow --target=$$HOME git
 	stow --restow --target=$$HOME ruby
 	ln -s $(cwd)/.zshenv $$HOME/.zshenv
@@ -107,13 +111,15 @@ rvm-clean: ## Uninstall rvm
 nerd-clean: ## Uninstall nerd fonts
 	rm $$HOME/Library/Fonts/Anonymice*.ttf
 
-neovim-clean: ## Uninstall neovim
+neovim-clean: ## Uninstall neovim, and unlink config files
 	-sudo rm /usr/local/bin/nvim
 	-sudo rm /usr/local/bin/vi
 	-sudo rm -r /usr/local/lib/nvim
 	-sudo rm -r /usr/local/share/nvim
-	brew unlink neovim
-	stow --delete --target=$$XDG_CONFIG_HOME/nvim nvim
+	-brew unlink neovim
+	stow --delete --target=$(cfgd)/nvim nvim
+	rm -rf $(cfgd)/nvim
+	rm -rf $$HOME/.local/share/nvim
 
 misc-clean: ## Uninstall misc files
 	-rm -rf ~/.gnupg

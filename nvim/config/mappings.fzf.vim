@@ -2,18 +2,18 @@
 " by directory prefix, content search, or symbol search.
 "
 " All are prefixed by <C-o>
+
 function! g:FuzzyGivenDir(dir)
-  let find_cmd = 'fd --type=file . %s'
-  let cmd = printf(find_cmd, shellescape(a:dir))
-  call fzf#run({'source': cmd, 'sink': 'e', 'options': ['--preview', 'bat -f {-1}']})
+  return luaeval("require('telescope.builtin').find_files({search_dirs = {_A.dir}})", {'dir': a:dir})
 endfunc
 
-nmap <silent> <C-o>b <cmd>Buffers<cr>
+nmap <silent> <C-o>b <cmd>Telescope buffers<cr>
 nmap <silent> <C-o>c <cmd>call FuzzyGivenDir('app/controllers')<CR>
-nmap <silent> <C-o>f <cmd>Files<cr>
+nmap <silent> <C-o>f <cmd>Telescope find_files theme=get_dropdown<cr>
 nmap <silent> <C-o>m <cmd>call FuzzyGivenDir('app/models')<CR>
-nmap <silent> <C-o>r <cmd>lua vim.lsp.buf.references()<cr>
-nmap <silent> <C-o>t <cmd>Tags<cr>
+nmap <silent> <C-o>r <cmd>Telescope lsp_document_symbols theme=get_dropdown<cr>
+nmap <silent> <C-o>s <cmd>Telescope git_status<cr>
+nmap <silent> <C-o>t <cmd>Telescope current_buffer_tags theme=get_dropdown<cr>
 nmap <silent> <C-o>v <cmd>call FuzzyGivenDir('app/views')<CR>
 
 function! RipgrepFzf(query, fullscreen)
