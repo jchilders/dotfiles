@@ -16,6 +16,9 @@ nmap <silent> <C-o>s <cmd>Telescope git_status<cr>
 nmap <silent> <C-o>t <cmd>Telescope current_buffer_tags theme=get_dropdown<cr>
 nmap <silent> <C-o>v <cmd>call FuzzyGivenDir('app/views')<CR>
 
+nmap <silent> <leader>[[ <cmd>lua vim.lsp.diagnostic.goto_prev()<CR>
+nmap <silent> <leader>]] <cmd>lua vim.lsp.diagnostic.goto_next()<CR>
+
 function! RipgrepFzf(query, fullscreen)
   let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case -- %s || true'
   let initial_command = printf(command_fmt, shellescape(a:query))

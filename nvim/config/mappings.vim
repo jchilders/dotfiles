@@ -62,3 +62,6 @@ nmap <leader>fmt <cmd>lua vim.lsp.buf.formatting_sync(nil, 1000)<cr>
 " Change (rename) symbol under cursor ('change current symbol')
 nmap <silent> <Leader>ccs <cmd>lua vim.lsp.buf.rename()<cr>
 
+map <leader>hi :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
+\ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
+\ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>

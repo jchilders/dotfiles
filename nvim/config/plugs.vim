@@ -25,7 +25,6 @@ call plug#begin('~/.config/nvim/plugs')
   " Plug 'nvim-lua/lsp-status.nvim'
   " Plug 'romgrk/barbar.nvim'
 
-"  Plug 'nvim-lua/diagnostic-nvim'
 "  Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
 "  Plug 'kassio/neoterm'
@@ -41,6 +40,7 @@ call plug#begin('~/.config/nvim/plugs')
   Plug 'vim-airline/vim-airline'
   Plug 'vim-airline/vim-airline-themes'
   Plug 'embark-theme/vim', { 'as': 'embark' }
+  Plug 'wadackel/vim-dogrun'
 
   Plug 'scrooloose/nerdcommenter'
   Plug 'AndrewRadev/splitjoin.vim'      " Smart split/join code blocks

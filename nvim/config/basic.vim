@@ -18,7 +18,6 @@ set invnumber				" show current line number in gutter
 set relativenumber			" on by default
 set scrolloff=5
 set signcolumn=yes
-set termguicolors
 
 " Restore cursor to where it was when the file was closed
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif

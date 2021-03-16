@@ -16,10 +16,10 @@ z() {
 eval "$(starship init zsh)"
 
 foreach file (
+  settings.zsh
   aliases.zsh
   exports.zsh
   fzf-widgets.zsh
-  settings.zsh
   widgets.zsh
 ) {
   source $ZDOTDIR/config/$file

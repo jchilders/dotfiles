@@ -8,7 +8,6 @@ command! -nargs=1 LuaLoad exec 'luafile '.s:home.'/config/'.'<args>'.'.lua'
 VimLoad basic
 VimLoad plugs
 VimLoad looknfeel
-LuaLoad colors
 
 " VimLoad neoterm
 " LuaLoad neoterm
