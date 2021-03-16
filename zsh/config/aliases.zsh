@@ -9,6 +9,8 @@ abbr add dcom='docker-compose' > /dev/null 2>&1
 abbr add gd='git diff' > /dev/null 2>&1
 abbr add gst='git status -sb' --force > /dev/null 2>&1
 
+abbr add mux='tmuxinator' > /dev/null 2>&1
+
 abbr add rc='rails console' --force> /dev/null 2>&1
 abbr add rdbm='rake db:migrate' > /dev/null 2>&1
 abbr add rdbmt='rake db:migrate RAILS_ENV=test' > /dev/null 2>&1

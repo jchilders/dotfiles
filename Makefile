@@ -15,7 +15,7 @@ homebrew: ## Install homebrew
 	curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh | /bin/bash
 
 default-formulae: ## Install default homebrew formulae
-	-brew install bat exa git git-delta gpg fd fzf rg python rust starship stow tree tmux
+	-brew install bat exa git git-delta gpg fd fzf rg python rust starship stow tree tmux tmuxinator
 	-brew install olets/tap/zsh-abbr
 	-brew install docker docker-compose
 
