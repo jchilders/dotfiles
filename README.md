@@ -1,94 +1,77 @@
-This repo was originally created to just track my dotfiles, and has evolved into something that allows me to get new laptops spun up. I was doing many of the same steps over and over again, and [grew tired of it](https://xkcd.com/1205/). It is targeted towards Ruby on Rails development under macOS.
+Zsh/Neovim/Tmux configurations targeted towards Rails development under macOS. A design goal is to be able to do as much work as possible without your hands ever needing to leave the home row.
 
-The core stack is tmux, zsh, and neovim.
+The core toolchain is tmux, zsh, neovim, and fzf.
 
 # Installation
 
-```
-> make install
-```
+'make install` - Installs homebrew, Ruby, default homebrew formalae (including tmux),
+builds Neovim from source, and links all config files. Typically used when
+spinning up a new laptop.
+`make stow` - Link config files (dotfiles) only
+`make` - See all avaialable targets
 
-Or to see a list of individual targets:
-
-```
-> make
-
-Usage:
-  make
-
-Install
-  install          Install all the things
-  macos            macOS-specific pieces
-  homebrew         Install homebrew
-  default-formula  Install default homebrew formulae
-  nerd             Install nerd font (Needed for prompt)
-  neovim           Install NeoVim & plugins
-  neovim-install   Install neovim
-  neovim-plugs     Install neovim plugins
-  ruby             Install Ruby-related items
-  rvm-install      Install Ruby Version Manager
-  ruby-gems        Install default gems
-  stow             Link config files
-  zinit            Install plugin manager for zsh
-
-Clean
-  clean            Uninstall all the things
-  homebrew-clean   Uninstall homebrew
-  rvm-clean        Uninstall rvm
-  nerd-clean       Uninstall nerd fonts
-  neovim-clean     Uninstall neovim
-  misc-clean       Uninstall misc files
-  zsh-clean        Uninstall zsh-related items
-
-Helpers
-  help             Display this help
-```
-
-# Hotkeys
-## zsh
-### Widgets
-These widgets are available at the prompt.
+# zsh
+## Mappings
+These mappings (zsh calls them "widgets") are available:
 
 | mapping | description |
 | :-----: | :---------- |
-|`^oa` | Fuzzy find modified file & add to staging area (`git add`) |
-|`^oc` | Fuzzy find Rails controller & edit |
-|`^od` | Fuzzy find modified file & diff |
-|`^of` | Fuzzy find *any* file (ignores `.gitignore`) & edit |
-|`^om` | Fuzzy find Rails model & edit |
-|`^ov` | Fuzzy find Rails view & edit |
-|`^t` | Fuzzy find file and append to current cursor position |
-|`^r` | Fuzzy search command history (`^r<enter>` to run last command) |
+| `^oa` | Fuzzy find modified file & add to staging area (`git add`) |
+| `^oc` | Fuzzy find Rails controller & edit |
+| `^od` | Fuzzy find modified file & diff |
+| `^of` | Fuzzy find *any* file (ignores `.gitignore`) & edit |
+| `^om` | Fuzzy find Rails model & edit |
+| `^os` | Fuzzy find modified file & edit
+| `^ov` | Fuzzy find Rails view & edit |
+| `^t` | Fuzzy find file and append to current cursor position |
+| `^r` | Fuzzy search command history (`^r<enter>` to run last command) |
 
-### Aliases
+## Aliases
 Defined in `zsh/config/aliases.zsh`
 
 | alias | description |
 | :---: | :---------- |
-|`bi` | `bundle install` |
-|`gcb` | Copies current branch name to pasteboard (clipboard) |
-|`gd` | `git diff` |
-|`gst` |  `git status -sb` |
-|`rc` | `rails console` |
-|`rdbm` | `rake db:migrate` |
-|`rdbms` | `rake db:migrate:status` |
-|`rs` | `rails server` |
+| `bi` | `bundle install` |
+| `gcb` | Copies current branch name to pasteboard (clipboard) |
+| `gd` | `git diff` |
+| `gst` |  `git status -sb` |
+| `rc` | `rails console` |
+| `rdbm` | `rake db:migrate` |
+| `rdbms` | `rake db:migrate:status` |
+| `rdbmt` | `rake db:migrate RAILS_ENV=test` |
+| `rdbmst` | `rake db:migrate:status RAILS_ENV=test` |
+| `rs` | `rails server` |
 
-## Neovim
+# Neovim
 
 Leader key is `,`.
 
-### Mappings
+## Mappings
 See `nvim/config/mappings.vim` for a more complete list. Ruby-specific mappings are kept in `nvim/after/ftplugin/ruby.vim`.
 
 | mapping | description | provided by |
 | :-----: | :---------- | :---------: |
 | `^ob` | Fuzzy switch buffer by filename | telescope.nvim |
+| `^oc` | Fuzzy find Rails controller & edit | telescope.nvim |
 | `^of` | Fuzzy find file & edit | telescope.nvim |
-| `^or` | Find referencess to current symbol | telescope.nvim |
-| `^os` | Go to symbol (method, global, etc.) | telescope.nvim |
+| `^om` | Fuzzy find Rails model & edit | telescope.nvim |
+| `^or` | Fuzzy go to symbol (method name, etc.) | telescope.nvim |
+| `^os` | Fuzzy find modified file & edit | telescope.nvim |
+| `^ov` | Fuzzy find Rails view & edit | telescope.nvim |
 | `,ccs` | Change (rename) current symbol | neovim LSP |
 | `,fmt` | Format current buffer | neovim LSP |
 | `gJ` | Join code block | splitjoin.vim |
 | `gS` | Split code block | splitjoin.vim |
+| `,]]` | Go to next error/warning | neovim LSP |
+| `,[[` | Go to previous error/warning | neovim LSP |
 
+## Ruby- and Rails-specific Mappings
+| mapping | description |
+| :-----: | :---------- |
+| `,rp` | Insert `puts` statement on line below |
+| `,rP` | Insert `puts` statement on line above |
+| `,bp` | Insert `binding.pry` statement on line below |
+| `,bP` | Insert `binding.pry` statement on line above |
+| `^oc` | Fuzzy find Rails controller & edit | telescope.nvim |
+| `^om` | Fuzzy find Rails model & edit | telescope.nvim |
+| `^ov` | Fuzzy find Rails view & edit | telescope.nvim |
