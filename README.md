@@ -1,14 +1,21 @@
-Zsh/Neovim/Tmux configurations targeted towards Rails development under macOS. A design goal is to be able to do as much work as possible without your hands ever needing to leave the home row.
+Zsh/Neovim/Tmux configurations targeted towards Ruby on Rails development under macOS.
+There are two design goals:
+
+1. Be able to do as much work as possible without your hands ever needing to
+   leave the home row
+2. Be able to open files in as few keystrokes as possible
 
 The core toolchain is tmux, zsh, neovim, and fzf.
 
 # Installation
 
-'make install` - Installs homebrew, Ruby, default homebrew formalae (including tmux),
-builds Neovim from source, and links all config files. Typically used when
-spinning up a new laptop.
-`make stow` - Link config files (dotfiles) only
-`make` - See all avaialable targets
+`make install` - Installs homebrew, Ruby, default homebrew formalae (including tmux),
+builds Neovim from source, and links all configuation files (dotfiles). Typically used when
+needing to bootstrap up a new laptop used in development.
+
+`make dotfiles` - Links configuation files (dotfiles) only, without installing anything
+
+`make` - List all available targets
 
 # zsh
 ## Mappings
@@ -42,12 +49,24 @@ Defined in `zsh/config/aliases.zsh`
 | `rdbmst` | `rake db:migrate:status RAILS_ENV=test` |
 | `rs` | `rails server` |
 
+## Directory Navigation
+
+Use `z`. For example:
+
+```
+~ ➜ cd ~/workspace/myrailsproj
+myrailsproj on  master ➜ cd
+~ ➜ z proj
+myrailsproj on  master ➜ 
+```
+
 # Neovim
 
 Leader key is `,`.
 
 ## Mappings
-See `nvim/config/mappings.vim` for a more complete list. Ruby-specific mappings are kept in `nvim/after/ftplugin/ruby.vim`.
+
+An attempt was made to avoid collision with native mappings. See `nvim/config/mappings*.vim` for the complete list. Ruby-specific mappings are kept in `nvim/after/ftplugin/ruby.vim`.
 
 | mapping | description | provided by |
 | :-----: | :---------- | :---------: |
@@ -58,20 +77,25 @@ See `nvim/config/mappings.vim` for a more complete list. Ruby-specific mappings 
 | `^or` | Fuzzy go to symbol (method name, etc.) | telescope.nvim |
 | `^os` | Fuzzy find modified file & edit | telescope.nvim |
 | `^ov` | Fuzzy find Rails view & edit | telescope.nvim |
+| `,,` | Switch between next/previous buffers |
 | `,ccs` | Change (rename) current symbol | neovim LSP |
 | `,fmt` | Format current buffer | neovim LSP |
 | `gJ` | Join code block | splitjoin.vim |
 | `gS` | Split code block | splitjoin.vim |
 | `,]]` | Go to next error/warning | neovim LSP |
 | `,[[` | Go to previous error/warning | neovim LSP |
+| `,g` | Toggle gutter | Native |
+| `,c<Space>` | Comment/uncomment current line | nerd-commenter |
+| `3,c<Space>` | Comment/uncomment 3 lines | nerd-commenter |
+| `<Enter>` | Clear highlighted search | Native |
 
 ## Ruby- and Rails-specific Mappings
 | mapping | description |
 | :-----: | :---------- |
-| `,rp` | Insert `puts` statement on line below |
-| `,rP` | Insert `puts` statement on line above |
-| `,bp` | Insert `binding.pry` statement on line below |
-| `,bP` | Insert `binding.pry` statement on line above |
 | `^oc` | Fuzzy find Rails controller & edit | telescope.nvim |
 | `^om` | Fuzzy find Rails model & edit | telescope.nvim |
 | `^ov` | Fuzzy find Rails view & edit | telescope.nvim |
+| `,bp` | Insert `binding.pry` statement below current line |
+| `,bP` | Insert `binding.pry` statement above current line |
+| `,rp` | Insert `puts` statement below current line |
+| `,rP` | Insert `puts` statement above current line |

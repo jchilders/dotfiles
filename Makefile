@@ -5,11 +5,27 @@ SHELL:=/bin/zsh
 
 .PHONY: install
 
-install: -macos -homebrew -default-formula -nerd -ruby -python -stow -neovim ## Install all the things
+install: -macos -homebrew -default-formula -nerd -ruby -python -dotfiles -neovim ## Install all the things
 
-macos: ## macOS-specific pieces
+# TODO: Use XDG_CONFIG_HOME
+# zsh:
+#   > test -d $XDG_CONFIG_HOME ; echo $?
+#   0
+cwd := $(shell pwd)
+dotfiles: ## Link configuration files
+	stow --restow --target=$$HOME tmux
+	stow --restow --target=$$HOME git
+	stow --restow --target=$$HOME ruby
+	ln -s $(cwd)/.zshenv $$HOME/.zshenv
+	stow --restow --target=$(cfgd)/zsh zsh
+	stow --restow --target=$(cfgd)/ starship/*
+
+# TODO: Automate installation of Xcode
+macos: ## Set macOS defaults and install command line developer tools
+  ifeq ($(shell uname -s), Darwin)
 	-xcode-select --install
 	./macos
+  endif
 
 homebrew: ## Install homebrew
 	curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh | /bin/bash
@@ -59,7 +75,6 @@ neovim-plugs: ## Install neovim plugins
 
 ruby: -rvm-install -ruby-gems ## Install Ruby-related items
 
-RVM_EXISTS = $(shell which -s rvm &>/dev/null; echo $$?)
 rvm-install: ## Install Ruby Version Manager
 	@if [[ `which rvm &>/dev/null && $?` != 0 ]]; then \
 	  curl -sSL https://get.rvm.io | bash -s stable --rails; \
@@ -76,19 +91,6 @@ python: -python-packages ## Install Python-related items
 # The pynvim package is needed by the vim-ultest plugin
 python-packages: ## Install Python packages
 	-python3 -m pip install --user --upgrade pynvim
-
-# TODO: Use XDG_CONFIG_HOME
-# zsh:
-#   > test -d $XDG_CONFIG_HOME ; echo $?
-#   0
-cwd := $(shell pwd)
-stow: ## Link config files
-	stow --restow --target=$$HOME tmux
-	stow --restow --target=$$HOME git
-	stow --restow --target=$$HOME ruby
-	ln -s $(cwd)/.zshenv $$HOME/.zshenv
-	stow --restow --target=$(cfgd)/zsh zsh
-	stow --restow --target=$(cfgd)/ starship/*
 
 zinit: ## Install plugin manager for zsh
 	mkdir ~/.zinit

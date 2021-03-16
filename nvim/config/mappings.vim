@@ -29,7 +29,7 @@ function! g:ToggleGutter()
     set signcolumn=yes
   endif
 endfunc
-nmap <Leader>l <cmd>call g:ToggleGutter()<cr>
+nmap <Leader>g <cmd>call g:ToggleGutter()<cr>
 
 " Remap * to search word under cursor, but do not immediately advance to next match
 nnoremap <silent>*
@@ -52,7 +52,7 @@ nmap <Leader>rq <cmd>s/'/"/g<CR><cmd>let @/ = ''<CR>
 nmap <Leader>rq2 <cmd>s/"/'/g<CR><cmd>let @/ = ''<CR>
 
 " Show attached LSP clients for current buffer
-nmap <silent> <leader>gc <cmd>lua print(vim.inspect(vim.lsp.buf_get_clients()))<CR>
+nmap <silent> <leader>lc <cmd>lua print(vim.inspect(vim.lsp.buf_get_clients()))<CR>
 
 nmap <leader>sit <cmd>Telescope treesitter<cr>
 
