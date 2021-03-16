@@ -7,6 +7,8 @@ There are two design goals:
 
 The core toolchain is tmux, zsh, neovim, and fzf.
 
+![](nvim-tscope-sym.png)
+
 # Installation
 
 `make install` - Installs homebrew, Ruby, default homebrew formalae (including tmux),
@@ -55,10 +57,16 @@ Use `z`. For example:
 
 ```
 ~ ➜ cd ~/workspace/myrailsproj
-myrailsproj on  master ➜ cd
+myrailsproj on  master via 💎 v3.0.0 ➜ cd
 ~ ➜ z proj
-myrailsproj on  master ➜ 
+myrailsproj on  master via 💎 v3.0.0 ➜ 
 ```
+
+## Working with git
+
+This shows a Rails project with two modified files. They are each diffed using `^od`, then added to the git staging area using `^oa`. 
+
+![](ctrlo-git.gif)
 
 # Neovim
 

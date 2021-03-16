@@ -29,10 +29,7 @@ call plug#begin('~/.config/nvim/plugs')
 
 "  Plug 'kassio/neoterm'
 "  Plug 'tpope/vim-fugitive'
-"  Plug 'tpope/vim-rails'
-
-"  Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-"  Plug 'junegunn/fzf.vim'
+  Plug 'tpope/vim-rails'
 
   Plug 'vim-test/vim-test'
   Plug 'rcarriga/vim-ultest'
