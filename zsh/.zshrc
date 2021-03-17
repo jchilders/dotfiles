@@ -20,7 +20,7 @@ foreach file (
   aliases.zsh
   exports.zsh
   fzf-widgets.zsh
-  widgets.zsh
+  ctrlo-widgets.zsh
 ) {
   source $ZDOTDIR/config/$file
 }
