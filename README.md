@@ -1,11 +1,13 @@
-Zsh/Neovim/Tmux configurations targeted towards Ruby on Rails development under macOS.
-There are two design goals:
+Zsh/Neovim/Tmux configurations targeted towards Ruby on Rails development under
+macOS. Provides the following out of the box:
 
-1. Be able to do as much work as possible without your hands ever needing to
-   leave the home row
-2. Be able to open files in as few keystrokes as possible
-
-The core toolchain is tmux, zsh, neovim, and fzf.
+- zsh fuzzy file finding
+- zsh hotkeys (widgets) for common tasks
+- neovim LSP integration for Ruby
+- neovim fuzzy search via telescope.neovim
+- Tab completion for neovim
+- Run tests from within neovim 
+- tmux session/window/pane management
 
 ![](nvim-tscope-sym.png)
 
@@ -17,15 +19,18 @@ needing to bootstrap up a new laptop used in development.
 
 `make dotfiles` - Links configuration files (dotfiles) only, without installing anything
 
-`make neovim-config neovim-plugins` - Install neovim configuration files (dotfiles) and plugins. Use this if you already have neovim installed and just want to test out the neovim configuration.
+`make neovim-config neovim-plugins` - Install neovim configuration files
+(dotfiles) and plugins. Use this if you already have neovim installed and just
+want to test out the neovim configuration.
 
-`make zsh-config` - Install zsh configuration files (dotfiles). Use this if you just want to test out the zsh configuration.
+`make zsh-config` - Install zsh configuration files (dotfiles). Use this if you
+just want to test out the zsh configuration.
 
 `make` - List all available targets
 
 # zsh
 ## Mappings
-These mappings (zsh calls them "widgets") are available:
+The following mappings (widgets) are available from the zsh prompt:
 
 | mapping | description |
 | :-----: | :---------- |
@@ -78,7 +83,6 @@ Leader key is `,`.
 
 ## Mappings
 
-An attempt was made to avoid collision with native mappings. See `nvim/config/mappings*.vim` for the complete list. Ruby-specific mappings are kept in `nvim/after/ftplugin/ruby.vim`.
 
 | mapping | description | provided by |
 | :-----: | :---------- | :---------: |
