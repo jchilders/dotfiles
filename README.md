@@ -12,10 +12,14 @@ The core toolchain is tmux, zsh, neovim, and fzf.
 # Installation
 
 `make install` - Installs homebrew, Ruby, default homebrew formalae (including tmux),
-builds Neovim from source, and links all configuation files (dotfiles). Typically used when
+builds Neovim from source, and links all configuration files (dotfiles). Typically used when
 needing to bootstrap up a new laptop used in development.
 
-`make dotfiles` - Links configuation files (dotfiles) only, without installing anything
+`make dotfiles` - Links configuration files (dotfiles) only, without installing anything
+
+`make neovim-config neovim-plugins` - Install neovim configuration files (dotfiles) and plugins. Use this if you already have neovim installed and just want to test out the neovim configuration.
+
+`make zsh-config` - Install zsh configuration files (dotfiles). Use this if you just want to test out the zsh configuration.
 
 `make` - List all available targets
 

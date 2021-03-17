@@ -1,26 +1,24 @@
 .DEFAULT_GOAL:=help
 SHELL:=/bin/zsh
+XDG_CONFIG_HOME := $$HOME/.config
 
 ##@ Install
 
 .PHONY: install
 
-install: -macos -homebrew -default-formula -nerd -ruby -python -dotfiles -neovim ## Install all the things
+install: -macos -homebrew -default-formula -nerd -ruby -python -dotfiles -neovim -zsh ## Install all the things
 
 # TODO: Use XDG_CONFIG_HOME
 # zsh:
 #   > test -d $XDG_CONFIG_HOME ; echo $?
 #   0
 cwd := $(shell pwd)
-dotfiles: ## Link configuration files
+dotfiles: -zsh-config -neovim-config ## Link configuration files
 	stow --restow --target=$$HOME tmux
 	stow --restow --target=$$HOME git
 	stow --restow --target=$$HOME ruby
-	ln -s $(cwd)/.zshenv $$HOME/.zshenv
-	stow --restow --target=$(cfgd)/zsh zsh
-	stow --restow --target=$(cfgd)/ starship/*
+	stow --restow --target=$(XDG_CONFIG_HOME)/ starship/*
 
-# TODO: Automate installation of Xcode
 macos: ## Set macOS defaults and install command line developer tools
   ifeq ($(shell uname -s), Darwin)
 	-xcode-select --install
@@ -30,7 +28,7 @@ macos: ## Set macOS defaults and install command line developer tools
 homebrew: ## Install homebrew
 	curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh | /bin/bash
 
-default-formulae: ## Install default homebrew formulae
+default-formula: ## Install default homebrew formula
 	-brew install bat exa git git-delta gpg fd fzf rg python rust starship stow tree tmux tmuxinator
 	-brew install olets/tap/zsh-abbr
 	-brew install docker docker-compose
@@ -40,11 +38,10 @@ nerd: ## Install nerd font (Needed for prompt)
 	unzip -n AnonymousPro.zip -x 'Anonymice Nerd Font Complete Windows Compatible.ttf' 'Anonymice Nerd Font Complete Mono Windows Compatible.ttf' -d $$HOME/Library/Fonts
 	rm AnonymousPro.zip
 
-neovim: -neovim-install -neovim-plugs ## Install NeoVim & plugins
+neovim: -neovim-install -neovim-config -neovim-plugins ## Install NeoVim & plugins
 
-cfgd := $$HOME/.config
 NEOVIM_SRC_DIR := "$$HOME/workspace/neovim"
-XDG_CONFIG_HOME := $$HOME/.config
+NEOVIM_CFG_DIR := "$(XDG_CONFIG_HOME)/nvim"
 
 # Have to build from source rather than just doing 'brew install neovim --HEAD`
 # because of an issue with upstream luajit. See:
@@ -64,14 +61,17 @@ endif
 	$(MAKE) -C $(NEOVIM_SRC_DIR) distclean
 	$(MAKE) -C $(NEOVIM_SRC_DIR) CMAKE_BUILD_TYPE=RelWithDebInfo; \
 	sudo $(MAKE) -C $(NEOVIM_SRC_DIR) CMAKE_INSTALL_PREFIX=/usr/local install; \
-	ln -s /usr/local/bin/nvim /usr/local/bin/vi
 
-neovim-plugs: ## Install neovim plugins
-	mkdir $(XDG_CONFIG_HOME)/nvim
-	stow --restow --target=$(cfgd)/nvim nvim
+neovim-config: ## Link neovim configuration files
+	@if [ ! -d $(NEOVIM_CFG_DIR) ]; then \
+	  mkdir $(NEOVIM_CFG_DIR); \
+	fi; \
+	stow --restow --target=$(NEOVIM_CFG_DIR) nvim
+
+neovim-plugins: neovim-config ## Install neovim plugins
 	sh -c 'curl -fLo $(HOME)/.local/share/nvim/site/autoload/plug.vim --create-dirs \
 	       https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-	nvim --headless +PlugInstall +UpdateRemotePlugins +qa
+	nvim --headless -u $(NEOVIM_CFG_DIR)/config/plugs.vim +PlugInstall +UpdateRemotePlugins +qa
 
 ruby: -rvm-install -ruby-gems ## Install Ruby-related items
 
@@ -92,15 +92,17 @@ python: -python-packages ## Install Python-related items
 python-packages: ## Install Python packages
 	-python3 -m pip install --user --upgrade pynvim
 
-zinit: ## Install plugin manager for zsh
-	mkdir ~/.zinit
-	git clone https://github.com/zdharma/zinit.git ~/.zinit/bin
+zsh: -zsh-config ## Install zsh-related items
+
+zsh-config: ## Link zsh configuration files
+	ln -s $(cwd)/.zshenv $$HOME/.zshenv
+	stow --restow --target=$(XDG_CONFIG_HOME)/zsh zsh
 
 ##@ Clean
 
 .PHONY: clean
 
-clean: -homebrew-clean -nerd-clean -rvm-clean -neovim-clean -misc-clean ## Uninstall all the things
+clean: -homebrew-clean -nerd-clean -rvm-clean -neovim-clean -misc-clean -zsh-clean ## Uninstall all the things
 
 homebrew-clean: ## Uninstall homebrew
 	curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall.sh | /bin/zsh
@@ -113,15 +115,17 @@ rvm-clean: ## Uninstall rvm
 nerd-clean: ## Uninstall nerd fonts
 	rm $$HOME/Library/Fonts/Anonymice*.ttf
 
-neovim-clean: ## Uninstall neovim, and unlink config files
+neovim-clean: -neovim-clean-cfg ## Uninstall neovim
 	-sudo rm /usr/local/bin/nvim
 	-sudo rm /usr/local/bin/vi
 	-sudo rm -r /usr/local/lib/nvim
 	-sudo rm -r /usr/local/share/nvim
 	-brew unlink neovim
-	stow --delete --target=$(cfgd)/nvim nvim
-	rm -rf $(cfgd)/nvim
 	rm -rf $$HOME/.local/share/nvim
+
+neovim-clean-cfg: ## Unlink neovim configuration files
+	stow --delete --target=$(NEOVIM_CFG_DIR) nvim
+	rm -rf $(NEOVIM_CFG_DIR)
 
 misc-clean: ## Uninstall misc files
 	-rm -rf ~/.gnupg
@@ -129,7 +133,7 @@ misc-clean: ## Uninstall misc files
 
 zsh-clean: ## Uninstall zsh-related items
 	-rm $$HOME/.zshenv
-	stow --delete --target=$$XDG_CONFIG_HOME/zsh zsh
+	stow --delete --target=$(XDG_CONFIG_HOME)/zsh zsh
 
 ##@ Helpers
 
