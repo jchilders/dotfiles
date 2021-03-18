@@ -16,17 +16,20 @@ vmap <silent> <C-c> "+y
 nmap <Leader>cw :%s/\<<C-r><C-w>\>/<C-r><C-w>
 vmap <Leader>cw y:%s/<C-r>"/<C-r>"
 
-" <Leader>l - toggle gutter. Use when you need to copy text to pasteboard, but don't want
-" extra stuff getting in the way
+" <Leader>g - Toggles display of gutter and any virtual text. Use when you
+" need to copy text to pasteboard, but don't want extra stuff getting in the
+" way
 function! g:ToggleGutter()
   if(&rnu == 1)
-    set nornu
-    set nonu
+    set nonumber
+    set norelativenumber
     set signcolumn=no
+    lua vim.lsp.diagnostic.display(vim.lsp.diagnostic.get(0, 1), 0, 1, {virtual_text = false})
   else
-    set nu
-    set rnu
+    set number
+    set relativenumber
     set signcolumn=yes
+    lua vim.lsp.diagnostic.display(vim.lsp.diagnostic.get(0, 1), 0, 1, {virtual_text = true})
   endif
 endfunc
 nmap <Leader>g <cmd>call g:ToggleGutter()<cr>
@@ -36,9 +39,9 @@ nnoremap <silent>*
     \ :let @/='\<<C-R>=expand("<cword>")<CR>\>'<CR>:set hls<CR>
 
 " Clears hlsearch after doing a search, otherwise just does normal <CR> stuff
-nnoremap <expr> <CR> {-> v:hlsearch ? ":nohl\<CR>" : "\<CR>"}()
+nnoremap <silent> <expr> <CR> {-> v:hlsearch ? ":nohl\<CR>" : "\<CR>"}()
 
-" Toggle next/previous buffers
+" Quickly toggle next/previous buffers
 nmap <silent> <Leader><Leader> <cmd>b#<CR>
 
 " For moving quickly up and down,

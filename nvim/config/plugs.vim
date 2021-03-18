@@ -21,7 +21,7 @@ call plug#begin('~/.config/nvim/plugs')
   Plug 'nvim-lua/completion-nvim'
   Plug 'steelsojka/completion-buffers'
 
-  " To investigate:::
+  " ::: to investigate :::
   " Plug 'nvim-lua/lsp-status.nvim'
   " Plug 'romgrk/barbar.nvim'
 
@@ -30,6 +30,12 @@ call plug#begin('~/.config/nvim/plugs')
 "  Plug 'kassio/neoterm'
 "  Plug 'tpope/vim-fugitive'
   Plug 'tpope/vim-rails'
+
+  " K - jumps to appropriate location in man tmux
+  " :make - invokes tmux source .tmux.conf and places all the errors (if any) in quicklist
+  " g! - executes lines as tmux command
+  " g!! - executes current line as tmux command
+  Plug 'tmux-plugins/vim-tmux'
 
   Plug 'vim-test/vim-test'
   Plug 'rcarriga/vim-ultest'

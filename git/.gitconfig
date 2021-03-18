@@ -1,11 +1,27 @@
 [core]
   whitespace = fix,-indent-with-non-tab,trailing-space,cr-at-eol
   excludesfile = /Users/jchilders/.gitignore_global
-  editor = nvim
+  editor = $EDITOR
   pager = delta
 [delta]
   features = side-by-side line-numbers decorations
   whitespace-error-style = 22 reverse
+[interactive]
+    diffFilter = delta --color-only
+[diff]
+  algorithm = patience
+  colorMoved = default
+[merge]
+	tool = vimdiff
+[pull]
+	rebase = true
+[push]
+	default = current
+[rerere]
+	enabled = true
+[rebase]
+  autoStash = true
+
 [color]
   ui = auto
 [color "branch"]
@@ -42,17 +58,3 @@
   undo = !git reset --hard remotes/origin/$(git rev-parse --abbrev-ref HEAD)
  
   ; git for-each-ref refs/heads/pr/* --format=\"%(refname)\" | while read ref ; do branch=${ref#refs/heads/} ; git branch -D $branch ; done
-
-[merge]
-	tool = vimdiff
-[push]
-	default = current
-[diff]
-  algorithm = patience
-  colorMoved = default
-[rerere]
-	enabled = true
-[rebase]
-  autoStash = true
-[pull]
-	rebase = true
