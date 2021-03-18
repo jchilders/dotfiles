@@ -15,7 +15,7 @@ function __eval_found_file {
 
 function __fuzzy_search_git_status_and_eval {
   __fuzzy_find_file "git status -s"
-  found_file=$(head -2 <<< "$found_file" | tail -1 | awk ' { print $2 } ')
+  found_file=$(echo "$found_file" | awk ' { print $NF } ')
   __eval_found_file $1
 }
 

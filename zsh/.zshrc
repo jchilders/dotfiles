@@ -21,10 +21,15 @@ foreach file (
   exports.zsh
   fzf-widgets.zsh
   ctrlo-widgets.zsh
+  misc-widgets.zsh
 ) {
   source $ZDOTDIR/config/$file
 }
 unset file
+
+if [[ -f $HOME/.local_settings_no_commit.zsh ]]; then
+  source $HOME/.local_settings_no_commit.zsh
+fi
 
 # Source the completions installed by homebrew
 if type brew &>/dev/null; then

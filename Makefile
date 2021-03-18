@@ -6,7 +6,7 @@ XDG_CONFIG_HOME := $$HOME/.config
 
 .PHONY: install
 
-install: -macos -homebrew -default-formula -nerd -ruby -python -dotfiles -neovim -zsh ## Install all the things
+install: -macos -homebrew -default-formula -nerd -ruby -python -dotfiles -neovim -tmux -zsh ## Install all the things
 
 # TODO: Use XDG_CONFIG_HOME
 # zsh:
@@ -14,7 +14,6 @@ install: -macos -homebrew -default-formula -nerd -ruby -python -dotfiles -neovim
 #   0
 cwd := $(shell pwd)
 dotfiles: -zsh-config -neovim-config ## Link configuration files
-	stow --restow --target=$$HOME tmux
 	stow --restow --target=$$HOME git
 	stow --restow --target=$$HOME ruby
 	stow --restow --target=$(XDG_CONFIG_HOME)/ starship/*
@@ -29,7 +28,7 @@ homebrew: ## Install homebrew
 	curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh | /bin/bash
 
 default-formula: ## Install default homebrew formula
-	-brew install bat exa git git-delta gpg fd fzf rg python rust starship stow tree tmux tmuxinator
+	-brew install bat exa git git-delta gpg fd fzf rg python rust starship stow tree
 	-brew install olets/tap/zsh-abbr
 	-brew install docker docker-compose
 
@@ -92,6 +91,22 @@ python: -python-packages ## Install Python-related items
 python-packages: ## Install Python packages
 	-python3 -m pip install --user --upgrade pynvim
 
+tmux: -tmux-config -tmux-plugins ## Install tmux
+	brew install tmux
+
+tmux-config: ## Link tmux configuration files
+	@if [ ! -d $(XDG_CONFIG_HOME)/tmux ]; then \
+	  mkdir $(XDG_CONFIG_HOME)/tmux; \
+	fi; \
+	stow --restow --target=$(XDG_CONFIG_HOME)/tmux tmux
+
+tmux-plugins: ## Install plugin manager and other related items
+	@if [ ! -d $$HOME/.tmux ]; then \
+	  mkdir $$HOME/.tmux; \
+	fi; \
+	git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+	brew install tmuxinator
+
 zsh: -zsh-config ## Install zsh-related items
 
 zsh-config: ## Link zsh configuration files
@@ -102,7 +117,7 @@ zsh-config: ## Link zsh configuration files
 
 .PHONY: clean
 
-clean: -homebrew-clean -nerd-clean -rvm-clean -neovim-clean -misc-clean -zsh-clean ## Uninstall all the things
+clean: -homebrew-clean -nerd-clean -rvm-clean -neovim-clean -misc-clean -tmux-clean -zsh-clean ## Uninstall all the things
 
 homebrew-clean: ## Uninstall homebrew
 	curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall.sh | /bin/zsh
@@ -130,6 +145,11 @@ neovim-clean-cfg: ## Unlink neovim configuration files
 misc-clean: ## Uninstall misc files
 	-rm -rf ~/.gnupg
 	-rm -rf ~/.config
+
+tmux-clean: ## Uninstall tmux
+	-brew uninstall tmux tmuxinator
+	-rm -rf ~/.tmux
+	stow --delete --target=$(XDG_CONFIG_HOME)/tmux tmux
 
 zsh-clean: ## Uninstall zsh-related items
 	-rm $$HOME/.zshenv
