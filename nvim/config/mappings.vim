@@ -6,17 +6,17 @@ let mapleader = ","
 imap jk <Esc>
 vmap jk <Esc>
 
-nmap <silent> <Leader>w <cmd>wa<CR>
-nmap <silent> <Leader>W <cmd>wqa<CR>
+nmap <silent> <leader>w <cmd>wa<CR>
+nmap <silent> <leader>W <cmd>wqa<CR>
 
 " Ctrl-C to copy visual selection to pasteboard
 vmap <silent> <C-c> "+y
 
 " Change all occurences of the current word
-nmap <Leader>cw :%s/\<<C-r><C-w>\>/<C-r><C-w>
-vmap <Leader>cw y:%s/<C-r>"/<C-r>"
+nmap <leader>cw :%s/\<<C-r><C-w>\>/<C-r><C-w>
+vmap <leader>cw y:%s/<C-r>"/<C-r>"
 
-" <Leader>g - Toggles display of gutter and any virtual text. Use when you
+" <leader>g - Toggles display of gutter and any virtual text. Use when you
 " need to copy text to pasteboard, but don't want extra stuff getting in the
 " way
 function! g:ToggleGutter()
@@ -32,7 +32,7 @@ function! g:ToggleGutter()
     lua vim.lsp.diagnostic.display(vim.lsp.diagnostic.get(0, 1), 0, 1, {virtual_text = true})
   endif
 endfunc
-nmap <Leader>g <cmd>call g:ToggleGutter()<cr>
+nmap <leader>g <cmd>call g:ToggleGutter()<cr>
 
 " Remap * to search word under cursor, but do not immediately advance to next match
 nnoremap <silent>*
@@ -42,7 +42,7 @@ nnoremap <silent>*
 nnoremap <silent> <expr> <CR> {-> v:hlsearch ? ":nohl\<CR>" : "\<CR>"}()
 
 " Quickly toggle next/previous buffers
-nmap <silent> <Leader><Leader> <cmd>b#<CR>
+nmap <silent> <leader><leader> <cmd>b#<CR>
 
 " For moving quickly up and down,
 " Goes to the first line above/below that isn't whitespace
@@ -50,9 +50,11 @@ nmap <silent> <Leader><Leader> <cmd>b#<CR>
 nnoremap gj :let _=&lazyredraw<CR>:set lazyredraw<CR>/\%<C-R>=virtcol(".")<CR>v\S<CR>:nohl<CR>:let &lazyredraw=_<CR>
 nnoremap gk :let _=&lazyredraw<CR>:set lazyredraw<CR>?\%<C-R>=virtcol(".")<CR>v\S<CR>:nohl<CR>:let &lazyredraw=_<CR>
 
+nmap <leader>rv <cmd>source $MYVIMRC<CR><cmd>echo 'Reloaded!'<CR>
+
 " Replace single quotes with doubles
-nmap <Leader>rq <cmd>s/'/"/g<CR><cmd>let @/ = ''<CR>
-nmap <Leader>rq2 <cmd>s/"/'/g<CR><cmd>let @/ = ''<CR>
+nmap <leader>rq <cmd>s/'/"/g<CR><cmd>let @/ = ''<CR>
+nmap <leader>rq2 <cmd>s/"/'/g<CR><cmd>let @/ = ''<CR>
 
 " Show attached LSP clients for current buffer
 nmap <silent> <leader>lc <cmd>lua print(vim.inspect(vim.lsp.buf_get_clients()))<CR>
@@ -63,7 +65,7 @@ nmap <leader>sit <cmd>Telescope treesitter<cr>
 nmap <leader>fmt <cmd>lua vim.lsp.buf.formatting_sync(nil, 1000)<cr>
 
 " Change (rename) symbol under cursor ('change current symbol')
-nmap <silent> <Leader>ccs <cmd>lua vim.lsp.buf.rename()<cr>
+nmap <silent> <leader>ccs <cmd>lua vim.lsp.buf.rename()<cr>
 
 map <leader>hi :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
 \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
