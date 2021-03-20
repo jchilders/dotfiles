@@ -15,6 +15,7 @@ VimLoad autocmds
 LuaLoad nvim-lspconfig
 LuaLoad telescope.nvim
 LuaLoad nvim-completion
+LuaLoad startify
 
 " VimLoad treesitter
 " LuaLoad treesitter

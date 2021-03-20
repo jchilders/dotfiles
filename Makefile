@@ -6,7 +6,7 @@ XDG_CONFIG_HOME := $$HOME/.config
 
 .PHONY: install
 
-install: -macos -homebrew -default-formula -nerd -ruby -python -dotfiles -neovim -tmux -zsh ## Install all the things
+install: -macos -homebrew -default-formula -fonts -ruby -python -dotfiles -neovim -tmux -zsh ## Install all the things
 
 # TODO: Use XDG_CONFIG_HOME
 # zsh:
@@ -28,14 +28,16 @@ homebrew: ## Install homebrew
 	curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh | /bin/bash
 
 default-formula: ## Install default homebrew formula
-	-brew install bat exa git git-delta gpg fd fzf rg python rust starship stow tree
+	-brew install bat exa git git-delta gpg fd fzf rg python rust starship stow toilet tree
 	-brew install olets/tap/zsh-abbr
 	-brew install docker docker-compose
 
-nerd: ## Install nerd font (Needed for prompt)
+fonts: ## Install fonts
 	curl -OL https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/AnonymousPro.zip
 	unzip -n AnonymousPro.zip -x 'Anonymice Nerd Font Complete Windows Compatible.ttf' 'Anonymice Nerd Font Complete Mono Windows Compatible.ttf' -d $$HOME/Library/Fonts
 	rm AnonymousPro.zip
+	## We are using this font with toilet banner generator tool
+	cp cosmic.flf /usr/local/Cellar/toilet/0.3/share/figlet
 
 neovim: -neovim-install -neovim-config -neovim-plugins ## Install NeoVim & plugins
 
@@ -117,7 +119,7 @@ zsh-config: ## Link zsh configuration files
 
 .PHONY: clean
 
-clean: -homebrew-clean -nerd-clean -rvm-clean -neovim-clean -misc-clean -tmux-clean -zsh-clean ## Uninstall all the things
+clean: -homebrew-clean -font-clean -rvm-clean -neovim-clean -misc-clean -tmux-clean -zsh-clean ## Uninstall all the things
 
 homebrew-clean: ## Uninstall homebrew
 	curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall.sh | /bin/zsh
@@ -127,8 +129,9 @@ rvm-clean: ## Uninstall rvm
 	rvm implode
 	rm -rf $HOME/.rvm
 
-nerd-clean: ## Uninstall nerd fonts
+font-clean: ## Uninstall fonts
 	rm $$HOME/Library/Fonts/Anonymice*.ttf
+	rm /usr/local/Cellar/toilet/0.3/share/figlet/cosmic.flf
 
 neovim-clean: -neovim-clean-cfg ## Uninstall neovim
 	-sudo rm /usr/local/bin/nvim

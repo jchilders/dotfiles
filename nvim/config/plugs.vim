@@ -40,6 +40,7 @@ call plug#begin('~/.config/nvim/plugs')
   Plug 'vim-test/vim-test'
   Plug 'rcarriga/vim-ultest'
 
+  Plug 'mhinz/vim-startify'
   Plug 'vim-airline/vim-airline'
   Plug 'vim-airline/vim-airline-themes'
   Plug 'embark-theme/vim', { 'as': 'embark' }
