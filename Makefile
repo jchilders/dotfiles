@@ -2,21 +2,20 @@
 SHELL:=/bin/zsh
 XDG_CONFIG_HOME := $$HOME/.config
 
+# TODO: Use jump instead of make?
+
 ##@ Install
 
 .PHONY: install
 
 install: -macos -homebrew -default-formula -fonts -ruby -python -dotfiles -neovim -tmux -zsh ## Install all the things
 
-# TODO: Use XDG_CONFIG_HOME
-# zsh:
-#   > test -d $XDG_CONFIG_HOME ; echo $?
-#   0
 cwd := $(shell pwd)
 dotfiles: -zsh-config -neovim-config ## Link configuration files
 	stow --restow --target=$$HOME git
 	stow --restow --target=$$HOME ruby
-	stow --restow --target=$(XDG_CONFIG_HOME)/ starship/*
+	stow --restow --target=$(XDG_CONFIG_HOME)/ alacritty
+	stow --restow --target=$(XDG_CONFIG_HOME)/ starship
 
 macos: ## Set macOS defaults and install command line developer tools
   ifeq ($(shell uname -s), Darwin)
@@ -142,21 +141,21 @@ neovim-clean: -neovim-clean-cfg ## Uninstall neovim
 	rm -rf $$HOME/.local/share/nvim
 
 neovim-clean-cfg: ## Unlink neovim configuration files
-	stow --delete --target=$(NEOVIM_CFG_DIR) nvim
+	stow --target=$(NEOVIM_CFG_DIR) --delete nvim
 	rm -rf $(NEOVIM_CFG_DIR)
 
 misc-clean: ## Uninstall misc files
-	-rm -rf ~/.gnupg
-	-rm -rf ~/.config
+	stow --target=$(XDG_CONFIG_HOME) --delete starship
+	stow --target=$(XDG_CONFIG_HOME) --delete alacritty
 
 tmux-clean: ## Uninstall tmux
 	-brew uninstall tmux tmuxinator
 	-rm -rf ~/.tmux
-	stow --delete --target=$(XDG_CONFIG_HOME)/tmux tmux
+	stow --target=$(XDG_CONFIG_HOME)/tmux --delete tmux
 
 zsh-clean: ## Uninstall zsh-related items
 	-rm $$HOME/.zshenv
-	stow --delete --target=$(XDG_CONFIG_HOME)/zsh zsh
+	stow --target=$(XDG_CONFIG_HOME)/zsh --delete zsh
 
 ##@ Helpers
 
