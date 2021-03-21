@@ -24,15 +24,21 @@ function! g:ToggleGutter()
     set nonumber
     set norelativenumber
     set signcolumn=no
+    " TODO: Get this to work with virutal text not added by the LSP.
+    " See :h nvim_buf_set_virtual_text
     lua vim.lsp.diagnostic.display(vim.lsp.diagnostic.get(0, 1), 0, 1, {virtual_text = false})
+    call GitBlameDisable()
   else
     set number
     set relativenumber
     set signcolumn=yes
     lua vim.lsp.diagnostic.display(vim.lsp.diagnostic.get(0, 1), 0, 1, {virtual_text = true})
+    call GitBlameEnable()
   endif
 endfunc
 nmap <leader>g <cmd>call g:ToggleGutter()<cr>
+
+command GitBlame call GitBlameToggle()
 
 " Remap * to search word under cursor, but do not immediately advance to next match
 nnoremap <silent>*

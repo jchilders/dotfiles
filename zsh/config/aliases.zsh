@@ -1,6 +1,7 @@
 alias ..='cd ..'
-alias l='exa -a --long --git'
+alias l='exa --all --header --long --no-permissions --no-user --color-scale --git'
 alias gcb="git rev-parse --abbrev-ref HEAD | tr -d '\n' | pbcopy"
+alias tree='exa --tree'
 
 source /usr/local/share/zsh-abbr/zsh-abbr.zsh
 

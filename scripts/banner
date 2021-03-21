@@ -1,0 +1,30 @@
+#!/usr/bin/env zsh
+
+foreach font (
+  jave/amcaaa01.flf
+  jave/filter.flf
+  jave/fire_font-k.flf
+  contributed/cosmic.flf
+) {
+  echo "$font:"
+  toilet --font $font Academy
+  toilet -k --font $font Academy
+  echo
+}
+
+# for font in ours/*.flf(.); do
+  # echo "$font:"
+  # toilet --font $font Academy
+# done
+
+# jave/fire_font-k.flf
+# jave/filter.flf
+# jave/amcaa01.flf - looks like heavy metal :)
+# contributed/cosmic.flf - looks like heavy metal :)
+
+  # echo "$font:"
+  # toilet --font $font Academy
+  # echo "$font metal:"
+  # toilet --font $font --metal Academy
+  # echo
+# }
