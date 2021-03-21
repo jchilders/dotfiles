@@ -38,7 +38,6 @@ call plug#begin('~/.config/nvim/plugs')
 
   " {{{ git
   Plug 'airblade/vim-gitgutter'
-  Plug 'f-person/git-blame.nvim'
   " git }}}
 
   " {{{ tmux

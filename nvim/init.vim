@@ -10,12 +10,10 @@ VimLoad plugs
 VimLoad looknfeel
 VimLoad autocmds
 
-" git related
-LuaLoad git-blame
-
 " VimLoad neoterm
 " LuaLoad neoterm
 LuaLoad nvim-lspconfig
+
 LuaLoad telescope.nvim
 LuaLoad nvim-completion
 LuaLoad startify
