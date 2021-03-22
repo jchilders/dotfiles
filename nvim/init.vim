@@ -24,6 +24,7 @@ LuaLoad startify
 " Mappings need to be last to ensure that ours take priority
 VimLoad mappings
 VimLoad mappings.fzf
+LuaLoad mappings.lsp
 VimLoad mappings.ultest
 
 " `vim --cmd 'profile start initvim-profiling.result' --cmd 'profile! file

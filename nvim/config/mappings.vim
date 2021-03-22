@@ -24,19 +24,13 @@ function! g:ToggleGutter()
     set nonumber
     set norelativenumber
     set signcolumn=no
-    " TODO: Get this to work with virutal text not added by the LSP.
-    " See :h nvim_buf_set_virtual_text
-    lua vim.lsp.diagnostic.display(vim.lsp.diagnostic.get(0, 1), 0, 1, {virtual_text = false})
   else
     set number
     set relativenumber
     set signcolumn=yes
-    lua vim.lsp.diagnostic.display(vim.lsp.diagnostic.get(0, 1), 0, 1, {virtual_text = true})
   endif
 endfunc
 nmap <leader>g <cmd>call g:ToggleGutter()<cr>
-
-command GitBlame call GitBlameToggle()
 
 " Remap * to search word under cursor, but do not immediately advance to next match
 nnoremap <silent>*
@@ -60,17 +54,7 @@ nmap <leader>rv <cmd>source $MYVIMRC<CR><cmd>echo 'Reloaded!'<CR>
 nmap <leader>rq <cmd>s/'/"/g<CR><cmd>let @/ = ''<CR>
 nmap <leader>rq2 <cmd>s/"/'/g<CR><cmd>let @/ = ''<CR>
 
-" Show attached LSP clients for current buffer
-nmap <silent> <leader>lc <cmd>lua print(vim.inspect(vim.lsp.buf_get_clients()))<CR>
-
-nmap <leader>sit <cmd>Telescope treesitter<cr>
-
-" Format current document
-nmap <leader>fmt <cmd>lua vim.lsp.buf.formatting_sync(nil, 1000)<cr>
-
-" Change (rename) symbol under cursor ('change current symbol')
-nmap <silent> <leader>ccs <cmd>lua vim.lsp.buf.rename()<cr>
-
+" Show highlights for current cursor position
 map <leader>hi :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
 \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
 \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>

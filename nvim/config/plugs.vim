@@ -11,7 +11,10 @@ call plug#begin('~/.config/nvim/plugs')
   Plug 'darfink/vim-plist'
   " syntax }}}
  
+  " {{{ lsp
   Plug 'neovim/nvim-lspconfig'
+  Plug 'glepnir/lspsaga.nvim'
+  " lsp }}}
 
   " {{{ telescope.nvim
   Plug 'nvim-lua/popup.nvim'
