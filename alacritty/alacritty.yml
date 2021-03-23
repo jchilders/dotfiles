@@ -60,7 +60,9 @@ window:
   decorations: full
 
   # When true, alacritty starts maximized.
-  startup_mode: 'SimpleFullscreen'
+  startup_mode: 'Windowed'
+  # startup_mode: 'FullScreen'
+  # startup_mode: 'SimpleFullscreen'
   # startup_mode: 'Maximized'
 
 scrolling:
@@ -100,7 +102,7 @@ font:
   # Offset is the extra space around each character. `offset.y` can be thought of
   # as modifying the line spacing, and `offset.x` as modifying the letter spacing.
   offset:
-    x: 0
+    x: 1
     y: 1
 
   # Glyph offset determines the locations of the glyphs within their cells with
@@ -129,13 +131,13 @@ font:
 # If `true`, bold text is drawn using the bright color variants.
 draw_bold_text_with_bright_colors: true
 
-# schemes:
-# Colors (IR Black)
+# https://github.com/alacritty/alacritty/wiki/Color-schemes
+
 colors:
   # Default colors
   primary:
     background: '#000000'
-    foreground: '#ffffff'
+    foreground: '#b0b0e0'
 
   cursor:
     text: '#ffffff'

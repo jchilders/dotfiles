@@ -15,8 +15,8 @@ let g:airline_section_y = ''
 let g:airline_section_z = "%p%% %#__accent_bold#%{g:airline_symbols.linenr}%l%#__restore__#%#__accent_bold#:%c"
 
 hi Normal ctermbg=Black
-hi Search ctermfg=White ctermbg=12 guisp=Blue
-hi IncSearch ctermfg=White ctermbg=12 guisp=Blue
+hi Search ctermfg=White ctermbg=60
+hi IncSearch ctermfg=63 ctermbg=12
 
 hi Visual ctermbg=240 ctermfg=White
 

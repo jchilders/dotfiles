@@ -42,13 +42,10 @@ nnoremap <silent> <expr> <CR> {-> v:hlsearch ? ":nohl\<CR>" : "\<CR>"}()
 " Quickly toggle next/previous buffers
 nmap <silent> <leader><leader> <cmd>b#<CR>
 
-" For moving quickly up and down,
-" Goes to the first line above/below that isn't whitespace
-" Thanks to: http://vi.stackexchange.com/a/213
-nnoremap gj :let _=&lazyredraw<CR>:set lazyredraw<CR>/\%<C-R>=virtcol(".")<CR>v\S<CR>:nohl<CR>:let &lazyredraw=_<CR>
-nnoremap gk :let _=&lazyredraw<CR>:set lazyredraw<CR>?\%<C-R>=virtcol(".")<CR>v\S<CR>:nohl<CR>:let &lazyredraw=_<CR>
-
 nmap <leader>rv <cmd>source $MYVIMRC<CR><cmd>echo 'Reloaded!'<CR>
+
+nnoremap <silent> <A-t> <cmd>lua require('lspsaga.floaterm').open_float_terminal()<CR>
+tnoremap <silent> <A-t> <C-\><C-n>:lua require('lspsaga.floaterm').close_float_terminal()<CR>
 
 " Replace single quotes with doubles
 nmap <leader>rq <cmd>s/'/"/g<CR><cmd>let @/ = ''<CR>

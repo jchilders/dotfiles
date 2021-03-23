@@ -9,7 +9,9 @@ macOS. Provides the following out of the box:
 - Run tests from within neovim 
 - tmux session/window/pane management
 
-![](nvim-tscope-sym.png)
+![](screenshot1.png)
+![](screenshot2.png)
+![](screenshot3.png)
 
 # Installation
 
