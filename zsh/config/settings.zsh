@@ -43,7 +43,6 @@ setopt HIST_REDUCE_BLANKS # Remove superfluous blanks before recording an entry.
 setopt HIST_SAVE_NO_DUPS # Don't write duplicate entries in the history file.
 setopt HIST_VERIFY # Don't execute the line directly instead perform history expansion.
 setopt INC_APPEND_HISTORY # Write to the history file immediately, not when the shell exits.
-setopt SHARE_HISTORY # Share history between all sessions.
 
 # Input/Output
 setopt NO_CLOBBER # Don't allow `>` redirection to override existing files. Use `>!` instead.

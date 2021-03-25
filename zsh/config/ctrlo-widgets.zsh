@@ -10,7 +10,7 @@ function __eval_found_file {
     print -s $cmd  # Add to history
     eval "$cmd"
   fi
-  zle reset-prompt
+  zle accept-line
 }
 
 function __fuzzy_search_git_status_and_eval {
