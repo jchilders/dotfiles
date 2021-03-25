@@ -52,6 +52,7 @@ nmap <leader>rq <cmd>s/'/"/g<CR><cmd>let @/ = ''<CR>
 nmap <leader>rq2 <cmd>s/"/'/g<CR><cmd>let @/ = ''<CR>
 
 " Show highlights for current cursor position
-map <leader>hi :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
-\ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
-\ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
+map <leader>hi <cmd>TSHighlightCapturesUnderCursor<CR>
+
+" Toggle ruby tree-sitter on/off
+nmap <leader>tog <cmd>TSToggle highlight<CR>

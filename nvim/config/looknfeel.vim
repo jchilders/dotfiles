@@ -20,5 +20,6 @@ hi IncSearch ctermfg=63 ctermbg=12
 
 hi Visual ctermbg=240 ctermfg=White
 
+set cursorline
 hi CursorLineNr cterm=underline ctermbg=Black gui=underline guibg=#000000
 hi CursorLine cterm=underline ctermbg=Black gui=underline guibg=#000000

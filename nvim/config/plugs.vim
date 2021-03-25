@@ -30,14 +30,20 @@ call plug#begin('~/.config/nvim/plugs')
   " Plug 'nvim-lua/lsp-status.nvim'
   " Plug 'romgrk/barbar.nvim'
 
-  "  Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+  " {{{ tree-sitter
+  " Problems?
+  "   :checkhealth nvim_treesitter
+  "   :TSHighlightCapturesUnderCursor
+  Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+  Plug 'nvim-treesitter/playground'
+  " tree-sitter }}}
 
   Plug 'scrooloose/nerdcommenter'
   Plug 'adelarsq/vim-matchit'
   Plug 'AndrewRadev/splitjoin.vim'      " Smart split/join code blocks
   Plug 'tpope/vim-rails'
   Plug 'vim-test/vim-test'
-  " Plug 'rcarriga/vim-ultest'
+  Plug 'rcarriga/vim-ultest'
 
   " {{{ git
   Plug 'airblade/vim-gitgutter'
@@ -55,6 +61,5 @@ call plug#begin('~/.config/nvim/plugs')
   Plug 'mhinz/vim-startify'
   Plug 'vim-airline/vim-airline'
   Plug 'vim-airline/vim-airline-themes'
-  Plug 'embark-theme/vim', { 'as': 'embark' }
   Plug 'wadackel/vim-dogrun'
 call plug#end()

@@ -10,7 +10,6 @@ set undodir=~/.local/share/nvim/backups
 set undofile
 
 set ai
-set cursorline				" highlight current line
 set fileformat=unix
 set grepprg=rg\ --vimgrep\ --no-heading\ --hidden
 set hidden

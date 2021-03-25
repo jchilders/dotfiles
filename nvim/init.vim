@@ -10,21 +10,18 @@ VimLoad plugs
 VimLoad looknfeel
 VimLoad autocmds
 
-" VimLoad neoterm
-" LuaLoad neoterm
 LuaLoad nvim-lspconfig
 
 LuaLoad telescope.nvim
 LuaLoad nvim-completion
 LuaLoad startify
 
-" VimLoad treesitter
-" LuaLoad treesitter
+LuaLoad nvim-treesitter
 
 " Mappings need to be last to ensure that ours take priority
 VimLoad mappings
 VimLoad mappings.fzf
 LuaLoad mappings.lsp
-VimLoad mappings.ultest
+" VimLoad mappings.ultest
 
 " `vim --cmd 'profile start initvim-profiling.result' --cmd 'profile! file
