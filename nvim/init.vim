@@ -20,7 +20,7 @@ LuaLoad nvim-treesitter
 
 " Mappings need to be last to ensure that ours take priority
 VimLoad mappings
-VimLoad mappings.fzf
+VimLoad mappings.ctrlo
 LuaLoad mappings.lsp
 " VimLoad mappings.ultest
 

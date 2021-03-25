@@ -11,11 +11,14 @@ vim.api.nvim_set_keymap('n', '<leader>e', "<cmd>lua require'lspsaga.diagnostic'.
 
 vim.api.nvim_set_keymap('n', '<leader>sit', "<cmd>Telescope treesitter<CR>", opts)
 
+vim.api.nvim_set_keymap('n', '<leader>[[', "<cmd>lua require'lspsaga.diagnostic'.lsp_jump_diagnostic_prev()<CR>", opts)
+vim.api.nvim_set_keymap('n', '<leader>]]', "<cmd>lua require'lspsaga.diagnostic'.lsp_jump_diagnostic_next()<CR>", opts)
+
 -- <leader>ccs - change (rename) current symbol
 vim.api.nvim_set_keymap('n', '<leader>ccs', "<cmd>lua require('lspsaga.rename').rename()<CR>", opts)
 
 -- Format current document
-vim.api.nvim_set_keymap('n', '<leader>fmt', "<leader>fmt <cmd>lua vim.lsp.buf.formatting_sync(nil, 1000)<CR>", opts)
+vim.api.nvim_set_keymap('n', '<leader>fmt', "<cmd>lua vim.lsp.buf.formatting_sync(nil, 1000)<CR>", opts)
 
 -- Show attached LSP clients for current buffer
 vim.api.nvim_set_keymap('n', '<leader>lc', "<cmd>lua print(vim.inspect(vim.lsp.buf_get_clients()))<CR>", opts)
