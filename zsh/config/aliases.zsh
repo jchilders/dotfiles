@@ -1,5 +1,5 @@
 alias ..='cd ..'
-alias l='exa --all --header --long --no-permissions --no-user --color-scale --git'
+alias l='exa --all --classify --git --header --icons --long --no-permissions --no-user --color-scale'
 alias gcb="git rev-parse --abbrev-ref HEAD | tr -d '\n' | pbcopy"
 alias tree='exa --tree'
 

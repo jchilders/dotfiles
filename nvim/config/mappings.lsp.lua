@@ -1,25 +1,26 @@
-local opts = { noremap=true, silent=true }
-vim.api.nvim_set_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
-vim.api.nvim_set_keymap('n', 'K', '<cmd>lua require(\'lspsaga.hover\').render_hover_doc()<CR>', opts)
-vim.api.nvim_set_keymap('n', '<leader>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
-vim.api.nvim_set_keymap('n', '<leader>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
-vim.api.nvim_set_keymap('n', '<leader>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
-vim.api.nvim_set_keymap('n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-vim.api.nvim_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-vim.api.nvim_set_keymap('n', '<leader>la', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
-vim.api.nvim_set_keymap('n', '<leader>e', "<cmd>lua require'lspsaga.diagnostic'.show_line_diagnostics()<CR>", opts)
+local keymaps = {
+  { 'gd', '<cmd>lua vim.lsp.buf.definition()' },
+  { 'K', '<cmd>lua require(\'lspsaga.hover\').render_hover_doc()' },
+  { '<leader>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()' },
+  { '<leader>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()' },
+  { '<leader>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))' },
+  { '<leader>rn', '<cmd>lua vim.lsp.buf.rename()' },
+  { 'gr', '<cmd>lua vim.lsp.buf.references()' },
+  { '<leader>la', '<cmd>lua vim.lsp.buf.code_action()' },
+  { '<leader>sit', '<cmd>Telescope treesitter' },
 
-vim.api.nvim_set_keymap('n', '<leader>sit', "<cmd>Telescope treesitter<CR>", opts)
+  { '<leader>e', "<cmd>lua require'lspsaga.diagnostic'.show_line_diagnostics()" },
+  { '<leader>[[', "<cmd>lua require'lspsaga.diagnostic'.lsp_jump_diagnostic_prev()" },
+  { '<leader>]]', "<cmd>lua require'lspsaga.diagnostic'.lsp_jump_diagnostic_next()" },
 
-vim.api.nvim_set_keymap('n', '<leader>[[', "<cmd>lua require'lspsaga.diagnostic'.lsp_jump_diagnostic_prev()<CR>", opts)
-vim.api.nvim_set_keymap('n', '<leader>]]', "<cmd>lua require'lspsaga.diagnostic'.lsp_jump_diagnostic_next()<CR>", opts)
+  -- <leader>ccs - change (rename) current symbol
+  { '<leader>ccs', "<cmd>lua require('lspsaga.rename').rename()" },
 
--- <leader>ccs - change (rename) current symbol
-vim.api.nvim_set_keymap('n', '<leader>ccs', "<cmd>lua require('lspsaga.rename').rename()<CR>", opts)
+  -- Format current document
+  { '<leader>fmt', '<cmd>lua vim.lsp.buf.formatting_sync(nil, 1000)' },
 
--- Format current document
-vim.api.nvim_set_keymap('n', '<leader>fmt', "<cmd>lua vim.lsp.buf.formatting_sync(nil, 1000)<CR>", opts)
+  -- Show attached LSP clients for current buffer
+  { '<leader>lc', '<cmd>lua print(vim.inspect(vim.lsp.buf_get_clients()))' },
+}
 
--- Show attached LSP clients for current buffer
-vim.api.nvim_set_keymap('n', '<leader>lc', "<cmd>lua print(vim.inspect(vim.lsp.buf_get_clients()))<CR>", opts)
-
+require("utils").set_mappings(keymaps)

@@ -4,8 +4,8 @@ vim.api.nvim_exec([[
 
 require'lspconfig'.solargraph.setup {
   cmd = { "solargraph", "stdio" },
-  filetypes = { "ruby", "eruby" },
-  on_attach = function(client, bufnr)
+  filetypes = { "ruby" },
+  on_attach = function(_, _)
     require'completion'.on_attach()
     print 'Attached to Solargraph LSP'
   end,

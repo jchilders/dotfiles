@@ -7,10 +7,12 @@ command! -nargs=1 LuaLoad exec 'luafile '.s:home.'/config/'.'<args>'.'.lua'
 
 VimLoad basic
 VimLoad plugs
-VimLoad looknfeel
+VimLoad airline
+VimLoad colors
 VimLoad autocmds
 
 LuaLoad nvim-lspconfig
+LuaLoad nvim-lspinstall
 
 LuaLoad telescope.nvim
 LuaLoad nvim-completion

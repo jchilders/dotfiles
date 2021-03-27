@@ -44,8 +44,8 @@ nmap <silent> <leader><leader> <cmd>b#<CR>
 
 nmap <leader>rv <cmd>source $MYVIMRC<CR><cmd>echo 'Reloaded!'<CR>
 
-nnoremap <silent> <A-t> <cmd>lua require('lspsaga.floaterm').open_float_terminal()<CR>
-tnoremap <silent> <A-t> <C-\><C-n>:lua require('lspsaga.floaterm').close_float_terminal()<CR>
+nnoremap <silent> <leader>t <cmd>lua require('lspsaga.floaterm').open_float_terminal()<CR>
+tnoremap <silent> <esc><esc> <C-\><C-n>:lua require('lspsaga.floaterm').close_float_terminal()<CR>
 
 " Replace single quotes with doubles
 nmap <leader>rq <cmd>s/'/"/g<CR><cmd>let @/ = ''<CR>

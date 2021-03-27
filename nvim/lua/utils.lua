@@ -2,6 +2,38 @@
 local M = {}
 local api = vim.api
 
+-- Create silnt normal mode mappings
+function M.key_mapper(lhs, rhs)
+  if (type(rhs) == "table") then
+    M.key_mapper(rhs[1], rhs[2])
+  else
+    local opts = { noremap=true, silent=true }
+    vim.api.nvim_set_keymap('n', lhs, rhs..'<CR>', opts)
+  end
+end
+
+-- Takes array of following form, e.g.:
+-- { { '<leader>u', 'gg' } }
+function M.set_mappings(keymaps)
+  for lhs, rhs in pairs(keymaps) do
+    M.key_mapper(lhs, rhs)
+  end
+end
+
+function M.dumpTable(table)
+   if type(table) == 'table' then
+      local s = '{ '
+      for k,v in pairs(table) do
+         if type(k) ~= 'number' then k = '"'..k..'"' end
+         s = s .. '['..k..'] = ' .. M.dumpTable(v) .. ','
+      end
+      return s .. '} '
+   else
+      return tostring(table)
+   end
+end
+
+-- WIP
 function M.blameVirtText()
   local ft = vim.fn.expand('%:h:t') -- get the current file extension
   if ft == '' then -- if we are in a scratch buffer or unknown filetype
@@ -39,19 +71,6 @@ function M.runCurrentSpec()
   print(M.dumpTable(currLine))
   fileLoc = string.format('Curr: %s:%d', currFile, currLine[1])
   api.nvim_buf_set_virtual_text(0, 2, currLine[1] - 1, {{ text,'GitLens' }}, {}) -- set virtual text for namespace 2 with the content from git and assign it to the higlight group 'GitLens'
-end
-
-function M.dumpTable(table)
-   if type(table) == 'table' then
-      local s = '{ '
-      for k,v in pairs(table) do
-         if type(k) ~= 'number' then k = '"'..k..'"' end
-         s = s .. '['..k..'] = ' .. M.dumpTable(v) .. ','
-      end
-      return s .. '} '
-   else
-      return tostring(table)
-   end
 end
 
 return M
