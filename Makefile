@@ -2,16 +2,17 @@
 SHELL:=/bin/zsh
 XDG_CONFIG_HOME := $$HOME/.config
 
+# TODO: Use nix instead of make?
 # TODO: Use jump instead of make?
 
 ##@ Install
 
 .PHONY: install
 
-install: -macos -homebrew -default-formula -fonts -ruby -python -dotfiles -neovim -tmux -zsh ## Install all the things
+install: -macos -homebrew -default-formula -fonts -ruby -python -cfg-all -neovim -tmux -zsh ## Install all the things
 
 cwd := $(shell pwd)
-dotfiles: -zsh-config -neovim-config ## Link configuration files
+cfg-all: -zsh-cfg -neovim-cfg ## Link configuration files
 	stow --restow --target=$$HOME git
 	stow --restow --target=$$HOME ruby
 	stow --restow --target=$(XDG_CONFIG_HOME)/ alacritty
@@ -38,7 +39,7 @@ fonts: ## Install fonts
 	## We are using this font with toilet banner generator tool
 	cp cosmic.flf /usr/local/Cellar/toilet/0.3/share/figlet
 
-neovim: -neovim-install -neovim-config -neovim-plugins ## Install NeoVim & plugins
+neovim: -neovim-install -neovim-cfg -neovim-plugins ## Install NeoVim & plugins
 
 NEOVIM_SRC_DIR := "$$HOME/workspace/neovim"
 NEOVIM_CFG_DIR := "$(XDG_CONFIG_HOME)/nvim"
@@ -62,13 +63,13 @@ endif
 	$(MAKE) -C $(NEOVIM_SRC_DIR) CMAKE_BUILD_TYPE=RelWithDebInfo; \
 	sudo $(MAKE) -C $(NEOVIM_SRC_DIR) CMAKE_INSTALL_PREFIX=/usr/local install; \
 
-neovim-config: ## Link neovim configuration files
+neovim-cfg: ## Link neovim configuration files
 	@if [ ! -d $(NEOVIM_CFG_DIR) ]; then \
 	  mkdir $(NEOVIM_CFG_DIR); \
 	fi; \
 	stow --restow --target=$(NEOVIM_CFG_DIR) nvim
 
-neovim-plugins: neovim-config ## Install neovim plugins
+neovim-plugins: neovim-cfg ## Install neovim plugins
 	sh -c 'curl -fLo $(HOME)/.local/share/nvim/site/autoload/plug.vim --create-dirs \
 	       https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 	nvim --headless -u $(NEOVIM_CFG_DIR)/config/plugs.vim +PlugInstall +UpdateRemotePlugins +qa
@@ -92,10 +93,10 @@ python: -python-packages ## Install Python-related items
 python-packages: ## Install Python packages
 	-python3 -m pip install --user --upgrade pynvim
 
-tmux: -tmux-config -tmux-plugins ## Install tmux
+tmux: -tmux-cfg -tmux-plugins ## Install tmux
 	brew install tmux
 
-tmux-config: ## Link tmux configuration files
+tmux-cfg: ## Link tmux configuration files
 	@if [ ! -d $(XDG_CONFIG_HOME)/tmux ]; then \
 	  mkdir $(XDG_CONFIG_HOME)/tmux; \
 	fi; \
@@ -108,9 +109,9 @@ tmux-plugins: ## Install plugin manager and other related items
 	git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 	brew install tmuxinator
 
-zsh: -zsh-config ## Install zsh-related items
+zsh: -zsh-cfg ## Install zsh-related items
 
-zsh-config: ## Link zsh configuration files
+zsh-cfg: ## Link zsh configuration files
 	ln -s $(cwd)/.zshenv $$HOME/.zshenv
 	stow --restow --target=$(XDG_CONFIG_HOME)/zsh zsh
 
@@ -118,7 +119,9 @@ zsh-config: ## Link zsh configuration files
 
 .PHONY: clean
 
-clean: -homebrew-clean -font-clean -rvm-clean -neovim-clean -misc-clean -tmux-clean -zsh-clean ## Uninstall all the things
+clean: -homebrew-clean -font-clean -rvm-clean -neovim-clean -misc-clean-cfg -tmux-clean -zsh-clean ## Uninstall all the things
+
+clean-all-cfg: -misc-clean-cfg -neovim-clean-cfg -tmux-clean-cfg -zsh-clean-cfg ## Unlink all configuration files
 
 homebrew-clean: ## Uninstall homebrew
 	curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall.sh | /bin/zsh
@@ -138,23 +141,26 @@ neovim-clean: -neovim-clean-cfg ## Uninstall neovim
 	-sudo rm -r /usr/local/lib/nvim
 	-sudo rm -r /usr/local/share/nvim
 	-brew unlink neovim
-	rm -rf $$HOME/.local/share/nvim
 
 neovim-clean-cfg: ## Unlink neovim configuration files
 	stow --target=$(NEOVIM_CFG_DIR) --delete nvim
-	rm -rf $(NEOVIM_CFG_DIR)
-
-misc-clean: ## Uninstall misc files
+	
+misc-clean-cfg: ## Unlink misc configs
+	stow --target=$$HOME git --delete git
 	stow --target=$(XDG_CONFIG_HOME) --delete starship
 	stow --target=$(XDG_CONFIG_HOME) --delete alacritty
 
-tmux-clean: ## Uninstall tmux
+tmux-clean: -tmux-clean-cfg ## Uninstall tmux
 	-brew uninstall tmux tmuxinator
 	-rm -rf ~/.tmux
+
+tmux-clean-cfg: ## Unlink tmux configuration files
 	stow --target=$(XDG_CONFIG_HOME)/tmux --delete tmux
 
-zsh-clean: ## Uninstall zsh-related items
+zsh-clean: -zsh-clean-cfg ## Uninstall zsh-related items
 	-rm $$HOME/.zshenv
+
+zsh-clean-cfg: ## Unlink zsh configuration files
 	stow --target=$(XDG_CONFIG_HOME)/zsh --delete zsh
 
 ##@ Helpers

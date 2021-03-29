@@ -1,7 +1,3 @@
-vim.api.nvim_exec([[
-  sign define LspDiagnosticsSignInformation text=! texthl=Todo
-]], false)
-
 require'lspconfig'.solargraph.setup {
   cmd = { "solargraph", "stdio" },
   filetypes = { "ruby" },

@@ -24,3 +24,5 @@ hi CursorLine cterm=underline ctermbg=Black gui=underline guibg=#000000
 
 hi link TSPunctDelimiter SpecialChar
 hi link TSVariable FernLeafSymbol
+
+sign define LspDiagnosticsSignInformation text=! texthl=Todo
