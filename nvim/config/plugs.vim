@@ -24,6 +24,8 @@ call plug#begin('~/.config/nvim/plugs')
   Plug 'kyazdani42/nvim-web-devicons'
   " telescope.nvim }}}
 
+  Plug 'nacro90/numb.nvim' " :<line number> 'peeks' the line before you hit enter
+
   Plug 'nvim-lua/completion-nvim'
   Plug 'steelsojka/completion-buffers'
 
@@ -40,7 +42,7 @@ call plug#begin('~/.config/nvim/plugs')
   " tree-sitter }}}
 
   Plug 'scrooloose/nerdcommenter'
-  Plug 'adelarsq/vim-matchit'
+  " Plug 'adelarsq/vim-matchit'
   Plug 'AndrewRadev/splitjoin.vim'      " Smart split/join code blocks
   Plug 'tpope/vim-rails'
   Plug 'vim-test/vim-test'

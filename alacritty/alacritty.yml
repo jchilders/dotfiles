@@ -158,12 +158,12 @@ colors:
   # Bright colors
   bright:
     black:   '#6b7089'
-    red:     '#e98989'
+    red:     '#f05050'
     green:   '#c0ca8e'
     yellow:  '#e9b189'
-    blue:    '#91acd1'
+    blue:    '#5151ff'
     magenta: '#ada0d3'
-    cyan:    '#95c4ce'
+    cyan:    '#2050ff'
     white:   '#d2d4de'
 
   primary:

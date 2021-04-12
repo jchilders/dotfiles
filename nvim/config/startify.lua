@@ -2,7 +2,8 @@
 
 -- print current directory as a banner in the startify header
 local cwd = vim.fn.split(vim.fn.getcwd(), '/')
-local banner = vim.fn.system("toilet --font cosmic -W "..cwd[#cwd])
+local width = vim.fn['winwidth']('%')
+local banner = vim.fn.system("toilet --font cosmic -W --width "..width.." "..cwd[#cwd])
 local header = vim.fn['startify#pad'](vim.fn.split(banner, '\n'))
 vim.g.startify_custom_header = header
 

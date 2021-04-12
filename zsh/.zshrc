@@ -39,5 +39,7 @@ if type brew &>/dev/null; then
   compinit
 fi
 
+export MANPAGER='nvim +Man!'
+
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 export PATH="$PATH:$HOME/.rvm/bin"
