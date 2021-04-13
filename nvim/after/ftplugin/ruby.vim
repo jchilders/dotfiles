@@ -13,6 +13,7 @@ nnoremap <silent> <Leader>rt <cmd>call RunMostRecentlyModifiedSpec()<CR>
 
 " TODO: make it look for *_spec.rb files to make sure it doesn't try and run
 " non-spec files, e.g. spec_helper.rb
+" TODO: Save current buffer if modified
 function! g:RunMostRecentlyModifiedSpec()
   let find_str = "find spec -type f -exec stat -f '%a %N' {} \\\; | sort -r | head -1 | awk \'{print \\$NF}'"
   let cmd_str = "rspec \\$(".find_str.")"
