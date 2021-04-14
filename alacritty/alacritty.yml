@@ -60,8 +60,8 @@ window:
   decorations: full
 
   # When true, alacritty starts maximized.
-  startup_mode: 'Windowed'
-  # startup_mode: 'FullScreen'
+  # startup_mode: 'Windowed'
+  startup_mode: 'FullScreen'
   # startup_mode: 'SimpleFullscreen'
   # startup_mode: 'Maximized'
 

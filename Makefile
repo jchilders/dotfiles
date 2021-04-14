@@ -12,7 +12,7 @@ XDG_CONFIG_HOME := $$HOME/.config
 install: -macos -homebrew -default-formula -fonts -ruby -python -cfg-all -neovim -tmux -zsh ## Install all the things
 
 cwd := $(shell pwd)
-all-cfg: -git-cfg -zsh-cfg -neovim-cfg ## Link configuration files
+all-cfg: -git-cfg -zsh-cfg -neovim-cfg -tmux-cfg ## Link configuration files
 	stow --restow --target=$$HOME ruby
 	stow --restow --target=$(XDG_CONFIG_HOME)/ alacritty
 	stow --restow --target=$(XDG_CONFIG_HOME)/ starship
