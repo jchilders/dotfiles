@@ -1,6 +1,17 @@
-Zsh/Neovim/Tmux configurations targeted towards Ruby on Rails development under
-macOS. Provides the following out of the box:
+# Philosophy
 
+- Unix as IDE
+- Eliminate need for mice/trackpads
+- Eliminate need for arrow keys
+- *Quickly* get to files you need
+
+This repo was primarily started to allow me to get up to running quickly on new
+laptops. I had never actually written a Makefile before, so it uses make to
+install everything. This includes:
+
+- Building neovim nightly from source
+- Linking (using GNU stow) dotfiles/config files for zsh, neovim, tmux, and others
+- Setting macOS defaults
 - zsh fuzzy file finding
 - zsh hotkeys (widgets) for common tasks
 - neovim LSP integration for Ruby

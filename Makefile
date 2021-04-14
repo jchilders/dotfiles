@@ -12,8 +12,7 @@ XDG_CONFIG_HOME := $$HOME/.config
 install: -macos -homebrew -default-formula -fonts -ruby -python -cfg-all -neovim -tmux -zsh ## Install all the things
 
 cwd := $(shell pwd)
-cfg-all: -zsh-cfg -neovim-cfg ## Link configuration files
-	stow --restow --target=$$HOME git
+all-cfg: -git-cfg -zsh-cfg -neovim-cfg ## Link configuration files
 	stow --restow --target=$$HOME ruby
 	stow --restow --target=$(XDG_CONFIG_HOME)/ alacritty
 	stow --restow --target=$(XDG_CONFIG_HOME)/ starship
@@ -38,6 +37,9 @@ fonts: ## Install fonts
 	rm AnonymousPro.zip
 	## We are using this font with toilet banner generator tool
 	cp cosmic.flf /usr/local/Cellar/toilet/0.3/share/figlet
+
+git-cfg: ## Link git configuration files
+	stow --restow --target=$$HOME git
 
 neovim: -neovim-install -neovim-cfg -neovim-plugins ## Install NeoVim & plugins
 
@@ -119,9 +121,12 @@ zsh-cfg: ## Link zsh configuration files
 
 .PHONY: clean
 
-clean: -homebrew-clean -font-clean -rvm-clean -neovim-clean -misc-clean-cfg -tmux-clean -zsh-clean ## Uninstall all the things
+clean: -homebrew-clean -font-clean -rvm-clean -neovim-clean -misc-clean-cfg -tmux-clean -zsh-clean-cfg ## Uninstall all the things
 
-clean-all-cfg: -misc-clean-cfg -neovim-clean-cfg -tmux-clean-cfg -zsh-clean-cfg ## Unlink all configuration files
+clean-all-cfg: -git-clean-cfg -misc-clean-cfg -neovim-clean-cfg -tmux-clean-cfg -zsh-clean-cfg ## Unlink all configuration files
+
+git-clean-cfg: ## Unlink git configuration files
+	-stow --target=$$HOME --delete git
 
 homebrew-clean: ## Uninstall homebrew
 	curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall.sh | /bin/zsh
@@ -146,7 +151,7 @@ neovim-clean-cfg: ## Unlink neovim configuration files
 	stow --target=$(NEOVIM_CFG_DIR) --delete nvim
 	
 misc-clean-cfg: ## Unlink misc configs
-	stow --target=$$HOME git --delete git
+	stow --target=$$HOME --delete ruby
 	stow --target=$(XDG_CONFIG_HOME) --delete starship
 	stow --target=$(XDG_CONFIG_HOME) --delete alacritty
 
@@ -157,11 +162,9 @@ tmux-clean: -tmux-clean-cfg ## Uninstall tmux
 tmux-clean-cfg: ## Unlink tmux configuration files
 	stow --target=$(XDG_CONFIG_HOME)/tmux --delete tmux
 
-zsh-clean: -zsh-clean-cfg ## Uninstall zsh-related items
-	-rm $$HOME/.zshenv
-
 zsh-clean-cfg: ## Unlink zsh configuration files
 	stow --target=$(XDG_CONFIG_HOME)/zsh --delete zsh
+	-rm $$HOME/.zshenv
 
 ##@ Helpers
 
