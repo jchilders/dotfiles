@@ -1,3 +1,6 @@
+-- pictographs for lsp selectors
+require('lspkind').init({})
+
 require'lspconfig'.solargraph.setup {
   cmd = { "solargraph", "stdio" },
   filetypes = { "ruby" },

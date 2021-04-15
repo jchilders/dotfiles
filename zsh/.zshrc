@@ -45,5 +45,5 @@ export MANPAGER='nvim +Man!'
 export PATH="$PATH:$HOME/.rvm/bin"
 
 if [[ ! -v TMUX ]]; then
-  tmux attach || tmux new
+  tmux attach > /dev/null 2>&1 || tmux new
 fi

@@ -25,3 +25,11 @@ function! RipgrepFzf(query, fullscreen)
   call fzf#vim#grep(initial_command, 1, fzf#vim#with_preview(spec), a:fullscreen)
 endfunction
 command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
+
+" Telescope commands:
+" lsp_document_symbols: lists methods and classes defined in current buffer
+"   - works on controllers, not specs
+" lsp_document_diagnostics: buffer linter results in telescope window
+" lsp_dynamic_workspace_symbols: all symbols for entire workspace
+" lsp_workspace_symbols: all symbols for entire workspace
+" lsp_workspace_diagnostics: workspace linter results in telescope window

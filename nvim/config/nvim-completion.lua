@@ -14,8 +14,8 @@ vim.g.completion_chain_complete_list = {
 -- can be one or more of 'exact', 'substring', 'fuzzy', and 'all'
 vim.g.completion_matching_strategy_list = { 'fuzzy' }
 
--- can be one of  "length", "alphabet", "none"
-vim.g.completion_sorting = { 'length' }
+-- can be one of "length", "alphabet", "none"
+vim.g.completion_sorting = { 'alphabet' }
 
 vim.cmd [[ autocmd BufEnter * lua require'completion'.on_attach() ]]
 

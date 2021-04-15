@@ -7,8 +7,9 @@ command! -nargs=1 LuaLoad exec 'luafile '.s:home.'/config/'.'<args>'.'.lua'
 
 VimLoad basic
 VimLoad plugs
-" status bar
-LuaLoad airline
+
+" statusline
+LuaLoad feline
 VimLoad colors
 VimLoad autocmds
 
@@ -28,6 +29,6 @@ LuaLoad nvim-treesitter
 VimLoad mappings
 VimLoad mappings.ctrlo
 LuaLoad mappings.lsp
-VimLoad mappings.ultest
+" VimLoad mappings.ultest
 
 " `vim --cmd 'profile start initvim-profiling.result' --cmd 'profile! file

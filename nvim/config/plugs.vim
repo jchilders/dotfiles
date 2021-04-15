@@ -15,6 +15,7 @@ call plug#begin('~/.config/nvim/plugs')
   Plug 'neovim/nvim-lspconfig'
   Plug 'kabouzeid/nvim-lspinstall'
   Plug 'glepnir/lspsaga.nvim'
+  Plug 'onsails/lspkind-nvim' " adds vscode-like pictograms
   " lsp }}}
 
   " {{{ telescope.nvim
@@ -28,25 +29,28 @@ call plug#begin('~/.config/nvim/plugs')
 
   Plug 'nvim-lua/completion-nvim'
   Plug 'steelsojka/completion-buffers'
+  Plug 'andymass/vim-matchup'
 
   " ::: to investigate :::
   " Plug 'nvim-lua/lsp-status.nvim'
   " Plug 'romgrk/barbar.nvim'
 
-  " {{{ tree-sitter
+  " {{{ treesitter
   " Problems?
   "   :checkhealth nvim_treesitter
   "   :TSHighlightCapturesUnderCursor
   Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
   Plug 'nvim-treesitter/playground'
-  " tree-sitter }}}
+  " treesitter }}}
 
   Plug 'scrooloose/nerdcommenter'
-  " Plug 'adelarsq/vim-matchit'
   Plug 'AndrewRadev/splitjoin.vim'      " Smart split/join code blocks
-  Plug 'tpope/vim-rails'
-  Plug 'vim-test/vim-test'
-  Plug 'rcarriga/vim-ultest'
+
+  " {{{ ruby/rails
+  " Plug 'tpope/vim-rails'
+  " Plug 'vim-test/vim-test'
+  " Plug 'rcarriga/vim-ultest'
+  " ruby/rails }}}
 
   " {{{ git
   Plug 'airblade/vim-gitgutter'
@@ -62,7 +66,6 @@ call plug#begin('~/.config/nvim/plugs')
   " tmux }}}
 
   Plug 'mhinz/vim-startify'
-  Plug 'vim-airline/vim-airline'
-  Plug 'vim-airline/vim-airline-themes'
   Plug 'wadackel/vim-dogrun'
+  Plug 'famiu/feline.nvim'
 call plug#end()
