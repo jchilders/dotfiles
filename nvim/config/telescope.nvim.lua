@@ -2,12 +2,17 @@
 
 require('telescope').setup{
   defaults = {
-    color_devicons = true,
+    borderchars = {
+      { '─', '│', '─', '│', '╭', '╮', '╯', '╰'},
+      prompt = {"─", "│", " ", "│", "╭", "╮", "│", "│"},
+      results = {"─", "│", "─", "│", "├", "┤", "╯", "╰"},
+      preview = { '─', '│', '─', '│', '╭', '╮', '╯', '╰'},
+    },
     file_ignore_patterns = { 'png', 'jpg' },
-    file_sorter =  require'telescope.sorters'.get_fzy_sorter,
-    layout_strategy = 'flex',
-    prompt_prefix = "> ",
-    scroll_strategy = 'cycle',
-    winblend = 0
+    layout_strategy = "center",
+    preview_cutoff = 1, -- Preview should always show (unless previewer = false)
+    results_height = 15,
+    sorting_strategy = "ascending",
+    results_title = false,
   }
 }

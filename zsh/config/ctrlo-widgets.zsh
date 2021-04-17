@@ -67,9 +67,16 @@ function fuzzy_edit_rails_controller {
 zle -N fuzzy_edit_rails_controller
 bindkey '^oc' fuzzy_edit_rails_controller
 
+function fuzzy_edit_file {
+  __fuzzy_find_file "fd --type=file"
+  __eval_found_file "${EDITOR:-nvim}"
+}
+zle -N fuzzy_edit_file
+bindkey '^of' fuzzy_edit_file
+
 function fuzzy_edit_any_file {
   __fuzzy_find_file "fd --type=file --hidden --no-ignore"
   __eval_found_file "${EDITOR:-nvim}"
 }
 zle -N fuzzy_edit_any_file
-bindkey '^of' fuzzy_edit_any_file
+bindkey '^oF' fuzzy_edit_any_file
