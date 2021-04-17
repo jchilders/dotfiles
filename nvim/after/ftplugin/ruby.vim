@@ -8,7 +8,6 @@ nnoremap <Leader>rp oputs "-=-=> ##{__method__} -> "<ESC>i
 nnoremap <Leader>rP Oputs "-=-=> ##{__method__} -> "<ESC>i
 
 " run most recently modified file in spec/ directory in tmux pane to the left
-" nnoremap <silent> <Leader>rt <cmd>silent !tmux send-keys -t left 'rspec $(find spec -type f -exec stat -f "\%a \%N" {} \; \| sort -r \| head -1 \| awk "{print \$2}")' 'c-m'<CR>
 nnoremap <silent> <Leader>rt <cmd>call RunMostRecentlyModifiedSpec()<CR>
 
 " TODO: make it look for *_spec.rb files to make sure it doesn't try and run

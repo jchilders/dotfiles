@@ -17,7 +17,6 @@ VimLoad autocmds
 LuaLoad init
 
 LuaLoad nvim-lspconfig
-LuaLoad nvim-lspinstall
 
 LuaLoad telescope.nvim
 LuaLoad nvim-completion
