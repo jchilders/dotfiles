@@ -8,6 +8,7 @@ fi
 export PATH="/usr/local/sbin:$PATH"
 export PATH="/usr/local/opt/mysql@5.6/bin:$PATH"
 export PATH="/usr/local/opt/openssl@1.1/bin:$PATH"
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 export PATH="$PATH:$HOME/.rvm/bin"
 
 export LDFLAGS="-L/usr/local/opt/mysql@5.6/lib -L/usr/local/opt/openssl@1.1/lib"
