@@ -9,7 +9,7 @@ XDG_CONFIG_HOME := $$HOME/.config
 
 .PHONY: install
 
-install: -macos -homebrew -default-formula -fonts -ruby -python -cfg-all -neovim -tmux -zsh ## Install all the things
+install: -macos -homebrew -default-formula -fonts -ruby -python -all-cfg -neovim -tmux -zsh ## Install all the things
 
 cwd := $(shell pwd)
 all-cfg: -git-cfg -zsh-cfg -neovim-cfg -tmux-cfg ## Link configuration files
