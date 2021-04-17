@@ -1,24 +1,13 @@
+# What?
+
+Configurations for neovim, zsh, tmux, and macOS, with a focus on neovim.
+
 # Philosophy
 
 - Unix as IDE
-- Eliminate need for mice/trackpads
-- Eliminate need for arrow keys
+- Eliminate need for mice/trackpads & arrow keys
 - *Quickly* get to files you need
-
-This repo was primarily started to allow me to get up to running quickly on new
-laptops. I had never actually written a Makefile before, so it uses make to
-install everything. This includes:
-
-- Building neovim nightly from source
-- Linking (using GNU stow) dotfiles/config files for zsh, neovim, tmux, and others
-- Setting macOS defaults
-- zsh fuzzy file finding
-- zsh hotkeys (widgets) for common tasks
-- neovim LSP integration for Ruby
-- neovim fuzzy search via telescope.neovim
-- Tab completion for neovim
-- Run tests from within neovim 
-- tmux session/window/pane management
+- VSCode is for the weak
 
 ![](screenshot1.png)
 ![](screenshot2.png)
@@ -26,20 +15,21 @@ install everything. This includes:
 
 # Installation
 
-`make install` - Installs homebrew, Ruby, default homebrew formalae (including tmux),
-builds Neovim from source, and links all configuration files (dotfiles). Typically used when
-needing to bootstrap up a new laptop used in development.
+`make install` - All The Things. Installs homebrew, Ruby, default homebrew
+formalae (including tmux), clones & builds neovim from source, and links all
+configuration files (dotfiles). Typically used when bootstraping a new
+development machine.
 
 `make dotfiles` - Links configuration files (dotfiles) only, without installing anything
 
 `make neovim-config neovim-plugins` - Install neovim configuration files
 (dotfiles) and plugins. Use this if you already have neovim installed and just
-want to test out the neovim configuration.
+want to test out the neovim configurations provided by this repo.
 
 `make zsh-config` - Install zsh configuration files (dotfiles). Use this if you
 just want to test out the zsh configuration.
 
-`make` - List all available targets
+`make` - List available targets
 
 # zsh
 ## Mappings
@@ -50,7 +40,8 @@ The following mappings (widgets) are available from the zsh prompt:
 | <kbd>^oa</kbd> | Fuzzy find modified file & add to staging area (`git add`) |
 | <kbd>^oc</kbd> | Fuzzy find Rails controller & edit |
 | <kbd>^od</kbd> | Fuzzy find modified file & diff |
-| <kbd>^of</kbd> | Fuzzy find *any* file (ignores `.gitignore`) & edit |
+| <kbd>^of</kbd> | Fuzzy find file & edit |
+| <kbd>^oF</kbd> | Fuzzy find *any* file (ignores `.gitignore`) & edit |
 | <kbd>^om</kbd> | Fuzzy find Rails model & edit |
 | <kbd>^os</kbd> | Fuzzy find modified file & edit
 | <kbd>^ov</kbd> | Fuzzy find Rails view & edit |
@@ -78,10 +69,15 @@ Defined in `zsh/config/aliases.zsh`
 Use `z`. For example:
 
 ```
-~ ➜ cd ~/workspace/myrailsproj
-myrailsproj on  master via 💎 v3.0.0 ➜ cd
-~ ➜ z proj
-myrailsproj on  master via 💎 v3.0.0 ➜ 
+➜ cd ~/workspace/myrailsproj
+➜ pwd
+/Users/jchilders/workspace/myrailsproj
+➜ cd
+➜ pwd
+/Users/jchilders
+➜ z myraiprj # <-- easy!
+➜ pwd
+/Users/jchilders/workspace/myrailsproj
 ```
 
 ## Working with git
@@ -96,12 +92,12 @@ Leader key is `,`.
 
 ## Mappings
 
-
 | mapping | description | provided by |
 | :-----: | :---------- | :---------: |
 | <kbd>^ob</kbd> | Fuzzy switch buffer by filename | telescope.nvim |
 | <kbd>^oc</kbd> | Fuzzy find Rails controller & edit | telescope.nvim |
 | <kbd>^of</kbd> | Fuzzy find file & edit | telescope.nvim |
+| <kbd>^oF</kbd> | Fuzzy find *any* file & edit (ignores `.gitignore`) | telescope.nvim |
 | <kbd>^om</kbd> | Fuzzy find Rails model & edit | telescope.nvim |
 | <kbd>^or</kbd> | Fuzzy go to symbol (method name, etc.) | telescope.nvim |
 | <kbd>^os</kbd> | Fuzzy find modified file & edit | telescope.nvim |
@@ -113,7 +109,8 @@ Leader key is `,`.
 | <kbd>gS</kbd> | Split code block | splitjoin.vim |
 | <kbd>,]]</kbd> | Go to next error/warning | neovim LSP |
 | <kbd>,[[</kbd> | Go to previous error/warning | neovim LSP |
-| <kbd>,g</kbd> | Toggle gutter | Native |
+| <kbd>,e</kbd> | Show error/warning | lspsaga.nvim |
+| <kbd>,g</kbd> | Toggle gutter | g:ToggleGutter() |
 | <kbd>,c<Space></kbd> | Comment/uncomment current line | nerd-commenter |
 | <kbd>3,c<Space></kbd> | Comment/uncomment 3 lines | nerd-commenter |
 | <kbd>Enter</kbd> | Clear highlighted search | Native |
@@ -128,3 +125,4 @@ Leader key is `,`.
 | <kbd>,bP</kbd> | Insert `binding.pry` statement above current line |
 | <kbd>,rp</kbd> | Insert `puts` statement below current line |
 | <kbd>,rP</kbd> | Insert `puts` statement above current line |
+| <kbd>,rt</kbd> | Run most recently modified spec in tmux pane to the left |
