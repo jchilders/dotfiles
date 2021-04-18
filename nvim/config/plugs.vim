@@ -6,7 +6,7 @@
 "
 "   nvim --headless +PlugInstall +qa
 
-call plug#begin('~/.config/nvim/plugs')
+call plug#begin('~/.local/share/nvim/plugs')
   " {{{ syntax
   Plug 'cespare/vim-toml'
   Plug 'darfink/vim-plist'

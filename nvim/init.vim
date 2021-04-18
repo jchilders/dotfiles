@@ -4,7 +4,7 @@
 " We use tjdevries/astronauta.nvim to load plugin specific configurations. This allows configurations to be automatically loaded from:
 "   ./ftplugin/*.lua
 "   ./after/ftplugin/*.lua
-"   ./lua/plugin/*.lua
+"   ./lua/plugin/*.lua - most things are here
 "   ./after/plugin/*.vim
 
 " Set s:home to current directory and add to runtimepath
@@ -16,13 +16,10 @@ command! -nargs=1 LuaLoad exec 'luafile '.s:home.'/config/'.'<args>'.'.lua'
 
 VimLoad basic
 VimLoad plugs
-
 VimLoad colors
 VimLoad autocmds
-
- " stuff being moved into lua
+" Stuff being moved into lua
 LuaLoad init
-
 " Mappings need to be last to ensure that ours take priority
 VimLoad mappings
 VimLoad mappings.ctrlo
