@@ -5,7 +5,7 @@ vim.cmd [[ set shortmess+=c ]]
 
 vim.g.completion_chain_complete_list = {
   default = {
-    { complete_items = { 'buffers', 'lsp' } },
+    { complete_items = { 'lsp', 'buffers' } },
     { mode = { '<c-p>' } },
     { mode = { '<c-n>' } }
   },
@@ -15,7 +15,7 @@ vim.g.completion_chain_complete_list = {
 vim.g.completion_matching_strategy_list = { 'fuzzy' }
 
 -- can be one of "length", "alphabet", "none"
-vim.g.completion_sorting = { 'alphabet' }
+vim.g.completion_sorting = { 'none' }
 
 vim.cmd [[ autocmd BufEnter * lua require'completion'.on_attach() ]]
 

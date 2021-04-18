@@ -1,11 +1,12 @@
-" https://github.com/junegunn/vim-plug
+" The configurations for these are in lua/plugin.
+"
+" Uses vim-plug: https://github.com/junegunn/vim-plug
 "
 "   :PlugInstall to install
 "
 " or from the shell:
 "
 "   nvim --headless +PlugInstall +qa
-
 call plug#begin('~/.local/share/nvim/plugs')
   " {{{ syntax
   Plug 'cespare/vim-toml'
@@ -44,10 +45,10 @@ call plug#begin('~/.local/share/nvim/plugs')
   Plug 'scrooloose/nerdcommenter'
 
   Plug 'nvim-lua/completion-nvim'
-  " Plug 'steelsojka/completion-buffers'
+  Plug 'steelsojka/completion-buffers'
 
   " ::: to investigate :::
-  " git add/status/discard. looks good.
+  " " git add/status/discard. looks good.
   " Plug 'lambdalisue/gina.vim'
   " Plug 'romgrk/barbar.nvim'
 

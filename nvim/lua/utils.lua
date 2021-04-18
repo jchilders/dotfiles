@@ -20,17 +20,39 @@ function M.set_mappings(keymaps)
   end
 end
 
-function M.dumpTable(table)
+function M.dump(table)
    if type(table) == 'table' then
       local s = '{ '
       for k,v in pairs(table) do
          if type(k) ~= 'number' then k = '"'..k..'"' end
-         s = s .. '['..k..'] = ' .. M.dumpTable(v) .. ','
+         s = s .. '['..k..'] = ' .. M.dump(v) .. ','
       end
       return s .. '} '
    else
       return tostring(table)
    end
+end
+
+-- " Statusline
+-- function! LspStatus() abort
+  -- if luaeval('#vim.lsp.buf_get_clients() > 0')
+    -- return luaeval("require('lsp-status').status()")
+  -- endif
+
+  -- return ''
+-- endfunction
+
+function M.LengthOfTable(table)
+  setmetatable(table,{__index={len=function(len) local incr=0 for _ in pairs(len) do incr=incr+1 end return incr end}})
+  return table:len()
+end
+
+function M.LspStatus()
+  if not vim.tbl_isempty(vim.lsp.buf_get_clients()) then
+    return require('lsp-status').status()
+  end
+
+  return 'X'
 end
 
 -- WIP
