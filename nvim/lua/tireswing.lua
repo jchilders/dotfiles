@@ -3,10 +3,11 @@ local ts_utils = require 'nvim-treesitter.ts_utils'
 local parsers = require'nvim-treesitter.parsers'
 
 -- To call from vim command prompt:
---   :lua print(require('tireswing').ts_root_class())
+--   :lua print(vim.inspect(require('tireswing').ts_root_class()))
 
 local M = {}
 
+-- Get root class from tree-sitter
 -- WIP
 M.ts_root_class = function()
   if not parsers.has_parser() then return end
@@ -34,5 +35,8 @@ M.ts_root_class = function()
 
   return node
 end
+
+-- local ts = require('tireswing')
+-- print(vim.inspect(M.ts_root_class()))
 
 return M

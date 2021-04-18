@@ -51,8 +51,25 @@ tnoremap <silent> <esc><esc> <C-\><C-n>:lua require('lspsaga.floaterm').close_fl
 nmap <leader>rq <cmd>s/'/"/g<CR><cmd>let @/ = ''<CR>
 nmap <leader>rq2 <cmd>s/"/'/g<CR><cmd>let @/ = ''<CR>
 
-" Show highlights for current cursor position
+" Show tree-sitter highlight group(s) for current cursor position
 map <leader>hi <cmd>TSHighlightCapturesUnderCursor<CR>
 
-" Toggle ruby tree-sitter on/off
+" Toggle tree-sitter highlighting
 nmap <leader>tog <cmd>TSToggle highlight<CR>
+
+" Execute this file
+function! s:save_and_exec() abort
+  if &filetype == 'vim'
+    :silent! write
+    :source %
+  elseif &filetype == 'lua'
+    :silent! write
+    :lua require("plenary.reload").reload_module'%'
+    :luafile %
+  endif
+
+  return
+endfunction
+
+" save and resource current file
+noremap <leader>xx :call <SID>save_and_exec()<CR>
