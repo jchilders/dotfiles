@@ -19,6 +19,7 @@ set invnumber				" show current line number in gutter
 set relativenumber			" on by default
 set scrolloff=5
 set signcolumn=yes
+set smartcase
 
 set scrolloff=8
 set sidescrolloff=15

@@ -1,6 +1,7 @@
 -- pictographs for lsp selectors
 require('lspkind').init({})
 
+local utils = require('utils')
 local nvim_lsp = require('lspconfig')
 
 nvim_lsp.solargraph.setup {
@@ -9,7 +10,7 @@ nvim_lsp.solargraph.setup {
   flags = { debounce_text_changes = 150, },
   on_attach = function(_, _)
     require'completion'.on_attach()
-    print 'Attached to Solargraph LSP'
+    print("Attached to Solargraph")
   end,
   handlers = {
     ["textDocument/publishDiagnostics"] = vim.lsp.with(

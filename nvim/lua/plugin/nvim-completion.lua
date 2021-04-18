@@ -19,7 +19,6 @@ vim.g.completion_sorting = { 'alphabet' }
 
 vim.cmd [[ autocmd BufEnter * lua require'completion'.on_attach() ]]
 
--- TODO: Make this generally available
 local function map(mode, lhs, rhs, opts)
   local options = {noremap = true}
   if opts then options = vim.tbl_extend('force', options, opts) end

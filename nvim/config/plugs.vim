@@ -1,10 +1,11 @@
 " https://github.com/junegunn/vim-plug
 "
-" :PlugInstall to install
+"   :PlugInstall to install
 "
 " or from the shell:
 "
-" nvim --headless +PlugInstall +qa
+"   nvim --headless +PlugInstall +qa
+
 call plug#begin('~/.config/nvim/plugs')
   " {{{ syntax
   Plug 'cespare/vim-toml'
@@ -15,7 +16,8 @@ call plug#begin('~/.config/nvim/plugs')
   Plug 'neovim/nvim-lspconfig'
   Plug 'kabouzeid/nvim-lspinstall'
   Plug 'glepnir/lspsaga.nvim'
-  Plug 'onsails/lspkind-nvim' " adds vscode-like pictograms
+  " adds vscode-like pictograms
+  Plug 'onsails/lspkind-nvim'
   " lsp }}}
 
   " {{{ telescope.nvim
@@ -25,14 +27,28 @@ call plug#begin('~/.config/nvim/plugs')
   Plug 'kyazdani42/nvim-web-devicons'
   " telescope.nvim }}}
 
-  Plug 'nacro90/numb.nvim' " :<line number> 'peeks' the line before you hit enter
+  " :<line number> 'peeks' the line before you hit enter
+  Plug 'nacro90/numb.nvim'
+
+  " astronauta provides:
+  "   1) Keymaps in lua
+  "     local nnoremap = vim.keymap.nnoremap
+  "     nnoremap { '<leader>hello', function() print("Hello world, from lua") end }
+  "   2) autoload lua cfgs from ftplugin/*.lua, after/ftplugin/*.lua, or
+  " lua/plugin/*.lua
+  Plug 'tjdevries/astronauta.nvim'
+
+  " Smart split/join code blocks
+  Plug 'AndrewRadev/splitjoin.vim'
+  Plug 'andymass/vim-matchup'
+  Plug 'scrooloose/nerdcommenter'
 
   Plug 'nvim-lua/completion-nvim'
-  Plug 'steelsojka/completion-buffers'
-  Plug 'andymass/vim-matchup'
+  " Plug 'steelsojka/completion-buffers'
 
   " ::: to investigate :::
-  " Plug 'nvim-lua/lsp-status.nvim'
+  " git add/status/discard. looks good.
+  " Plug 'lambdalisue/gina.vim'
   " Plug 'romgrk/barbar.nvim'
 
   " {{{ treesitter
@@ -42,9 +58,6 @@ call plug#begin('~/.config/nvim/plugs')
   Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
   Plug 'nvim-treesitter/playground'
   " treesitter }}}
-
-  Plug 'scrooloose/nerdcommenter'
-  Plug 'AndrewRadev/splitjoin.vim'      " Smart split/join code blocks
 
   " {{{ ruby/rails
   " Plug 'tpope/vim-rails'
@@ -63,9 +76,12 @@ call plug#begin('~/.config/nvim/plugs')
   " g! - executes lines as tmux command
   " g!! - executes current line as tmux command
   Plug 'tmux-plugins/vim-tmux'
+
   " tmux }}}
 
   Plug 'mhinz/vim-startify'
+  " colorscheme
   Plug 'wadackel/vim-dogrun'
+  " statusline
   Plug 'famiu/feline.nvim'
 call plug#end()
