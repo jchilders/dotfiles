@@ -3,10 +3,8 @@
 " Shows info about the CursorLine,highlight  including where its value was last set
 "   :verbose hi CursorLine
 "
-" Show all curently active higghligh groups:
+" Show all curently active highlight groups:
 "   :so $VIMRUNTIME/syntax/hitest.vim
-
-colorscheme dogrun
 
 if has("nvim")
   set termguicolors
@@ -25,4 +23,4 @@ hi CursorLine cterm=underline ctermbg=Black guibg=#18101f
 hi link TSPunctDelimiter SpecialChar
 hi link TSVariable FernLeafSymbol
 
-sign define LspDiagnosticsSignInformation text=! texthl=Todo
+sign define LspDiagnosticsSignInformation text=! texthl=WarningMsg

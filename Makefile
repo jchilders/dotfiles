@@ -49,7 +49,7 @@ NEOVIM_CFG_DIR := "$(XDG_CONFIG_HOME)/nvim"
 # Have to build from source rather than just doing 'brew install neovim --HEAD`
 # because of an issue with upstream luajit. See:
 # https://github.com/neovim/neovim/issues/13529#issuecomment-744375133
-neovim-install: ## Install neovim
+neovim-install: ## Install neovim nightly from source
 ifeq (, $(shell which cmake))
 	$(shell brew install cmake)
 endif

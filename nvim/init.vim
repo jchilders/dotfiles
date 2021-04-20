@@ -15,11 +15,14 @@ command! -nargs=1 VimLoad exec 'source '.s:home.'/config/'.'<args>'.'.vim'
 command! -nargs=1 LuaLoad exec 'luafile '.s:home.'/config/'.'<args>'.'.lua'
 
 VimLoad basic
+let g:tokyonight_style = 'night'
 VimLoad plugs
 VimLoad colors
 VimLoad autocmds
 " Stuff being moved into lua
 LuaLoad init
+
+colorscheme tokyonight
 " Mappings need to be last to ensure that ours take priority
 VimLoad mappings
 VimLoad mappings.ctrlo
