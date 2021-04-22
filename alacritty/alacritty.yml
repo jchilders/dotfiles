@@ -134,41 +134,74 @@ draw_bold_text_with_bright_colors: true
 # https://github.com/alacritty/alacritty/wiki/Color-schemes
 
 # Colors (Iceberg Dark)
-colors:
-  cursor:
-    text: '#ffffff'
-    cursor: '#107010'
+schemes:
+  default_dark: &dark
+    cursor:
+      text: '#ffffff'
+      cursor: '#109010'
 
-  # Colors (Iceberg Dark)
-  # primary:
-    # background: '#161821'
-    # foreground: '#d2d4de'
+    primary:
+      background: '#000000'
+      foreground: '#d0d0ff'
 
-  # Normal colors
-  normal:
-    black:   '#161821'
-    red:     '#e27878'
-    green:   '#b0ff72'
-    yellow:  '#e2a478'
-    blue:    '#84a0c6'
-    magenta: '#a093c7'
-    cyan:    '#89b8c2'
-    white:   '#c6c8d1'
+    # Normal colors
+    normal:
+      black:   '#161821'
+      red:     '#e27878'
+      green:   '#b0ff72'
+      yellow:  '#e2a478'
+      blue:    '#84a0c6'
+      magenta: '#a093c7'
+      cyan:    '#89b8c2'
+      white:   '#c6c8d1'
 
-  # Bright colors
-  bright:
-    black:   '#6b7089'
-    red:     '#f05050'
-    green:   '#c0ca8e'
-    yellow:  '#e9b189'
-    blue:    '#5151ff'
-    magenta: '#ada0d3'
-    cyan:    '#2050ff'
-    white:   '#d2d4de'
+    # Bright colors
+    bright:
+      black:   '#6b7089'
+      red:     '#f05050'
+      green:   '#c0ca8e'
+      yellow:  '#e9b189'
+      blue:    '#5151ff'
+      magenta: '#ada0d3'
+      cyan:    '#2050ff'
+      white:   '#d2d4de'
 
-  primary:
-    background: '#000000'
-    foreground: '#d0d0ff'
+    tokyonight_night: &tokyo
+      cursor:
+        text: '#ffffff'
+        cursor: '#10A010'
+
+      primary:
+        background: '0x000000'
+        foreground: '0xc0caf5'
+
+      # Normal colors
+      normal:
+        black:   '0x15161E'
+        red:     '0xf7768e'
+        green:   '0x9ece6a'
+        yellow:  '0xe0af68'
+        blue:    '0x7aa2f7'
+        magenta: '0xbb9af7'
+        cyan:    '0x7dcfff'
+        white:   '0xa9b1d6'
+
+      # Bright colors
+      bright:
+        black:   '0x15161E'
+        red:     '0xf7768e'
+        green:   '0x9ece6a'
+        yellow:  '0xe0af68'
+        blue:    '0x7aa2f7'
+        magenta: '0xbb9af7'
+        cyan:    '0x7dcfff'
+        white:   '0xc0caf5'
+
+      indexed_colors:
+        - { index: 16, color: '0xff9e64' }
+        - { index: 17, color: '0xdb4b4b' }
+    
+colors: *tokyo
 
   # # Normal colors
   # normal:

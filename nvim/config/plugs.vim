@@ -8,11 +8,12 @@
 "
 "   nvim --headless +PlugInstall +qa
 call plug#begin('~/.local/share/nvim/plugins')
-  " {{{ syntax
-  Plug 'cespare/vim-toml'
-  Plug 'darfink/vim-plist'
-  " syntax }}}
- 
+  " astronauta provides autoloading of lua configs from:
+  "   ftplugin/*.lua
+  "   after/ftplugin/*.lua
+  "   lua/plugin/*.lua
+  Plug 'tjdevries/astronauta.nvim'
+
   " {{{ lsp
   Plug 'neovim/nvim-lspconfig'
   Plug 'kabouzeid/nvim-lspinstall'
@@ -33,19 +34,6 @@ call plug#begin('~/.local/share/nvim/plugins')
   Plug 'nvim-telescope/telescope.nvim'
   " telescope.nvim }}}
 
-  " :<line number> 'peeks' the line before you hit enter
-  Plug 'nacro90/numb.nvim'
-
-  " astronauta provides autoloading of lua configs from:
-  "   ftplugin/*.lua
-  "   after/ftplugin/*.lua
-  "   lua/plugin/*.lua
-  Plug 'tjdevries/astronauta.nvim'
-
-  " Smart split/join code blocks
-  Plug 'AndrewRadev/splitjoin.vim'
-  Plug 'scrooloose/nerdcommenter'
-
   Plug 'nvim-lua/completion-nvim'
   Plug 'steelsojka/completion-buffers'
 
@@ -54,9 +42,12 @@ call plug#begin('~/.local/share/nvim/plugins')
   Plug 'kyazdani42/nvim-web-devicons'
 
   " ::: to investigate :::
-  " " git add/status/discard. looks good.
   " Plug 'lambdalisue/gina.vim'
   " Plug 'romgrk/barbar.nvim'
+
+  " Smart split/join code blocks
+  Plug 'AndrewRadev/splitjoin.vim'
+  Plug 'scrooloose/nerdcommenter'
 
   " {{{ ruby/rails
   " Plug 'tpope/vim-rails'
@@ -64,8 +55,15 @@ call plug#begin('~/.local/share/nvim/plugins')
   " Plug 'rcarriga/vim-ultest'
   " ruby/rails }}}
 
+  " {{{ syntax
+  Plug 'cespare/vim-toml'
+  Plug 'darfink/vim-plist'
+  " syntax }}}
+ 
   " {{{ git
   Plug 'airblade/vim-gitgutter'
+  " ::: to investigate :::
+  " " git add/status/discard. looks good.
   " git }}}
 
   " {{{ tmux
@@ -76,10 +74,16 @@ call plug#begin('~/.local/share/nvim/plugins')
   Plug 'tmux-plugins/vim-tmux'
   " tmux }}}
 
+  " {{{ misc
+  " :<line number> 'peeks' the line before you hit enter
+  Plug 'nacro90/numb.nvim'
   Plug 'mhinz/vim-startify'
+  " misc }}}
+
   " colorschemes/themes
-  Plug 'wadackel/vim-dogrun'
+  " Plug 'wadackel/vim-dogrun'
   Plug 'folke/tokyonight.nvim'
+
   " statusline
   Plug 'famiu/feline.nvim'
 call plug#end()

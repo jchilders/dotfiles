@@ -3,6 +3,8 @@ alias l='exa --all --classify --git --header --icons --long --no-permissions --n
 alias gcb="git rev-parse --abbrev-ref HEAD | tr -d '\n' | pbcopy"
 alias tree='exa --tree'
 
+alias python=/usr/local/bin/python3
+
 source /usr/local/share/zsh-abbr/zsh-abbr.zsh
 
 abbr add bi='bundle install' > /dev/null 2>&1
