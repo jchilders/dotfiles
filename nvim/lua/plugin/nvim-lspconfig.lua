@@ -8,7 +8,6 @@ nvim_lsp.solargraph.setup {
   filetypes = { "ruby" },
   flags = { debounce_text_changes = 150, },
   on_attach = function(_, _)
-    -- require'completion'.on_attach()
     print("Attached to Solargraph")
   end,
   handlers = {

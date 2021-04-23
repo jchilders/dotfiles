@@ -34,9 +34,8 @@ call plug#begin('~/.local/share/nvim/plugins')
   Plug 'nvim-telescope/telescope.nvim'
   " telescope.nvim }}}
 
-  Plug 'nvim-lua/completion-nvim'
-  Plug 'steelsojka/completion-buffers'
-
+  Plug 'hrsh7th/nvim-compe'
+  
   " adds vscode-like pictograms
   Plug 'onsails/lspkind-nvim'
   Plug 'kyazdani42/nvim-web-devicons'
