@@ -22,17 +22,32 @@ require'compe'.setup {
   };
 }
 
+vim.g.lexima_no_default_rules = true
+vim.fn['lexima#set_default_rules']()
+
+local compemap = function(lhs, rhs)
+  vim.api.nvim_set_keymap(
+    "i",
+    lhs,
+    rhs,
+    { silent = true, expr = true, noremap = true }
+  )
+end
+
+compemap("<C-Space>", "compe#complete()")
+compemap("<CR>", "compe#confirm(lexima#expand('<LT>CR>', 'i'))")
+
 local t = function(str)
   return vim.api.nvim_replace_termcodes(str, true, true, true)
 end
 
 local check_back_space = function()
-    local col = vim.fn.col('.') - 1
-    if col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') then
-        return true
-    else
-        return false
-    end
+  local col = vim.fn.col('.') - 1
+  if col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') then
+    return true
+  else
+    return false
+  end
 end
 
 -- Use (s-)tab to:

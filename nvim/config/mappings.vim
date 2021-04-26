@@ -58,18 +58,20 @@ map <leader>hi <cmd>TSHighlightCapturesUnderCursor<CR>
 nmap <leader>tog <cmd>TSToggle highlight<CR>
 
 " Execute this file
-function! s:save_and_exec() abort
-  if &filetype == 'vim'
-    :silent! write
-    :source %
-  elseif &filetype == 'lua'
-    :silent! write
-    :lua require("plenary.reload").reload_module'%'
-    :luafile %
-  endif
+if !exists('#save_and_exec')
+  function! s:save_and_exec() abort
+    if &filetype == 'vim'
+      :silent! write
+      :source %
+    elseif &filetype == 'lua'
+      :silent! write
+      :lua require("plenary.reload").reload_module'%'
+      :luafile %
+    endif
 
-  return
-endfunction
+    return
+  endfunction
+end
 
 " save and resource current file
 noremap <leader>xx :call <SID>save_and_exec()<CR>

@@ -9,12 +9,16 @@ endfunc
 
 nmap <silent> <C-o>b <cmd>Telescope buffers<CR>
 nmap <silent> <C-o>c <cmd>call FuzzyGivenDir('app/controllers')<CR>
-nmap <silent> <C-o>f <cmd>Telescope find_files<CR>
-" Big F = ALLLLL files: don't respect .gitignore, search hidden files
+nmap <silent> <C-o>f <cmd>Telescope git_files<CR>
+" Big F -> ALLLLL files: don't respect .gitignore, search hidden files
 nmap <silent> <C-o>F <cmd>Telescope find_files find_command=rg,--no-ignore,--hidden,--files<CR>
+nmap <silent> <C-o>gb <cmd>Telescope git_branches<CR>
 nmap <silent> <C-o>m <cmd>call FuzzyGivenDir('app/models')<CR>
 nmap <silent> <C-o>q <cmd>Telescope quickfix<CR>
+" Little r -> Current document symbols
 nmap <silent> <C-o>r <cmd>Telescope lsp_document_symbols<CR>
+" Big R -> All workplace symbols
+nmap <silent> <C-o>R <cmd>Telescope lsp_workspace_symbols<CR>
 nmap <silent> <C-o>s <cmd>Telescope git_status<CR>
 nmap <silent> <C-o>t <cmd>Telescope current_buffer_tags<CR>
 nmap <silent> <C-o>v <cmd>call FuzzyGivenDir('app/views')<CR>

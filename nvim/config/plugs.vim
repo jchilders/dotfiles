@@ -35,6 +35,7 @@ call plug#begin('~/.local/share/nvim/plugins')
   " telescope.nvim }}}
 
   Plug 'hrsh7th/nvim-compe'
+  Plug 'cohama/lexima.vim'
   
   " adds vscode-like pictograms
   Plug 'onsails/lspkind-nvim'
@@ -85,4 +86,9 @@ call plug#begin('~/.local/share/nvim/plugins')
 
   " statusline
   Plug 'famiu/feline.nvim'
+
+  " fix performance probs w/ CursorHold
+  " can test is by holding down j/k while current buffer is connected to
+  " Solargraph
+  Plug 'antoinemadec/FixCursorHold.nvim'
 call plug#end()

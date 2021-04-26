@@ -4,8 +4,9 @@
   editor = $EDITOR
   pager = delta
 [delta]
-  features = side-by-side line-numbers decorations
+  features = dark side-by-side line-numbers decorations
   whitespace-error-style = 22 reverse
+  hunk-header-style = omit
 [interactive]
     diffFilter = delta --color-only
 [diff]
@@ -43,9 +44,6 @@
   l = log --color --graph --pretty=format:'%Cred%h%Creset%C(yellow)%d%Creset %s %Cgreen(%cr)%C(bold blue)<%an>%Creset' --abbrev-commit
   ll = log --pretty=format:'%Cred%h%Creset%C(yellow)%d%Creset %s %Cgreen(%cr)%C(bold blue)<%an>%Creset' --decorate --numstat
   st = status -sb
-  di = diff
-  dif = diff
-  dff = diff
   cb = ! git rev-parse --abbrev-ref HEAD | tr -d '\n' | pbcopy
   co = checkout
   ci = commit
@@ -58,3 +56,6 @@
   undo = !git reset --hard remotes/origin/$(git rev-parse --abbrev-ref HEAD)
  
   ; git for-each-ref refs/heads/pr/* --format=\"%(refname)\" | while read ref ; do branch=${ref#refs/heads/} ; git branch -D $branch ; done
+[user]
+	name = James Childers
+	email = james.childers@gmail.com
