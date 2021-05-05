@@ -1,9 +1,9 @@
 -- pictographs for lsp selectors
 require('lspkind').init({})
 
-local nvim_lsp = require('lspconfig')
+local lspconfig = require('lspconfig')
 
-nvim_lsp.solargraph.setup {
+lspconfig.solargraph.setup {
   cmd = { "solargraph", "stdio" },
   filetypes = { "ruby" },
   flags = { debounce_text_changes = 150, },
@@ -38,7 +38,7 @@ else
   print("Unsupported system for sumneko")
 end
 
-nvim_lsp.sumneko_lua.setup {
+lspconfig.sumneko_lua.setup {
   cmd = {sumneko_binary, "-E", sumneko_main_path .. "/main.lua"},
   on_attach = function(_, _)
     print 'Attached to Sumneko'

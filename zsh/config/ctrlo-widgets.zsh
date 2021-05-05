@@ -19,30 +19,6 @@ function __fuzzy_search_git_status_and_eval {
   __eval_found_file $1
 }
 
-# edit file selected from git status
-function fuzzy_edit_from_git_status {
-  __fuzzy_search_git_status_and_eval "${EDITOR:-nvim}"
-}
-zle -N fuzzy_edit_from_git_status
-bindkey '^os' fuzzy_edit_from_git_status
-
-# show diff of file selected from from git status
-function fuzzy_diff_from_git_status {
-  __fuzzy_search_git_status_and_eval "git diff"
-}
-zle -N fuzzy_diff_from_git_status
-bindkey '^od' fuzzy_diff_from_git_status
-
-# git add file selected from from git status
-function fuzzy_add_from_git_status {
-  __fuzzy_search_git_status_and_eval "git add"
-  echo "${found_file} added to index"
-  echo
-  git status -sb
-}
-zle -N fuzzy_add_from_git_status
-bindkey '^oa' fuzzy_add_from_git_status
-
 # edit a file in app/models
 function fuzzy_edit_rails_model {
   __fuzzy_find_file "fd --type=file . 'app/models'"
@@ -74,9 +50,54 @@ function fuzzy_edit_file {
 zle -N fuzzy_edit_file
 bindkey '^of' fuzzy_edit_file
 
+# ANY file
 function fuzzy_edit_any_file {
   __fuzzy_find_file "fd --type=file --hidden --no-ignore"
   __eval_found_file "${EDITOR:-nvim}"
 }
 zle -N fuzzy_edit_any_file
 bindkey '^oF' fuzzy_edit_any_file
+
+# Git stuff. All prefixed with ^og
+
+# git add file selected from from git status
+function fuzzy_add_from_git_status {
+  __fuzzy_search_git_status_and_eval "git add"
+  echo "${found_file} added to index"
+  echo
+  git status -sb
+}
+zle -N fuzzy_add_from_git_status
+bindkey '^oga' fuzzy_add_from_git_status
+
+function fuzzy_switch_branch {
+  # Copy current branch name to pasteboard
+  # TODO: Save current branch to var, add that var to fzf list
+  # TODO: Stash if neccessary
+  git branch --show-current | tr -d '\n' | pbcopy
+  
+  local branch=$(git branch --sort=-committerdate --remotes | rg -v '/HEAD\s' | cut -c 10- | fzf)
+
+  if [[ '' != $branch ]]; then
+    git checkout $branch
+    zle accept-line
+  else
+    zle reset-prompt
+  fi
+}
+zle -N fuzzy_switch_branch
+bindkey '^ogb' fuzzy_switch_branch
+
+# show diff of file selected from from git status
+function fuzzy_diff_from_git_status {
+  __fuzzy_search_git_status_and_eval "git diff"
+}
+zle -N fuzzy_diff_from_git_status
+bindkey '^ogd' fuzzy_diff_from_git_status
+
+# edit file selected from git status
+function fuzzy_edit_from_git_status {
+  __fuzzy_search_git_status_and_eval "${EDITOR:-nvim}"
+}
+zle -N fuzzy_edit_from_git_status
+bindkey '^ogs' fuzzy_edit_from_git_status
