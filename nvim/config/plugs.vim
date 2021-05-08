@@ -48,7 +48,7 @@ call plug#begin('~/.local/share/nvim/plugins')
 
   " Smart split/join code blocks
   Plug 'AndrewRadev/splitjoin.vim'
-  Plug 'scrooloose/nerdcommenter'
+  Plug 'b3nj5m1n/kommentary'
 
   " {{{ ruby/rails
   " Plug 'tpope/vim-rails'
