@@ -76,18 +76,22 @@ neovim-plugins: neovim-cfg ## Install neovim plugins
 	       https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 	nvim --headless -u $(NEOVIM_CFG_DIR)/config/plugs.vim +PlugInstall +UpdateRemotePlugins +qa
 
-ruby: -rvm-install -ruby-gems ## Install Ruby-related items
+ruby: -rvm-install ## Install Ruby-related items
 
 rvm-install: ## Install Ruby Version Manager
 	@if [[ `which rvm &>/dev/null && $?` != 0 ]]; then \
-	  curl -sSL https://get.rvm.io | bash -s stable --rails; \
+	  curl -sSL https://get.rvm.io | bash -s stable --rails ; \
 	else \
 	  print 'RVM already installed. Doing nothing'; \
 	fi
+	if [[ ! -f $$HOME/.rvm/gemsets/default.gems ]]; then \
+	  cp $(cwd)/default.gems $$HOME/.rvm/gemsets/default.gems; \
+	else; \
+	  cat $(cwd)/default.gems >> $$HOME/.rvm/gemsets/default.gems; \
+	fi; \
 
-ruby-gems: ## Install default gems
-	rvm gemset use global
-	gem install solargraph neovim ripper-tags
+rvm-clean: ## Uninstall Ruby Version Manager
+	rvm implode
 
 python: -python-packages ## Install Python-related items
 
@@ -131,10 +135,6 @@ git-clean-cfg: ## Unlink git configuration files
 homebrew-clean: ## Uninstall homebrew
 	curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall.sh | /bin/zsh
 	rm -r /usr/local/var/homebrew
-
-rvm-clean: ## Uninstall rvm
-	rvm implode
-	rm -rf $HOME/.rvm
 
 font-clean: ## Uninstall fonts
 	rm $$HOME/Library/Fonts/Anonymice*.ttf

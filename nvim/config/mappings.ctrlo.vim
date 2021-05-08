@@ -13,6 +13,8 @@ nmap <silent> <C-o>f <cmd>Telescope git_files<CR>
 " Big F -> ALLLLL files: don't respect .gitignore, search hidden files
 nmap <silent> <C-o>F <cmd>Telescope find_files find_command=rg,--no-ignore,--hidden,--files<CR>
 nmap <silent> <C-o>gb <cmd>Telescope git_branches<CR>
+" <g>rep <s>tring
+nmap <silent> <C-o>gs <cmd>Telescope grep_string<CR>
 nmap <silent> <C-o>m <cmd>call FuzzyGivenDir('app/models')<CR>
 nmap <silent> <C-o>q <cmd>Telescope quickfix<CR>
 " Little r -> Current document symbols
@@ -24,13 +26,6 @@ nmap <silent> <C-o>t <cmd>Telescope current_buffer_tags<CR>
 nmap <silent> <C-o>v <cmd>call FuzzyGivenDir('app/views')<CR>
 
 " Not currently used
-function! RipgrepFzf(query, fullscreen)
-  let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case -- %s || true'
-  let initial_command = printf(command_fmt, shellescape(a:query))
-  let reload_command = printf(command_fmt, '{q}')
-  let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
-  call fzf#vim#grep(initial_command, 1, fzf#vim#with_preview(spec), a:fullscreen)
-endfunction
 command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
 
 " Telescope commands:

@@ -76,7 +76,11 @@ function fuzzy_switch_branch {
   # TODO: Stash if neccessary
   git branch --show-current | tr -d '\n' | pbcopy
   
-  local branch=$(git branch --sort=-committerdate --remotes | rg -v '/HEAD\s' | cut -c 10- | fzf)
+  # 1. List remote branches & sort by most recently commited to
+  # 2. Get rid of the HEAD entry
+  # 3. Remove the "   origin/" from the beginning
+  # 4. Fuzzy search, ties go to those earlier in the search results
+  local branch=$(git branch --sort=-committerdate --remotes | rg -v '/HEAD\s' | cut -c 10- | fzf --tiebreak=index)
 
   if [[ '' != $branch ]]; then
     git checkout $branch
