@@ -6,50 +6,45 @@ XDG_CONFIG_HOME := $$HOME/.config
 # TODO: Use jump instead of make?
 
 ##@ Install
+install: -macos -homebrew -homebrew-defaults -fonts -ruby -python -cfg -neovim -tmux -zsh -alacritty ## Install all the things
 
-.PHONY: install
-
-install: -macos -homebrew -default-formula -fonts -ruby -python -all-cfg -neovim -tmux -zsh ## Install all the things
+clean: -homebrew-clean -fonts-clean -rvm-clean -neovim-clean -misc-cfg-clean -tmux-clean -zsh-cfg-clean ## Uninstall all the things
 
 cwd := $(shell pwd)
-all-cfg: -git-cfg -zsh-cfg -neovim-cfg -tmux-cfg ## Link configuration files
+cfg: -git-cfg -zsh-cfg -neovim-cfg -tmux-cfg -alacritty-cfg ## Link configuration files
 	stow --restow --target=$$HOME ruby
 	stow --restow --target=$(XDG_CONFIG_HOME)/ alacritty
 	stow --restow --target=$(XDG_CONFIG_HOME)/ starship
 
-macos: ## Set macOS defaults and install command line developer tools
-  ifeq ($(shell uname -s), Darwin)
-	-xcode-select --install
-	./macos
-  endif
+cfg-clean: -git-cfg-clean -misc-cfg-clean -neovim-cfg-clean -tmux-cfg-clean -zsh-cfg-clean -alacritty-cfg-clean ## Unlink all configuration files
 
+##@ Homebrew
 homebrew: ## Install homebrew
 	curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh | /bin/bash
 
-default-formula: ## Install default homebrew formula
-	-brew install bat exa fd fzf git git-delta gpg just python rg rust starship stow toilet
+homebrew-clean: ## Uninstall homebrew
+	curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall.sh | /bin/zsh
+	rm -r /usr/local/var/homebrew
+
+homebrew-defaults: ## Install default homebrew formulae
+	-brew install bat exa fd fzf git git-delta gpg just python rg rust starship stow tldr toilet
 	-brew install olets/tap/zsh-abbr
 	-brew install docker docker-compose
 
-fonts: ## Install fonts
-	curl -OL https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/AnonymousPro.zip
-	unzip -n AnonymousPro.zip -x 'Anonymice Nerd Font Complete Windows Compatible.ttf' 'Anonymice Nerd Font Complete Mono Windows Compatible.ttf' -d $$HOME/Library/Fonts
-	rm AnonymousPro.zip
-	## We are using this font with toilet banner generator tool
-	cp cosmic.flf /usr/local/Cellar/toilet/0.3/share/figlet
+##@ Neovim
+neovim: -neovim-bulid -neovim-cfg -neovim-plugins ## Install Neovim, configurations, & plugins
 
-git-cfg: ## Link git configuration files
-	stow --restow --target=$$HOME git
-
-neovim: -neovim-install -neovim-cfg -neovim-plugins ## Install NeoVim & plugins
-
-NEOVIM_SRC_DIR := "$$HOME/workspace/neovim"
-NEOVIM_CFG_DIR := "$(XDG_CONFIG_HOME)/nvim"
+neovim-clean: -neovim-cfg-clean ## Uninstall Neovim, configurations, & plugins
+	-sudo rm /usr/local/bin/nvim
+	-sudo rm /usr/local/bin/vi
+	-sudo rm -r /usr/local/lib/nvim
+	-sudo rm -r /usr/local/share/nvim
+	-brew unlink neovim
 
 # Have to build from source rather than just doing 'brew install neovim --HEAD`
 # because of an issue with upstream luajit. See:
 # https://github.com/neovim/neovim/issues/13529#issuecomment-744375133
-neovim-install: ## Install neovim nightly from source
+neovim-bulid: ## Build and install neovim nightly from source
 ifeq (, $(shell which cmake))
 	$(shell brew install cmake)
 endif
@@ -71,14 +66,35 @@ neovim-cfg: ## Link neovim configuration files
 	fi; \
 	stow --restow --target=$(NEOVIM_CFG_DIR) nvim
 
+neovim-cfg-clean: ## Unlink neovim configuration files
+	stow --target=$(NEOVIM_CFG_DIR) --delete nvim
+
 neovim-plugins: neovim-cfg ## Install neovim plugins
 	sh -c 'curl -fLo $(HOME)/.local/share/nvim/site/autoload/plug.vim --create-dirs \
 	       https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 	nvim --headless -u $(NEOVIM_CFG_DIR)/config/plugs.vim +PlugInstall +UpdateRemotePlugins +qa
 
-ruby: -rvm-install ## Install Ruby-related items
+##@ Alacritty
+alacritty: alacritty-cfg ## Install Alacritty terminal emulator
+	brew install alacritty # fast
+	stow --target=$(XDG_CONFIG_HOME)/ alacritty
 
-rvm-install: ## Install Ruby Version Manager
+alacritty-clean: alacritty-cfg-clean ## Remove Alacritty terminal emulator
+	brew uninstall alacritty
+
+alacritty-cfg: ## Link Alacritty configuration files
+	stow --target=$(XDG_CONFIG_HOME)/ alacritty
+
+alacritty-cfg-clean: ## Unlink Alacritty configuration files
+	stow --target=$(XDG_CONFIG_HOME)/ --delete alacritty
+
+NEOVIM_SRC_DIR := "$$HOME/workspace/neovim"
+NEOVIM_CFG_DIR := "$(XDG_CONFIG_HOME)/nvim"
+
+##@ Languages
+ruby: -rvm ## Install Ruby-related items
+
+rvm: ## Install Ruby Version Manager
 	@if [[ `which rvm &>/dev/null && $?` != 0 ]]; then \
 	  curl -sSL https://get.rvm.io | bash -s stable --rails ; \
 	else \
@@ -99,14 +115,22 @@ python: -python-packages ## Install Python-related items
 python-packages: ## Install Python packages
 	-python3 -m pip install --user --upgrade pynvim
 
-tmux: -tmux-cfg -tmux-plugins ## Install tmux
+##@ tmux
+tmux: -tmux-cfg -tmux-plugins ## Install & configure tmux
 	brew install tmux
+
+tmux-clean: -tmux-cfg-clean ## Uninstall tmux & configuration files
+	-brew uninstall tmux tmuxinator
+	-rm -rf ~/.tmux
 
 tmux-cfg: ## Link tmux configuration files
 	@if [ ! -d $(XDG_CONFIG_HOME)/tmux ]; then \
 	  mkdir $(XDG_CONFIG_HOME)/tmux; \
 	fi; \
 	stow --restow --target=$(XDG_CONFIG_HOME)/tmux tmux
+
+tmux-cfg-clean: ## Unlink tmux configuration files
+	stow --target=$(XDG_CONFIG_HOME)/tmux --delete tmux
 
 tmux-plugins: ## Install plugin manager and other related items
 	@if [ ! -d $$HOME/.tmux ]; then \
@@ -115,61 +139,50 @@ tmux-plugins: ## Install plugin manager and other related items
 	git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 	brew install tmuxinator
 
+##@ zsh
 zsh: -zsh-cfg ## Install zsh-related items
 
 zsh-cfg: ## Link zsh configuration files
 	ln -s $(cwd)/.zshenv $$HOME/.zshenv
 	stow --restow --target=$(XDG_CONFIG_HOME)/zsh zsh
 
-##@ Clean
+zsh-cfg-clean: ## Unlink zsh configuration files
+	stow --target=$(XDG_CONFIG_HOME)/zsh --delete zsh
+	-rm $$HOME/.zshenv
 
-.PHONY: clean
+##@ Misc
+macos: ## Set macOS defaults and install command line developer tools
+  ifeq ($(shell uname -s), Darwin)
+	-xcode-select --install
+	./macos
+  endif
 
-clean: -homebrew-clean -font-clean -rvm-clean -neovim-clean -misc-clean-cfg -tmux-clean -zsh-clean-cfg ## Uninstall all the things
+fonts: ## Install fonts
+	curl -OL https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/AnonymousPro.zip
+	unzip -n AnonymousPro.zip -x 'Anonymice Nerd Font Complete Windows Compatible.ttf' 'Anonymice Nerd Font Complete Mono Windows Compatible.ttf' -d $$HOME/Library/Fonts
+	rm AnonymousPro.zip
+	## We are using this font with toilet banner generator tool
+	cp cosmic.flf /usr/local/Cellar/toilet/0.3/share/figlet
 
-clean-all-cfg: -git-clean-cfg -misc-clean-cfg -neovim-clean-cfg -tmux-clean-cfg -zsh-clean-cfg ## Unlink all configuration files
-
-git-clean-cfg: ## Unlink git configuration files
-	-stow --target=$$HOME --delete git
-
-homebrew-clean: ## Uninstall homebrew
-	curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall.sh | /bin/zsh
-	rm -r /usr/local/var/homebrew
-
-font-clean: ## Uninstall fonts
+fonts-clean: ## Uninstall fonts
 	rm $$HOME/Library/Fonts/Anonymice*.ttf
 	rm /usr/local/Cellar/toilet/0.3/share/figlet/cosmic.flf
 
-neovim-clean: -neovim-clean-cfg ## Uninstall neovim
-	-sudo rm /usr/local/bin/nvim
-	-sudo rm /usr/local/bin/vi
-	-sudo rm -r /usr/local/lib/nvim
-	-sudo rm -r /usr/local/share/nvim
-	-brew unlink neovim
+git-cfg: ## Link git configuration files
+	stow --restow --target=$$HOME git
 
-neovim-clean-cfg: ## Unlink neovim configuration files
-	stow --target=$(NEOVIM_CFG_DIR) --delete nvim
-	
-misc-clean-cfg: ## Unlink misc configs
+git-cfg-clean: ## Unlink git configuration files
+	-stow --target=$$HOME --delete git
+
+misc-cfg-clean: ## Unlink misc configs
 	stow --target=$$HOME --delete ruby
 	stow --target=$(XDG_CONFIG_HOME) --delete starship
 	stow --target=$(XDG_CONFIG_HOME) --delete alacritty
 
-tmux-clean: -tmux-clean-cfg ## Uninstall tmux
-	-brew uninstall tmux tmuxinator
-	-rm -rf ~/.tmux
-
-tmux-clean-cfg: ## Unlink tmux configuration files
-	stow --target=$(XDG_CONFIG_HOME)/tmux --delete tmux
-
-zsh-clean-cfg: ## Unlink zsh configuration files
-	stow --target=$(XDG_CONFIG_HOME)/zsh --delete zsh
-	-rm $$HOME/.zshenv
-
 ##@ Helpers
 
-help:  ## Display this help
-	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m\033[0m\n"} /^[a-zA-Z_-]+:.*?##/ { printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
+help: ## Display this help
+	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m\033[0m\n"} /^[a-zA-Z_-]+:.*?##/ { printf "  \033[36m%-15s\033[0m\t%s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
 
 -%:
 	-@$(MAKE) $*
