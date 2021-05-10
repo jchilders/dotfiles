@@ -27,16 +27,16 @@ new development machine.
 
 `make clean` - Uninstall All The Things
 
+`make cfg` - Links configuration files (dotfiles) only, without installing
+neovim or any homebrew formulae.
+
+`make cfg-clean` - Unlink configuration files
+
 `make neovim` - Install neovim nightly from source, configuration files, and
 plugins
 
 `make neovim-clean` - Uninstall neovim nightly from source, configuration
 files, and plugins
-
-`make all-cfg` - Links configuration files (dotfiles) only, without installing
-neovim or any homebrew formulae.
-
-`make cfg-clean` - Unlink configuration files
 
 `make neovim-cfg` - Install neovim configuration files
 
