@@ -12,7 +12,7 @@ abbr add dcom='docker-compose' > /dev/null 2>&1
 alias gcb="git branch --current-branch | tr -d '\n' | pbcopy"
 abbr  add gd='git diff' > /dev/null 2>&1
 abbr  add gst='git status -sb' --force > /dev/null 2>&1
-
+abbr  icat="kitty +kitten icat" > /dev/null 2>&1
 abbr add muxi='tmuxinator' > /dev/null 2>&1
 
 abbr add rc='bin/rails console' --force> /dev/null 2>&1

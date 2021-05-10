@@ -6,17 +6,16 @@ XDG_CONFIG_HOME := $$HOME/.config
 # TODO: Use jump instead of make?
 
 ##@ Install
-install: -macos -homebrew -homebrew-defaults -fonts -ruby -python -cfg -neovim -tmux -zsh -alacritty ## Install all the things
+install: -macos -homebrew -homebrew-defaults -fonts -ruby -python -cfg -neovim -tmux -zsh -kitty ## Install all the things
 
 clean: -homebrew-clean -fonts-clean -rvm-clean -neovim-clean -misc-cfg-clean -tmux-clean -zsh-cfg-clean ## Uninstall all the things
 
 cwd := $(shell pwd)
-cfg: -git-cfg -zsh-cfg -neovim-cfg -tmux-cfg -alacritty-cfg ## Link configuration files
+cfg: -git-cfg -zsh-cfg -neovim-cfg -tmux-cfg -kitty-cfg ## Link configuration files
 	stow --restow --target=$$HOME ruby
-	stow --restow --target=$(XDG_CONFIG_HOME)/ alacritty
 	stow --restow --target=$(XDG_CONFIG_HOME)/ starship
 
-cfg-clean: -git-cfg-clean -misc-cfg-clean -neovim-cfg-clean -tmux-cfg-clean -zsh-cfg-clean -alacritty-cfg-clean ## Unlink all configuration files
+cfg-clean: -git-cfg-clean -misc-cfg-clean -neovim-cfg-clean -tmux-cfg-clean -zsh-cfg-clean -kitty-cfg-clean ## Unlink all configuration files
 
 ##@ Homebrew
 homebrew: ## Install homebrew
@@ -32,6 +31,10 @@ homebrew-defaults: ## Install default homebrew formulae
 	-brew install docker docker-compose
 
 ##@ Neovim
+
+NEOVIM_SRC_DIR := "$$HOME/workspace/neovim"
+NEOVIM_CFG_DIR := "$(XDG_CONFIG_HOME)/nvim"
+
 neovim: -neovim-bulid -neovim-cfg -neovim-plugins ## Install Neovim, configurations, & plugins
 
 neovim-clean: -neovim-cfg-clean ## Uninstall Neovim, configurations, & plugins
@@ -74,25 +77,38 @@ neovim-plugins: neovim-cfg ## Install neovim plugins
 	       https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 	nvim --headless -u $(NEOVIM_CFG_DIR)/config/plugs.vim +PlugInstall +UpdateRemotePlugins +qa
 
-##@ Alacritty
-alacritty: alacritty-cfg ## Install Alacritty terminal emulator
-	brew install alacritty # fast
-	stow --target=$(XDG_CONFIG_HOME)/ alacritty
+##@ Kitty
 
-alacritty-clean: alacritty-cfg-clean ## Remove Alacritty terminal emulator
-	brew uninstall alacritty
+KITTY_CFG_DIR := "$(XDG_CONFIG_HOME)/kitty"
 
-alacritty-cfg: ## Link Alacritty configuration files
-	stow --target=$(XDG_CONFIG_HOME)/ alacritty
+kitty: kitty-cfg ## Install Kitty terminal emulator
+	brew install kitty # fast
 
-alacritty-cfg-clean: ## Unlink Alacritty configuration files
-	stow --target=$(XDG_CONFIG_HOME)/ --delete alacritty
+kitty-clean: kitty-cfg-clean ## Remove Kitty terminal emulator
+	brew uninstall kitty
 
-NEOVIM_SRC_DIR := "$$HOME/workspace/neovim"
-NEOVIM_CFG_DIR := "$(XDG_CONFIG_HOME)/nvim"
+kitty-cfg: ## Link Kitty configuration files
+	@if [ ! -d $(KITTY_CFG_DIR) ]; then \
+	  mkdir $(KITTY_CFG_DIR); \
+	fi; \
+	stow --target=$(KITTY_CFG_DIR) kitty
+
+kitty-cfg-clean: ## Unlink Kitty configuration files
+	stow --target=$(KITTY_CFG_DIR) --delete kitty
 
 ##@ Languages
-ruby: -rvm ## Install Ruby-related items
+ruby: -ruby-cfg -rvm ## Install Ruby-related items
+
+ruby-cfg: ## Link Ruby configuration files
+	stow --dir=ruby --target=$$HOME gem
+	@if [ ! -d $(XDG_CONFIG_HOME)/pry ]; then \
+	  mkdir $(XDG_CONFIG_HOME)/pry; \
+	fi; \
+	stow --dir=ruby --target=$(XDG_CONFIG_HOME)/pry pry
+
+ruby-cfg-clean: ## Unlink Ruby configuration files
+	stow --dir=ruby --target=$$HOME --delete gem
+	stow --dir=ruby --target=$(XDG_CONFIG_HOME)/pry --delete pry
 
 rvm: ## Install Ruby Version Manager
 	@if [[ `which rvm &>/dev/null && $?` != 0 ]]; then \
@@ -175,9 +191,8 @@ git-cfg-clean: ## Unlink git configuration files
 	-stow --target=$$HOME --delete git
 
 misc-cfg-clean: ## Unlink misc configs
-	stow --target=$$HOME --delete ruby
 	stow --target=$(XDG_CONFIG_HOME) --delete starship
-	stow --target=$(XDG_CONFIG_HOME) --delete alacritty
+	stow --target=$(XDG_CONFIG_HOME)/kitty --delete kitty
 
 ##@ Helpers
 

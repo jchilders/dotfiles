@@ -1,0 +1,14 @@
+new_tab academy
+title acadrs
+layout horizontal
+cd ~/workspace/academy
+launch zsh
+
+new_tab courses
+title acadrs
+cd ~/workspace/courses
+launch zsh
+
+new_tab accounts
+cd ~/workspace/accounts
+launch zsh
