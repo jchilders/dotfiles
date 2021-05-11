@@ -18,11 +18,11 @@ nmap <silent> <C-o>gs <cmd>Telescope git_status<CR>
 nmap <silent> <C-o>s <cmd>Telescope grep_string<CR>
 nmap <silent> <C-o>m <cmd>call FuzzyGivenDir('app/models')<CR>
 nmap <silent> <C-o>q <cmd>Telescope quickfix<CR>
-" Little r -> Current document symbols
-nmap <silent> <C-o>r <cmd>Telescope lsp_document_symbols<CR>
-nmap <silent> <C-o>s <cmd>Telescope grep_string<CR>
+" Little r -> LSP references 
+nmap <silent> <C-o>r <cmd>Telescope lsp_references<CR>
 " Big R -> All workplace symbols
 nmap <silent> <C-o>R <cmd>Telescope lsp_workspace_symbols<CR>
+nmap <silent> <C-o>s <cmd>Telescope grep_string<CR>
 nmap <silent> <C-o>t <cmd>Telescope current_buffer_tags<CR>
 nmap <silent> <C-o>v <cmd>call FuzzyGivenDir('app/views')<CR>
 
