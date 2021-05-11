@@ -64,9 +64,7 @@ endif
 	sudo $(MAKE) -C $(NEOVIM_SRC_DIR) CMAKE_INSTALL_PREFIX=/usr/local install; \
 
 neovim-cfg: ## Link neovim configuration files
-	@if [ ! -d $(NEOVIM_CFG_DIR) ]; then \
-	  mkdir $(NEOVIM_CFG_DIR); \
-	fi; \
+	@[ -d $(NEOVIM_CFG_DIR) ] || mkdir $(NEOVIM_CFG_DIR)
 	stow --restow --target=$(NEOVIM_CFG_DIR) nvim
 
 neovim-cfg-clean: ## Unlink neovim configuration files
@@ -88,9 +86,7 @@ kitty-clean: kitty-cfg-clean ## Remove Kitty terminal emulator
 	brew uninstall kitty
 
 kitty-cfg: ## Link Kitty configuration files
-	@if [ ! -d $(KITTY_CFG_DIR) ]; then \
-	  mkdir $(KITTY_CFG_DIR); \
-	fi; \
+	@[ -d $(KITTY_CFG_DIR) ] || mkdir $(KITTY_CFG_DIR)
 	stow --target=$(KITTY_CFG_DIR) kitty
 
 kitty-cfg-clean: ## Unlink Kitty configuration files
@@ -101,9 +97,7 @@ ruby: -ruby-cfg -rvm ## Install Ruby-related items
 
 ruby-cfg: ## Link Ruby configuration files
 	stow --dir=ruby --target=$$HOME gem
-	@if [ ! -d $(XDG_CONFIG_HOME)/pry ]; then \
-	  mkdir $(XDG_CONFIG_HOME)/pry; \
-	fi; \
+	@[ -d $(XDG_CONFIG_HOME)/pry ] || mkdir $(XDG_CONFIG_HOME)/pry
 	stow --dir=ruby --target=$(XDG_CONFIG_HOME)/pry pry
 
 ruby-cfg-clean: ## Unlink Ruby configuration files
@@ -140,20 +134,24 @@ tmux-clean: -tmux-cfg-clean ## Uninstall tmux & configuration files
 	-rm -rf ~/.tmux
 
 tmux-cfg: ## Link tmux configuration files
-	@if [ ! -d $(XDG_CONFIG_HOME)/tmux ]; then \
-	  mkdir $(XDG_CONFIG_HOME)/tmux; \
-	fi; \
+	@[ -d $(XDG_CONFIG_HOME)/tmux ] || mkdir $(XDG_CONFIG_HOME)/tmux
 	stow --restow --target=$(XDG_CONFIG_HOME)/tmux tmux
 
 tmux-cfg-clean: ## Unlink tmux configuration files
 	stow --target=$(XDG_CONFIG_HOME)/tmux --delete tmux
 
 tmux-plugins: ## Install plugin manager and other related items
-	@if [ ! -d $$HOME/.tmux ]; then \
-	  mkdir $$HOME/.tmux; \
-	fi; \
+	@[ -d $$HOME/tmux ] || mkdir $$HOME/tmux
 	git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 	brew install tmuxinator
+
+wezterm: -wezterm-cfg ## Install WezTerm terminal emulator
+	brew tap wez/wezterm
+	brew install wezterm
+
+wezterm-cfg: ## Link WezTerm configuration files
+	@[ -d $(XDG_CONFIG_HOME)/wezterm ] || mkdir $(XDG_CONFIG_HOME)/wezterm
+	stow --target=$(XDG_CONFIG_HOME)/wezterm wezterm
 
 ##@ zsh
 zsh: -zsh-cfg ## Install zsh-related items
@@ -179,10 +177,18 @@ fonts: ## Install fonts
 	rm AnonymousPro.zip
 	## We are using this font with toilet banner generator tool
 	cp cosmic.flf /usr/local/Cellar/toilet/0.3/share/figlet
+	brew tap homebrew/cask-fonts
+	brew install font-inconsolata
+	brew install font-fantasque-sans-mono
+	brew install font-powerline-symbols
 
 fonts-clean: ## Uninstall fonts
 	rm $$HOME/Library/Fonts/Anonymice*.ttf
 	rm /usr/local/Cellar/toilet/0.3/share/figlet/cosmic.flf
+	brew uninstall font-fantasque-sans-mono
+	brew uninstall font-inconsolata
+	brew uninstall font-powerline-symbols
+	brew untap homebrew/cask-fonts
 
 git-cfg: ## Link git configuration files
 	stow --restow --target=$$HOME git
