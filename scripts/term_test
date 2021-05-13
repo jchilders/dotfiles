@@ -1,0 +1,23 @@
+#!/usr/bin/env zsh
+
+echo "Below this line should be six colored lines: two red, two green, two blue, and the last two rainbow-ish:"
+./24-bit-color.sh
+echo "Below this line should be a single line with slashes and backslashes, with a background that goes ROYGBIV from left to right:"
+./truecolor-test
+echo -e "no formatting"
+echo -e "\e[1mbold\e[0m"
+echo -e "\e[3mitalic\e[0m"
+echo -e "\e[3m\e[1mbold italic\e[0m"
+echo -e "\e[4:1msingle underline\e[0m"
+echo -e "\e[58:2::255:0:0m\e[4:1msingle red underline"
+echo -e "\e[4:2mdouble underline\e[2m"
+echo -e "\e[4:3mcurly underline\e[0m"
+echo -e "\e[4:4mdotted underline\e[0m"
+echo -e "\e[4:4mdashed underline\e[0m"
+echo -e "\e[9mstrikethrough\e[0m"
+echo -e "\e[31mHello Red World 1\e[0m"
+echo -e "\x1B[31mHello Red World 2\e[0m"
+echo -e "\e[3;4;33mThis should be italicized, underlined, and yellow\n\e[0m"
+echo -e "Ligature: =>"
+echo
+echo "Done. If you are using tmux make sure you run this script both inside and outside of it."

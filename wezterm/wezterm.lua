@@ -1,14 +1,44 @@
 local wezterm = require 'wezterm';
 
+function font_with_fallback(name, params)
+  local names = {
+    name,
+    "Fantasque Sans Mono",
+    "Inconsolata",
+    "PowerlineExtraSymbols",
+    "Anonymice Nerd Font",
+    "FontAwesome",
+  }
+  return wezterm.font_with_fallback(names, params)
+end
+
 return {
   font = wezterm.font_with_fallback({
     "Fantasque Sans Mono",
+    "Inconsolata",
     "PowerlineExtraSymbols",
     "Anonymice Nerd Font",
     "FontAwesome",
   }),
-  font_size = 16.0,
-  harfbuzz_features = {"calt=1", "clig=0", "liga=0"},
+  font_size = 18.0,
+  font_rules = {
+    {
+      intensity = "Normal",
+      italic = true,
+      font = font_with_fallback("Fantasque Sans Mono", { italic = true, weight = "Regular" }),
+    },
+    {
+      intensity = "Bold",
+      italic = false,
+      font = font_with_fallback("Fantasque Sans Mono", { italic = false, weight = "Bold" }),
+    },
+    {
+      intensity = "Bold",
+      italic = true,
+      font = font_with_fallback("Fantasque Sans Mono", { italic = true, weight = "Bold" }),
+    },
+  },
+  line_height = 1.1,
   keys = {
     { key = "f", mods="CTRL|CMD", action="ToggleFullScreen" },
     { key = "l", mods="SHIFT|CMD", action="ShowTabNavigator" },
