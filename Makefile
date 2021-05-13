@@ -26,9 +26,7 @@ homebrew-clean: ## Uninstall homebrew
 	rm -r /usr/local/var/homebrew
 
 homebrew-defaults: ## Install default homebrew formulae
-	-brew install bat exa fd fzf git git-delta gpg just python rg rust starship stow tldr toilet
-	-brew install olets/tap/zsh-abbr
-	-brew install docker docker-compose
+	brew bundle # see Brewfile
 
 ##@ Neovim
 
@@ -48,12 +46,6 @@ neovim-clean: -neovim-cfg-clean ## Uninstall Neovim, configurations, & plugins
 # because of an issue with upstream luajit. See:
 # https://github.com/neovim/neovim/issues/13529#issuecomment-744375133
 neovim-bulid: ## Build and install neovim nightly from source
-ifeq (, $(shell which cmake))
-	$(shell brew install cmake)
-endif
-ifeq (, $(shell which automake))
-	$(shell brew install automake)
-endif
 	@if [ -d $(NEOVIM_SRC_DIR) ]; then \
 		git -C $(NEOVIM_SRC_DIR) pull; \
 	else; \
@@ -127,10 +119,8 @@ python-packages: ## Install Python packages
 
 ##@ tmux
 tmux: -tmux-cfg -tmux-plugins ## Install & configure tmux
-	brew install tmux
 
 tmux-clean: -tmux-cfg-clean ## Uninstall tmux & configuration files
-	-brew uninstall tmux tmuxinator
 	-rm -rf ~/.tmux
 
 tmux-cfg: ## Link tmux configuration files
@@ -143,8 +133,8 @@ tmux-cfg-clean: ## Unlink tmux configuration files
 tmux-plugins: ## Install plugin manager and other related items
 	@[ -d $$HOME/tmux ] || mkdir $$HOME/tmux
 	git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-	brew install tmuxinator
 
+##@ WezTerm
 wezterm: -wezterm-cfg ## Install WezTerm terminal emulator
 	brew tap wez/wezterm
 	brew install wezterm
@@ -177,18 +167,10 @@ fonts: ## Install fonts
 	rm AnonymousPro.zip
 	## We are using this font with toilet banner generator tool
 	cp cosmic.flf /usr/local/Cellar/toilet/0.3/share/figlet
-	brew tap homebrew/cask-fonts
-	brew install font-inconsolata
-	brew install font-fantasque-sans-mono
-	brew install font-powerline-symbols
 
 fonts-clean: ## Uninstall fonts
 	rm $$HOME/Library/Fonts/Anonymice*.ttf
 	rm /usr/local/Cellar/toilet/0.3/share/figlet/cosmic.flf
-	brew uninstall font-fantasque-sans-mono
-	brew uninstall font-inconsolata
-	brew uninstall font-powerline-symbols
-	brew untap homebrew/cask-fonts
 
 git-cfg: ## Link git configuration files
 	stow --restow --target=$$HOME git

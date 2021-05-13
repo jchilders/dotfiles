@@ -43,3 +43,10 @@ export MANPAGER='nvim +Man!'
 
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 export PATH="$PATH:$HOME/.rvm/bin"
+
+# Add .envrc file to directory to load project specific envars. Then:
+# 
+# > direnv allow .
+#
+# To allow it for that directory
+eval "$(direnv hook zsh)"
