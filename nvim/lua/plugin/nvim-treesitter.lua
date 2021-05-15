@@ -1,3 +1,5 @@
+local enabled = true
+
 require'nvim-treesitter.configs'.setup {
   -- Modules and its options for treesitter
 
@@ -14,7 +16,7 @@ require'nvim-treesitter.configs'.setup {
     enable = false
   },
   incremental_selection = {
-    enable = true,
+    enable = enabled,
     keymaps = {
       init_selection = "gni",
       node_incremental = "gna",
@@ -22,11 +24,43 @@ require'nvim-treesitter.configs'.setup {
       scope_incremental = "gnA",
     },
   },
-  textobjects = { enable = true },
   query_linter = {
-    enable = true,
+    enable = enabled,
     use_virtual_text = true,
     lint_events = {"BufWrite", "CursorHold"},
+  },
+  textobjects = {
+    select = {
+      enable = enabled,
+      keymaps = {
+        ['af'] = '@function.outer',
+        ['if'] = '@function.inner',
+
+        ['ac'] = '@conditional.outer',
+        ['ic'] = '@conditional.inner',
+
+        ['aa'] = '@parameter.outer',
+        ['ia'] = '@parameter.inner',
+      },
+    },
+
+    -- TODO: Could be interesting to do things w/ lists?
+    -- TODO: Need to think of the right prefix for this.
+    --          Almost wonder if I should go in an operator pending style
+    --          thing here?... until I stop holding things.
+    --
+    --          Could do special stuff w/ my keyboard too :)
+    swap = {
+      enable = true,
+      swap_next = {
+        ["<M-s><M-p>"] = "@parameter.inner",
+        ["<M-s>f"] = "@function.outer",
+      },
+      swap_previous = {
+        ["<M-s><M-P>"] = "@parameter.inner",
+        ["<M-s>F"] = "@function.outer",
+      },
+    },
   },
   playground = {
     enable = true,

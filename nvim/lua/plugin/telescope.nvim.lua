@@ -16,6 +16,7 @@ require('telescope').setup{
       },
     },
     color_devicons = true,
+    file_ignore_patterns = { '%.png', '%.jpg', '%.svg', '%.ttf', '%.eot', '%.gif', '%.swf', '%.woff', '%.pdf' },
     prompt_prefix = '🔍 ',
     prompt_position = 'bottom',
     preview_cutoff = 1, -- Preview should always show (unless previewer = false)
@@ -40,5 +41,6 @@ require('telescope').setup{
     }
   }
 }
--- require fzf extension for fzf sorting algorithm
+
+-- require fzf extension for better fzf sorting algorithm
 require('telescope').load_extension('fzf')
