@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 
-echo "Below this line should be six colored lines: two red, two green, two blue, and the last two rainbow-ish:"
+echo "Below this line should be eight colored lines: two red, two green, two blue, and the last two rainbow-ish:"
 ./24-bit-color.sh
 echo "Below this line should be a single line with slashes and backslashes, with a background that goes ROYGBIV from left to right:"
 ./truecolor-test

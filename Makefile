@@ -12,7 +12,6 @@ clean: -homebrew-clean -fonts-clean -rvm-clean -neovim-clean -misc-cfg-clean -tm
 
 cwd := $(shell pwd)
 cfg: -git-cfg -zsh-cfg -neovim-cfg -tmux-cfg -kitty-cfg ## Link configuration files
-	stow --restow --target=$$HOME ruby
 	stow --restow --target=$(XDG_CONFIG_HOME)/ starship
 
 cfg-clean: -git-cfg-clean -misc-cfg-clean -neovim-cfg-clean -tmux-cfg-clean -zsh-cfg-clean -kitty-cfg-clean ## Unlink all configuration files
@@ -89,6 +88,7 @@ ruby: -ruby-cfg -rvm ## Install Ruby-related items
 
 ruby-cfg: ## Link Ruby configuration files
 	stow --dir=ruby --target=$$HOME gem
+	stow --dir=ruby --target=$$HOME rvm
 	@[ -d $(XDG_CONFIG_HOME)/pry ] || mkdir $(XDG_CONFIG_HOME)/pry
 	stow --dir=ruby --target=$(XDG_CONFIG_HOME)/pry pry
 

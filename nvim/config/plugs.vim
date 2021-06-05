@@ -59,6 +59,7 @@ call plug#begin('~/.local/share/nvim/plugins')
   " {{{ syntax
   Plug 'cespare/vim-toml'
   Plug 'darfink/vim-plist'
+  Plug 'LnL7/vim-nix'
   " syntax }}}
  
   " {{{ git
@@ -76,6 +77,8 @@ call plug#begin('~/.local/share/nvim/plugins')
   " tmux }}}
 
   " {{{ misc
+  " :Bdelete/Bwipeout - remove buffers w/out affecting window layout
+  Plug 'famiu/bufdelete.nvim'
   " :<line number> 'peeks' the line before you hit enter
   Plug 'nacro90/numb.nvim'
   Plug 'mhinz/vim-startify'
