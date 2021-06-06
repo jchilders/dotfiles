@@ -95,20 +95,21 @@ Neovim-specific additions are shown here.
 
 ### Other Neovim Mappings
 
-| mapping | description | provided by |
-| :-----: | :---------- | :---------: |
+| mapping | description |
+| :-----: | :---------- |
+| <kbd>Enter</kbd> | Clear highlighted search |
 | <kbd>,,</kbd> | Switch between next/previous buffers |
-| <kbd>,ccs</kbd> | Change (rename) current symbol | neovim LSP |
-| <kbd>,fmt</kbd> | Format current buffer | neovim LSP |
+| <kbd>,ccs</kbd> | Change (rename) current symbol |
+| <kbd>,fmt</kbd> | Format current buffer |
 | <kbd>,g</kbd> | Toggle gutter | g:ToggleGutter() |
-| <kbd>gJ</kbd> | Join code block | splitjoin.vim |
-| <kbd>gS</kbd> | Split code block | splitjoin.vim |
-| <kbd>,]]</kbd> | Go to next error/warning | neovim LSP |
-| <kbd>,[[</kbd> | Go to previous error/warning | neovim LSP |
-| <kbd>,e</kbd> | Show error/warning for current line| lspsaga.nvim |
-| <kbd>gcc<Space></kbd> | Comment/uncomment current line | kommentary |
-| <kbd>gc3j<Space></kbd> | Comment/uncomment current line & 3 down | kommentary |
-| <kbd>Enter</kbd> | Clear highlighted search | Native |
+| <kbd>gJ</kbd> | Join code block |
+| <kbd>gS</kbd> | Split code block |
+| <kbd>,]]</kbd> | Go to next error/warning |
+| <kbd>,[[</kbd> | Go to previous error/warning |
+| <kbd>,e</kbd> | Show error/warning for current line|
+| <kbd>gc.</kbd> | Comment/uncomment code block (treesitter based)|
+| <kbd>gc<motion></kbd> | Comment/uncomment <motion> |
+| <kbd>gcc</kbd> | Comment/uncomment current line |
 
 ### Ruby- and Rails-specific Neovim Mappings
 | mapping | description |
