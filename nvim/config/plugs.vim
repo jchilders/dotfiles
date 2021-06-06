@@ -49,6 +49,9 @@ call plug#begin('~/.local/share/nvim/plugins')
   " Smart split/join code blocks
   Plug 'AndrewRadev/splitjoin.vim'
   Plug 'b3nj5m1n/kommentary'
+  " During visual select, hit `.` to expand selection to the surrounding
+  " treesitter object
+  Plug 'RRethy/nvim-treesitter-textsubjects'
 
   " {{{ ruby/rails
   " Plug 'tpope/vim-rails'
