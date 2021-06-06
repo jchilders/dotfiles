@@ -59,3 +59,5 @@
 [user]
 	name = James Childers
 	email = james.childers@gmail.com
+[init]
+	defaultBranch = main
