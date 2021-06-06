@@ -39,6 +39,8 @@ if type brew &>/dev/null; then
   compinit
 fi
 
+source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+
 export MANPAGER='nvim +Man!'
 
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.

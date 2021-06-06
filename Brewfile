@@ -19,8 +19,9 @@ brew "tldr" # man page supplement
 brew "tmux"
 brew "tmuxinator"
 brew "toilet" # ascii banners
-brew "watchexec"
+brew "watchexec" # auto-restart process on file changes
 brew "olets/tap/zsh-abbr"
+brew "zsh-autosuggestions"
 
 # fonts
 tap "homebrew/cask-fonts"
