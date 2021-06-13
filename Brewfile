@@ -1,3 +1,7 @@
+# find alternate (i.e. test) file
+tap "uptech/homebrew-oss"
+brew "uptech/oss/alt"
+
 brew "automake"
 brew "bat" # cat replacement
 brew "cmake"
@@ -8,7 +12,6 @@ brew "fzf" # fuzzy finder
 brew "git"
 brew "git-delta" # git-diff replacement
 brew "gpg"
-brew "just"
 brew "jq" # json processor
 brew "python"
 brew "rg" # ripgrep

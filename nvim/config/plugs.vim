@@ -92,8 +92,6 @@ call plug#begin('~/.local/share/nvim/plugins')
   " statusline
   Plug 'famiu/feline.nvim'
 
-  Plug 'easymotion/vim-easymotion'
-
   " fix performance probs w/ CursorHold
   " can test is by holding down j/k while current buffer is connected to
   " Solargraph

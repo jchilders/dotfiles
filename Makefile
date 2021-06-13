@@ -32,7 +32,7 @@ homebrew-defaults: ## Install default homebrew formulae
 NEOVIM_SRC_DIR := "$$HOME/workspace/neovim"
 NEOVIM_CFG_DIR := "$(XDG_CONFIG_HOME)/nvim"
 
-neovim: -neovim-bulid -neovim-cfg -neovim-plugins ## Install Neovim, configurations, & plugins
+neovim: -neovim-build -neovim-cfg -neovim-plugins ## Install Neovim, configurations, & plugins
 
 neovim-clean: -neovim-cfg-clean ## Uninstall Neovim, configurations, & plugins
 	-sudo rm /usr/local/bin/nvim
@@ -44,13 +44,13 @@ neovim-clean: -neovim-cfg-clean ## Uninstall Neovim, configurations, & plugins
 # Have to build from source rather than just doing 'brew install neovim --HEAD`
 # because of an issue with upstream luajit. See:
 # https://github.com/neovim/neovim/issues/13529#issuecomment-744375133
-neovim-bulid: ## Build and install neovim nightly from source
+neovim-build: ## Build and install neovim nightly from source
 	@if [ -d $(NEOVIM_SRC_DIR) ]; then \
 		git -C $(NEOVIM_SRC_DIR) pull; \
 	else; \
 	  git clone https://github.com/neovim/neovim.git $(NEOVIM_SRC_DIR); \
 	fi; \
-	$(MAKE) -C $(NEOVIM_SRC_DIR) distclean
+	sudo $(MAKE) -C $(NEOVIM_SRC_DIR) distclean
 	$(MAKE) -C $(NEOVIM_SRC_DIR) CMAKE_BUILD_TYPE=RelWithDebInfo; \
 	sudo $(MAKE) -C $(NEOVIM_SRC_DIR) CMAKE_INSTALL_PREFIX=/usr/local install; \
 
@@ -88,7 +88,6 @@ ruby: -ruby-cfg -rvm ## Install Ruby-related items
 
 ruby-cfg: ## Link Ruby configuration files
 	stow --dir=ruby --target=$$HOME gem
-	stow --dir=ruby --target=$$HOME rvm
 	@[ -d $(XDG_CONFIG_HOME)/pry ] || mkdir $(XDG_CONFIG_HOME)/pry
 	stow --dir=ruby --target=$(XDG_CONFIG_HOME)/pry pry
 
