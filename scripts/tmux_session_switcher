@@ -1,7 +1,8 @@
 #!/usr/bin/env zsh
 
 curr_session=$(tmux display-message -p '#S')
-result=$(tmux list-sessions | ./fzfp | choose -f : 0)
+script_dir="$HOME/workspace/dotfiles/scripts"
+result=$(tmux list-sessions | $script_dir/fzfp | choose -f : 0)
 
 if [[ $curr_session -eq $result ]]; then
   exit 0
