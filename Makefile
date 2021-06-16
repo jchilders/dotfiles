@@ -2,9 +2,6 @@
 SHELL:=/bin/zsh
 XDG_CONFIG_HOME := $$HOME/.config
 
-# TODO: Use nix instead of make?
-# TODO: Use jump instead of make?
-
 ##@ Install
 install: -macos -homebrew -homebrew-defaults -fonts -ruby -python -cfg -neovim -tmux -zsh -kitty ## Install all the things
 

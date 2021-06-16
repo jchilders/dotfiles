@@ -1,0 +1,25 @@
+#!/usr/bin/env ruby
+
+require 'fileutils'
+
+files = `git diff --name-only master`
+files.split("\n").each do |file|
+  puts file
+  result = system("git diff master -- #{file}")
+  print "what do? (s)kip (default), (c)opy, (q)uit: "
+  whut = gets.chomp
+  case whut
+  when 'q'
+    exit(0)
+  when 'c'
+    subdir, filename = File.dirname(file), File.basename(file)
+    dest_dir = '/Users/jchilders/temp/kalkomey/academy'
+    dest = File.join(dest_dir, subdir)
+    final_dest = File.join(dest, file)
+    print "copy #{file} to #{dest}? "
+    confirm = gets.chomp!
+    FileUtils.cp(file, dest) if 'y' == confirm
+  else
+    next
+  end
+end

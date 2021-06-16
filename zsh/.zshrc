@@ -2,15 +2,14 @@
 # https://github.com/zdharma/zinit
 # source ~/.zinit/bin/zinit.zsh
 
-# z - fast directory switching
-. /usr/local/etc/profile.d/z.sh
+# zoxide: smarter cd
+_ZO_DATA_DIR=$HOME/.local/share/zoxide
+eval "$(zoxide init zsh)"
 
-# when no args are given to z, or z returns no results, use fzf
-unalias z &> /dev/null
-z() {
-  [ $# -gt 0 ] && _z "$*" && return
-  cd "$(_z -l 2>&1 | fzf --nth 2.. +s --tac --query "${*##-* }" | sed 's/^[0-9,.]* *//')" || exit 1
-}
+# mcfly: smarter history search
+export MCFLY_KEY_SCHEME=vim
+export MCFLY_FUZZY=true
+eval "$(mcfly init zsh)"
 
 # prompt
 eval "$(starship init zsh)"

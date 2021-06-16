@@ -1,0 +1,14 @@
+#!/usr/bin/env zsh
+
+curr_session=$(tmux display-message -p '#S')
+result=$(tmux list-sessions | ./fzfp | choose -f : 0)
+
+if [[ $curr_session -eq $result ]]; then
+  exit 0
+fi
+
+if [[ -v TMUX ]]; then
+  tmux switch-client -t $result
+else
+  tmux attach -t "$result"
+fi
