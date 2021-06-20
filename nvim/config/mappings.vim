@@ -47,10 +47,6 @@ nmap <leader>rv <cmd>source $MYVIMRC<CR><cmd>echo 'Reloaded!'<CR>
 nnoremap <silent> <leader>t <cmd>lua require('lspsaga.floaterm').open_float_terminal()<CR>
 tnoremap <silent> <esc><esc> <C-\><C-n>:lua require('lspsaga.floaterm').close_float_terminal()<CR>
 
-" Replace single quotes with doubles
-nmap <leader>rq <cmd>s/'/"/g<CR><cmd>let @/ = ''<CR>
-nmap <leader>rq2 <cmd>s/"/'/g<CR><cmd>let @/ = ''<CR>
-
 " Show tree-sitter highlight group(s) for current cursor position
 map <leader>hi <cmd>TSHighlightCapturesUnderCursor<CR>
 

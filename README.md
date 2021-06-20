@@ -56,13 +56,14 @@ For both zsh and nvim commonly used functionality is provided via
 <kbd>Ctrl-O</kbd> mappings. There are two basic types of <kbd>Ctrl-O</kbd>
 mappings: git-related, and finding & editing files.
 
-## ctrl-o find & edit file mappings
+## ctrl-o file mappings
 
 These work in both zsh and nvim.
 
 | mapping | description |
 | :-----: | :---------- |
 | <kbd>^oc</kbd> | Fuzzy find Rails controller & edit |
+| <kbd>^od</kbd> | Fuzzy find directory & cd to it |
 | <kbd>^of</kbd> | Fuzzy find file & edit |
 | <kbd>^oF</kbd> | Fuzzy find *any* file (ignores `.gitignore`) & edit |
 | <kbd>^om</kbd> | Fuzzy find Rails model & edit |
@@ -149,7 +150,7 @@ Defined in `zsh/config/aliases.zsh`
 
 ## Directory Navigation
 
-Use `z`. For example:
+Uses `zoxide`. For example:
 
 ```
 ➜ cd ~/workspace/myrailsproj

@@ -35,7 +35,9 @@ call plug#begin('~/.local/share/nvim/plugins')
   Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
   " telescope.nvim }}}
 
-  Plug 'hrsh7th/nvim-compe'
+  " Plug 'hrsh7th/nvim-compe'
+  " Surround text with quotes/brackets
+  Plug 'blackcauldron7/surround.nvim'
   Plug 'cohama/lexima.vim'
   
   " adds vscode-like pictograms
