@@ -3,6 +3,8 @@
   excludesfile = /Users/jchilders/.gitignore_global
   editor = $EDITOR
   pager = delta
+[branch]
+  autoSetupMerge = true
 [delta]
   features = dark side-by-side line-numbers decorations
   whitespace-error-style = 22 reverse

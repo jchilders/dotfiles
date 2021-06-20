@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Get list of all branches, remote and local, sorted by most recently modified first
+puts(`git branch --sort=-committerdate --all 2>/dev/null`
+  .split
+  .map! { |br| br.gsub(/remotes\/origin\//, '') }
+  .uniq
+  .reject { |br| br == '*' })

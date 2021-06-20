@@ -9,6 +9,7 @@ brew "fzf" # fuzzy finder
 brew "git"
 brew "git-delta" # git-diff replacement
 brew "gpg"
+brew "httpie"
 brew "jq" # json processor
 brew "python"
 brew "rg" # ripgrep

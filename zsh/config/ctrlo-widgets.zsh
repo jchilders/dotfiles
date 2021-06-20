@@ -62,6 +62,7 @@ bindkey '^oF' fuzzy_edit_any_file
 
 # git add file selected from from git status
 function fuzzy_add_from_git_status {
+  echo "-=-=> Adding"
   __fuzzy_search_git_status_and_eval "git add"
   echo "${found_file} added to index"
   echo
@@ -71,16 +72,7 @@ zle -N fuzzy_add_from_git_status
 bindkey '^oga' fuzzy_add_from_git_status
 
 function fuzzy_switch_branch {
-  # Copy current branch name to pasteboard
-  # TODO: Save current branch to var, add that var to fzf list
-  # TODO: Stash if neccessary
-  git branch --show-current | tr -d '\n' | pbcopy
-  
-  # 1. List remote branches & sort by most recently commited to
-  # 2. Get rid of the HEAD entry
-  # 3. Remove the "   origin/" from the beginning
-  # 4. Fuzzy search, ties go to those earlier in the search results
-  local branch=$(git branch --sort=-committerdate --remotes | rg -v '/HEAD\s' | cut -c 10- | fzf --tiebreak=index)
+  local branch=$(all_branches | fzf --tiebreak=index)
 
   if [[ '' != $branch ]]; then
     git checkout $branch
@@ -94,6 +86,7 @@ bindkey '^ogb' fuzzy_switch_branch
 
 # show diff of file selected from from git status
 function fuzzy_diff_from_git_status {
+  echo "-=-=> Diffing"
   __fuzzy_search_git_status_and_eval "git diff"
 }
 zle -N fuzzy_diff_from_git_status
@@ -101,6 +94,7 @@ bindkey '^ogd' fuzzy_diff_from_git_status
 
 # edit file selected from git status
 function fuzzy_edit_from_git_status {
+  echo "-=-=> Editing from git status"
   __fuzzy_search_git_status_and_eval "${EDITOR:-nvim}"
 }
 zle -N fuzzy_edit_from_git_status
