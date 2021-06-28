@@ -169,7 +169,7 @@ fonts-clean: ## Uninstall fonts
 	rm /usr/local/Cellar/toilet/0.3/share/figlet/cosmic.flf
 
 git-cfg: ## Link git configuration files
-	stow --restow --target=$$HOME git
+	stow --target=$$HOME git
 
 git-cfg-clean: ## Unlink git configuration files
 	-stow --target=$$HOME --delete git
