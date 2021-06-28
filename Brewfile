@@ -10,6 +10,7 @@ brew "git"
 brew "git-delta" # git-diff replacement
 brew "gpg"
 brew "httpie"
+brwe "imagemagick"
 brew "jq" # json processor
 brew "python"
 brew "rg" # ripgrep

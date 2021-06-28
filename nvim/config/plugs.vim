@@ -65,6 +65,9 @@ call plug#begin('~/.local/share/nvim/plugins')
   Plug 'cespare/vim-toml'
   Plug 'darfink/vim-plist'
   Plug 'LnL7/vim-nix'
+
+  Plug 'yuezk/vim-js'
+  Plug 'maxmellon/vim-jsx-pretty'
   " syntax }}}
  
   " {{{ git
