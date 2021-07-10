@@ -5,32 +5,27 @@ local actions = require('telescope.actions')
 
 require('telescope').setup{
   defaults = {
+    borderchars             = {"─", "│", "─", "│", "╭", "╮", "╯", "╰"},
     color_devicons = true,
-    file_ignore_patterns = { '%.png', '%.jpg', '%.svg', '%.ttf', '%.eot', '%.gif', '%.swf', '%.woff', '%.pdf' },
+    file_ignore_patterns = { '%.png', '%.jpg', '%.ttf', '%.eot', '%.gif', '%.swf', '%.woff', '%.pdf' },
     layout_config = {
       preview_cutoff = 1, -- Preview should always show (unless previewer = false)
+      preview_width = 0.66,
       prompt_position = 'bottom',
-      height = 15,
-      horizontal = {
-        mirror = true,
-      },
-      vertical = {
-        mirror = true,
-      }
     },
-    layout_strategy = 'flex',
     mappings = {
       n = {
-        ['<c-x>'] = actions.select_horizontal,
+        ["<c-d>"] = actions.delete_buffer,
         ['<c-q>'] = actions.send_to_qflist,
+        ['<c-x>'] = actions.select_horizontal,
       },
       i = {
-        ['<c-x>'] = actions.select_horizontal,
+        ["<c-d>"] = actions.delete_buffer,
         ['<c-q>'] = actions.send_to_qflist,
+        ['<c-x>'] = actions.select_horizontal,
       },
     },
     prompt_prefix = '🔍 ',
-    results_title = false,
     sorting_strategy = 'ascending',
   },
   extensions = {
