@@ -14,6 +14,9 @@ call plug#begin('~/.local/share/nvim/plugins')
   "   lua/plugin/*.lua
   Plug 'tjdevries/astronauta.nvim'
 
+  " Easy/flexible syntax for key mappings (nnoremap, etc.)
+  Plug 'Iron-E/nvim-cartographer'
+
   " {{{ lsp
   Plug 'neovim/nvim-lspconfig'
   Plug 'kabouzeid/nvim-lspinstall'
@@ -36,11 +39,11 @@ call plug#begin('~/.local/share/nvim/plugins')
   " telescope.nvim }}}
 
   " Plug 'hrsh7th/nvim-compe'
-  " Surround text with quotes/brackets
-  Plug 'blackcauldron7/surround.nvim'
+
+  " Auto close parens/quotes/etc.
   Plug 'cohama/lexima.vim'
   
-  " adds vscode-like pictograms
+  " Add VSCode-like pictograms
   Plug 'onsails/lspkind-nvim'
   Plug 'kyazdani42/nvim-web-devicons'
 
@@ -65,7 +68,6 @@ call plug#begin('~/.local/share/nvim/plugins')
   Plug 'cespare/vim-toml'
   Plug 'darfink/vim-plist'
   Plug 'LnL7/vim-nix'
-
   Plug 'yuezk/vim-js'
   Plug 'maxmellon/vim-jsx-pretty'
   " syntax }}}
@@ -85,8 +87,6 @@ call plug#begin('~/.local/share/nvim/plugins')
   " {{{ misc
   " :Bdelete/Bwipeout - remove buffers w/out affecting window layout
   Plug 'famiu/bufdelete.nvim'
-  " :<line number> 'peeks' the line before you hit enter
-  Plug 'nacro90/numb.nvim'
   Plug 'mhinz/vim-startify'
   " misc }}}
 
