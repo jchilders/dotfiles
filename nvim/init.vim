@@ -1,7 +1,10 @@
 " Much inspiration/outright theft of this was taken from:
 "   https://github.com/tjdevries/config_manager/blob/master/xdg_config/nvim/init.lua
 "
-" We use tjdevries/astronauta.nvim to load plugin specific configurations. This allows configurations to be automatically loaded from:
+" We use tjdevries/astronauta.nvim to load plugin-specific configurations.
+" This allows configurations to be automatically loaded from the following
+" locations:
+"
 "   ./ftplugin/*.lua
 "   ./after/ftplugin/*.lua
 "   ./lua/plugin/*.lua - most things are here

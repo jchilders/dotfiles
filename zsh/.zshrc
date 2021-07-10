@@ -1,15 +1,6 @@
-# plugin manager
-# https://github.com/zdharma/zinit
-# source ~/.zinit/bin/zinit.zsh
-
 # zoxide: smarter cd
 _ZO_DATA_DIR=$HOME/.local/share/zoxide
 eval "$(zoxide init zsh)"
-
-# mcfly: smarter history search
-export MCFLY_KEY_SCHEME=vim
-export MCFLY_FUZZY=true
-eval "$(mcfly init zsh)"
 
 # prompt
 eval "$(starship init zsh)"
@@ -40,9 +31,8 @@ fi
 
 source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
-export MANPAGER='nvim +Man!'
-
-# Add .envrc file to directory to load project specific envars. Then:
+# direnv allows for directory-specific environment variables. To use, add
+# .envrc file to directory to load project specific envars. Then:
 # 
 # > direnv allow .
 #

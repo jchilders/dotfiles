@@ -23,7 +23,7 @@ require('telescope').setup{
     results_height = 15,
     sorting_strategy = 'ascending',
     results_title = false,
-    layout_defaults = {
+    layout_config = {
       horizontal = {
         mirror = true,
       },
