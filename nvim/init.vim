@@ -11,6 +11,8 @@
 "   ./after/plugin/*.vim
 
 " Set s:home to current directory and add to runtimepath
+" This will -- and should -- eventually be removed (...) as configs are moved
+" into vim standard dirs. 
 let s:home = fnamemodify(resolve(expand('<sfile>:p')), ':h')
 exec 'set rtp+='.s:home
 
@@ -21,8 +23,6 @@ VimLoad basic
 VimLoad plugs
 VimLoad autocmds
 VimLoad colors
-" Stuff being moved into lua
-LuaLoad init
 
 " Mappings need to be last to ensure that ours take priority
 VimLoad mappings
