@@ -1,0 +1,20 @@
+#!/usr/bin/env zsh
+
+# start all projects in $XDG_CONFIG_HOME/tmuxinator
+foreach project (
+  academy
+  courses
+  accounts
+  order_service
+  assets
+  dotfiles
+) {
+  tmuxinator start $project
+}
+
+echo "Done starting tmux. Session list:"
+tmux list-sessions
+
+tmux attach-session -t courses
+tmux select-window console
+tmux select-pane -t 1

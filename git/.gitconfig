@@ -12,8 +12,14 @@
 [interactive]
     diffFilter = delta --color-only
 [diff]
-  algorithm = patience
-  colorMoved = default
+    tool = diffsitter
+[difftool]
+    prompt = false
+[difftool "diffsitter"]
+    cmd = diffsitter "$LOCAL" "$REMOTE"
+; [diff]
+;   algorithm = patience
+;   colorMoved = default
 [merge]
 	tool = vimdiff
 [pull]

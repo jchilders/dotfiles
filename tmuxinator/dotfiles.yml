@@ -1,0 +1,12 @@
+# /Users/jchilders/.config/tmuxinator/dotfiles.yml
+
+name: dotfiles
+root: ~/workspace/dotfiles
+attach: false
+
+windows:
+  - nvimcfg:
+      layout: main-vertical
+      panes:
+        - 
+        -
