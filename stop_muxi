@@ -1,20 +1,10 @@
 #!/usr/bin/env zsh
 
 foreach project (
-  academy
-  accounts
-  assets
-  courses
-  newt
-  order_service
+  dotfiles
 ) {
   tmuxinator stop $project
 }
 
 echo "Done stopping tmux. Remaining sessions:"
 tmux list-sessions
-
-# tmux attach-session -t academy
-# tmux select-window console
-# tmux select-pane -t 1
-

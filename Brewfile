@@ -1,5 +1,6 @@
 brew 'automake'
 brew 'bat' # cat replacement
+brew 'broot' # like tree, only paginated
 brew 'choose-rust' # sed replacement: `choose 5`
 brew 'cmake'
 brew 'direnv'
@@ -22,9 +23,15 @@ brew 'tmux'
 brew 'tmuxinator'
 brew 'toilet' # ascii banners
 brew 'watchexec' # auto-restart process on file changes
-brew 'olets/tap/zsh-abbr'
 brew 'zsh-autosuggestions'
 brew 'zoxide' # smarter cd command
+
+cask 'kitty'
+cask 'lulu' # allow/deny apps to use the network
+
+# fish-like abbreviations for zsh
+tap 'olets/tap'
+brew 'zsh-abbr'
 
 # find alternate (i.e. test) file
 tap 'uptech/homebrew-oss'

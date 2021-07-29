@@ -1,14 +1,16 @@
 .DEFAULT_GOAL:=help
 SHELL:=/bin/zsh
 XDG_CONFIG_HOME := $$HOME/.config
+XDG_DATA_HOME := $$HOME/.local/share
+
+cwd := $(shell pwd)
 
 ##@ Install
-install: -macos -homebrew -homebrew-defaults -fonts -ruby -python -cfg -neovim -tmux -zsh -kitty ## Install all the things
+install: macos xdg-setup -homebrew -homebrew-defaults -fonts -ruby -python -cfg -neovim -tmux -zsh -kitty ## Install all the things
 
 clean: -homebrew-clean -fonts-clean -rvm-clean -neovim-clean -misc-cfg-clean -tmux-clean -zsh-cfg-clean ## Uninstall all the things
 
-cwd := $(shell pwd)
-cfg: -git-cfg -zsh-cfg -neovim-cfg -tmux-cfg -kitty-cfg ## Link configuration files
+cfg: xdg-setup -git-cfg -zsh-cfg -neovim-cfg -tmux-cfg -kitty-cfg misc-cfg ## Link configuration files
 	stow --restow --target=$(XDG_CONFIG_HOME)/ starship
 
 cfg-clean: -git-cfg-clean -misc-cfg-clean -neovim-cfg-clean -tmux-cfg-clean -zsh-cfg-clean -kitty-cfg-clean ## Unlink all configuration files
@@ -68,10 +70,8 @@ neovim-plugins: neovim-cfg ## Install neovim plugins
 KITTY_CFG_DIR := "$(XDG_CONFIG_HOME)/kitty"
 
 kitty: kitty-cfg ## Install Kitty terminal emulator
-	brew install kitty # fast
 
 kitty-clean: kitty-cfg-clean ## Remove Kitty terminal emulator
-	brew uninstall kitty
 
 kitty-cfg: ## Link Kitty configuration files
 	@[ -d $(KITTY_CFG_DIR) ] || mkdir $(KITTY_CFG_DIR)
@@ -120,20 +120,19 @@ tmux-clean: -tmux-cfg-clean ## Uninstall tmux & configuration files
 	-rm -rf ~/.tmux
 
 tmux-cfg: ## Link tmux configuration files
-	@[ -d $(XDG_CONFIG_HOME)/tmux ] || mkdir $(XDG_CONFIG_HOME)/tmux
+	@[ -d $(XDG_CONFIG_HOME)/tmux ] || mkdir -p $(XDG_CONFIG_HOME)/tmux
 	stow --restow --target=$(XDG_CONFIG_HOME)/tmux tmux
 
 tmux-cfg-clean: ## Unlink tmux configuration files
 	stow --target=$(XDG_CONFIG_HOME)/tmux --delete tmux
 
 tmux-plugins: ## Install plugin manager and other related items
-	@[ -d $$HOME/tmux ] || mkdir $$HOME/tmux
+	@[ -d $$HOME/.tmux ] || mkdir $$HOME/.tmux
 	git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
 ##@ WezTerm
 wezterm: -wezterm-cfg ## Install WezTerm terminal emulator
-	brew tap wez/wezterm
-	brew install wezterm
+	brew install --cask wezterm-nightly --no-quarantine
 
 wezterm-cfg: ## Link WezTerm configuration files
 	@[ -d $(XDG_CONFIG_HOME)/wezterm ] || mkdir $(XDG_CONFIG_HOME)/wezterm
@@ -142,20 +141,28 @@ wezterm-cfg: ## Link WezTerm configuration files
 ##@ zsh
 zsh: -zsh-cfg ## Install zsh-related items
 
+.PHONY : zsh-cfg
 zsh-cfg: ## Link zsh configuration files
-	ln -s $(cwd)/.zshenv $$HOME/.zshenv
+	ln -sf $(cwd)/.zshenv $$HOME/.zshenv
+	@[ -d $(XDG_CONFIG_HOME)/zsh ] || mkdir $(XDG_CONFIG_HOME)/zsh
 	stow --restow --target=$(XDG_CONFIG_HOME)/zsh zsh
+	@[ -d $(XDG_DATA_HOME)/zsh ] || mkdir $(XDG_DATA_HOME)/zsh
 
 zsh-cfg-clean: ## Unlink zsh configuration files
 	stow --target=$(XDG_CONFIG_HOME)/zsh --delete zsh
 	-rm $$HOME/.zshenv
 
 ##@ Misc
+
+.PHONY : macos
+XCODE_INSTALLED := $(shell xcode-select -p 1>/dev/null; echo $$?)
 macos: ## Set macOS defaults and install command line developer tools
-  ifeq ($(shell uname -s), Darwin)
-	-xcode-select --install
+ifeq ($(shell uname -s), Darwin)
+ifeq ($(XCODE_INSTALLED), 1)
+	xcode-select --install
+endif
 	./macos
-  endif
+endif
 
 fonts: ## Install fonts
 	curl -OL https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/AnonymousPro.zip
@@ -174,9 +181,16 @@ git-cfg: ## Link git configuration files
 git-cfg-clean: ## Unlink git configuration files
 	-stow --target=$$HOME --delete git
 
+misc-cfg: ## Miscellany
+	@[ -e $$HISTFILE ] || touch $$HISTFILE
+
 misc-cfg-clean: ## Unlink misc configs
 	stow --target=$(XDG_CONFIG_HOME) --delete starship
 	stow --target=$(XDG_CONFIG_HOME)/kitty --delete kitty
+
+xdg-setup: ## Create XDG dirs (XDG_CONFIG_HOME, etc.)
+	@[ -d $(XDG_CONFIG_HOME) ] || mkdir -p $(XDG_CONFIG_HOME)
+	@[ -d $(XDG_DATA_HOME) ] || mkdir -p $(XDG_DATA_HOME)
 
 ##@ Helpers
 
