@@ -1,3 +1,5 @@
+export XDG_DATA_HOME="$HOME/.local/share"
+
 # Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then
   export EDITOR='vim'
@@ -25,3 +27,5 @@ export MCFLY_KEY_SCHEME=vim
 export MCFLY_FUZZY=true
 eval "$(mcfly init zsh)"
 
+# frum: ruby version manager
+export FRUM_DIR="$XDG_DATA_HOME/frum"

@@ -38,3 +38,9 @@ source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 #
 # To allow it for that directory
 eval "$(direnv hook zsh)"
+
+# file tree thing
+eval "$(broot --print-shell-function zsh)"
+
+# ruby version manager
+eval "$(frum init)"

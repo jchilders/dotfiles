@@ -1,16 +1,18 @@
 brew 'automake'
 brew 'bat' # cat replacement
-brew 'broot' # like tree, only paginated
+brew 'broot' # dir/file tree thing
 brew 'choose-rust' # sed replacement: `choose 5`
 brew 'cmake'
 brew 'direnv'
 brew 'exa' # ls replacement
 brew 'fd' # file finder
+brew 'frum' # ruby version manager
 brew 'fzf' # fuzzy finder
 brew 'git'
 brew 'git-delta' # git-diff replacement
 brew 'gpg'
 brew 'httpie'
+brew 'htop'
 brew 'imagemagick'
 brew 'jq' # json processor
 brew 'python'
@@ -19,6 +21,7 @@ brew 'rust'
 brew 'starship' # prompt
 brew 'stow' # dotfiles management
 brew 'tldr' # man page supplement
+brew 'tig'  # git history viewer
 brew 'tmux'
 brew 'tmuxinator'
 brew 'toilet' # ascii banners

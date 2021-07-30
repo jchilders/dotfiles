@@ -1,6 +1,6 @@
 alias ..='cd ..'
 alias l='exa --all --classify --git --header --icons --long --no-permissions --no-user --color-scale'
-alias tree='exa --tree'
+alias tree='br' # trying out broot
 
 alias python=/usr/local/bin/python3
 
