@@ -156,12 +156,13 @@ zsh-cfg-clean: ## Unlink zsh configuration files
 
 .PHONY : macos
 XCODE_INSTALLED := $(shell xcode-select -p 1>/dev/null; echo $$?)
-macos: ## Set macOS defaults and install command line developer tools
+macos: ## Set macOS defaults and install XCode command line developer tools
 ifeq ($(shell uname -s), Darwin)
 ifeq ($(XCODE_INSTALLED), 1)
 	xcode-select --install
 endif
 	./macos
+	killall Dock
 endif
 
 fonts: ## Install fonts

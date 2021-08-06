@@ -1,6 +1,7 @@
 #!/usr/bin/env zsh
 
-script_dir="$HOME/workspace/dotfiles/scripts"
+# TODO: Make this generic
+script_dir="$HOME/workspace/jchilders/dotfiles/scripts"
 
 local result="$(tmux list-sessions | $script_dir/fzfp | choose -f : 0)"
 

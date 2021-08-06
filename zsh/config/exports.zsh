@@ -11,7 +11,7 @@ export PATH="/usr/local/sbin:$PATH"
 export PATH="/usr/local/opt/mysql@5.6/bin:$PATH"
 export PATH="/usr/local/opt/openssl@1.1/bin:$PATH"
 export PATH="$PATH:$HOME/Library/Python/3.9/bin"
-export PATH="$PATH:$HOME/workspace/dotfiles/scripts"
+export PATH="$PATH:$HOME/workspace/jchilders/dotfiles/scripts"
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 export PATH="$PATH:$HOME/.rvm/bin"
 
