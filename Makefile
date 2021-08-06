@@ -19,12 +19,12 @@ cfg-clean: -git-cfg-clean -misc-cfg-clean -neovim-cfg-clean -tmux-cfg-clean -zsh
 homebrew: ## Install homebrew
 	curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh | /bin/bash
 
+homebrew-bundle: ## Install default homebrew formulae
+	brew bundle # see Brewfile
+
 homebrew-clean: ## Uninstall homebrew
 	curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall.sh | /bin/zsh
 	rm -r /usr/local/var/homebrew
-
-homebrew-defaults: ## Install default homebrew formulae
-	brew bundle # see Brewfile
 
 ##@ Neovim
 

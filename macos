@@ -190,8 +190,8 @@ defaults write com.apple.dock magnification -bool true
 defaults write com.apple.dock tilesize -int 40
 
 # Hot Corners
-# top left: Application Windows
-defaults write com.apple.dock wvous-tl-corner -int 3
+# top left: Mission Control 
+defaults write com.apple.dock wvous-tl-corner -int 2
 # top right: Notification Center
 defaults write com.apple.dock wvous-tr-corner -int 12
 # bottom left: Show Desktop

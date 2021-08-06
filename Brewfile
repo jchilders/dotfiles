@@ -15,7 +15,9 @@ brew 'httpie'
 brew 'htop'
 brew 'imagemagick'
 brew 'jq' # json processor
+brew 'memcached'
 brew 'python'
+brew 'redis'
 brew 'rg' # ripgrep
 brew 'rust'
 brew 'starship' # prompt
@@ -29,7 +31,7 @@ brew 'watchexec' # auto-restart process on file changes
 brew 'zsh-autosuggestions'
 brew 'zoxide' # smarter cd command
 
-cask 'kitty'
+cask 'kitty' # terminal emulator
 cask 'lulu' # allow/deny apps to use the network
 
 # fish-like abbreviations for zsh
