@@ -1,8 +1,6 @@
 set softtabstop=2
 set shiftwidth=2
 
-set omnifunc=v:lua.vim.lsp.omnifunc
-
 nnoremap <Leader>rs :sp ~/temp/scratch.rb<CR>
 nnoremap <Leader>bp obinding.pry<ESC>:w<ENTER>
 nnoremap <Leader>bP Obinding.pry<ESC>:w<ENTER>

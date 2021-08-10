@@ -38,11 +38,8 @@ call plug#begin('~/.local/share/nvim/plugins')
   Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
   " telescope.nvim }}}
 
-  " Plug 'hrsh7th/nvim-compe'
+  Plug 'hrsh7th/nvim-compe'
 
-  " Auto close parens/quotes/etc.
-  Plug 'cohama/lexima.vim'
-  
   " Add VSCode-like pictograms
   Plug 'onsails/lspkind-nvim'
   Plug 'kyazdani42/nvim-web-devicons'

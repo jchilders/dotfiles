@@ -1,4 +1,4 @@
-bundler
-neovim
-solargraph
-ripper-tags
+gem 'bundler'
+gem 'neovim'
+gem 'solargraph'
+gem 'ripper-tags'
