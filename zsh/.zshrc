@@ -43,4 +43,4 @@ eval "$(direnv hook zsh)"
 eval "$(broot --print-shell-function zsh)"
 
 # ruby version manager
-eval "$(frum init)"
+source $HOME/.rvm/scripts/rvm

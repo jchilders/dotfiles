@@ -6,7 +6,6 @@ brew 'cmake'
 brew 'direnv'
 brew 'exa' # ls replacement
 brew 'fd' # file finder
-brew 'frum' # ruby version manager
 brew 'fzf' # fuzzy finder
 brew 'git'
 brew 'git-delta' # git-diff replacement

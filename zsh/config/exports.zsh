@@ -26,6 +26,3 @@ export MANPAGER='nvim +Man!'
 export MCFLY_KEY_SCHEME=vim
 export MCFLY_FUZZY=true
 eval "$(mcfly init zsh)"
-
-# frum: ruby version manager
-export FRUM_DIR="$XDG_DATA_HOME/frum"
