@@ -1,25 +1,8 @@
-vim.opt.completeopt = { "menuone", "noselect" }
+vim.opt.completeopt = { "menuone", "noselect", "noinsert" }
 
-local has_compe, compe = pcall(require, "compe")
+-- :setglobal
 
-if has_compe then
-  compe.setup {
-    autocomplete = true, -- Open popup automatically
-    debug = false;
-    enabled = true;
-    preselect = "always",
-    source = {
-      path = true;
-      buffer = true;
-      nvim_lsp = true;
-    };
-  }
-
-  vim.api.nvim_set_keymap("i", "<c-space>", "compe#complete()", { silent = true, noremap = true, expr = true })
-
-  -- Some sources might rely on compe#confirm() mapping. For example, to expand snippets from the completion menu, you
-  -- have to use compe#confirm() mapping.
-  vim.api.nvim_set_keymap("i", "<c-y>", 'compe#confirm("<c-y>")', { silent = true, noremap = true, expr = true })
-
-  vim.api.nvim_set_keymap("i", "<c-e>", 'compe#close("<c-e>")', { silent = true, noremap = true, expr = true })
-end
+-- Not currently working (... with vim-plug?). See:
+-- https://github.com/ms-jpq/coq_nvim/issues/11
+-- Manually enable with :COQnow
+vim.g.coq_settings = { auto_start = true }

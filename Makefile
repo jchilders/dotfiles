@@ -15,6 +15,20 @@ cfg: xdg-setup -git-cfg -zsh-cfg -neovim-cfg -tmux-cfg -kitty-cfg misc-cfg ## Li
 
 cfg-clean: -git-cfg-clean -misc-cfg-clean -neovim-cfg-clean -tmux-cfg-clean -zsh-cfg-clean -kitty-cfg-clean ## Unlink all configuration files
 
+# This is needed by the rvm target: they sign their releases with GPG, so we
+# need to import their PKs.  This process can be buggy due to the keyservers
+# being slow or inoperational.
+gpg-receive-keys:
+	@if ! gpg --list-keys 409B6B1796C275462A1703113804BB82D39DC0E3 &> /dev/null; then \
+		gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 ; \
+	fi
+	@if ! gpg --list-keys 7D2BAF1CF37B13E2069D6956105BD0E739499BDB &> /dev/null; then \
+		gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys 7D2BAF1CF37B13E2069D6956105BD0E739499BDB; \
+	fi
+
+gpg-delete-keys:
+	gpg --batch --delete-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
+
 ##@ Homebrew
 homebrew: ## Install homebrew
 	curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh | /bin/bash
@@ -81,7 +95,11 @@ kitty-cfg-clean: ## Unlink Kitty configuration files
 	stow --target=$(KITTY_CFG_DIR) --delete kitty
 
 ##@ Languages
-ruby: -ruby-cfg -rvm ## Install Ruby-related items
+ruby: ruby-cfg rvm ## Install Ruby
+	rvm install ruby-3.0.2
+	rvm alias create default ruby-3.0.2
+
+ruby-clean: ruby-cfg-clean rvm-clean ## Uninstall Ruby
 
 ruby-cfg: ## Link Ruby configuration files
 	stow --dir=ruby --target=$$HOME gem
@@ -92,22 +110,17 @@ ruby-cfg-clean: ## Unlink Ruby configuration files
 	stow --dir=ruby --target=$$HOME --delete gem
 	stow --dir=ruby --target=$(XDG_CONFIG_HOME)/pry --delete pry
 
-rvm: ## Install Ruby Version Manager
-	@if [[ `which rvm &>/dev/null && $?` != 0 ]]; then \
-	  curl -sSL https://get.rvm.io | bash -s stable --rails ; \
+rvm: gpg-receive-keys ## Install Ruby Version Manager
+	@if ! which rvm &> /dev/null ; then \
+	  curl -sSL https://get.rvm.io | bash -s stable --with-default-gems="bundler rails solargraph neovim ripper-tags" --ignore-dotfiles; \
 	else \
 	  print 'RVM already installed. Doing nothing'; \
 	fi
-	if [[ ! -f $$HOME/.rvm/gemsets/default.gems ]]; then \
-	  cp $(cwd)/default.gems $$HOME/.rvm/gemsets/default.gems; \
-	else; \
-	  cat $(cwd)/default.gems >> $$HOME/.rvm/gemsets/default.gems; \
-	fi; \
 
-rvm-clean: ## Uninstall Ruby Version Manager
-	rvm implode
+rvm-clean: -gpg-delete-keys ## Uninstall Ruby Version Manager
+	rvm implode --force
 
-python: -python-packages ## Install Python-related items
+python: -python-packages ## Install Python
 
 # The pynvim package is needed by the vim-ultest plugin
 python-packages: ## Install Python packages

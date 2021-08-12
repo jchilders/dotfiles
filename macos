@@ -102,7 +102,6 @@ sudo pmset -a displaysleep 15
 # Screen                                                                      #
 ###############################################################################
 
-
 # Require password immediately after sleep or screen saver begins
 defaults write com.apple.screensaver askForPassword -int 1
 defaults write com.apple.screensaver askForPasswordDelay -int 0
@@ -204,9 +203,7 @@ defaults write com.apple.dock wvous-br-corner -int 5
 ###############################################################################
 
 defaults write com.apple.Safari AutoOpenSafeDownloads -bool true
-
-# Hide Safari’s sidebar in Top Sites
-defaults write com.apple.Safari ShowSidebarInTopSites -bool false
+defaults write com.apple.Safari SearchProviderShortName -string DuckDuckGo
 
 # Enable Safari’s debug menu
 defaults write com.apple.Safari IncludeInternalDebugMenu -bool true
@@ -232,17 +229,6 @@ defaults write com.apple.Safari AutoFillCreditCardData -bool false
 
 # Update extensions automatically
 defaults write com.apple.Safari InstallExtensionUpdatesAutomatically -bool true
-
-
-###############################################################################
-# Terminal & iTerm 2                                                          #
-###############################################################################
-
-defaults write com.apple.Terminal "Default Window Settings" Homebrew
-defaults write com.apple.Terminal "Startup Window Settings" Homebrew
-
-# Only use UTF-8 in Terminal.app
-defaults write com.apple.terminal StringEncodings -array 4
 
 ###############################################################################
 # Mac App Store                                                               #

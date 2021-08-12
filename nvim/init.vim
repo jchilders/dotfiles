@@ -24,6 +24,8 @@ VimLoad plugs
 VimLoad autocmds
 VimLoad colors
 
+LuaLoad init
+
 " Mappings need to be last to ensure that ours take priority
 VimLoad mappings
 VimLoad mappings.ctrlo
