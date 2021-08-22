@@ -15,6 +15,7 @@ brew 'htop'
 brew 'imagemagick'
 brew 'jq' # json processor
 brew 'memcached'
+brew 'parallel' # gnu parallel
 brew 'python'
 brew 'redis'
 brew 'rg' # ripgrep
@@ -26,6 +27,7 @@ brew 'tig'  # git history viewer
 brew 'tmux'
 brew 'tmuxinator'
 brew 'toilet' # ascii banners
+brew 'universal-ctags' # better ctags
 brew 'watchexec' # auto-restart process on file changes
 brew 'zsh-autosuggestions'
 brew 'zoxide' # smarter cd command

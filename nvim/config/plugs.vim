@@ -8,6 +8,7 @@
 "
 "   nvim --headless +PlugInstall +qa
 call plug#begin('~/.local/share/nvim/plugins')
+
   " astronauta provides autoloading of lua configs from:
   "   ftplugin/*.lua
   "   after/ftplugin/*.lua
@@ -19,7 +20,6 @@ call plug#begin('~/.local/share/nvim/plugins')
 
   " {{{ lsp
   Plug 'neovim/nvim-lspconfig'
-  Plug 'kabouzeid/nvim-lspinstall'
   Plug 'glepnir/lspsaga.nvim'
   " lsp }}}
 
@@ -38,7 +38,9 @@ call plug#begin('~/.local/share/nvim/plugins')
   Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
   " telescope.nvim }}}
 
-  Plug 'hrsh7th/nvim-compe'
+  " very (!) fast completion/snippets
+  Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}
+  Plug 'ms-jpq/coq.artifacts', {'branch': 'artifacts'}
 
   " Add VSCode-like pictograms
   Plug 'onsails/lspkind-nvim'
