@@ -16,9 +16,7 @@ vmap <silent> <C-c> "+y
 nmap <leader>cw :%s/\<<C-r><C-w>\>/<C-r><C-w>
 vmap <leader>cw y:%s/<C-r>"/<C-r>"
 
-" <leader>g - Toggles display of gutter and any virtual text. Use when you
-" need to copy text to pasteboard, but don't want extra stuff getting in the
-" way
+" Toggle display of gutter and any virtual text
 function! g:ToggleGutter()
   if(&rnu == 1)
     set nonumber
@@ -42,15 +40,16 @@ nnoremap <silent> <expr> <CR> {-> v:hlsearch ? ":nohl\<CR>" : "\<CR>"}()
 " Quickly toggle next/previous buffers
 nmap <silent> <leader><leader> <cmd>b#<CR>
 
-nmap <leader>rv <cmd>source $MYVIMRC<CR><cmd>echo 'Reloaded!'<CR>
+" Toggle between single and double quotes for the string under the cursor
+nmap <leader>rq <cmd>lua require("jc.quote-toggler").toggle_quotes()<CR>
 
-nnoremap <silent> <leader>t <cmd>lua require('lspsaga.floaterm').open_float_terminal()<CR>
-tnoremap <silent> <esc><esc> <C-\><C-n>:lua require('lspsaga.floaterm').close_float_terminal()<CR>
+" Reload configuration
+nmap <leader>rv <cmd>source $MYVIMRC<CR><cmd>echo 'Reloaded!'<CR>
 
 " Show tree-sitter highlight group(s) for current cursor position
 map <leader>hi <cmd>TSHighlightCapturesUnderCursor<CR>
 
-" Toggle tree-sitter highlighting
+" Toggle treesitter highlighting
 nmap <leader>tog <cmd>TSToggle highlight<CR>
 
 " Execute this file

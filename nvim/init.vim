@@ -30,4 +30,7 @@ LuaLoad init
 VimLoad mappings
 VimLoad mappings.ctrlo
 
+" let g:coq_settings = { 'auto_start': v:true | 'shut-up' }
+let g:coq_settings = { 'auto_start': v:true }
+
 " `vim --cmd 'profile start initvim-profiling.result' --cmd 'profile! file
