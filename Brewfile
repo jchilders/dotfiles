@@ -14,6 +14,8 @@ brew 'httpie'
 brew 'htop'
 brew 'imagemagick'
 brew 'jq' # json processor
+brew 'lua'
+brew 'luarocks'
 brew 'memcached'
 brew 'parallel' # gnu parallel
 brew 'python'

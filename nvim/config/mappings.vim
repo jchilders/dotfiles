@@ -43,6 +43,11 @@ nmap <silent> <leader><leader> <cmd>b#<CR>
 " Toggle between single and double quotes for the string under the cursor
 nmap <leader>rq <cmd>lua require("jc.quote-toggler").toggle_quotes()<CR>
 
+" Send the current line to the left tmux pane
+nmap <leader>sl <cmd>lua require("jc.repl").send_line_left()<CR>
+" Send the selected text to the left tmux pane
+vmap <leader>ss <cmd>lua require("jc.repl").send_selection_left()<CR>
+
 " Reload configuration
 nmap <leader>rv <cmd>source $MYVIMRC<CR><cmd>echo 'Reloaded!'<CR>
 

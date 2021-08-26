@@ -101,10 +101,7 @@ Neovim-specific additions are shown here.
 | <kbd>Enter</kbd> | Clear highlighted search |
 | <kbd>,,</kbd> | Switch between next/previous buffers |
 | <kbd>,ccs</kbd> | Change (rename) current symbol |
-| <kbd>,fmt</kbd> | Format current buffer |
 | <kbd>,g</kbd> | Toggle gutter | g:ToggleGutter() |
-| <kbd>gJ</kbd> | Join code block |
-| <kbd>gS</kbd> | Split code block |
 | <kbd>,]]</kbd> | Go to next error/warning |
 | <kbd>,[[</kbd> | Go to previous error/warning |
 | <kbd>,e</kbd> | Show error/warning for current line|
@@ -120,6 +117,12 @@ Neovim-specific additions are shown here.
 | <kbd>,rp</kbd> | Insert `puts` below current line |
 | <kbd>,rP</kbd> | Insert `puts` above current line |
 | <kbd>,rt</kbd> | Run most recently modified spec in tmux pane to the left |
+
+### Interacting with Tmux
+| mapping | description |
+| :-----: | :---------- |
+| <kbd>,sl</kbd> | Send current line to tmux pane to the left |
+| <kbd>,ss</kbd> | Send current selection to tmux pane to the left |
 
 # zsh
 

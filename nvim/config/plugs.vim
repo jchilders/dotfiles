@@ -20,6 +20,7 @@ call plug#begin('~/.local/share/nvim/plugins')
 
   " {{{ lsp
   Plug 'neovim/nvim-lspconfig'
+  Plug 'kabouzeid/nvim-lspinstall'
   Plug 'glepnir/lspsaga.nvim'
   " lsp }}}
 
