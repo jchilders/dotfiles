@@ -8,11 +8,7 @@ require('telescope').setup{
     borderchars             = {"─", "│", "─", "│", "╭", "╮", "╯", "╰"},
     color_devicons = true,
     file_ignore_patterns = { '%.png', '%.jpg', '%.ttf', '%.eot', '%.gif', '%.swf', '%.woff', '%.pdf' },
-    layout_config = {
-      preview_cutoff = 1, -- Preview should always show (unless previewer = false)
-      preview_width = 0.66,
-      prompt_position = 'bottom',
-    },
+    layout_strategy = 'vertical',
     mappings = {
       n = {
         ["<c-d>"] = actions.delete_buffer,
