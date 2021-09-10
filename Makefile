@@ -6,7 +6,7 @@ XDG_DATA_HOME := $$HOME/.local/share
 cwd := $(shell pwd)
 
 ##@ Install
-install: macos xdg-setup -homebrew -homebrew-defaults -fonts -ruby -python -cfg -neovim -tmux -zsh -kitty ## Install all the things
+install: macos xdg-setup homebrew homebrew-bundle -fonts -ruby -python -cfg -neovim -tmux -ssh -zsh -kitty ## Install all the things
 
 clean: -homebrew-clean -fonts-clean -rvm-clean -neovim-clean -misc-cfg-clean -tmux-clean -zsh-cfg-clean ## Uninstall all the things
 
@@ -96,8 +96,8 @@ kitty-cfg-clean: ## Unlink Kitty configuration files
 
 ##@ Languages
 ruby: ruby-cfg rvm ## Install Ruby
-	rvm install ruby-3.0.2
-	rvm alias create default ruby-3.0.2
+	rvm install ruby-3
+	rvm alias create default ruby-3
 
 ruby-clean: ruby-cfg-clean rvm-clean ## Uninstall Ruby
 
@@ -126,8 +126,12 @@ python: -python-packages ## Install Python
 python-packages: ## Install Python packages
 	-python3 -m pip install --user --upgrade pynvim
 
+ssh: ## Install ssh related files
+	@[ -d $$HOME/.ssh ] || mkdir $$HOME/.ssh
+	stow --target=$$HOME/.ssh .ssh
+
 ##@ tmux
-tmux: -tmux-cfg -tmux-plugins ## Install & configure tmux
+tmux: tmux-cfg tmux-plugins ## Install & configure tmux
 
 tmux-clean: -tmux-cfg-clean ## Uninstall tmux & configuration files
 	-rm -rf ~/.tmux

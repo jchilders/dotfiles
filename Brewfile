@@ -7,8 +7,10 @@ brew 'direnv'
 brew 'exa' # ls replacement
 brew 'fd' # file finder
 brew 'fzf' # fuzzy finder
+brew 'gh'  # GitHub CLI
 brew 'git'
 brew 'git-delta' # git-diff replacement
+brew 'git-lfs' # handle Large Files in git
 brew 'gpg'
 brew 'httpie'
 brew 'htop'
@@ -18,6 +20,7 @@ brew 'lua'
 brew 'luarocks'
 brew 'memcached'
 brew 'parallel' # gnu parallel
+brew 'postgresql'
 brew 'python'
 brew 'redis'
 brew 'rg' # ripgrep

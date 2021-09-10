@@ -40,7 +40,7 @@ source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 eval "$(direnv hook zsh)"
 
 # file tree thing
-eval "$(broot --print-shell-function zsh)"
+source $XDG_CONFIG_HOME/broot/launcher/bash/br
 
 # ruby version manager
 source $HOME/.rvm/scripts/rvm
