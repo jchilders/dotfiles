@@ -69,3 +69,5 @@
 	email = james.childers@gmail.com
 [init]
 	defaultBranch = main
+[credential]
+	helper = cache --timeout=600

@@ -130,6 +130,9 @@ ssh: ## Install ssh related files
 	@[ -d $$HOME/.ssh ] || mkdir $$HOME/.ssh
 	stow --target=$$HOME/.ssh .ssh
 
+ssh-add-key: -ssh ## Add key to SSH agent
+	ssh-add -K ~/.ssh/id_ed25519
+
 ##@ tmux
 tmux: tmux-cfg tmux-plugins ## Install & configure tmux
 
