@@ -1,5 +1,7 @@
 export XDG_DATA_HOME="$HOME/.local/share"
 
+export JC_DOTFILES_HOME="$HOME/workspace/dotfiles"
+
 # Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then
   export EDITOR='vim'
@@ -9,7 +11,7 @@ fi
 
 export PATH="/usr/local/sbin:$PATH"
 # export PATH="/usr/local/opt/openssl@1.1/bin:$PATH"
-export PATH="$PATH:$HOME/workspace/dotfiles/scripts"
+export PATH="$PATH:$JC_DOTFILES_HOME/scripts"
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 export PATH="$PATH:$HOME/.rvm/bin"
 

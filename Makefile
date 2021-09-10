@@ -148,7 +148,7 @@ tmux-cfg-clean: ## Unlink tmux configuration files
 
 tmux-plugins: ## Install plugin manager and other related items
 	@[ -d $$HOME/.tmux ] || mkdir $$HOME/.tmux
-	git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+	git clone https://github.com/tmux-plugins/tpm $$HOME/.tmux/plugins/tpm
 
 ##@ WezTerm
 wezterm: -wezterm-cfg ## Install WezTerm terminal emulator

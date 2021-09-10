@@ -1,9 +1,6 @@
 #!/usr/bin/env zsh
 
-# TODO: Make this generic
-script_dir="$HOME/workspace/jchilders/dotfiles/scripts"
-
-local result="$(tmux list-sessions | $script_dir/fzfp | choose -f : 0)"
+local result="$(tmux list-sessions | fzfp | choose -f : 0)"
 
 if [[ -z $result ]]; then
   return 0
