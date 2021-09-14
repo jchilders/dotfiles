@@ -28,8 +28,3 @@ opt.wrap = true
 opt.scrolloff = 8
 opt.sidescrolloff = 15
 opt.sidescroll = 5
-
--- wrap long lines with indentation
-opt.breakindent = true
-opt.breakindentopt = 'shift:2'
-opt.showbreak = '↳'

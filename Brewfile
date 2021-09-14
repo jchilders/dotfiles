@@ -37,6 +37,7 @@ brew 'watchexec' # auto-restart process on file changes
 brew 'zsh-autosuggestions'
 brew 'zoxide' # smarter cd command
 
+cask '1password'
 cask 'kitty' # terminal emulator
 cask 'lulu' # allow/deny apps to use the network
 
