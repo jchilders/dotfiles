@@ -1,6 +1,9 @@
 alias ..='cd ..'
 alias l='exa --all --classify --git --header --icons --long --no-permissions --no-user --color-scale'
-alias tree='br' # trying out broot
+alias tree='exa --tree'
+
+# let man command work for both executables and builtins
+alias man=run-help
 
 alias python=/usr/local/bin/python3
 

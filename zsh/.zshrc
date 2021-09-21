@@ -1,15 +1,17 @@
 # zoxide: smarter cd
-_ZO_DATA_DIR=$HOME/.local/share/zoxide
-eval "$(zoxide init zsh)"
+if type zoxide &> /dev/null; then
+  eval "$(zoxide init zsh)"
+fi
 
 # prompt
-eval "$(starship init zsh)"
+if type starship &>/dev/null; then
+  eval "$(starship init zsh)"
+fi
 
 foreach file (
   settings.zsh
   aliases.zsh
   exports.zsh
-  fzf-widgets.zsh
   ctrlo-widgets.zsh
   misc-widgets.zsh
 ) {
@@ -29,7 +31,9 @@ if type brew &>/dev/null; then
   compinit
 fi
 
-source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+if [[ -f /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
+  source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+fi
 
 # direnv allows for directory-specific environment variables. To use, add
 # .envrc file to directory to load project specific envars. Then:
@@ -37,10 +41,14 @@ source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 # > direnv allow .
 #
 # To allow it for that directory
-eval "$(direnv hook zsh)"
-
-# file tree thing
-source $XDG_CONFIG_HOME/broot/launcher/bash/br
+if type direnv &>/dev/null; then
+  eval "$(direnv hook zsh)"
+fi
 
 # ruby version manager
 source $HOME/.rvm/scripts/rvm
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+export PATH="/usr/local/opt/postgresql@11/bin:$PATH"
+export LDFLAGS="-L/usr/local/opt/postgresql@11/lib"
+export CPPFLAGS="-I/usr/local/opt/postgresql@11/include"

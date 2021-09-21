@@ -1,6 +1,5 @@
 brew 'automake'
 brew 'bat' # cat replacement
-brew 'broot' # dir/file tree thing
 brew 'choose-rust' # sed replacement: `choose 5`
 brew 'cmake'
 brew 'direnv'
@@ -20,7 +19,6 @@ brew 'lua'
 brew 'luarocks'
 brew 'memcached'
 brew 'parallel' # gnu parallel
-brew 'postgresql'
 brew 'python'
 brew 'redis'
 brew 'rg' # ripgrep
@@ -48,10 +46,6 @@ brew 'zsh-abbr'
 # find alternate (i.e. test) file
 tap 'uptech/homebrew-oss'
 brew 'uptech/oss/alt'
-
-# smarter history search. ctrl-r replacement
-tap 'cantino/mcfly'
-brew 'mcfly'
 
 # Semantics-aware diffs using ASTs from tree-sitter
 tap 'afnanenayet/tap'

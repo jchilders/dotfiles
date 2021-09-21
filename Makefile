@@ -31,13 +31,13 @@ gpg-delete-keys:
 
 ##@ Homebrew
 homebrew: ## Install homebrew
-	curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh | /bin/bash
+	sudo curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh | /bin/bash
 
 homebrew-bundle: ## Install default homebrew formulae
 	brew bundle # see Brewfile
 
 homebrew-clean: ## Uninstall homebrew
-	curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall.sh | /bin/zsh
+	curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall.sh | /bin/bash
 	rm -r /usr/local/var/homebrew
 
 ##@ Neovim
@@ -126,14 +126,6 @@ python: -python-packages ## Install Python
 python-packages: ## Install Python packages
 	-python3 -m pip install --user --upgrade pynvim
 
-ssh: ## Install ssh related files
-	@[ -d $$HOME/.ssh ] || mkdir $$HOME/.ssh
-	stow --target=$$HOME/.ssh .ssh
-
-ssh-add-key: -ssh ## Add key to SSH agent
-	ssh-add -K ~/.ssh/id_ed25519
-
-##@ tmux
 tmux: tmux-cfg tmux-plugins ## Install & configure tmux
 
 tmux-clean: -tmux-cfg-clean ## Uninstall tmux & configuration files
@@ -208,6 +200,15 @@ misc-cfg: ## Miscellany
 misc-cfg-clean: ## Unlink misc configs
 	stow --target=$(XDG_CONFIG_HOME) --delete starship
 	stow --target=$(XDG_CONFIG_HOME)/kitty --delete kitty
+
+ssh: ## Install ssh related files
+	@[ -d $$HOME/.ssh ] || mkdir $$HOME/.ssh
+	stow --target=$$HOME/.ssh .ssh
+
+ssh-add-key: -ssh ## Add key to SSH agent
+	ssh-add -K ~/.ssh/id_ed25519
+
+##@ tmux
 
 xdg-setup: ## Create XDG dirs (XDG_CONFIG_HOME, etc.)
 	@[ -d $(XDG_CONFIG_HOME) ] || mkdir -p $(XDG_CONFIG_HOME)

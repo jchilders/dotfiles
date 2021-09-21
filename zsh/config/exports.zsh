@@ -21,8 +21,3 @@ export FZF_DEFAULT_OPTS="--height 30% --border --tiebreak=index --info=inline --
 export FZF_DEFAULT_COMMAND="fd"
 
 export MANPAGER='nvim +Man!'
-
-# mcfly: smarter history search
-export MCFLY_KEY_SCHEME=vim
-export MCFLY_FUZZY=true
-eval "$(mcfly init zsh)"
