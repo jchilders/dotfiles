@@ -49,6 +49,5 @@ fi
 source $HOME/.rvm/scripts/rvm
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-export PATH="/usr/local/opt/postgresql@11/bin:$PATH"
 export LDFLAGS="-L/usr/local/opt/postgresql@11/lib"
 export CPPFLAGS="-I/usr/local/opt/postgresql@11/include"
