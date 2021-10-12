@@ -3,6 +3,15 @@
 
 # Return a list of all branches, remote and local, sorted by most recently modified.
 
+require 'English'
+
+# check if curr dir is git repo
+`git -C . rev-parse 2>/dev/null`
+unless $CHILD_STATUS.success?
+  puts 'Not a git repo'
+  exit($CHILD_STATUS.exitstatus)
+end
+
 git_cmd = "git for-each-ref --sort=-committerdate --format='%(refname:lstrip=2)'"
 
 locals = `#{git_cmd} refs/heads`.split

@@ -46,7 +46,7 @@ nmap <leader>rq <cmd>lua require("jc.quote-toggler").toggle_quotes()<CR>
 " Send the current line to the left tmux pane
 nmap <leader>sl <cmd>lua require("jc.tmux").send_line_left()<CR>
 " Send the selected text to the left tmux pane
-vmap <leader>ss <cmd>lua require("jc.tmux").send_selection_left()<CR>
+vmap <leader>sl <cmd>lua require("jc.tmux").send_selection_left()<CR>
 
 " Run the most recently modified test
 nmap <leader>rt <cmd>lua require("jc.tmux").run_mru_rails_test()<CR>

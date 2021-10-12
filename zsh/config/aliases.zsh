@@ -31,8 +31,7 @@ abbr add rdbmst='bin/rake db:migrate:status RAILS_ENV=test'> /dev/null 2>&1
 function rs {
   # If $PORT is defined, then start rails with the -p param. Otherwise... don't.
   [[ -v PORT ]] && port_arg=("-p $PORT") || unset port_arg
-  watch_cmd=("watchexec --restart --watch 'app/controllers'")
-  rails_cmd=("'bin/rails server $port_arg'")
-  echo $watch_cmd $rails_cmd
-  eval $watch_cmd $rails_cmd
+  rails_cmd=("bin/rails server $port_arg")
+  echo $rails_cmd
+  eval $rails_cmd
 }
