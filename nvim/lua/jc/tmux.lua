@@ -1,6 +1,5 @@
 local M = {}
 
-
 -- Send line under the cursor to the tmux pane to the left
 M.send_line_left = function()
   local curr_line = vim.fn.trim(vim.fn.getline("."))
@@ -23,7 +22,7 @@ M.run_mru_rails_test = function()
 end
 
 M.send_left = function(text)
-  local esc_text = vim.fn.escape(text, '\"$')
+  local esc_text = vim.fn.escape(text, '\"$`')
   local tmux_cmd = string.format('tmux send-keys -t left "%s" Enter', esc_text)
 
   vim.fn.system(tmux_cmd)
