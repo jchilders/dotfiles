@@ -2,6 +2,10 @@ export XDG_DATA_HOME="$HOME/.local/share"
 
 export JC_DOTFILES_HOME="$HOME/workspace/dotfiles"
 
+# In all my years of doing Rails development Spring has caused far, far more
+# issues than time it has saved. Disable it, with a vengeance.
+export DISABLE_SPRING=1
+
 # Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then
   export EDITOR='vim'

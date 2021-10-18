@@ -1,9 +1,13 @@
 local M = {}
 
--- Send line under the cursor to the tmux pane to the left
+-- Send line under the cursor to the tmux pane to the left, then move cursor to
+-- next line
 M.send_line_left = function()
   local curr_line = vim.fn.trim(vim.fn.getline("."))
   M.send_left(curr_line)
+
+  local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+  vim.api.nvim_win_set_cursor(0, {row + 1, col})
 end
 
 -- Send currently selected text to the tmux pane to the left

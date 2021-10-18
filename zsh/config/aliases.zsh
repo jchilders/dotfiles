@@ -11,7 +11,9 @@ source /usr/local/share/zsh-abbr/zsh-abbr.zsh
 
 abbr add be='bundle exec' > /dev/null 2>&1
 abbr add bi='bundle install' > /dev/null 2>&1
-abbr add cpwd='pwd | pbcopy' > /dev/null 2>&1
+
+alias cpwd="pwd | tr -d '\n' | pbcopy"
+
 abbr add dcom='docker-compose' > /dev/null 2>&1
 
 alias gcb="git branch --show-current | tr -d '\n' | pbcopy"
