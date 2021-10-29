@@ -102,6 +102,7 @@ ruby: ruby-cfg rvm ## Install Ruby
 ruby-clean: ruby-cfg-clean rvm-clean ## Uninstall Ruby
 
 ruby-cfg: ## Link Ruby configuration files
+	stow --dir=ruby --target=$$HOME ruby
 	stow --dir=ruby --target=$$HOME gem
 	@[ -d $(XDG_CONFIG_HOME)/pry ] || mkdir $(XDG_CONFIG_HOME)/pry
 	stow --dir=ruby --target=$(XDG_CONFIG_HOME)/pry pry
