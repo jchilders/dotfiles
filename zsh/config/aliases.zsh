@@ -27,13 +27,32 @@ abbr add rdbms='bin/rake db:migrate:status' > /dev/null 2>&1
 abbr add rdbmt='bin/rake db:migrate RAILS_ENV=test' > /dev/null 2>&1
 abbr add rdbmst='bin/rake db:migrate:status RAILS_ENV=test'> /dev/null 2>&1
 
-# Some (older) versions of Rails -- like the one I'm currently working with --
-# do not pick up changes to controllers and force you to restart the server.
-# This automates that. 
 function rs {
   # If $PORT is defined, then start rails with the -p param. Otherwise... don't.
   [[ -v PORT ]] && port_arg=("-p $PORT") || unset port_arg
   rails_cmd=("bin/rails server $port_arg")
   echo $rails_cmd
   eval $rails_cmd
+}
+
+# Change directory to source dir for given gem
+function cdgem () {
+  if [[ $# -eq 0 ]]; then
+      echo "Usage: $0 <gem>"
+      return 1
+  fi
+
+  if [[ ! -f Gemfile ]]; then
+      echo "No Gemfile found"
+      return 1
+  fi
+
+  gem_dir=$(bundle info $1 2>/dev/null | awk 'END{print}' | choose -1)
+
+  if [[ -d $gem_dir ]]; then
+      cd $gem_dir
+  else
+      echo "No install directory found for $1"
+      return 1
+  fi
 }

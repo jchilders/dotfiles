@@ -40,8 +40,8 @@ call plug#begin('~/.local/share/nvim/plugins')
   " telescope.nvim }}}
 
   " very (!) fast completion/snippets
-  Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}
-  Plug 'ms-jpq/coq.artifacts', {'branch': 'artifacts'}
+  " Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}
+  " Plug 'ms-jpq/coq.artifacts', {'branch': 'artifacts'}
 
   " Add VSCode-like pictograms
   Plug 'onsails/lspkind-nvim'
@@ -101,4 +101,6 @@ call plug#begin('~/.local/share/nvim/plugins')
   " can test is by holding down j/k while current buffer is connected to
   " Solargraph
   Plug 'antoinemadec/FixCursorHold.nvim'
+
+  Plug 'github/copilot.vim'
 call plug#end()
