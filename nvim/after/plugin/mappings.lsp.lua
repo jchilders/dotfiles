@@ -3,7 +3,8 @@ local map = require('cartographer')
 -- `:unmap` 'zfo' in `x` mode
 -- map.x['<leader>zfo'] = nil
 
-map.n.nore.silent['<leader>gd'] = '<cmd>lua vim.lsp.buf.definition()<CR>'
+map.n.nore.silent['<leader>gd'] = "<cmd>lua require('telescope.builtin').lsp_definitions()<CR>"
+
 map.n.nore.silent['<leader>K'] = '<cmd>lua require(\'lspsaga.hover\').render_hover_doc()<CR>'
 map.n.nore.silent['<leader>wa'] = '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>'
 map.n.nore.silent['<leader>wr'] = '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>'
