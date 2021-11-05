@@ -1,7 +1,8 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-# Return a list of all branches, remote and local, sorted by most recently modified.
+# Return a list of all branches, both remote and local, sorted by most recently
+# modified.
 
 require 'English'
 

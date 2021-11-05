@@ -8,7 +8,8 @@ Configurations for neovim, zsh, tmux, and macOS, with a focus on neovim.
 - FZF & Telescope integration 
 - tmux
 
-Common tasks should require a minimum of keystrokes. Fuzzy finding is preferred over tab completion. 
+Common tasks should require a minimum of keystrokes. Fuzzy finding is preferred
+over tab completion. File trees are for the weak.
 
 # Installation
 
@@ -62,12 +63,11 @@ These work in both zsh and nvim.
 
 | mapping | description |
 | :-----: | :---------- |
-| <kbd>^oc</kbd> | Fuzzy find Rails controller & edit |
-| <kbd>^od</kbd> | Fuzzy find directory & cd to it |
-| <kbd>^of</kbd> | Fuzzy find file & edit |
-| <kbd>^oF</kbd> | Fuzzy find *any* file (ignores `.gitignore`) & edit |
-| <kbd>^om</kbd> | Fuzzy find Rails model & edit |
-| <kbd>^ov</kbd> | Fuzzy find Rails view & edit |
+| <kbd>^oo</kbd> | Find file & edit |
+| <kbd>^oO</kbd> | Find *any* file (ignores `.gitignore`) & edit |
+| <kbd>^oc</kbd> | Find Rails controller & edit |
+| <kbd>^om</kbd> | Find Rails model & edit |
+| <kbd>^ov</kbd> | Find Rails view & edit |
 
 ## ctrl-o git mappings
 
@@ -75,10 +75,10 @@ These work in both zsh and nvim.
 
 | mapping | description |
 | :-----: | :---------- |
-| <kbd>^oga</kbd> | Fuzzy find uncommited change & add to staging area (`git add`) |
+| <kbd>^oga</kbd> | Find uncommited changed file & add to staging area (`git add`) |
 | <kbd>^ogb</kbd> | Switch branch |
-| <kbd>^ogd</kbd> | Fuzzy find uncommited change & view diff (`git diff`) |
-| <kbd>^ogs</kbd> | Fuzzy find uncommited change & edit (`git status`)|
+| <kbd>^ogd</kbd> | Find uncommited changed file & show diff (`git diff`) |
+| <kbd>^ogs</kbd> | Find uncommited changed file & edit (`git status`)|
 
 # Neovim
 ## Mappings
@@ -94,7 +94,7 @@ Neovim-specific additions are shown here.
 | <kbd>^oR</kbd> | Fuzzy go to symbol (method name, etc.) for current workspace | telescope.nvim |
 | <kbd>^os</kbd> | Search directory for string under cursor | telescope.nvim |
 
-### Other Neovim Mappings
+### Other Noteworthy Neovim Mappings
 
 | mapping | description |
 | :-----: | :---------- |
@@ -110,19 +110,22 @@ Neovim-specific additions are shown here.
 | <kbd>gcc</kbd> | Comment/uncomment current line |
 
 ### Ruby- and Rails-specific Neovim Mappings
+
 | mapping | description |
 | :-----: | :---------- |
 | <kbd>,bp</kbd> | Insert `binding.pry` below current line |
 | <kbd>,bP</kbd> | Insert `binding.pry` above current line |
 | <kbd>,rp</kbd> | Insert `puts` below current line |
 | <kbd>,rP</kbd> | Insert `puts` above current line |
+| <kbd>,rr</kbd> | Restart console running in tmux pane to the left |
 | <kbd>,rt</kbd> | Run most recently modified spec in tmux pane to the left |
 
-### Interacting with Tmux
+### Sending to Tmux
+
 | mapping | description |
 | :-----: | :---------- |
 | <kbd>,sl</kbd> | Send current line to tmux pane to the left |
-| <kbd>,ss</kbd> | Send current selection to tmux pane to the left |
+| <kbd>,sl</kbd> | Send current selection to tmux pane to the left |
 
 # zsh
 
@@ -131,8 +134,8 @@ Additional mappings (widgets) available to zsh:
 
 | mapping | description |
 | :-----: | :---------- |
-| <kbd>^t</kbd> | Fuzzy find file and append to current cursor position |
-| <kbd>^r</kbd> | Fuzzy search command history (`^r<enter>` to run last command) |
+| <kbd>^t</kbd> | Find file and append to current cursor position |
+| <kbd>^r</kbd> | Search command history (`^r<enter>` to run last command) |
 
 ## Aliases
 Defined in `zsh/config/aliases.zsh`
@@ -144,7 +147,7 @@ Defined in `zsh/config/aliases.zsh`
 | <kbd>gd</kbd> | `git diff` |
 | <kbd>gst</kbd> |  `git status -sb` |
 | <kbd>r</kbd> | Rerun previous command |
-| <kbd>rc</kbd> | `rails console` |
+| <kbd>rc</kbd> | `bin/rails console`, or `bin/console` if in a Gem directory |
 | <kbd>rdbm</kbd> | `rake db:migrate` |
 | <kbd>rdbms</kbd> | `rake db:migrate:status` |
 | <kbd>rdbmt</kbd> | `rake db:migrate RAILS_ENV=test` |
