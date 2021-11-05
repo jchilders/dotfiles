@@ -26,15 +26,12 @@ PrintTable(t)
 table.concat(t, "\r")
 PrintTable(table.concat(t, "\r"))
 
-
-
 for k, v in pairs(t) do
   print(v)
 end
 
 if str:sub(#str, #str) ~= "\r" then
   print("it is NOT")
-  str = str .. "\r"
 else
   print("it IS")
 end
@@ -45,3 +42,33 @@ end
 
 -- add to end of table
 t[#t+1] = "\n"
+
+function split(str, delim)
+  if delim == nil then
+    delim = "%s"
+  end
+
+  local t={}
+  for substr in string.gmatch(str, "([^" .. delim .. "]+)") do
+    table.insert(t, substr)
+  end
+
+  return t
+end
+
+str = "this/is/a/path"
+matches = split(str, "/")
+PrintTable(matches)
+
+for k, v in pairs(matches) do
+  print(v)
+end
+
+scratch_file = matches[#matches] .."_scratch.rb"
+
+print("Last match: '" .. matches[#matches] .. "'")
+
+bundle info sidekiq 2>/dev/null
+
+| awk 'END{print}' | choose -1
+

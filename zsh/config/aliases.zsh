@@ -21,11 +21,21 @@ abbr add gd='git diff' > /dev/null 2>&1
 abbr add gst='git status -sb' > /dev/null 2>&1
 abbr add muxi='tmuxinator' > /dev/null 2>&1
 
-abbr add rc='bin/rails console'> /dev/null 2>&1
 abbr add rdbm='bin/rake db:migrate' > /dev/null 2>&1
 abbr add rdbms='bin/rake db:migrate:status' > /dev/null 2>&1
 abbr add rdbmt='bin/rake db:migrate RAILS_ENV=test' > /dev/null 2>&1
 abbr add rdbmst='bin/rake db:migrate:status RAILS_ENV=test'> /dev/null 2>&1
+
+function rc() {
+  if [[ -f bin/rails ]]; then
+    bin/rails console
+  elif [[ -f bin/console ]]; then
+    bin/console
+  else
+    echo "No console found"
+    return 1
+  fi
+}
 
 function rs {
   # If $PORT is defined, then start rails with the -p param. Otherwise... don't.
@@ -47,7 +57,7 @@ function cdgem () {
       return 1
   fi
 
-  gem_dir=$(bundle info $1 2>/dev/null | awk 'END{print}' | choose -1)
+  gem_dir=$(gem open $1 -e echo)
 
   if [[ -d $gem_dir ]]; then
       cd $gem_dir

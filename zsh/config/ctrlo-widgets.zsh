@@ -48,7 +48,7 @@ function fuzzy_edit_file {
   __eval_found_file "${EDITOR:-nvim}"
 }
 zle -N fuzzy_edit_file
-bindkey '^of' fuzzy_edit_file
+bindkey '^oo' fuzzy_edit_file
 
 # ANY file
 function fuzzy_edit_any_file {
@@ -56,7 +56,7 @@ function fuzzy_edit_any_file {
   __eval_found_file "${EDITOR:-nvim}"
 }
 zle -N fuzzy_edit_any_file
-bindkey '^oF' fuzzy_edit_any_file
+bindkey '^oO' fuzzy_edit_any_file
 
 # Git stuff. All prefixed with ^og
 

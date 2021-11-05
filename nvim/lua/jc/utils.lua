@@ -2,6 +2,23 @@ local M = {}
 
 local api = vim.api
 
+-- Split a string into a list of strings based on the given delimiter.
+-- @param str The string to split.
+-- @param delim The delimiter.
+-- @return A list of strings.
+function M.split(str, delim)
+  if delim == nil then
+    delim = "%s"
+  end
+
+  local t={}
+  for substr in string.gmatch(str, "([^" .. delim .. "]+)") do
+    table.insert(t, substr)
+  end
+
+  return t
+end
+
 -- Create silnt normal mode mappings
 function M.key_mapper(lhs, rhs)
   if (type(rhs) == "table") then
@@ -20,6 +37,7 @@ function M.set_mappings(keymaps)
   end
 end
 
+-- Does this work?
 function M.add_gem_to_lsp_workspace(gem_name)
   local cmd = "bundle info --path --no-color " .. gem_name
   local gem_path = vim.fn.system(cmd) .. '/lib'

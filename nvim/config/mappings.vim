@@ -56,6 +56,9 @@ nmap <leader>rr <cmd>lua require("jc.tmux").send_keys_left({"C-d","Up","Enter"})
 " Toggle between single and double quotes for the string under the cursor
 nmap <leader>rq <cmd>lua require("jc.quote-toggler").toggle_quotes()<CR>
 
+" Open Scratch file for this project
+nmap <leader>rs <cmd>lua require("jc.scratch").open_project_scratch_file()<CR>
+
 " Run the most recently modified test
 nmap <leader>rt <cmd>lua require("jc.tmux").run_mru_rails_test()<CR>
 
@@ -81,5 +84,5 @@ if !exists('#save_and_exec')
   endfunction
 end
 
-" save and resource current file
+" save and re-source current file
 noremap <leader>xx :call <SID>save_and_exec()<CR>
