@@ -39,8 +39,8 @@ end
 
 -- Does this work?
 function M.add_gem_to_lsp_workspace(gem_name)
-  local cmd = "bundle info --path --no-color " .. gem_name
-  local gem_path = vim.fn.system(cmd) .. '/lib'
+  local cmd = "gem open " .. gem_name .. " -e echo"
+  local gem_path = vim.fn.system(cmd)
   gem_path = string.gsub(gem_path, "\n", '')
   print('Adding ' .. gem_name .. ' to LSP, path: ' .. gem_path)
 

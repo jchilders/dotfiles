@@ -52,17 +52,5 @@ function cdgem () {
       return 1
   fi
 
-  if [[ ! -f Gemfile ]]; then
-      echo "No Gemfile found"
-      return 1
-  fi
-
-  gem_dir=$(gem open $1 -e echo)
-
-  if [[ -d $gem_dir ]]; then
-      cd $gem_dir
-  else
-      echo "No install directory found for $1"
-      return 1
-  fi
+  cd $(gem open $1 -e echo)
 }
