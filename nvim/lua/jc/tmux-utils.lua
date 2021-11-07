@@ -46,7 +46,6 @@ end
 
 -- Send array `keys` as keys to the tmux pane to the left
 -- See: http://man.openbsd.org/OpenBSD-current/man1/tmux.1#KEY_BINDINGS
--- TODO: DRY this up?
 M.send_keys_left = function(keys)
   for _, key in ipairs(keys) do
     local esc_text = vim.fn.escape(key, '\"$`')
@@ -67,11 +66,13 @@ function M.visual_selection_range()
   return vis_start, vis_end
 end
 
--- Find the most recently modified file with 'test' in its name and run it with 'rails test'
+-- Find and run the most recently updated test
 M.run_mru_rails_test = function()
-  local find_str = "find test -type f -exec stat -f '%a %N' {} \\; | sort -r | head -1 | awk '{print $NF}'"
-  local cmd_str = "rails test $(" .. find_str .. ")"
-  M.send_left(cmd_str)
+  local find_cmd = "stat -f '%a %N' spec/**/*_spec.rb | sort -r | head -1 | awk '{print $NF}'"
+  local test_file = vim.fn.system(find_cmd)
+  local test_cmd = "rspec " .. test_file
+
+  M.send_left(test_cmd)
 end
 
 return M

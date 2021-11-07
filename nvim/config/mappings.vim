@@ -39,19 +39,18 @@ nnoremap <silent> <expr> <CR> {-> v:hlsearch ? ":nohl\<CR>" : "\<CR>"}()
 
 " Quickly toggle next/previous buffers
 nmap <silent> <leader><leader> <cmd>b#<CR>
+
 " Send the current line to the left tmux pane
-nmap <leader>sl <cmd>lua require("jc.tmux").send_line_left()<CR>
+nmap <leader>sl <cmd>lua require("jc.tmux-utils").send_line_left()<CR>
 " Send the selected text to the left tmux pane
-vmap <leader>sl <cmd>lua require("jc.tmux").send_selection_left()<CR>
+vmap <leader>sl <cmd>lua require("jc.tmux-utils").send_selection_left()<CR>
 
 " Reload confiGuration
 nmap <leader>rg <cmd>source $MYVIMRC<CR><cmd>echo 'Reloaded!'<CR>
 
-" Send ^D UpArrow Enter to the left tmux pane
-" Lets us Restart Rails console/server w/out switching panes
-nmap <leader>rr <cmd>lua require("jc.tmux").send_keys_left({"C-d","Up","Enter"})<CR>
-
-" lua require("jc.tmux").send_keys_left({"C-c","Up","Enter"})
+" Send the keys `^D`, `UpArrow`, and `Enter` to the left tmux pane
+" Lets us quickly Restart Rails console/server/whatever
+nmap <leader>rr <cmd>lua require("jc.tmux-utils").send_keys_left({"C-d","Up","Enter"})<CR>
 
 " Toggle between single and double quotes for the string under the cursor
 nmap <leader>rq <cmd>lua require("jc.quote-toggler").toggle_quotes()<CR>
@@ -60,7 +59,7 @@ nmap <leader>rq <cmd>lua require("jc.quote-toggler").toggle_quotes()<CR>
 nmap <leader>rs <cmd>lua require("jc.scratch").open_project_scratch_file()<CR>
 
 " Run the most recently modified test
-nmap <leader>rt <cmd>lua require("jc.tmux").run_mru_rails_test()<CR>
+nmap <leader>rt <cmd>lua require("jc.tmux-utils").run_mru_rails_test()<CR>
 
 " Show tree-sitter highlight group(s) for current cursor position
 map <leader>hi <cmd>TSHighlightCapturesUnderCursor<CR>

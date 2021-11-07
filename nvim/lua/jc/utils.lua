@@ -2,22 +2,7 @@ local M = {}
 
 local api = vim.api
 
--- Split a string into a list of strings based on the given delimiter.
--- @param str The string to split.
--- @param delim The delimiter.
--- @return A list of strings.
-function M.split(str, delim)
-  if delim == nil then
-    delim = "%s"
-  end
-
-  local t={}
-  for substr in string.gmatch(str, "([^" .. delim .. "]+)") do
-    table.insert(t, substr)
-  end
-
-  return t
-end
+-- Grab bag of stuff that may or may not work
 
 -- Create silnt normal mode mappings
 function M.key_mapper(lhs, rhs)
@@ -164,15 +149,6 @@ end
 
 function M.clearBlameVirtText() -- important for clearing out the text when our cursor moves
   api.nvim_buf_clear_namespace(0, 2, 0, -1)
-end
-
-function M.runCurrentSpec()
-  api.nvim_buf_clear_namespace(0, 2, 0, -1) -- clear out virtual text from namespace 2 (the namespace we will set later)
-  local currFile = vim.fn.expand('%')
-  local currLine = api.nvim_win_get_cursor(0)
-  print(M.dumpTable(currLine))
-  fileLoc = string.format('Curr: %s:%d', currFile, currLine[1])
-  api.nvim_buf_set_virtual_text(0, 2, currLine[1] - 1, {{ text,'GitLens' }}, {}) -- set virtual text for namespace 2 with the content from git and assign it to the higlight group 'GitLens'
 end
 
 return M
