@@ -1,9 +1,25 @@
 alias ..='cd ..'
+alias ...='cd ../..'
 alias l='exa --all --classify --git --header --icons --long --no-permissions --no-user --color-scale'
 alias tree='exa --tree'
 
-# let man command work for both executables and builtins
-alias man=run-help
+if alias -L run-help > /dev/null; then
+  unalias run-help
+fi
+autoload run-help
+export MANPAGER='nvim +Man!'
+export HELPDIR=/usr/share/zsh/$(zsh --version | choose -2)/help
+
+# override the `man` command so that it can show both help pages for normal
+# executables as well as zsh builtins
+function man() {
+  readonly page=${1:?"usage: man <command or builtin>"}
+  if [[ -f $HELPDIR/$1 ]]; then
+    run-help $1 | eval ${MANPAGER}
+  else
+    command man $1
+  fi
+}
 
 alias python=/usr/local/bin/python3
 
