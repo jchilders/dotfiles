@@ -1,4 +1,4 @@
-"   Plugin keymaps will all be found in `./after/plugin/*`
+" Plugin keymaps are in `./after/plugin`
 
 let mapleader = ","
 

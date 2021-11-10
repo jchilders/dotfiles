@@ -64,6 +64,10 @@ call plug#begin('~/.local/share/nvim/plugins')
   " Plug 'rcarriga/vim-ultest'
   " ruby/rails }}}
 
+  " {{{ lua
+  Plug 'bfredl/nvim-luadev' " :Luadev
+  " lua }}}
+
   " {{{ syntax
   Plug 'cespare/vim-toml'
   Plug 'darfink/vim-plist'
