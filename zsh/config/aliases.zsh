@@ -25,6 +25,7 @@ alias python=/usr/local/bin/python3
 
 source /usr/local/share/zsh-abbr/zsh-abbr.zsh
 
+# abbr does in-place (at the prompt) text expansion
 abbr add be='bundle exec' > /dev/null 2>&1
 abbr add bi='bundle install' > /dev/null 2>&1
 

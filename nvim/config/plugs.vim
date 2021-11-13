@@ -15,9 +15,6 @@ call plug#begin('~/.local/share/nvim/plugins')
   "   lua/plugin/*.lua
   Plug 'tjdevries/astronauta.nvim'
 
-  " Easy/flexible syntax for key mappings (nnoremap, etc.)
-  Plug 'Iron-E/nvim-cartographer'
-
   " {{{ lsp
   Plug 'neovim/nvim-lspconfig'
   Plug 'kabouzeid/nvim-lspinstall'

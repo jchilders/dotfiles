@@ -6,6 +6,9 @@ let mapleader = ","
 imap jk <Esc>
 vmap jk <Esc>
 
+" Prevent Q from taking us into Ex mode
+nnoremap Q <NOP>
+
 nmap <silent> <leader>w <cmd>wa<CR>
 nmap <silent> <leader>W <cmd>wqa<CR>
 

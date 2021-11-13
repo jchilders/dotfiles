@@ -49,4 +49,4 @@ setopt NO_CLOBBER # Don't allow `>` redirection to override existing files. Use 
 setopt NO_FLOW_CONTROL # Disable flow control characters `^S` and `^Q`.
 setopt NO_IGNORE_EOF # Enable ^D to logout, exit on end-of-file.
 setopt INTERACTIVE_COMMENTS # Allow comments even in interactive shells.
-setopt RM_STAR_WAIT # Before executing `rm *` first wait 10 seconds and ignore anything typed.
+# setopt RM_STAR_WAIT # Before executing `rm *` first wait 10 seconds and ignore anything typed.

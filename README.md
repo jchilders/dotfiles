@@ -65,9 +65,9 @@ These work in both zsh and nvim.
 | :-----: | :---------- |
 | <kbd>^oo</kbd> | Find file & edit |
 | <kbd>^oO</kbd> | Find *any* file (ignores `.gitignore`) & edit |
-| <kbd>^oc</kbd> | Find Rails controller & edit |
-| <kbd>^om</kbd> | Find Rails model & edit |
-| <kbd>^ov</kbd> | Find Rails view & edit |
+| <kbd>^orc</kbd> | Find Rails controller & edit |
+| <kbd>^orm</kbd> | Find Rails model & edit |
+| <kbd>^orv</kbd> | Find Rails view & edit |
 
 ## ctrl-o git mappings
 

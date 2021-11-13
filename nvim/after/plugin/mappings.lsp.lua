@@ -1,28 +1,29 @@
-local map = require('cartographer')
+local nnoremap = vim.keymap.nnoremap
 
 -- `:unmap` 'zfo' in `x` mode
 -- map.x['<leader>zfo'] = nil
 
-map.n.nore.silent['<leader>gd'] = "<cmd>lua require('telescope.builtin').lsp_definitions()<CR>"
+nnoremap { '<leader>gd', function() require('telescope.builtin').lsp_definitions() end }
 
-map.n.nore.silent['<leader>K'] = '<cmd>lua require(\'lspsaga.hover\').render_hover_doc()<CR>'
-map.n.nore.silent['<leader>wa'] = '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>'
-map.n.nore.silent['<leader>wr'] = '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>'
-map.n.nore.silent['<leader>wl'] = '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>'
-map.n.nore.silent['<leader>rn'] = '<cmd>lua vim.lsp.buf.rename()<CR>'
-map.n.nore.silent['<leader>gr'] = '<cmd>lua vim.lsp.buf.references()<CR>'
-map.n.nore.silent['<leader>la'] = '<cmd>lua vim.lsp.buf.code_action()<CR>'
-map.n.nore.silent['<leader><leader>sit'] = '<cmd>Telescope treesitter<CR>'
+nnoremap { '<leader>K', function() require('lspsaga.hover').render_hover_doc() end }
+nnoremap { '<leader>wa', function() vim.lsp.buf.add_workspace_folder() end }
+nnoremap { '<leader>wr', function() vim.lsp.buf.remove_workspace_folder() end }
+nnoremap { '<leader>wl', function() print(vim.inspect(vim.lsp.buf.list_workspace_folders())) end }
+nnoremap { '<leader>rn', function() vim.lsp.buf.rename() end }
+nnoremap { '<leader>gr', function() vim.lsp.buf.references() end }
+nnoremap { '<leader>la', function() vim.lsp.buf.code_action() end }
+-- nnoremap { '<leader><leader>sit', function() Telescope treesitter end }
+nnoremap { '<leader>sit', function() require('telescope.builtin').treesitter() end }
 
-map.n.nore.silent['<leader>e'] = "<cmd>lua require('lspsaga.diagnostic').show_line_diagnostics()<CR>"
-map.n.nore.silent['<leader>[['] = "<cmd>lua require'lspsaga.diagnostic'.lsp_jump_diagnostic_prev()<CR>"
-map.n.nore.silent['<leader>]]'] = "<cmd>lua require'lspsaga.diagnostic'.lsp_jump_diagnostic_next()<CR>"
+nnoremap { '<leader>e', function() require('lspsaga.diagnostic').show_line_diagnostics() end }
+nnoremap { '<leader>[[', function() require'lspsaga.diagnostic'.lsp_jump_diagnostic_prev() end }
+nnoremap { '<leader>]]', function() require'lspsaga.diagnostic'.lsp_jump_diagnostic_next() end }
 
 -- <leader>ccs - change (rename) current symbol
-map.n.nore.silent['<leader>ccs'] = "<cmd>lua require('lspsaga.rename').rename()<CR>"
+nnoremap { '<leader>ccs', function() require('lspsaga.rename').rename() end }
 
 -- Format current document
-map.n.nore.silent['<leader>fmt'] = '<cmd>lua vim.lsp.buf.formatting_sync(nil, 1000)<CR>'
+nnoremap { '<leader>fmt', function() vim.lsp.buf.formatting_sync(nil, 1000) end }
 
 -- Show attached LSP clients for current buffer
-map.n.nore.silent['<leader>lc'] = '<cmd>lua print(vim.inspect(vim.lsp.buf_get_clients()))<CR>'
+nnoremap { '<leader>lc', function() print(vim.inspect(vim.lsp.buf_get_clients())) end }

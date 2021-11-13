@@ -42,26 +42,26 @@ function edit_any_file {
 zle -N edit_any_file
 bindkey '^oO' edit_any_file
 
+function edit_rails_controller {
+  __find_file "fd --type=file . 'app/controllers'"
+  __eval_found_file "${EDITOR:-nvim}"
+}
+zle -N edit_rails_controller
+bindkey '^orc' edit_rails_controller
+
 function edit_rails_model {
   __find_file "fd --type=file . 'app/models'"
   __eval_found_file "${EDITOR:-nvim}"
 }
 zle -N edit_rails_model
-bindkey '^om' edit_rails_model
+bindkey '^orm' edit_rails_model
 
 function edit_rails_view {
   __find_file "fd --type=file . 'app/views'"
   __eval_found_file "${EDITOR:-nvim}"
 }
 zle -N edit_rails_view
-bindkey '^ov' edit_rails_view
-
-function edit_rails_controller {
-  __find_file "fd --type=file . 'app/controllers'"
-  __eval_found_file "${EDITOR:-nvim}"
-}
-zle -N edit_rails_controller
-bindkey '^oc' edit_rails_controller
+bindkey '^orv' edit_rails_view
 
 # Git stuff. All are prefixed with ^og
 

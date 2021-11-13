@@ -13,12 +13,18 @@ else
   export EDITOR='nvim'
 fi
 
+# Prevent duplicate PATH entries.
+# -U = keep first occurence of a value in an array for the given key
+typeset -U path
+
 export PATH="/usr/local/sbin:$PATH"
 # export PATH="/usr/local/opt/openssl@1.1/bin:$PATH"
 export PATH="$PATH:$JC_DOTFILES_HOME/scripts"
 export PATH="/usr/local/opt/postgresql@11/bin:$PATH"
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 export PATH="$HOME/.rvm/bin:$PATH"
+# Rust binaries
+export PATH="$PATH:$HOME/.cargo/bin"
 
 export FZF_DEFAULT_OPTS="--height 30% --border --tiebreak=index --info=inline --select-1"
 export FZF_DEFAULT_COMMAND="fd"
