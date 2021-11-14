@@ -9,7 +9,7 @@ if type starship &>/dev/null; then
 fi
 
 foreach file (
-  settings.zsh
+  options.zsh
   aliases.zsh
   exports.zsh
   ctrlo-widgets.zsh

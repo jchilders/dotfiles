@@ -66,11 +66,41 @@ bindkey '^orv' edit_rails_view
 # Git stuff. All are prefixed with ^og
 
 function add_from_git_status {
-  echo "-=-=> Adding file to git staging area"
-  __search_git_status_and_eval "git add"
-  echo "${found_file} added to index"
-  echo
-  git status -sb
+  if [[ -n "$found_file" ]]; then
+    echo
+    read -k "answer?Add $found_file to the git staging area? [Y/n/d] "
+
+    # This monstrosity is necessary b/c I could not get zsh's case statment to
+    # work with the carriage return character, which is what you get when you just
+    # hit enter on the above call to `read`.
+    hex_answer=$(printf "%s" "$answer" | hexdump -v -e '/1 "%02x"')
+    if [[ $hex_answer == '0d' ]]; then
+      __eval_found_file "git add"
+      unset -v found_file
+      echo
+      git status -s
+      return
+    fi
+
+    case $answer in
+      (y | Y )
+        __eval_found_file "git add"
+        unset -v found_file
+        echo
+        git status -s
+        ;;
+      (d | D )
+        __eval_found_file "git diff"
+        ;;
+      (*)
+        unset -v found_file
+        zle reset-prompt
+        ;;
+    esac
+  else
+    __search_git_status_and_eval "git add"
+    git status -s
+  fi
 }
 zle -N add_from_git_status
 bindkey '^oga' add_from_git_status
