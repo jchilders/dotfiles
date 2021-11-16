@@ -9,6 +9,9 @@ vmap jk <Esc>
 " Prevent Q from taking us into Ex mode
 nnoremap Q <NOP>
 
+" [n] will go to next match and center it on screen
+nnoremap n nzz
+
 nmap <silent> <leader>w <cmd>wa<CR>
 nmap <silent> <leader>W <cmd>wqa<CR>
 

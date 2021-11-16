@@ -12,6 +12,7 @@ end
 
 local action_state = require "telescope.actions.state"
 local themes = require "telescope.themes"
+local Path = require "plenary.path"
 
 local M = {}
 
@@ -21,9 +22,23 @@ function M.buffers()
   }
 end
 
-function M.fd()
-  local opts = themes.get_ivy { hidden = false }
-  require("telescope.builtin").fd(opts)
+function M.find_files(opts)
+  opts = opts or {}
+
+  -- ivy theme = TS win is at bottom of screen, vertcally split
+  theme_opts = themes.get_ivy { hidden = false }
+
+  if opts.search_dir ~= nil then
+    path = Path:new(opts.search_dir)
+    if not path:exists() then
+      print("Directory " .. opts.search_dir .. " does not exist.")
+      return
+    else
+      theme_opts.search_dirs = { opts.search_dir }
+    end
+  end
+
+  require("telescope.builtin").find_files(theme_opts)
 end
 
 function M.git_status()
@@ -38,12 +53,16 @@ function M.git_status()
 end
 
 function M.search_only_files_of_type()
+  local bufnr = vim.api.nvim_get_current_buf()
+  local ft = vim.api.nvim_buf_get_option(bufnr, "filetype")
+
   require("telescope.builtin").find_files {
     find_command = {
       "rg",
       "--files",
+      "--sortr=modified",
       "--type",
-      vim.fn.input "type: ",
+      vim.fn.input({prompt = "search files of type: ", default = ft }),
     },
   }
 end

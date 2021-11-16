@@ -3,12 +3,9 @@
 --
 -- All are prefixed by <C-o>
 
-local sorters = require "telescope.sorters"
-
 TelescopeMapArgs = TelescopeMapArgs or {}
 
-local map_ctrlo = function(key, f, options, buffer)
-  local key = "<C-o>" .. key
+local map_tele = function(key, f, options, buffer)
   local map_key = vim.api.nvim_replace_termcodes(key .. f, true, true, true)
 
   TelescopeMapArgs[map_key] = options or {}
@@ -28,6 +25,10 @@ local map_ctrlo = function(key, f, options, buffer)
   end
 end
 
+local map_ctrlo = function(key, f, options, buffer)
+  map_tele("<C-o>" .. key, f, options, buffer)
+end
+
 -- {{ ctrl-o mappings }}
 
 map_ctrlo("b", "buffers")
@@ -45,7 +46,7 @@ map_ctrlo("gh", "git_bcommits")
 map_ctrlo("gs", "git_status")
 
 -- files
-map_ctrlo("o", "fd")
+map_ctrlo("o", "find_files")
 map_ctrlo("O", "search_all_files")
 map_ctrlo("z", "search_only_files_of_type")
 
@@ -58,6 +59,6 @@ map_ctrlo("t", "lsp_document_symbols")
 map_ctrlo("T", "lsp_workspace_symbols")
 
 -- rails
-map_ctrlo("rc", "find_files", { search_dirs = { "app/controllers" } })
-map_ctrlo("rm", "find_files", { search_dirs = { "app/models" } })
-map_ctrlo("rv", "find_files", { search_dirs = { "app/views" } })
+map_ctrlo("rc", "find_files", { search_dir = "app/controllers" })
+map_ctrlo("rm", "find_files", { search_dir = "app/models" })
+map_ctrlo("rv", "find_files", { search_dir = "app/views" })

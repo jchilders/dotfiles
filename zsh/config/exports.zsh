@@ -21,12 +21,12 @@ export PATH="/usr/local/sbin:$PATH"
 # export PATH="/usr/local/opt/openssl@1.1/bin:$PATH"
 export PATH="$PATH:$JC_DOTFILES_HOME/scripts"
 export PATH="/usr/local/opt/postgresql@11/bin:$PATH"
-# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
-export PATH="$HOME/.rvm/bin:$PATH"
 # Rust binaries
 export PATH="$PATH:$HOME/.cargo/bin"
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+export PATH="$HOME/.rvm/bin:$PATH"
 
-export FZF_DEFAULT_OPTS="--height 30% --border --tiebreak=index --info=inline --select-1"
+export FZF_DEFAULT_OPTS="--height 30% --border --tiebreak=index --info=inline"
 export FZF_DEFAULT_COMMAND="fd"
 
 export NVM_DIR="$HOME/.nvm"

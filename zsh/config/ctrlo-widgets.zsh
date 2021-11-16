@@ -70,9 +70,10 @@ function add_from_git_status {
     echo
     read -k "answer?Add $found_file to the git staging area? [Y/n/d] "
 
-    # This monstrosity is necessary b/c I could not get zsh's case statment to
-    # work with the carriage return character, which is what you get when you just
-    # hit enter on the above call to `read`.
+    # This monstrosity is necessary b/c I could not get the case statment below
+    # to work with the carriage return character, which is what you get when
+    # you just hit enter on the above call to `read`.
+    # Maybe something to do with IFS?
     hex_answer=$(printf "%s" "$answer" | hexdump -v -e '/1 "%02x"')
     if [[ $hex_answer == '0d' ]]; then
       __eval_found_file "git add"
