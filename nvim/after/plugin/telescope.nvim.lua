@@ -21,7 +21,7 @@ require('telescope').setup{
         ['<c-x>'] = actions.select_horizontal,
       },
     },
-    prompt_prefix = '🔍 ',
+    prompt_prefix = '⦕ ',
     sorting_strategy = 'ascending',
   },
   extensions = {

@@ -53,6 +53,9 @@ map_ctrlo("z", "search_only_files_of_type")
 -- lsp
 -- little r -> Search for LSP references to word under cursor
 map_ctrlo("r", "lsp_references")
+
+map_ctrlo("q", "quickfix")
+
 -- little t -> Search list of symbols (tags) for current document
 map_ctrlo("t", "lsp_document_symbols")
 -- Big T -> Search list of symbols (tags) from entire workspace

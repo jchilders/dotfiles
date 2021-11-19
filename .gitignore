@@ -1,5 +1,4 @@
 .DS_Store
-nvim/plugs/**
 nvim/.netrwhist
 Brewfile.lock.json
 default.gems.lock
