@@ -62,7 +62,7 @@ nmap <leader>rr <cmd>lua require("jc.tmux-utils").send_keys_left({"C-d","Up","En
 nmap <leader>rq <cmd>lua require("jc.quote-toggler").toggle_quotes()<CR>
 
 " Open Scratch file for this project
-nmap <leader>rs <cmd>lua require("jc.scratch").open_project_scratch_file()<CR>
+nmap <leader>rs <cmd>lua require("jc.scratch").split_open_scratch_file()<CR>
 
 " Run the most recently modified test
 nmap <leader>rt <cmd>lua require("jc.tmux-utils").run_mru_rails_test()<CR>

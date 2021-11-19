@@ -1,10 +1,11 @@
-local M = {}
+local scratch = {}
 
 local api = vim.api
 local git_utils = require('jc.git_utils')
 
-M.open_project_scratch_file = function()
-  local ft = vim.api.nvim_buf_get_option(0, "filetype")
+scratch.open_project_scratch_file = function(bufnr)
+  bufnr = 0 or bufnr
+  local ft = vim.api.nvim_buf_get_option(bufnr, "filetype")
   local ext = ""
   if ft ~= nil then
     if ft == "ruby" then
@@ -21,21 +22,22 @@ M.open_project_scratch_file = function()
 
   local scratch_file = fname_prefix .. "scratch." .. ext
   vim.cmd("edit ~/temp/" .. scratch_file)
-
-  -- TODO: test if buffer exists for `scratch_file`
-  -- nvim_list_bufs()
-  -- nvim_list_wins()
-
-  --[[ local win = vim.api.nvim_get_current_win()
-  local buf = vim.api.nvim_create_buf(true, true)
-  vim.api.nvim_win_set_buf(win, buf)
-  vim.cmd('vsplit') ]]
 end
 
-M.print_list = function()
-  for key, val in pairs(vim.api.nvim_list_wins()) do  -- Table iteration.
-    print(key, val)
+scratch.split_open_scratch_file = function()
+  local wins = api.nvim_list_wins()
+  if #wins == 1 then
+    vim.cmd("split")
+    scratch.open_project_scratch_file()
+    return
+  end
+
+  for _, handle in pairs(vim.api.nvim_list_wins()) do
+    -- set first win to active
+    api.nvim_set_current_win(handle)
+    scratch.open_project_scratch_file()
+    return
   end
 end
 
-return M
+return scratch
