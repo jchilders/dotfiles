@@ -2,6 +2,8 @@ local M = {}
 
 local api = vim.api
 
+-- TODO: Investigate maybe using nvim_replace_termcodes or something similar
+--
 -- Send line under the cursor to the tmux pane to the left, then move cursor to
 -- next line
 M.send_line_left = function()

@@ -2,11 +2,20 @@
 "
 " Uses vim-plug: https://github.com/junegunn/vim-plug
 "
-"   :PlugInstall to install
+"   :PlugInstall
 "
-" or from the shell:
+" From the shell:
 "
 "   nvim --headless +PlugInstall +qa
+"
+" If you add a new plugin here and want to install it without restarting nvim:
+"
+"   :so %
+"   :PlugInstall
+"
+" To update:
+"
+"   :PlugUpdate
 call plug#begin('~/.local/share/nvim/plugins')
 
   " astronauta provides autoloading of lua configs from:
@@ -35,6 +44,10 @@ call plug#begin('~/.local/share/nvim/plugins')
   Plug 'nvim-telescope/telescope.nvim'
   Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
   " telescope.nvim }}}
+
+  " harpoon lets you mark key files on a per-project basis & quickly nav to
+  " them
+  Plug 'ThePrimeagen/harpoon'
 
   " very (!) fast completion/snippets
   " Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}
