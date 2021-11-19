@@ -7,8 +7,14 @@ vim.api.nvim_set_keymap("n", "<Leader>af", "<cmd>lua R('harpoon.mark').add_file(
 -- open key files menu for this project (harpoon)
 vim.api.nvim_set_keymap("n", "<Leader>kf", "<cmd>lua R('harpoon.ui').toggle_quick_menu()<CR>", map_options)
 
--- Cmd-1 opens the first file in the list
-vim.api.nvim_set_keymap("n", "<WhatGoesHere>1", "<cmd>lua R('harpoon.ui').nav_file(1)<CR>", map_options)
+-- Cmd-j opens the first file added to the harpoon
+-- Cmd-k opens the second file added to the harpoon...
+-- etc
+-- jkl; = 1234
+vim.api.nvim_set_keymap("n", "<C-j>", "<cmd>lua R('harpoon.ui').nav_file(1)<CR>", map_options)
+vim.api.nvim_set_keymap("n", "<C-k>", "<cmd>lua R('harpoon.ui').nav_file(2)<CR>", map_options)
+vim.api.nvim_set_keymap("n", "<C-l>", "<cmd>lua R('harpoon.ui').nav_file(3)<CR>", map_options)
+vim.api.nvim_set_keymap("n", "<C-;>", "<cmd>lua R('harpoon.ui').nav_file(4)<CR>", map_options)
 
 -- hui.toggle_quick_menu()
 -- hmark.add_file()
