@@ -22,6 +22,7 @@ opt.swapfile = false
 opt.undofile = false ]]
 
 opt.autoindent = true
+opt.completeopt = { "menuone", "noselect", "noinsert" }
 opt.fileformat = 'unix'
 opt.grepprg = 'rg --vimgrep --no-heading --hidden'
 opt.hidden = true
