@@ -8,7 +8,9 @@ exec 'set runtimepath+='.s:home.'/lua'
 command! -nargs=1 VimLoad exec 'source '.s:home.'/config/'.'<args>'.'.vim'
 command! -nargs=1 LuaLoad exec 'luafile '.s:home.'/config/'.'<args>'.'.lua'
 
-VimLoad basic
+" Restore cursor to where it was when the file was closed
+au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+
 VimLoad plugins
 VimLoad autocmds
 VimLoad colors
@@ -21,6 +23,5 @@ let g:coq_settings = { 'auto_start': v:true }
 
 LuaLoad init
 LuaLoad mappings.ctrlo
-
 
 " `vim --cmd 'profile start initvim-profiling.result' --cmd 'profile! file

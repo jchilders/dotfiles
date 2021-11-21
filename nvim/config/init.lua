@@ -1,11 +1,8 @@
+-- make this available for later configs to use
+require "jc.globals"
+
 -- Map :Format to vim.lsp.buf.formatting()
 vim.cmd([[ command! Format execute 'lua vim.lsp.buf.formatting()' ]])
-
--- Supposedly improves startup time. Since we don't need the provider anyway,
--- can't hurt.
-vim.g.loaded_ruby_provider = 0
-
-require "jc.globals"
 
 local opt = vim.opt
 
@@ -17,9 +14,6 @@ opt.smarttab = true
 
 opt.backup = false
 opt.swapfile = false
--- commenting this out until I can fix this: ~ is creating a directory literally named "~"
---[[ opt.undodir = '~/.local/share/nvim/backups'
-opt.undofile = false ]]
 
 opt.autoindent = true
 opt.completeopt = { "menuone", "noselect", "noinsert" }
