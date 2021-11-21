@@ -1,4 +1,4 @@
--- All LSP-related config lives here
+-- All LSP-related config items live here, except for mappings
 
 -- {{ lspkind: pictographs for lsp selectors }} --
 require('lspkind').init({})
@@ -14,6 +14,14 @@ lsp_installer.on_server_ready(function(server)
         on_attach = function(_server, _)
             print("LSP: Attached to " .. _server.name)
         end
+        -- TODO: Turn off rubocop messages
+    }
+    opts.handlers = {
+        ["textDocument/publishDiagnostics"] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
+            -- Disable virtual_text. This helps with too many messages cluttering the UI. Show with
+            -- vim.lsp.diagnostic.show_line_diagnostics()
+            virtual_text = false
+        }),
     }
 
     if server.name == "solargraph" then

@@ -111,5 +111,5 @@ call plug#begin('~/.local/share/nvim/plugins')
   " statusline
   Plug 'famiu/feline.nvim'
 
-  Plug 'github/copilot.vim'
+  " Plug 'github/copilot.vim'
 call plug#end()
