@@ -1,6 +1,6 @@
 setlocal textwidth=120
 
-setlocal shiftwidth=2
+setlocal shiftwidth=4
 setlocal formatoptions-=o
 
 " override <Leader>sl to use the nvim-luadev plugin

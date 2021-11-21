@@ -26,7 +26,7 @@ call plug#begin('~/.local/share/nvim/plugins')
 
   " {{{ lsp
   Plug 'neovim/nvim-lspconfig'
-  Plug 'kabouzeid/nvim-lspinstall'
+  Plug 'williamboman/nvim-lsp-installer'
   Plug 'glepnir/lspsaga.nvim'
   " lsp }}}
 
@@ -62,7 +62,7 @@ call plug#begin('~/.local/share/nvim/plugins')
   " Plug 'romgrk/barbar.nvim'
 
   " Smart split/join code blocks
-  Plug 'AndrewRadev/splitjoin.vim'
+  " Plug 'AndrewRadev/splitjoin.vim'
   Plug 'b3nj5m1n/kommentary'
   " During visual select, hit `.` to expand selection to the surrounding
   " treesitter object
@@ -84,7 +84,7 @@ call plug#begin('~/.local/share/nvim/plugins')
   Plug 'LnL7/vim-nix'
   Plug 'yuezk/vim-js'
   Plug 'maxmellon/vim-jsx-pretty'
-  " syntax }}}
+  " " syntax }}}
  
   " {{{ git
   Plug 'airblade/vim-gitgutter'
@@ -95,7 +95,7 @@ call plug#begin('~/.local/share/nvim/plugins')
   " :make - invokes tmux source .tmux.conf and places all the errors (if any) in quicklist
   " g! - executes lines as tmux command
   " g!! - executes current line as tmux command
-  Plug 'tmux-plugins/vim-tmux'
+  " Plug 'tmux-plugins/vim-tmux'
   " tmux }}}
 
   " {{{ misc
@@ -110,11 +110,6 @@ call plug#begin('~/.local/share/nvim/plugins')
 
   " statusline
   Plug 'famiu/feline.nvim'
-
-  " fix performance probs w/ CursorHold
-  " can test is by holding down j/k while current buffer is connected to
-  " Solargraph
-  Plug 'antoinemadec/FixCursorHold.nvim'
 
   Plug 'github/copilot.vim'
 call plug#end()

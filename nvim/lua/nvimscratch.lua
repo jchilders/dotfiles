@@ -105,3 +105,5 @@ print(vim.g.lua_path)
 lua print(require('jc.git_utils').current_repo_name())
 lua require('jc.utils').key_mapper("Q", "<NOP>")
 
+lua print(require('nvim-lsp-installer.server').Server:new({name = 'solargraph'}))
+lua print(vim.inspect(require('lspconfig')['solargraph']))

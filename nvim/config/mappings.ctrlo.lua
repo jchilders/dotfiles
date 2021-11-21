@@ -7,9 +7,9 @@ TelescopeMapArgs = TelescopeMapArgs or {}
 
 -- ty tjdevries learning a lot
 local map_ctrlo = function(key, rhs, map_options, bufnr)
-  local key = "<C-o>" .. key
+  key = "<C-o>" .. key
   local mode = "n"
-  local map_options
+
   if map_options == nil then
     map_options = {
       noremap = true,
@@ -30,7 +30,7 @@ local map_ctrlo_tele = function(key, f, tele_options, bufnr)
   TelescopeMapArgs[map_key] = tele_options or {}
   local rhs = string.format("<cmd>lua R('jc.telescope')['%s'](TelescopeMapArgs['%s'])<CR>", f, map_key)
 
-  map_ctrlo(key, rhs)
+  map_ctrlo(key, rhs, bufnr)
 end
 
 -- {{ ctrl-o mappings }}
