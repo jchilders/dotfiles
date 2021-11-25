@@ -31,6 +31,10 @@ if type brew &>/dev/null; then
   compinit
 fi
 
+if [[ -f $XDG_CONFIG_HOME/ripgrep/.ripgreprc ]]; then
+  export RIPGREP_CONFIG_PATH=$XDG_CONFIG_HOME/ripgrep/.ripgreprc
+fi
+
 if [[ -f /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
   source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 fi
