@@ -1,18 +1,18 @@
 local M = {}
 M.__index = M
 
--- this is loaded after bootstrapping packer
--- and or if packer plugins are installed
--- load configs for packer plugins
+-- Things that should happen after packer is initialized, but for whatever
+-- reason can't be put into packer's `config` attribute, should go here.
 M.init = function()
 --  require("plugins.web-devicons").init()
---  require("plugins.autopairs").init()
+  require("plugins.autopairs").init()
 --  require("plugins.treesitter").init()
-  require("plugins.build"):init()
 --  require("plugins.bufferline").init()
+  require("plugins.build"):init()
+  require("plugins.lspconfig").init()
 
   -- the init is loaded over a autocmd for lazyload
-  -- require("plugins.wildmenu")
+  require("plugins.wildmenu")
 
   -- load last to overwrite every highlight that has been added by a plugin
   require("core.highlights")

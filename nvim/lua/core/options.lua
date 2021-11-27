@@ -3,12 +3,6 @@ local g, b, opt, go, wo, o = vim.g, vim.b, vim.opt, vim.go, vim.wo, vim.o
 local M = {}
 
 function M.load_options()
-  opt.expandtab = true
-  opt.softtabstop = 2
-  opt.shiftwidth = 2
-  opt.tabstop = 4
-  opt.smarttab = true
-
   opt.backup = false
   opt.swapfile = false
 
@@ -17,6 +11,7 @@ function M.load_options()
   opt.grepprg = 'rg'
   opt.hidden = true
   opt.hlsearch = true
+  opt.mouse = 'a' -- mouse enabled for all modes. needed for barbar
   opt.number = true
   opt.relativenumber = true
   opt.scrolloff = 5
@@ -72,7 +67,7 @@ function M.load_options()
   o.foldtext =
     [[substitute(getline(v:foldstart),'\\t',repeat('\ ',&tabstop),'g').'...'.trim(getline(v:foldend)) . ' (' . (v:foldend - v:foldstart + 1) . ' lines)']]
   wo.foldexpr = "nvim_treesitter#foldexpr()"
-  wo.fillchars = "fold:\\"
+  go.foldlevelstart = 99
   wo.foldnestmax = 3
   wo.foldminlines = 1
 

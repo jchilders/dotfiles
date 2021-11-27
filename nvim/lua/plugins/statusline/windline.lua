@@ -302,12 +302,11 @@ basic.lsp_names = {
   width = breakpoint_width,
   text = function()
     if lsp_comps.check_lsp() then
-      local debug = require("plugins.dap.attach")
       local lsp_status = require("plugins.lspStatus").lsp_status
       return {
         {
           helper.separators.slant_left,
-          debug:session() and "sepdebug" or "sep",
+          "sep"
         },
         { " ", "spacer" },
         { lsp_comps.lsp_name(), "magenta" },

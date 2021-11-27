@@ -6,7 +6,10 @@ local sep_os_replacer = require("utils").sep_os_replacer
 local packer_compiled = data_path .. "packer_compiled.vim"
 local compile_to_lua = data_path .. "lua" .. global.path_sep .. "_compiled.lua"
 
-local is_private = vim.fn.expand("$USER") == "dashie"
+-- ??Problems??
+-- :PackerInstall
+-- :PackerCompile
+-- quit/reload
 
 -- nil because packer is opt
 local packer = nil
@@ -26,15 +29,17 @@ local function init()
 
   use({ "kyazdani42/nvim-web-devicons" })
 
+  -- statusline
   use({
-      "windwp/windline.nvim",
-      config = function()
-        require("plugins.statusline.windline")
-      end,
-      }) -- statusline
+    "windwp/windline.nvim",
+    config = function()
+      require("plugins.statusline.windline")
+    end,
+  })
 
-  use({ "romgrk/barbar.nvim", requires = "kyazdani42/nvim-web-devicons" }) -- bufferline
+  use({ "romgrk/barbar.nvim", requires = "kyazdani42/nvim-web-devicons" })
 
+  -- colorscheme
   use({
     "folke/tokyonight.nvim",
     config = function()
@@ -47,7 +52,6 @@ local function init()
     end,
   })
 
-
   use({
     "vim-test/vim-test",
     cmd = { "TestFile" },
@@ -59,49 +63,118 @@ local function init()
       { "tpope/vim-dispatch", cmd = { "Dispatch" } },
     },
     wants = { "vim-dispatch", "neomake" },
-  }) -- testing
-
-
-  use({ "b3nj5m1n/kommentary", opt = true })
+  })
 
   -- telescope
   use {
     'nvim-telescope/telescope.nvim',
-    cmd = { "Telescope" },
---    config = require("plugins.telescope").init,
-    config = function()
-      vim.cmd([[echo hellooooooooooooooooooo]])
-      require("telescope").setup({
-        defaults = {
-          prompt_prefix = "?> "
-        }
-      })
-    end,
+    config = require("plugins.telescope").init,
     requires = {
-      {'nvim-lua/plenary.nvim'},
-    },
+      { 'nvim-lua/plenary.nvim' },
+      { "nvim-telescope/telescope-project.nvim", opt = true },
+      {
+        "nvim-telescope/telescope-fzf-native.nvim",
+        opt = true,
+        run = "make",
+      },
+    }
   }
 
---  use({
---    "nvim-telescope/telescope.nvim",
---    -- config = require("plugins.telescope").init,
---    config = function()
---      vim.cmd([[echo hellooooooooooooooooooo]])
---      require("telescope").setup()
---    end,
---    requires = {
---      { "nvim-lua/plenary.nvim", opt = false },
---      { "nvim-telescope/telescope-project.nvim", opt = true },
---      {
---        "nvim-telescope/telescope-fzf-native.nvim",
---        opt = true,
---        run = "make",
---      },
---    },
---  })
+  -- faster lua-based filetype detection. improves startup time.
+  use({ "nathom/filetype.nvim" })
 
+  -- automaticaly set `shiftwidth` & `expandtab`
+  use({ "tpope/vim-sleuth" })
 
-  -- lib
+  -- manage package.json files. "All the npm/yarn/pnpm commands I don't want to type"
+  use({
+    "vuki656/package-info.nvim",
+    disable = true,
+    requires = "MunifTanjim/nui.nvim",
+    ft = { "json" },
+    config = function()
+      require("package-info").setup()
+    end,
+  })
+
+  -- {{ Tree-sitter treesitter }} --
+  use({
+    "nvim-treesitter/nvim-treesitter",
+    config = require("plugins.nvim-treesitter").init,
+  })
+  use({ "nvim-treesitter/playground" })
+  use({ "nvim-treesitter/nvim-treesitter-textobjects" }) -- custom textobjects
+  use({ "RRethy/nvim-treesitter-textsubjects" })
+
+  -- know how you can have e.g. HTML inside of a React file? If you want to
+  -- comment out that HTML, this will use HTML comments instead of JS ones.
+  use({
+    "JoosepAlviste/nvim-ts-context-commentstring",
+    disable = true, -- disabling until I can integrate it with kommentary
+  })
+
+  use({
+    "b3nj5m1n/kommentary",
+    config = function()
+      require'nvim-treesitter.configs'.setup {
+        context_commentstring = {
+          enable = true,
+          enable_autocmd = false,
+        }
+      }
+
+      require('kommentary.config').configure_language("default", {
+        prefer_multi_line_comments = true,
+      })
+    end,
+  })
+
+  -- automatically close & rename tags using treesitter
+  use({
+    "windwp/nvim-ts-autotag",
+    ft = { "typescriptreact", "javascriptreact", "html" },
+  })
+
+  use({ "ray-x/lsp_signature.nvim", opt = true }) -- auto signature trigger
+
+  -- {{ LSP }}
+  use({
+    'neovim/nvim-lspconfig',
+    'williamboman/nvim-lsp-installer',
+  })
+  use({ "nvim-lua/lsp-status.nvim", })
+
+  use({
+    "onsails/lspkind-nvim",
+    config = require("plugins.lspkind-nvim").init,
+  })
+  -- {{ /LSP }} --
+
+  -- completion
+  use({
+    "hrsh7th/nvim-cmp",
+    config = require("plugins.cmp").init,
+    requires = {
+      --[[ { "hrsh7th/cmp-cmdline" }, ]]
+      { "hrsh7th/cmp-buffer" },
+      { "hrsh7th/cmp-nvim-lsp" },
+      { "hrsh7th/cmp-path" },
+      { "saadparwaiz1/cmp_luasnip" },
+      { "L3MON4D3/LuaSnip" },
+      { "rafamadriz/friendly-snippets" },
+    },
+  })
+
+  -- autoclose parens, etc.
+  use({ "windwp/nvim-autopairs" })
+
+  -- better wild menu: e.g.: when you do `:e` and you want to navigate the completion popup
+  -- currently funky.
+  use({
+    "gelguy/wilder.nvim",
+    opt = true,
+  })
+
   use({ "wbthomason/packer.nvim", opt = true })
 end
 

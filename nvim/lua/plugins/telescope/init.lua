@@ -2,7 +2,6 @@ local M = {}
 M.__index = M
 
 function M.init()
-  vim.vmd([[echo hellooooooooooooooooooo]])
   vim.cmd([[packadd plenary.nvim]])
   vim.cmd([[packadd telescope-project.nvim]])
   vim.cmd([[packadd telescope-fzf-native.nvim]])
@@ -64,9 +63,6 @@ function M.init()
       },
       project = {
         base_dirs = {
-          "~/code",
-          "~/dotfiles",
-          "~/dotfiles/.config/nvim",
         },
         max_depth = 4,
         hidden_files = true,
