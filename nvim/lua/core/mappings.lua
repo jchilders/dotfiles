@@ -121,7 +121,7 @@ function M.mappings()
   -- Show tree-sitter highlight group(s) for current cursor position
   remap("n", "<leader>hi", "<cmd>TSHighlightCapturesUnderCursor<CR>")
 
-  remap("n", "<Leader>tt", "<cmd>LspTroubleToggle<CR>")
+  remap("n", "<leader>tt", "<cmd>LspTroubleToggle<CR>")
 
   -- general
   remap("v", "J", "<cmd>m '>+1<CR>gv=gv") -- move lines
@@ -129,20 +129,20 @@ function M.mappings()
   remap("v", "<leader>p", '"_dP') -- delete into blackhole and paste last yank
 
   -- quickfix
-  remap("n", "<Leader>qo", "<cmd>lua require('utils').toggle_qf()<CR>")
-  remap("n", "<Leader>qn", "<cmd>cnext<CR>")
-  remap("n", "<Leader>qo", "<cmd>copen<CR>")
-  remap("n", "<Leader>qp", "<cmd>cprev<CR>")
+  remap("n", "<leader>qo", "<cmd>lua require('utils').toggle_qf()<CR>")
+  remap("n", "<leader>qn", "<cmd>cnext<CR>")
+  remap("n", "<leader>qo", "<cmd>copen<CR>")
+  remap("n", "<leader>qp", "<cmd>cprev<CR>")
 
   -- ctrl-o
 
   -- locationlist
-  remap("n", "<Leader>lc", "<cmd>lclose<CR>")
-  remap("n", "<Leader>lo", "<cmd>lopen<CR>")
-  remap("n", "<Leader>ln", "<cmd>lnext<CR>")
-  remap("n", "<Leader>lp", "<cmd>lprev<CR>")
+  remap("n", "<leader>lc", "<cmd>lclose<CR>")
+  remap("n", "<leader>lo", "<cmd>lopen<CR>")
+  remap("n", "<leader>ln", "<cmd>lnext<CR>")
+  remap("n", "<leader>lp", "<cmd>lprev<CR>")
 
-  -- ctrl-o
+  -- ctrl-o telescope mappings
   map_ctrlo_tele("b", "buffers")
 
   map_ctrlo_tele("f", "grep_string" )
@@ -177,73 +177,60 @@ function M.mappings()
   map_ctrlo_tele("rm", "find_files", { search_dir = "app/models" })
   map_ctrlo_tele("rv", "find_files", { search_dir = "app/views" })
 
+  -- harpoon
+  remap("n", "<leader>ha", "<cmd>lua R('harpoon.mark').add_file()<CR>")
+  -- open list of files marked as harpooned
+  remap("n", "<leader>hl", "<cmd>lua R('harpoon.ui').toggle_quick_menu()<CR>")
+
+  -- Cmd-j opens the first file added to the harpoon
+  -- Cmd-k opens the second file added to the harpoon...
+  -- etc
+  -- hjkl = 1234
+  remap("n", "<C-h>", "<cmd>lua R('harpoon.ui').nav_file(1)<CR>")
+  remap("n", "<C-j>", "<cmd>lua R('harpoon.ui').nav_file(2)<CR>")
+  remap("n", "<C-k>", "<cmd>lua R('harpoon.ui').nav_file(3)<CR>")
+  remap("n", "<C-l>", "<cmd>lua R('harpoon.ui').nav_file(4)<CR>")
+
+
   -- dap NOTE: Lazyloaded
-  remap(
+  -- also NOTE: not working atm
+  --[[ remap(
     "n",
-    "<Leader>dc",
-    [[ <cmd>lua require("plugins.dap.attach"):addPlug(); require'dap'.continue()<CR>]]
+    "<leader>dc",
+    <cmd>lua require("plugins.dap.attach"):addPlug(); require'dap'.continue()<CR>
   )
   remap(
     "n",
-    "<Leader>db",
-    [[ <cmd>lua require("plugins.dap.attach"):addPlug(); require'dap'.toggle_breakpoint()<CR>]]
-  )
+    "<leader>db",
+    <cmd>lua require("plugins.dap.attach"):addPlug(); require'dap'.toggle_breakpoint()<CR>
+  ) ]]
 
   -- compe: NOTE: Lazyloaded
-  remap("i", "<C-space>", "compe#complete()", true)
+  --[[ remap("i", "<C-space>", "compe#complete()", true)
   remap("i", "<C-e>", "compe#close('<C-e>')", true)
   remap("i", "<C-f>", "compe#scroll({ delta: +4 })", true)
-  remap("i", "<C-d>", "compe#scroll({ delta: -4 })", true)
-
-  -- gitlinker: NOTE: Lazyloaded
-  remap(
-    "n",
-    "<Leader>gy",
-    [[ <cmd>lua require('plugins.gitlinker'):normal()<CR>]]
-  )
-  remap(
-    "v",
-    "<Leader>gy",
-    [[ <cmd>lua require('plugins.gitlinker'):visual()<CR>]]
-  )
-
-  -- refactor: NOTE: Lazyloaded
-  remap(
-    "v",
-    "<Leader>re",
-    [[ <cmd>lua require('plugins.refactoring').extract()<CR>]]
-  )
-  remap(
-    "v",
-    "<Leader>rf",
-    [[ <cmd>lua require('plugins.refactoring').extract_to_file()<CR>]]
-  )
-  remap(
-    "v",
-    "<Leader>rt",
-    [[ <cmd>lua require('plugins.refactoring').telescope()<CR>]]
-  )
+  remap("i", "<C-d>", "compe#scroll({ delta: -4 })", true) ]]
 
   -- marker: NOTE: Lazyloaded
-  remap("v", "<Leader>1", "<cmd><c-u>HSHighlight 1<CR>")
-  remap("v", "<Leader>2", "<cmd><c-u>HSHighlight 2<CR>")
-  remap("v", "<Leader>3", "<cmd><c-u>HSHighlight 3<CR>")
-  remap("v", "<Leader>4", "<cmd><c-u>HSHighlight 4<CR>")
-  remap("v", "<Leader>5", "<cmd><c-u>HSHighlight 5<CR>")
-  remap("v", "<Leader>6", "<cmd><c-u>HSHighlight 6<CR>")
-  remap("v", "<Leader>7", "<cmd><c-u>HSHighlight 7<CR>")
-  remap("v", "<Leader>8", "<cmd><c-u>HSHighlight 8<CR>")
-  remap("v", "<Leader>9", "<cmd><c-u>HSHighlight 9<CR>")
-  remap("v", "<Leader>0", "<cmd><c-u>HSRmHighlight<CR>")
+  --[[ remap("v", "<leader>1", "<cmd><c-u>HSHighlight 1<CR>")
+  remap("v", "<leader>2", "<cmd><c-u>HSHighlight 2<CR>")
+  remap("v", "<leader>3", "<cmd><c-u>HSHighlight 3<CR>")
+  remap("v", "<leader>4", "<cmd><c-u>HSHighlight 4<CR>")
+  remap("v", "<leader>5", "<cmd><c-u>HSHighlight 5<CR>")
+  remap("v", "<leader>6", "<cmd><c-u>HSHighlight 6<CR>")
+  remap("v", "<leader>7", "<cmd><c-u>HSHighlight 7<CR>")
+  remap("v", "<leader>8", "<cmd><c-u>HSHighlight 8<CR>")
+  remap("v", "<leader>9", "<cmd><c-u>HSHighlight 9<CR>")
+  remap("v", "<leader>0", "<cmd><c-u>HSRmHighlight<CR>") ]]
 
 
   -- make
-  remap("n", "<Leader>ms", "<cmd>Neomake<CR>")
-  remap("n", "<Leader>mt", "<cmd>TestFile<CR>")
-  remap("n", "<Leader>mu", "<cmd>Ultest<CR>")
+  -- remap("n", "<leader>ms", "<cmd>Neomake<CR>")
+  -- remap("n", "<leader>mt", "<cmd>TestFile<CR>")
+  -- remap("n", "<leader>mu", "<cmd>Ultest<CR>")
 
   -- neogen
-  --[[ remap("n", "<Leader>nf", "<cmd>DocGen<CR>") ]]
+  --[[ remap("n", "<leader>nf", "<cmd>DocGen<CR>") ]]
 end
 
 return M

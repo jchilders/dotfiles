@@ -11,6 +11,15 @@ local compile_to_lua = data_path .. "lua" .. global.path_sep .. "_compiled.lua"
 -- :PackerCompile
 -- quit/reload
 
+-- TODO: Use this idiom where appropriate:
+--
+--   local ok, icon = pcall(require, "nvim-web-devicons")
+--   if ok then
+--     web_devicons = icon
+--   else
+--     web_devicons = false
+--    end
+
 -- nil because packer is opt
 local packer = nil
 
@@ -36,8 +45,6 @@ local function init()
       require("plugins.statusline.windline")
     end,
   })
-
-  use({ "romgrk/barbar.nvim", requires = "kyazdani42/nvim-web-devicons" })
 
   -- colorscheme
   use({
@@ -78,6 +85,13 @@ local function init()
         run = "make",
       },
     }
+  })
+
+  -- harpoon lets you mark key files on a per-project basis & quickly nav to
+  -- them
+  use({
+    "ThePrimeagen/harpoon",
+    config = require("plugins.harpoon").init
   })
 
   -- faster lua-based filetype detection. improves startup time.
