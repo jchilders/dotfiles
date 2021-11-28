@@ -7,25 +7,48 @@ local reloader = function()
     RELOAD "telescope"
     RELOAD "jc.telescope.setup"
     RELOAD "jc.telescope.custom"
+    RELOAD "core.mappings"
   end
 end
 
-local themes = require "telescope.themes"
-local Path = require "plenary.path"
+local builtin = require("telescope.builtin")
+local themes = require("telescope.themes")
+local Path = require("plenary.path")
 
 local M = {}
 
-function M.buffers()
-  require("telescope.builtin").buffers {
-    shorten_path = false,
+local dropdown_theme = function()
+  local default_opts = {
+    border = true,
+    previewer = false,
   }
+
+  return themes.get_dropdown(default_opts)
+end
+
+-- ivy theme = TS win is at bottom of screen, vertcally split
+local ivy_theme = function()
+  return themes.get_ivy {
+    hidden = false
+  }
+end
+
+function M.buffers()
+  local theme = dropdown_theme()
+  local opts = {
+    shorten_path = false,
+    sort_mru = true,
+    only_cwd = true,
+  }
+  opts = vim.tbl_extend('error', opts, theme)
+
+  builtin.buffers(opts)
 end
 
 function M.find_files(opts)
   opts = opts or {}
 
-  -- ivy theme = TS win is at bottom of screen, vertcally split
-  local theme_opts = themes.get_ivy { hidden = false }
+  local theme_opts = ivy_theme()
 
   if opts.search_dir ~= nil then
     local path = Path:new(opts.search_dir)
@@ -37,63 +60,70 @@ function M.find_files(opts)
     end
   end
 
-  require("telescope.builtin").find_files(theme_opts)
+  builtin.find_files(theme_opts)
 end
 
-local git_default_opts = {
-    winblend = 30,
-    border = false,
-    previewer = false,
-}
-
 function M.git_status()
-  print "fasdlfasdfasdfasdfasdfsdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasg(af(asgjhks)dgasdhj"
-  local opts = themes.get_dropdown(git_default_opts)
-  require("telescope.builtin").git_status(opts)
+  local opts = dropdown_theme()
+  builtin.git_status(opts)
 end
 
 function M.git_branches()
-  -- local opts = themes.get_dropdown(git_default_opts)
-  -- require("telescope.builtin").git_branches({ previewer = false })
-  require("telescope.builtin").builtin()
+  local opts = dropdown_theme()
+  builtin.git_branches(opts)
+end
+
+function M.quickfix()
+  local theme_opts = ivy_theme()
+  builtin.quickfix(theme_opts)
 end
 
 function M.search_only_files_of_type()
   local bufnr = vim.api.nvim_get_current_buf()
-  local ft = vim.api.nvim_buf_get_option(bufnr, "filetype")
-
-  require("telescope.builtin").find_files {
+  local bufft = vim.api.nvim_buf_get_option(bufnr, "filetype")
+  local ft = vim.fn.input({prompt = "search files of type: ", default = bufft })
+  local opts = {
     find_command = {
       "rg",
       "--files",
       "--sortr=modified",
       "--type",
-      vim.fn.input({prompt = "search files of type: ", default = ft }),
+      ft
     },
   }
+  opts = vim.tbl_extend('error', opts, ivy_theme())
+
+  builtin.grep_string(opts)
 end
 
 function M.lsp_references()
-  require("telescope.builtin").lsp_references {
-    layout_strategy = "horizontal",
-    layout_config = {
-      prompt_position = "top",
-    },
-    sorting_strategy = "ascending",
-    ignore_filename = false,
-  }
+  builtin.lsp_references(ivy_theme())
 end
 
-function M.live_grep()
-  require("telescope.builtin").live_grep {
+-- grep string under the cursor
+function M.grep_string()
+  local opts = {
     shorten_path = true,
     previewer = false,
-    fzf_separator = "|>",
+    disable_coordinates = true,
   }
+  opts = vim.tbl_extend('error', opts, ivy_theme())
+  builtin.grep_string(opts)
+end
+
+-- grep user-entered string
+function M.live_grep()
+  local opts = {
+    shorten_path = true,
+    previewer = false,
+    disable_coordinates = true,
+  }
+  opts = vim.tbl_extend('error', opts, ivy_theme())
+  builtin.live_grep(opts)
 end
 
 function M.search_all_files()
-  require("telescope.builtin").find_files {
+  builtin.find_files {
     find_command = { "rg", "--no-ignore", "--files" },
   }
 end
@@ -103,8 +133,6 @@ return setmetatable({}, {
   --
   --     require("jc.telescope")['some_method']() -- this would call telescope.some_method()
   __index = function(_, k)
-    print("k: " .. k)
-    adasdf
     reloader()
 
     -- pcall(func, arg1, ...) is equivalent to func(arg1, ...) except that it will catch any errors that occur in func
@@ -115,7 +143,7 @@ return setmetatable({}, {
     elseif has_custom then
       return custom
     else
-      return require("telescope.builtin")[k]
+      return builtin[k]
     end
   end,
 })

@@ -145,9 +145,8 @@ function M.mappings()
   -- ctrl-o
   map_ctrlo_tele("b", "buffers")
 
-  -- map_ctrlo_tele("F", "live_grep")
   map_ctrlo_tele("f", "grep_string" )
-  map_ctrlo_tele("F", "search_all_files")
+  map_ctrlo_tele("F", "live_grep")
 
   -- git
   -- switch branches
