@@ -1,58 +1,193 @@
 local remap = require("utils").map_global
+
 local M = {}
 
+TelescopeMapArgs = TelescopeMapArgs or {}
+
+local map_ctrlo = function(key, rhs, map_options, bufnr)
+  key = "<C-o>" .. key
+  local mode = "n"
+
+  if map_options == nil then
+    map_options = {
+      noremap = true,
+      silent = true,
+    }
+  end
+
+  if not bufnr then
+    vim.api.nvim_set_keymap(mode, key, rhs, map_options)
+  else
+    vim.api.nvim_buf_set_keymap(0, mode, key, rhs, map_options)
+  end
+end
+
+-- @param {string} f - telescope function to call
+local map_ctrlo_tele = function(key, f, tele_options, bufnr)
+  local map_key = vim.api.nvim_replace_termcodes(key .. f, true, true, true)
+  TelescopeMapArgs[map_key] = tele_options or {}
+  local rhs = string.format("<cmd>lua R('jc.telescope')['%s'](TelescopeMapArgs['%s'])<CR>", f, map_key)
+
+  map_ctrlo(key, rhs, bufnr)
+end
+
 function M.mappings()
+  -- Quickly toggle between next/previous buffers
+  remap("n", "<leader><leader>", "<cmd>b#<CR>")
+
+  -- Prevent `Q` from taking us into Ex mode, because it isn't 1977 any longer
+  remap("n", "Q", "<NOP>")
+
+  -- `*` still searches what is under the cursor, but doesn't immediately jump
+  -- to the next match. Found this on StackOverflow a long time ago. Diving
+  -- into how it works is interesting.
+  --
+  -- Details:
+  -- - the search register (i.e. where your search term from the `/` command is stored) is `@/`
+  -- - we want to manually set that value to what is under the cursor
+  --
+  -- You can set the search register manually by doing this:
+  --
+  --   :let @/='foo'
+  --
+  -- This is the same as the normal way to search:
+  --
+  --   /foo
+  --
+  -- We want to set the value of the `@/` register to what is under the cursor.
+  -- To do this we are going to use a lesser-known vim feature for manipulating
+  -- the command line: `CTRL-R` (`:h <C-R>`). To see how it works, do the
+  -- following:
+  --
+  --   - Place your cursor over some text
+  --   - Now type `:echo ` but don't hit enter yet. Instead, hit `CTRL-R`. This
+  -- will take you into a special "register" mode that allows dynamic values
+  -- to be inserted into the vim command line. There are various registers
+  -- available (see `:h <C-R>` for the list) but the one we are interested in
+  -- is the expression register, `=`.
+  --
+  -- This register lets you enter an expression (basically another command),
+  -- and have the result of that expression added to your command line.
+  --
+  -- Let's see how it works. With your cursor over some text in your document:
+  --
+  --   1. `:let @/='`. Note the single quote at the end.
+  --   2. Hit CTRL-R. Your cursor should have `"` under it indicating you
+  --   are now in register mode
+  --   3. Hit `=` to interact with the expression register
+  --   4. `expand("<cword>")`
+  --   5. Hit enter. If the word under your cursor is "foo" then your command line should look like the following: `let @/='foo`
+  --   6. Add your closing `'` and hit enter.
+  local search_cmd = [[:let @/='<C-R>=expand("<cword>")<CR>'<CR>:set hls<CR>]]
+  remap("n", "*", search_cmd)
+
+  -- Hit <CR> to clear hlsearch after doing a search
+  remap("n", "<CR>", "{-> v:hlsearch ? \"<cmd>nohl\\<CR>\" : \"\\<CR>\"}()", true)
+
+  -- `n`/`N` will go to next/previous search match and center it on screen
+  remap("n", "n", "nzz")
+  remap("n", "N", "Nzz")
+
+  -- scroll down/up and center
+  remap("n", "<C-d>", "<C-d>zz")
+  remap("n", "<C-u>", "<C-u>zz")
+  remap("n", "<C-f>", "<C-f>zz")
+  remap("n", "<C-b>", "<C-b>zz")
+
+  remap("n", "<leader>w", "<cmd>wa<CR>")
+  remap("n", "<leader>W", "<cmd>wqa<CR>")
+
+  remap("n", "<leader>g", "<cmd>lua require('jc.utils').toggle_gutter()<CR>")
+
+  -- Open Scratch file for this project
+  remap("n", "<leader>rs", "<cmd>lua require('jc.scratch').split_open_scratch_file()<CR>")
+
+  -- Send the current line to the left tmux pane
+  remap("n", "<leader>sl", "<cmd>lua require('jc.tmux-utils').send_line_left()<CR>")
+  -- Send the selected text to the left tmux pane
+  remap("v", "<leader>sl", "<cmd>lua require('jc.tmux-utils').send_selection_left()<CR>")
+
+  -- Send the keys `^D`, `UpArrow`, and `Enter` to the left tmux pane
+  -- Lets us quickly Restart Rails console/server/psql/lua/whatever, so long as it quits
+  -- when it receives a ^D
+  remap("n", "<leader>rr", "<cmd>lua require('jc.tmux-utils').send_keys_left({'C-d','Up','Enter'})<CR>")
+
+  -- Run the most recently modified test
+  remap("n", "<leader>rt", "<cmd>lua require('jc.tmux-utils').run_mru_rails_test()<CR>")
+
+  -- Toggle treesitter highlighting
+  remap("n", "<leader>tog", "<cmd>TSBufToggle highlight<CR>")
+
+  -- Show tree-sitter highlight group(s) for current cursor position
+  remap("n", "<leader>hi", "<cmd>TSHighlightCapturesUnderCursor<CR>")
+
+  remap("n", "<Leader>tt", "<cmd>LspTroubleToggle<CR>")
+
   -- general
-  remap("v", "J", ":m '>+1<CR>gv=gv") -- move lines
-  remap("v", "K", ":m '<-2<CR>gv=gv") -- move lines
-  remap("v", "<leader>p", '"_dP') -- delete into blackhole and past last yank
-  remap("n", "<leader>Y", 'gg"+yG') -- copy hole biffer
-  remap("n", "<leader>D", '"_d') -- delete into blackhole register
-  remap("v", "<leader>D", '"_d') -- delete into blackhole register
-  remap("n", "<C-d>", "<C-d>zz") -- move and center
-  remap("n", "<C-u>", "<C-u>zz") -- move and center
-  remap("i", "jj", "<ESC>") -- normal mode map
+  remap("v", "J", "<cmd>m '>+1<CR>gv=gv") -- move lines
+  remap("v", "K", "<cmd>m '<-2<CR>gv=gv") -- move lines
+  remap("v", "<leader>p", '"_dP') -- delete into blackhole and paste last yank
 
   -- quickfix
-  remap("n", "<Leader>qo", "<Cmd>lua require('utils').toggle_qf()<CR>")
-  remap("n", "<Leader>qn", ":cnext<CR>")
-  remap("n", "<Leader>qo", ":copen<CR>")
-  remap("n", "<Leader>qp", ":cprev<CR>")
+  remap("n", "<Leader>qo", "<cmd>lua require('utils').toggle_qf()<CR>")
+  remap("n", "<Leader>qn", "<cmd>cnext<CR>")
+  remap("n", "<Leader>qo", "<cmd>copen<CR>")
+  remap("n", "<Leader>qp", "<cmd>cprev<CR>")
 
+  -- ctrl-o
 
   -- locationlist
-  remap("n", "<Leader>lc", ":lclose<CR>")
-  remap("n", "<Leader>lo", ":lopen<CR>")
-  remap("n", "<Leader>ln", ":lnext<CR>")
-  remap("n", "<Leader>lp", ":lprev<CR>")
+  remap("n", "<Leader>lc", "<cmd>lclose<CR>")
+  remap("n", "<Leader>lo", "<cmd>lopen<CR>")
+  remap("n", "<Leader>ln", "<cmd>lnext<CR>")
+  remap("n", "<Leader>lp", "<cmd>lprev<CR>")
 
-  -- telescope NOTE: Lazyloaded
-  remap(
-    "n",
-    "<Leader>ff",
-    "<Cmd>Telescope find_files find_command=rg,--ignore,--hidden,--files prompt_prefix=🔍<CR>"
-  )
-  remap("n", "<Leader>fg", ":Telescope live_grep<CR>")
-  remap("n", "<Leader>fb", ":Telescope buffers<CR>")
-  remap("n", "<Leader>fh", ":Telescope help_tags<CR>")
-  remap("n", "<Leader>fo", ":Telescope oldfiles<CR>")
-  remap("n", "<Leader>fp", ":Telescope project<CR>")
-  remap("n", "<Leader>fn", ":Telescope file_create<CR>")
+  -- ctrl-o
+  map_ctrlo_tele("b", "buffers")
 
-  -- nvim tree NOTE: Lazyloaded
-  remap("n", "<Leader>n", ":NvimTreeFindFile<CR>")
-  remap("n", "<C-n>", ":NvimTreeToggle<CR>")
+  -- map_ctrlo_tele("F", "live_grep")
+  map_ctrlo_tele("f", "grep_string" )
+  map_ctrlo_tele("F", "search_all_files")
+
+  -- git
+  -- switch branches
+  map_ctrlo_tele("gb", "git_branches")
+  -- git history of file in current buffer
+  map_ctrlo_tele("gh", "git_bcommits")
+  -- edit changed file
+  map_ctrlo_tele("gs", "git_status")
+
+  -- files
+  map_ctrlo_tele("o", "find_files")
+  map_ctrlo_tele("O", "search_all_files")
+  map_ctrlo_tele("z", "search_only_files_of_type")
+
+  -- lsp
+  -- little r -> Search for LSP references to word under cursor
+  map_ctrlo_tele("r", "lsp_references")
+
+  map_ctrlo_tele("q", "quickfix")
+
+  -- little t -> Search list of symbols (tags) for current document
+  map_ctrlo_tele("t", "lsp_document_symbols")
+  -- Big T -> Search list of symbols (tags) from entire workspace
+  map_ctrlo_tele("T", "lsp_workspace_symbols")
+
+  -- rails
+  map_ctrlo_tele("rc", "find_files", { search_dir = "app/controllers" })
+  map_ctrlo_tele("rm", "find_files", { search_dir = "app/models" })
+  map_ctrlo_tele("rv", "find_files", { search_dir = "app/views" })
 
   -- dap NOTE: Lazyloaded
   remap(
     "n",
     "<Leader>dc",
-    [[ <Cmd>lua require("plugins.dap.attach"):addPlug(); require'dap'.continue()<CR>]]
+    [[ <cmd>lua require("plugins.dap.attach"):addPlug(); require'dap'.continue()<CR>]]
   )
   remap(
     "n",
     "<Leader>db",
-    [[ <Cmd>lua require("plugins.dap.attach"):addPlug(); require'dap'.toggle_breakpoint()<CR>]]
+    [[ <cmd>lua require("plugins.dap.attach"):addPlug(); require'dap'.toggle_breakpoint()<CR>]]
   )
 
   -- compe: NOTE: Lazyloaded
@@ -65,55 +200,51 @@ function M.mappings()
   remap(
     "n",
     "<Leader>gy",
-    [[ <Cmd>lua require('plugins.gitlinker'):normal()<CR>]]
+    [[ <cmd>lua require('plugins.gitlinker'):normal()<CR>]]
   )
   remap(
     "v",
     "<Leader>gy",
-    [[ <Cmd>lua require('plugins.gitlinker'):visual()<CR>]]
+    [[ <cmd>lua require('plugins.gitlinker'):visual()<CR>]]
   )
 
   -- refactor: NOTE: Lazyloaded
   remap(
     "v",
     "<Leader>re",
-    [[ <Cmd>lua require('plugins.refactoring').extract()<CR>]]
+    [[ <cmd>lua require('plugins.refactoring').extract()<CR>]]
   )
   remap(
     "v",
     "<Leader>rf",
-    [[ <Cmd>lua require('plugins.refactoring').extract_to_file()<CR>]]
+    [[ <cmd>lua require('plugins.refactoring').extract_to_file()<CR>]]
   )
   remap(
     "v",
     "<Leader>rt",
-    [[ <Cmd>lua require('plugins.refactoring').telescope()<CR>]]
+    [[ <cmd>lua require('plugins.refactoring').telescope()<CR>]]
   )
 
   -- marker: NOTE: Lazyloaded
-  remap("v", "<Leader>1", ":<c-u>HSHighlight 1<CR>")
-  remap("v", "<Leader>2", ":<c-u>HSHighlight 2<CR>")
-  remap("v", "<Leader>3", ":<c-u>HSHighlight 3<CR>")
-  remap("v", "<Leader>4", ":<c-u>HSHighlight 4<CR>")
-  remap("v", "<Leader>5", ":<c-u>HSHighlight 5<CR>")
-  remap("v", "<Leader>6", ":<c-u>HSHighlight 6<CR>")
-  remap("v", "<Leader>7", ":<c-u>HSHighlight 7<CR>")
-  remap("v", "<Leader>8", ":<c-u>HSHighlight 8<CR>")
-  remap("v", "<Leader>9", ":<c-u>HSHighlight 9<CR>")
-  remap("v", "<Leader>0", ":<c-u>HSRmHighlight<CR>")
+  remap("v", "<Leader>1", "<cmd><c-u>HSHighlight 1<CR>")
+  remap("v", "<Leader>2", "<cmd><c-u>HSHighlight 2<CR>")
+  remap("v", "<Leader>3", "<cmd><c-u>HSHighlight 3<CR>")
+  remap("v", "<Leader>4", "<cmd><c-u>HSHighlight 4<CR>")
+  remap("v", "<Leader>5", "<cmd><c-u>HSHighlight 5<CR>")
+  remap("v", "<Leader>6", "<cmd><c-u>HSHighlight 6<CR>")
+  remap("v", "<Leader>7", "<cmd><c-u>HSHighlight 7<CR>")
+  remap("v", "<Leader>8", "<cmd><c-u>HSHighlight 8<CR>")
+  remap("v", "<Leader>9", "<cmd><c-u>HSHighlight 9<CR>")
+  remap("v", "<Leader>0", "<cmd><c-u>HSRmHighlight<CR>")
 
-  -- trouble
-  remap("n", "<Leader>gt", ":LspTroubleToggle<CR>")
 
   -- make
-  remap("n", "<Leader>ms", ":Neomake<CR>")
-  remap("n", "<Leader>mt", ":TestFile<CR>")
-  remap("n", "<Leader>mu", ":Ultest<CR>")
-
-  remap("n", "<Leader>w", ":ChooseWin<CR>")
+  remap("n", "<Leader>ms", "<cmd>Neomake<CR>")
+  remap("n", "<Leader>mt", "<cmd>TestFile<CR>")
+  remap("n", "<Leader>mu", "<cmd>Ultest<CR>")
 
   -- neogen
-  remap("n", "<Leader>nf", ":DocGen<CR>")
+  --[[ remap("n", "<Leader>nf", "<cmd>DocGen<CR>") ]]
 end
 
 return M

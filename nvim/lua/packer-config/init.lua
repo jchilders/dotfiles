@@ -66,7 +66,7 @@ local function init()
   })
 
   -- telescope
-  use {
+  use({
     'nvim-telescope/telescope.nvim',
     config = require("plugins.telescope").init,
     requires = {
@@ -78,7 +78,7 @@ local function init()
         run = "make",
       },
     }
-  }
+  })
 
   -- faster lua-based filetype detection. improves startup time.
   use({ "nathom/filetype.nvim" })
@@ -124,7 +124,7 @@ local function init()
       }
 
       require('kommentary.config').configure_language("default", {
-        prefer_multi_line_comments = true,
+        prefer_multi_line_comments = false,
       })
     end,
   })
@@ -137,25 +137,49 @@ local function init()
 
   use({ "ray-x/lsp_signature.nvim", opt = true }) -- auto signature trigger
 
+  -- helper for generating doc comments like:
+  --   @param [String] my_param The paremeter that does a thing
+  use({
+    "danymat/neogen",
+    cmd = { "DocGen" },
+    config = require("plugins.neogen").init,
+    requires = "nvim-treesitter/nvim-treesitter",
+  })
+
   -- {{ LSP }}
+
   use({
     'neovim/nvim-lspconfig',
     'williamboman/nvim-lsp-installer',
   })
+
   use({ "nvim-lua/lsp-status.nvim", })
 
   use({
     "onsails/lspkind-nvim",
     config = require("plugins.lspkind-nvim").init,
   })
-  -- {{ /LSP }} --
+
+  -- Window/split containing a pretty list for showing diagnostics, references,
+  -- telescope results, quickfix and location lists to help you solve all the
+  -- trouble your code is causing.
+  use({
+    "folke/lsp-trouble.nvim",
+    config = function()
+      require("trouble").setup()
+    end,
+    cmd = { "LspTroubleToggle" },
+    requires = "kyazdani42/nvim-web-devicons",
+  }) -- window for showing LSP detected issues in code
+
+  -- {{ /LSP }}
 
   -- completion
-  use({
+  --[[ use({
     "hrsh7th/nvim-cmp",
     config = require("plugins.cmp").init,
     requires = {
-      --[[ { "hrsh7th/cmp-cmdline" }, ]]
+      { "hrsh7th/cmp-cmdline" },
       { "hrsh7th/cmp-buffer" },
       { "hrsh7th/cmp-nvim-lsp" },
       { "hrsh7th/cmp-path" },
@@ -163,17 +187,17 @@ local function init()
       { "L3MON4D3/LuaSnip" },
       { "rafamadriz/friendly-snippets" },
     },
-  })
+  }) ]]
 
   -- autoclose parens, etc.
   use({ "windwp/nvim-autopairs" })
 
   -- better wild menu: e.g.: when you do `:e` and you want to navigate the completion popup
   -- currently funky.
-  use({
+  --[[ use({
     "gelguy/wilder.nvim",
     opt = true,
-  })
+  }) ]]
 
   use({ "wbthomason/packer.nvim", opt = true })
 end

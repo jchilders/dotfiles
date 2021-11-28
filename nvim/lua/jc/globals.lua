@@ -1,3 +1,12 @@
+RELOAD = function(...)
+  return require("plenary.reload").reload_module(...)
+end
+
+R = function(name)
+  RELOAD(name)
+  return require(name)
+end
+
 local globals = {}
 
 local home = os.getenv("HOME")
@@ -9,7 +18,6 @@ function globals:load_variables()
   self.is_darwin = os_name == "Darwin"
   self.is_linux = os_name == "Linux"
   self.os_name = os_name
-  self.sumenko_os = os_name == "Darwin" and "macOS" or "Linux"
   self.vim_path = vim.fn.stdpath("config")
   self.path_sep = path_sep
   self.home = home
@@ -22,14 +30,5 @@ function globals:load_variables()
 end
 
 globals:load_variables()
-
-RELOAD = function(...)
-  return require("plenary.reload").reload_module(...)
-end
-
-globals.R = function(name)
-  RELOAD(name)
-  return require(name)
-end
 
 return globals

@@ -11,6 +11,6 @@ LSP.capabilities.textDocument.completion.completionItem.resolveSupport = {
     "additionalTextEdits",
   },
 }
-LSP.capabilities = require("cmp_nvim_lsp").update_capabilities(LSP.capabilities)
+--[[ LSP.capabilities = require("cmp_nvim_lsp").update_capabilities(LSP.capabilities) ]]
 
 return LSP

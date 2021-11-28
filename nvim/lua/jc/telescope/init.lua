@@ -1,4 +1,4 @@
-SHOULD_RELOAD_TELESCOPE = true
+SHOULD_RELOAD_TELESCOPE = false
 
 local reloader = function()
   if SHOULD_RELOAD_TELESCOPE then

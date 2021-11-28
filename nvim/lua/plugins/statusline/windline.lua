@@ -209,7 +209,7 @@ basic.git = {
       end
     end
     if git_comps.is_git() then
-      if packer_plugins["neomake"] ~= nill and packer_plugins["neomake"].loaded then
+      if packer_plugins["neomake"] ~= nil and packer_plugins["neomake"].loaded then
         return {
           { helper.separators.slant_left, "sep" },
           { " ", "spacer" },

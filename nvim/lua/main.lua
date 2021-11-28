@@ -6,7 +6,7 @@
 -- because of lazyloading
 local g, opt = vim.g, vim.opt
 
--- disable plugins
+-- disable unused vim builtins -- decreases startup time
 local disabled_built_ins = {
   "zip",
   "zipPlugin",

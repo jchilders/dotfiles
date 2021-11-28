@@ -36,8 +36,11 @@ function M.init()
             path = vim.split(package.path, ';')
           },
           diagnostics = {
-            -- Get the language server to recognize the `vim` global
-            globals = {'vim'}
+            -- Get the language server to recognize certain globals
+            globals = {
+              'vim',
+              'packer_plugins'
+            }
           },
           workspace = {
             -- Make the server aware of Neovim runtime files
