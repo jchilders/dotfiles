@@ -141,6 +141,7 @@ local function init()
   --   @param [String] my_param The paremeter that does a thing
   use({
     "danymat/neogen",
+    disable = true, -- no ruby support yet
     cmd = { "DocGen" },
     config = require("plugins.neogen").init,
     requires = "nvim-treesitter/nvim-treesitter",
