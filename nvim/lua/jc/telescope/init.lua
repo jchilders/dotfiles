@@ -1,16 +1,15 @@
-SHOULD_RELOAD_TELESCOPE = false
+SHOULD_RELOAD_TELESCOPE = true
 
 local reloader = function()
   if SHOULD_RELOAD_TELESCOPE then
     RELOAD "plenary"
     RELOAD "popup"
     RELOAD "telescope"
-    RELOAD "tj.telescope.setup"
-    RELOAD "tj.telescope.custom"
+    RELOAD "jc.telescope.setup"
+    RELOAD "jc.telescope.custom"
   end
 end
 
-local action_state = require "telescope.actions.state"
 local themes = require "telescope.themes"
 local Path = require "plenary.path"
 
@@ -26,10 +25,10 @@ function M.find_files(opts)
   opts = opts or {}
 
   -- ivy theme = TS win is at bottom of screen, vertcally split
-  theme_opts = themes.get_ivy { hidden = false }
+  local theme_opts = themes.get_ivy { hidden = false }
 
   if opts.search_dir ~= nil then
-    path = Path:new(opts.search_dir)
+    local path = Path:new(opts.search_dir)
     if not path:exists() then
       print("Directory " .. opts.search_dir .. " does not exist.")
       return
@@ -41,15 +40,22 @@ function M.find_files(opts)
   require("telescope.builtin").find_files(theme_opts)
 end
 
-function M.git_status()
-  local opts = themes.get_dropdown {
-    winblend = 10,
-    border = true,
+local git_default_opts = {
+    winblend = 30,
+    border = false,
     previewer = false,
-    shorten_path = false,
-  }
+}
 
+function M.git_status()
+  print "fasdlfasdfasdfasdfasdfsdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasg(af(asgjhks)dgasdhj"
+  local opts = themes.get_dropdown(git_default_opts)
   require("telescope.builtin").git_status(opts)
+end
+
+function M.git_branches()
+  -- local opts = themes.get_dropdown(git_default_opts)
+  -- require("telescope.builtin").git_branches({ previewer = false })
+  require("telescope.builtin").builtin()
 end
 
 function M.search_only_files_of_type()
@@ -97,10 +103,12 @@ return setmetatable({}, {
   --
   --     require("jc.telescope")['some_method']() -- this would call telescope.some_method()
   __index = function(_, k)
+    print("k: " .. k)
+    adasdf
     reloader()
 
     -- pcall(func, arg1, ...) is equivalent to func(arg1, ...) except that it will catch any errors that occur in func
-    local has_custom, custom = pcall(require, string.format("tj.telescope.custom.%s", k))
+    local has_custom, custom = pcall(require, string.format("jc.telescope.custom.%s", k))
 
     if M[k] then
       return M[k]
