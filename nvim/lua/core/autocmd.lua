@@ -1,7 +1,8 @@
-local Func = require("utils")
 local M = {}
 
-function M.autocmds()
+local utils = require("utils")
+
+local function augroups()
   local definitions = {
     ft = {
       { "FileType", "NvimTree,lspsagafinder,dashboard", "let b:cusorword=0" },
@@ -67,13 +68,19 @@ function M.autocmds()
         'silent! lua require("plugins.lspconfig.lua").reinit()',
       },
     },
-
-    --  gh = {
-    --  { "DirChanged", "*", "silent! lua require('plugins.gh').load()" },
-    --  },
   }
 
-  Func.nvim_create_augroups(definitions)
+  utils.nvim_create_augroups(definitions)
+end
+
+local function autocmds()
+  -- Restore cursor position (`g'"`) to where it was when a file was last edited
+  utils.autocmd("BufReadPost", "*", [[if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif]])
+end
+
+function M.init()
+  augroups()
+  autocmds()
 end
 
 return M

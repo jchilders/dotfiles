@@ -74,8 +74,11 @@ function M.git_branches()
 end
 
 function M.quickfix()
-  local theme_opts = ivy_theme()
-  builtin.quickfix(theme_opts)
+  local opts = {}
+
+  local theme = ivy_theme()
+  opts = vim.tbl_deep_extend("force", opts, theme)
+  builtin.quickfix(opts)
 end
 
 function M.search_only_files_of_type()

@@ -1,15 +1,15 @@
 local M = {}
 M.__index = M
 
-local themes = require("telescope.themes")
-
 function M.init()
   vim.cmd([[packadd plenary.nvim]])
   vim.cmd([[packadd telescope-project.nvim]])
   vim.cmd([[packadd telescope-fzf-native.nvim]])
 
   local telescope = require("telescope")
+  local actions = require("telescope.actions")
   local action_set = require("telescope.actions.set")
+
   telescope.setup({
     pickers = {
       find_files = {
@@ -36,7 +36,6 @@ function M.init()
       file_sorter = require("telescope.sorters").get_generic_sorter,
       file_ignore_patterns = { ".git/", "node_modules" },
       generic_sorter = require("telescope.sorters").get_generic_fuzzy_sorter,
-      winblend = 0,
       border = {},
       borderchars = {
         "─",
@@ -51,11 +50,16 @@ function M.init()
       color_devicons = true,
       use_less = true,
       set_env = { ["COLORTERM"] = "truecolor" }, -- default = nil,
-      --[[ file_previewer = require("telescope.previewers").vim_buffer_cat.new,
+      file_previewer = require("telescope.previewers").vim_buffer_cat.new,
       grep_previewer = require("telescope.previewers").vim_buffer_vimgrep.new,
       qflist_previewer = require("telescope.previewers").vim_buffer_qflist.new,
       -- Developer configurations: Not meant for general override
-      buffer_previewer_maker = require("telescope.previewers").buffer_previewer_maker, ]]
+      buffer_previewer_maker = require("telescope.previewers").buffer_previewer_maker,
+      mappings = {
+        i = {
+          ["<esc>"] = actions.close
+        }
+      },
     },
     extensions = {
       fzf = {

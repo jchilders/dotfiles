@@ -121,8 +121,6 @@ function M.mappings()
   -- Show tree-sitter highlight group(s) for current cursor position
   remap("n", "<leader>hi", "<cmd>TSHighlightCapturesUnderCursor<CR>")
 
-  remap("n", "<leader>tt", "<cmd>LspTroubleToggle<CR>")
-
   -- general
   remap("v", "J", "<cmd>m '>+1<CR>gv=gv") -- move lines
   remap("v", "K", "<cmd>m '<-2<CR>gv=gv") -- move lines
@@ -161,9 +159,15 @@ function M.mappings()
   map_ctrlo_tele("O", "search_all_files")
   map_ctrlo_tele("z", "search_only_files_of_type")
 
-  -- lsp
+  -- LSP
   -- little r -> Search for LSP references to word under cursor
   map_ctrlo_tele("r", "lsp_references")
+  remap("n", "[[", "<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>")
+  remap("n", "]]", "<cmd>lua vim.lsp.diagnostic.goto_next()<CR>")
+  remap("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>")
+  remap("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>")
+  remap("n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>")
+  remap("n", "<space>wl", "<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>")
 
   map_ctrlo_tele("q", "quickfix")
 
@@ -171,6 +175,8 @@ function M.mappings()
   map_ctrlo_tele("t", "lsp_document_symbols")
   -- Big T -> Search list of symbols (tags) from entire workspace
   map_ctrlo_tele("T", "lsp_workspace_symbols")
+
+  remap("n", "<leader>tt", "<cmd>LspTroubleToggle<CR>")
 
   -- rails
   map_ctrlo_tele("rc", "find_files", { search_dir = "app/controllers" })
@@ -190,7 +196,6 @@ function M.mappings()
   remap("n", "<C-j>", "<cmd>lua R('harpoon.ui').nav_file(2)<CR>")
   remap("n", "<C-k>", "<cmd>lua R('harpoon.ui').nav_file(3)<CR>")
   remap("n", "<C-l>", "<cmd>lua R('harpoon.ui').nav_file(4)<CR>")
-
 
   -- dap NOTE: Lazyloaded
   -- also NOTE: not working atm

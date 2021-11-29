@@ -1,6 +1,5 @@
 local global = {}
 local home = os.getenv("HOME")
--- local path_sep = global.is_windows and "\\" or "/"
 local path_sep = package.config:sub(1, 1)
 local os_name = vim.loop.os_uname().sysname
 

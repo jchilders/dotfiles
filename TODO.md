@@ -1,4 +1,4 @@
-- [ ] nvim: Harpoon
+- [x] nvim: Harpoon
 - [ ] nvim: Create mapping to switch to alternate (test) file using `alt`
   command from homebrew
   - [vim-test](https://github.com/vim-test/vim-test) looks good

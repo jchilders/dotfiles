@@ -29,7 +29,7 @@ end
 require("core.global")
 require("core.options").load_options()
 require("core.mappings").mappings()
-require("core.autocmd").autocmds()
+require("core.autocmd").init()
 
 local pack = require("packer-config")
 pack.bootstrap()
