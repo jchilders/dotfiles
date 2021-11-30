@@ -48,10 +48,7 @@ function M.load_options()
   })
   opt.matchpairs:append("<:>")
 
-  opt.ignorecase = true -- case sens ignore search
-  opt.termguicolors = true -- colors tmux settings
-  go.t_Co = "256" -- colors tmux setting
-  go.t_ut = "" -- colors tmux setting
+  opt.ignorecase = true
 
   opt.showmode = false -- modes
   opt.autoread = true -- reload files changed other edit
