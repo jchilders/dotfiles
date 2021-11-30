@@ -22,6 +22,18 @@ function M.set_mappings(keymaps)
   end
 end
 
+function M.toggle_gutter()
+  if vim.wo.relativenumber == true then
+    vim.wo.relativenumber = false
+    vim.wo.number = false
+    vim.wo.signcolumn = 'no'
+  else
+    vim.wo.relativenumber = true
+    vim.wo.number = true
+    vim.wo.signcolumn = 'yes'
+  end
+end
+
 -- Does this work?
 function M.add_gem_to_lsp_workspace(gem_name)
   local cmd = "gem open " .. gem_name .. " -e echo"
@@ -92,7 +104,7 @@ function M.table_length(table)
   return table:len()
 end
 
--- See also:vim.inspect(table) 
+-- See also:vim.inspect(table)
 function M.dump(table)
   if type(table) == 'table' then
     local s = '{ '
@@ -135,6 +147,7 @@ function M.blameVirtText()
   local blame = vim.fn.system(string.format('git blame -c -L %d,%d %s', line[1], line[1], currFile))
   local hash = vim.split(blame, '%s')[1]
   local cmd = string.format("git show %s ", hash).."--format='%an | %ar | %s'"
+  local text = ''
   if hash == '00000000' then
     text = 'Not Committed Yet'
   else

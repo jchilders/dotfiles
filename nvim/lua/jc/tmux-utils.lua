@@ -2,14 +2,15 @@ local M = {}
 
 local api = vim.api
 
--- TODO: Investigate maybe using nvim_replace_termcodes or something similar
---
 -- Send line under the cursor to the tmux pane to the left, then move cursor to
 -- next line
+--
+-- TODO: Investigate maybe using nvim_replace_termcodes or something similar
 M.send_line_left = function()
   local curr_line = vim.fn.trim(vim.fn.getline("."))
   M.send_left(curr_line)
 
+  -- move cursor to next line, if there is one
   local row, col = unpack(api.nvim_win_get_cursor(0))
   if row < api.nvim_buf_line_count(0) then
     api.nvim_win_set_cursor(0, {row + 1, col})
@@ -31,11 +32,12 @@ M.send_enter = function()
   vim.fn.system('tmux send-keys -t left Enter')
 end
 
--- Send `text` as UTF-8 characters to the tmux pane to the left
+-- Send `text` as UTF-8 characters to the tmux pane to the left. Appends a
+-- carriage return to `text` if one is not already the last character
 M.send_left = function(text)
-  local esc_text = vim.fn.escape(text, '\"$`')
-  -- the `-l` flag is needed to avoid the send-keys command from
-  -- intepreting strings such 'end' as e.g. the end key.
+  local esc_text = vim.fn.escape(text, '\\\"$`')
+  -- the `-l` flag is needed to avoid send-keys from
+  -- intepreting strings such 'end' as the end key.
   local send_text = string.format('tmux send-keys -l -t left "%s"', esc_text)
 
   -- Append a CR if the last char isn't already one

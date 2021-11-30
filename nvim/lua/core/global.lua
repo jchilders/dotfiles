@@ -1,23 +1,14 @@
-RELOAD = function(...)
-  return require("plenary.reload").reload_module(...)
-end
-
-R = function(name)
-  RELOAD(name)
-  return require(name)
-end
-
-local globals = {}
-
+local global = {}
 local home = os.getenv("HOME")
--- local path_sep = globals.is_windows and "\\" or "/"
 local path_sep = package.config:sub(1, 1)
 local os_name = vim.loop.os_uname().sysname
 
-function globals:load_variables()
+function global:load_variables()
   self.is_darwin = os_name == "Darwin"
   self.is_linux = os_name == "Linux"
+  self.is_windows = os_name == "Windows"
   self.os_name = os_name
+  self.sumenko_os = os_name == "Darwin" and "macOS" or "Linux"
   self.vim_path = vim.fn.stdpath("config")
   self.path_sep = path_sep
   self.home = home
@@ -29,6 +20,6 @@ function globals:load_variables()
   )
 end
 
-globals:load_variables()
+global:load_variables()
 
-return globals
+return global

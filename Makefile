@@ -151,6 +151,10 @@ wezterm-cfg: ## Link WezTerm configuration files
 	@[ -d $(XDG_CONFIG_HOME)/wezterm ] || mkdir $(XDG_CONFIG_HOME)/wezterm
 	stow --target=$(XDG_CONFIG_HOME)/wezterm wezterm
 
+wezterm-clean:
+	brew uninstall --cask wezterm-nightly
+	stow --target=$(XDG_CONFIG_HOME)/wezterm --delete wezterm
+
 ##@ zsh
 zsh: -zsh-cfg ## Install zsh-related items
 
