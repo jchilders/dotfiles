@@ -39,12 +39,12 @@ local function init()
   use({ "kyazdani42/nvim-web-devicons" })
 
   -- statusline
-  use({
+  --[[ use({
     "windwp/windline.nvim",
     config = function()
       require("plugins.statusline.windline")
     end,
-  })
+  }) ]]
 
   -- colorscheme
   use({
@@ -87,8 +87,15 @@ local function init()
     }
   })
 
-  -- harpoon lets you mark key files on a per-project basis & quickly nav to
-  -- them
+  -- :Telescope tmux sessions
+  -- :Telescope tmux windows
+  use({
+    "jchilders/telescope-tmux.nvim",
+    branch = "incl_curr_session_opt",
+  })
+
+  -- harpoon lets you mark a small number of key files on a per-project basis,
+  -- and quickly nav to them
   use({
     "ThePrimeagen/harpoon",
     config = require("plugins.harpoon").init

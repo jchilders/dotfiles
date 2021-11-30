@@ -17,6 +17,7 @@ local Path = require("plenary.path")
 
 local M = {}
 
+-- Simple dropdown with a border and no preview. Good for simple lists.
 local dropdown_theme = function()
   local default_opts = {
     border = true,
@@ -74,7 +75,9 @@ function M.git_branches()
 end
 
 function M.quickfix()
-  local opts = {}
+  local opts = {
+    previewer = false
+  }
 
   local theme = ivy_theme()
   opts = vim.tbl_deep_extend("force", opts, theme)
@@ -132,13 +135,13 @@ function M.search_all_files()
 end
 
 return setmetatable({}, {
-  -- Define a function that gets called when you try to get an array index for this class... er, table. example:
-  --
-  --     require("jc.telescope")['some_method']() -- this would call telescope.some_method()
+  -- Define a function that gets called when you try to get an array index for this class... er, table.
   __index = function(_, k)
     reloader()
 
-    -- pcall(func, arg1, ...) is equivalent to func(arg1, ...) except that it will catch any errors that occur in func
+    -- pcall(func, arg1, ...) is equivalent to func(arg1, ...) except that it
+    -- will catch any errors that occur in func. If it succeeds, then the first
+    -- return value will be true.
     local has_custom, custom = pcall(require, string.format("jc.telescope.custom.%s", k))
 
     if M[k] then
@@ -150,4 +153,3 @@ return setmetatable({}, {
     end
   end,
 })
-

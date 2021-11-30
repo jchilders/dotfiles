@@ -132,13 +132,13 @@ function M.mappings()
   remap("n", "<leader>qo", "<cmd>copen<CR>")
   remap("n", "<leader>qp", "<cmd>cprev<CR>")
 
-  -- ctrl-o
-
   -- locationlist
   remap("n", "<leader>lc", "<cmd>lclose<CR>")
   remap("n", "<leader>lo", "<cmd>lopen<CR>")
   remap("n", "<leader>ln", "<cmd>lnext<CR>")
   remap("n", "<leader>lp", "<cmd>lprev<CR>")
+
+  -- ctrl-o
 
   -- ctrl-o telescope mappings
   map_ctrlo_tele("b", "buffers")
@@ -157,6 +157,7 @@ function M.mappings()
   -- files
   map_ctrlo_tele("o", "find_files")
   map_ctrlo_tele("O", "search_all_files")
+  map_ctrlo_tele("q", "quickfix")
   map_ctrlo_tele("z", "search_only_files_of_type")
 
   -- LSP
@@ -168,8 +169,6 @@ function M.mappings()
   remap("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>")
   remap("n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>")
   remap("n", "<space>wl", "<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>")
-
-  map_ctrlo_tele("q", "quickfix")
 
   -- little t -> Search list of symbols (tags) for current document
   map_ctrlo_tele("t", "lsp_document_symbols")
@@ -188,9 +187,8 @@ function M.mappings()
   -- open list of files marked as harpooned
   remap("n", "<leader>hl", "<cmd>lua R('harpoon.ui').toggle_quick_menu()<CR>")
 
-  -- Cmd-j opens the first file added to the harpoon
-  -- Cmd-k opens the second file added to the harpoon...
-  -- etc
+  -- Cmd-j opens the first harpooned file,
+  -- Cmd-k opens the second harpooned file...
   -- hjkl = 1234
   remap("n", "<C-h>", "<cmd>lua R('harpoon.ui').nav_file(1)<CR>")
   remap("n", "<C-j>", "<cmd>lua R('harpoon.ui').nav_file(2)<CR>")
