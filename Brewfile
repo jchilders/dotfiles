@@ -10,6 +10,7 @@ brew 'gh'  # GitHub CLI
 brew 'git'
 brew 'git-delta' # git-diff replacement
 brew 'git-lfs' # handle Large Files in git
+brew 'golang'
 brew 'gpg'
 brew 'httpie'
 brew 'htop'

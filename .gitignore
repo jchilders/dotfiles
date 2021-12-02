@@ -2,3 +2,4 @@
 nvim/.netrwhist
 Brewfile.lock.json
 default.gems.lock
+node_modules/

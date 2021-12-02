@@ -23,6 +23,8 @@ export PATH="$PATH:$JC_DOTFILES_HOME/scripts"
 export PATH="/usr/local/opt/postgresql@11/bin:$PATH"
 # Rust binaries
 export PATH="$PATH:$HOME/.cargo/bin"
+# Python binaries
+export PATH="$PATH:$HOME/Library/Python/3.8/bin"
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 export PATH="$HOME/.rvm/bin:$PATH"
 

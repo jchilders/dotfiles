@@ -182,6 +182,10 @@ function M.mappings()
   map_ctrlo_tele("rm", "find_files", { search_dir = "app/models" })
   map_ctrlo_tele("rv", "find_files", { search_dir = "app/views" })
 
+  -- format.nvim
+  remap("n", "<leader>fb", "<cmd>Format<CR>")
+  remap("v", "<leader>fb", "<cmd>Format<CR>")
+
   -- harpoon
   remap("n", "<leader>ha", "<cmd>lua R('harpoon.mark').add_file()<CR>")
   -- open list of files marked as harpooned

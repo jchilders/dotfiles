@@ -106,6 +106,20 @@ local function init()
   -- automaticaly set `shiftwidth` & `expandtab`
   use({ "tpope/vim-sleuth" })
 
+  -- code formatter. can handle embedded syntax blocks via
+  -- `start_pattern`/`end_pattern` keys
+  use({
+    "lukas-reineke/format.nvim",
+    config = require("format").setup({
+        ["*"] = {
+          { cmd = { "sed -i 's/[ \t]*$//'" } } -- remove trailing whitespace
+        },
+        python = {
+          { cmd = { "black" } }
+        },
+    }),
+  })
+
   -- manage package.json files. "All the npm/yarn/pnpm commands I don't want to type"
   use({
     "vuki656/package-info.nvim",

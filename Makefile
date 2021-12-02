@@ -126,6 +126,9 @@ python: -python-packages ## Install Python
 # The pynvim package is needed by the vim-ultest plugin
 python-packages: ## Install Python packages
 	-python3 -m pip install --user --upgrade pynvim
+	-python3 -m pip install --user --upgrade black # py code formatter
+
+##@ tmux
 
 tmux: tmux-cfg tmux-plugins ## Install & configure tmux
 
@@ -141,7 +144,7 @@ tmux-cfg-clean: ## Unlink tmux configuration files
 
 tmux-plugins: ## Install plugin manager and other related items
 	@[ -d $$HOME/.tmux ] || mkdir $$HOME/.tmux
-	git clone https://github.com/tmux-plugins/tpm $$HOME/.tmux/plugins/tpm
+	@[ -d $$HOME/.tmux/plugins/tpm ] || git clone https://github.com/tmux-plugins/tpm $$HOME/.tmux/plugins/tpm
 
 ##@ WezTerm
 wezterm: -wezterm-cfg ## Install WezTerm terminal emulator
@@ -215,8 +218,6 @@ ssh: ## Install ssh related files
 
 ssh-add-key: -ssh ## Add key to SSH agent
 	ssh-add -K ~/.ssh/id_ed25519
-
-##@ tmux
 
 xdg-setup: ## Create XDG dirs (XDG_CONFIG_HOME, etc.)
 	@[ -d $(XDG_CONFIG_HOME) ] || mkdir -p $(XDG_CONFIG_HOME)
