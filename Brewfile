@@ -25,6 +25,7 @@ brew 'redis'
 brew 'rg' # ripgrep
 brew 'rust'
 brew 'starship' # prompt
+brew 'stylua' # lua code formatter
 brew 'stow' # dotfiles management
 brew 'tldr' # man page supplement
 brew 'tig'  # git history viewer

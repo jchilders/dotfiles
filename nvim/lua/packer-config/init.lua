@@ -79,6 +79,9 @@ local function init()
         ["*"] = {
           { cmd = { "sed -i 's/[ \t]*$//'" } } -- remove trailing whitespace
         },
+        lua = {
+        { cmd = { "stylua" } }
+      },
         python = {
           { cmd = { "black" } }
         },
