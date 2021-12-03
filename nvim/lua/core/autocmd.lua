@@ -45,7 +45,11 @@ end
 
 local function autocmds()
   -- Restore cursor position (`g'"`) to where it was when a file was last edited
-  utils.autocmd("BufReadPost", "*", [[if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif]])
+  utils.autocmd(
+    "BufReadPost",
+    "*",
+    [[if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif]]
+  )
 end
 
 function M.init()

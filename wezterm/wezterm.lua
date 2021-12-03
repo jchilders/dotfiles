@@ -1,4 +1,4 @@
-local wezterm = require 'wezterm';
+local wezterm = require("wezterm")
 
 function font_with_fallback(name, params)
   local names = {
@@ -40,13 +40,37 @@ return {
   },
   line_height = 1.1,
   keys = {
-    { key = "f", mods="CTRL|CMD", action="ToggleFullScreen" },
-    { key = "l", mods="SHIFT|CMD", action="ShowTabNavigator" },
-    { key = "s", mods="SHIFT|CMD", action=wezterm.action{SplitHorizontal={domain="CurrentPaneDomain"}}},
-    { key = "z", mods="SHIFT|CMD", action="TogglePaneZoomState" },
-    { key = "LeftArrow", mods="SHIFT|CMD", action=wezterm.action{ActivatePaneDirection="Left"}},
-    { key = "RightArrow", mods="SHIFT|CMD", action=wezterm.action{ActivatePaneDirection="Right"}},
-    { key = "UpArrow", mods="SHIFT|CMD", action=wezterm.action{ActivatePaneDirection="Up"}},
-    { key = "DownArrow", mods="SHIFT|CMD", action=wezterm.action{ActivatePaneDirection="Down"}},
+    { key = "f", mods = "CTRL|CMD", action = "ToggleFullScreen" },
+    { key = "l", mods = "SHIFT|CMD", action = "ShowTabNavigator" },
+    {
+      key = "s",
+      mods = "SHIFT|CMD",
+      action = wezterm.action({ SplitHorizontal = { domain = "CurrentPaneDomain" } }),
+    },
+    { key = "z", mods = "SHIFT|CMD", action = "TogglePaneZoomState" },
+    {
+      key = "LeftArrow",
+      mods = "SHIFT|CMD",
+      action = wezterm.action({
+        ActivatePaneDirection = "Left",
+      }),
+    },
+    {
+      key = "RightArrow",
+      mods = "SHIFT|CMD",
+      action = wezterm.action({
+        ActivatePaneDirection = "Right",
+      }),
+    },
+    {
+      key = "UpArrow",
+      mods = "SHIFT|CMD",
+      action = wezterm.action({ ActivatePaneDirection = "Up" }),
+    },
+    {
+      key = "DownArrow",
+      mods = "SHIFT|CMD",
+      action = wezterm.action({ ActivatePaneDirection = "Down" }),
+    },
   },
 }

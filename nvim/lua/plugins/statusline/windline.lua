@@ -82,7 +82,7 @@ basic.source_context = {
 
     if gps.is_available() then
       return {
-        { gps.get_location(), "white" }
+        { gps.get_location(), "white" },
       }
     else
       return {
@@ -275,7 +275,7 @@ basic.lsp_names = {
       return {
         {
           helper.separators.slant_left,
-          "sep"
+          "sep",
         },
         { " ", "spacer" },
         { lsp_comps.lsp_name(), "magenta" },

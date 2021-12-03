@@ -1,7 +1,7 @@
 local scratch = {}
 
 local api = vim.api
-local git_utils = require('jc.git_utils')
+local git_utils = require("jc.git_utils")
 
 scratch.open_project_scratch_file = function(bufnr)
   bufnr = 0 or bufnr

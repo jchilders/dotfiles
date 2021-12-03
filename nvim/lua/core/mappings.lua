@@ -26,7 +26,11 @@ end
 local map_ctrlo_tele = function(key, f, tele_options, bufnr)
   local map_key = vim.api.nvim_replace_termcodes(key .. f, true, true, true)
   TelescopeMapArgs[map_key] = tele_options or {}
-  local rhs = string.format("<cmd>lua R('jc.telescope')['%s'](TelescopeMapArgs['%s'])<CR>", f, map_key)
+  local rhs = string.format(
+    "<cmd>lua R('jc.telescope')['%s'](TelescopeMapArgs['%s'])<CR>",
+    f,
+    map_key
+  )
 
   map_ctrlo(key, rhs, bufnr)
 end
@@ -82,7 +86,7 @@ function M.mappings()
   remap("n", "*", search_cmd)
 
   -- Hit <CR> to clear hlsearch after doing a search
-  remap("n", "<CR>", "{-> v:hlsearch ? \"<cmd>nohl\\<CR>\" : \"\\<CR>\"}()", true)
+  remap("n", "<CR>", '{-> v:hlsearch ? "<cmd>nohl\\<CR>" : "\\<CR>"}()', true)
 
   -- `n`/`N` will go to next/previous search match and center it on screen
   remap("n", "n", "nzz")
@@ -110,7 +114,11 @@ function M.mappings()
   -- Send the keys `^D`, `UpArrow`, and `Enter` to the left tmux pane
   -- Lets us quickly Restart Rails console/server/psql/lua/whatever, so long as it quits
   -- when it receives a ^D
-  remap("n", "<leader>rr", "<cmd>lua require('jc.tmux-utils').send_keys_left({'C-d','Up','Enter'})<CR>")
+  remap(
+    "n",
+    "<leader>rr",
+    "<cmd>lua require('jc.tmux-utils').send_keys_left({'C-d','Up','Enter'})<CR>"
+  )
 
   -- Run the most recently modified test
   remap("n", "<leader>rt", "<cmd>lua require('jc.tmux-utils').run_mru_rails_test()<CR>")
@@ -143,7 +151,7 @@ function M.mappings()
   -- ctrl-o telescope mappings
   map_ctrlo_tele("b", "buffers")
 
-  map_ctrlo_tele("f", "grep_string" )
+  map_ctrlo_tele("f", "grep_string")
   map_ctrlo_tele("F", "live_grep")
 
   -- git
@@ -229,7 +237,6 @@ function M.mappings()
   remap("v", "<leader>8", "<cmd><c-u>HSHighlight 8<CR>")
   remap("v", "<leader>9", "<cmd><c-u>HSHighlight 9<CR>")
   remap("v", "<leader>0", "<cmd><c-u>HSRmHighlight<CR>") ]]
-
 
   -- make
   -- remap("n", "<leader>ms", "<cmd>Neomake<CR>")

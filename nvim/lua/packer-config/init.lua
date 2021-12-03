@@ -38,17 +38,17 @@ local function init()
 
   -- telescope
   use({
-    'nvim-telescope/telescope.nvim',
+    "nvim-telescope/telescope.nvim",
     config = require("plugins.telescope").init,
     requires = {
-      { 'nvim-lua/plenary.nvim' },
+      { "nvim-lua/plenary.nvim" },
       { "nvim-telescope/telescope-project.nvim", opt = true },
       {
         "nvim-telescope/telescope-fzf-native.nvim",
         opt = true,
         run = "make",
       },
-    }
+    },
   })
 
   -- :Telescope tmux sessions
@@ -62,7 +62,7 @@ local function init()
   -- and quickly nav to them
   use({
     "ThePrimeagen/harpoon",
-    config = require("plugins.harpoon").init
+    config = require("plugins.harpoon").init,
   })
 
   -- faster lua-based filetype detection. improves startup time.
@@ -76,15 +76,15 @@ local function init()
   use({
     "lukas-reineke/format.nvim",
     config = require("format").setup({
-        ["*"] = {
-          { cmd = { "sed -i 's/[ \t]*$//'" } } -- remove trailing whitespace
-        },
-        lua = {
-        { cmd = { "stylua" } }
+      ["*"] = {
+        { cmd = { "sed -i 's/[ \t]*$//'" } }, -- remove trailing whitespace
       },
-        python = {
-          { cmd = { "black" } }
-        },
+      lua = {
+        { cmd = { "stylua" } },
+      },
+      python = {
+        { cmd = { "black" } },
+      },
     }),
   })
 
@@ -118,14 +118,14 @@ local function init()
   use({
     "b3nj5m1n/kommentary",
     config = function()
-      require'nvim-treesitter.configs'.setup {
+      require("nvim-treesitter.configs").setup({
         context_commentstring = {
           enable = true,
           enable_autocmd = false,
-        }
-      }
+        },
+      })
 
-      require('kommentary.config').configure_language("default", {
+      require("kommentary.config").configure_language("default", {
         prefer_multi_line_comments = false,
       })
     end,
@@ -165,11 +165,11 @@ local function init()
   -- {{ LSP }}
 
   use({
-    'neovim/nvim-lspconfig',
-    'williamboman/nvim-lsp-installer',
+    "neovim/nvim-lspconfig",
+    "williamboman/nvim-lsp-installer",
   })
 
-  use({ "nvim-lua/lsp-status.nvim", })
+  use({ "nvim-lua/lsp-status.nvim" })
 
   use({
     "onsails/lspkind-nvim",
@@ -245,14 +245,14 @@ local function init()
   use({
     "Shatur/neovim-session-manager",
     config = function()
-      require('session_manager').setup({
+      require("session_manager").setup({
         -- Define what to do when Neovim is started without arguments. Possible
         -- values: Disabled, CurrentDir, LastSession
-        autoload_mode = require('session_manager.config').AutoloadMode.CurrentDir,
+        autoload_mode = require("session_manager.config").AutoloadMode.CurrentDir,
         -- Automatically save last session on exit
         autosave_last_session = true,
       })
-      require('telescope').load_extension('sessions')
+      require("telescope").load_extension("sessions")
     end,
   })
 
@@ -270,21 +270,15 @@ local plugins = setmetatable({}, {
 
 -- Bootstrap Packer and the Plugins + loads configs afterwards
 function plugins.bootstrap()
-  local install_path = sep_os_replacer(
-    fn.stdpath("data") .. "/site/pack/packer/opt/packer.nvim"
-  )
+  local install_path = sep_os_replacer(fn.stdpath("data") .. "/site/pack/packer/opt/packer.nvim")
   -- check if packer exists or is installed
   if fn.empty(fn.glob(install_path)) > 0 then
     -- fetch packer
-    execute(
-      "!git clone https://github.com/wbthomason/packer.nvim " .. install_path
-    )
+    execute("!git clone https://github.com/wbthomason/packer.nvim " .. install_path)
     execute("packadd packer.nvim")
 
     -- autocmd hook to wait for packer install and then after install load the needed config for plugins
-    vim.cmd(
-      "autocmd User PackerComplete ++once lua require('load_config').init()"
-    )
+    vim.cmd("autocmd User PackerComplete ++once lua require('load_config').init()")
 
     -- load packer plugins
     init()
@@ -340,14 +334,10 @@ function plugins.load_compile()
   if fn.filereadable(compile_to_lua) == 1 then
     require("_compiled")
   else
-    assert(
-      "Missing packer compile file Run PackerCompile Or PackerInstall to fix"
-    )
+    assert("Missing packer compile file Run PackerCompile Or PackerInstall to fix")
   end
 
-  vim.cmd(
-    [[command! PackerCompile lua require('packer-config').auto_compile()]]
-  )
+  vim.cmd([[command! PackerCompile lua require('packer-config').auto_compile()]])
   vim.cmd([[command! PackerInstall lua require('packer-config').install()]])
   vim.cmd([[command! PackerUpdate lua require('packer-config').update()]])
   vim.cmd([[command! PackerSync lua require('packer-config').sync()]])
@@ -355,9 +345,7 @@ function plugins.load_compile()
   vim.cmd([[command! PackerStatus  lua require('packer-config').status()]])
 
   -- autocompile event
-  vim.cmd(
-    [[autocmd User PackerComplete lua require('packer-config').auto_compile()]]
-  )
+  vim.cmd([[autocmd User PackerComplete lua require('packer-config').auto_compile()]])
 end
 
 return plugins

@@ -2,12 +2,12 @@ SHOULD_RELOAD_TELESCOPE = true
 
 local reloader = function()
   if SHOULD_RELOAD_TELESCOPE then
-    RELOAD "plenary"
-    RELOAD "popup"
-    RELOAD "telescope"
-    RELOAD "jc.telescope.setup"
-    RELOAD "jc.telescope.custom"
-    RELOAD "core.mappings"
+    RELOAD("plenary")
+    RELOAD("popup")
+    RELOAD("telescope")
+    RELOAD("jc.telescope.setup")
+    RELOAD("jc.telescope.custom")
+    RELOAD("core.mappings")
   end
 end
 
@@ -29,9 +29,9 @@ end
 
 -- ivy theme = TS win is at bottom of screen, vertcally split
 local ivy_theme = function()
-  return themes.get_ivy {
-    hidden = false
-  }
+  return themes.get_ivy({
+    hidden = false,
+  })
 end
 
 function M.buffers()
@@ -41,7 +41,7 @@ function M.buffers()
     sort_mru = true,
     only_cwd = true,
   }
-  opts = vim.tbl_extend('error', opts, theme)
+  opts = vim.tbl_extend("error", opts, theme)
 
   builtin.buffers(opts)
 end
@@ -76,7 +76,7 @@ end
 
 function M.quickfix()
   local opts = {
-    previewer = false
+    previewer = false,
   }
 
   local theme = ivy_theme()
@@ -87,17 +87,17 @@ end
 function M.search_only_files_of_type()
   local bufnr = vim.api.nvim_get_current_buf()
   local bufft = vim.api.nvim_buf_get_option(bufnr, "filetype")
-  local ft = vim.fn.input({prompt = "search files of type: ", default = bufft })
+  local ft = vim.fn.input({ prompt = "search files of type: ", default = bufft })
   local opts = {
     find_command = {
       "rg",
       "--files",
       "--sortr=modified",
       "--type",
-      ft
+      ft,
     },
   }
-  opts = vim.tbl_extend('error', opts, ivy_theme())
+  opts = vim.tbl_extend("error", opts, ivy_theme())
 
   builtin.grep_string(opts)
 end
@@ -113,7 +113,7 @@ function M.grep_string()
     previewer = false,
     disable_coordinates = true,
   }
-  opts = vim.tbl_extend('error', opts, ivy_theme())
+  opts = vim.tbl_extend("error", opts, ivy_theme())
   builtin.grep_string(opts)
 end
 
@@ -124,14 +124,14 @@ function M.live_grep()
     previewer = false,
     disable_coordinates = true,
   }
-  opts = vim.tbl_extend('error', opts, ivy_theme())
+  opts = vim.tbl_extend("error", opts, ivy_theme())
   builtin.live_grep(opts)
 end
 
 function M.search_all_files()
-  builtin.find_files {
+  builtin.find_files({
     find_command = { "rg", "--no-ignore", "--files" },
-  }
+  })
 end
 
 return setmetatable({}, {

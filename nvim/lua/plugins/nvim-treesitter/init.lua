@@ -2,7 +2,7 @@ local M = {}
 M.__index = M
 
 function M.init()
-  require('nvim-treesitter.configs').setup {
+  require("nvim-treesitter.configs").setup({
     -- one of "all", "maintained" (parsers with maintainers), or a list of languages
     ensure_installed = "maintained",
     highlight = {
@@ -13,7 +13,7 @@ function M.init()
       -- or -- additional_vim_regex_highlighting = { ruby=true },
     },
     indent = {
-      enable = true
+      enable = true,
     },
     -- windwp/nvim-ts-autotag auto close/rename html tags
     autotag = {
@@ -38,20 +38,20 @@ function M.init()
     query_linter = {
       enable = true,
       use_virtual_text = true,
-      lint_events = {"BufWrite", "CursorHold"},
+      lint_events = { "BufWrite", "CursorHold" },
     },
     textobjects = {
       select = {
         enable = true,
         keymaps = {
-          ['af'] = '@function.outer',
-          ['if'] = '@function.inner',
+          ["af"] = "@function.outer",
+          ["if"] = "@function.inner",
 
-          ['ac'] = '@conditional.outer',
-          ['ic'] = '@conditional.inner',
+          ["ac"] = "@conditional.outer",
+          ["ic"] = "@conditional.inner",
 
-          ['aa'] = '@parameter.outer',
-          ['ia'] = '@parameter.inner',
+          ["aa"] = "@parameter.outer",
+          ["ia"] = "@parameter.inner",
         },
       },
     },
@@ -61,19 +61,19 @@ function M.init()
       updatetime = 25, -- Debounced time for highlighting nodes in the playground from source code
       persist_queries = false, -- Whether the query persists across vim sessions
       keybindings = {
-        toggle_query_editor = 'o',
-        toggle_hl_groups = 'i',
-        toggle_injected_languages = 't',
-        toggle_anonymous_nodes = 'a',
-        toggle_language_display = 'I',
-        focus_language = 'f',
-        unfocus_language = 'F',
-        update = 'R',
-        goto_node = '<cr>',
-        show_help = '?',
+        toggle_query_editor = "o",
+        toggle_hl_groups = "i",
+        toggle_injected_languages = "t",
+        toggle_anonymous_nodes = "a",
+        toggle_language_display = "I",
+        focus_language = "f",
+        unfocus_language = "F",
+        update = "R",
+        goto_node = "<cr>",
+        show_help = "?",
       },
-    }
-  }
+    },
+  })
 end
 
 return M

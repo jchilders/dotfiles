@@ -9,9 +9,9 @@ M.init = function()
   require("nvim-gps").setup()
   -- require("plugins.build"):init()
 
---  require("plugins.web-devicons").init()
---  require("plugins.treesitter").init()
---  require("plugins.bufferline").init()
+  --  require("plugins.web-devicons").init()
+  --  require("plugins.treesitter").init()
+  --  require("plugins.bufferline").init()
 
   -- the init is loaded over a autocmd for lazyload
   --[[ require("plugins.wildmenu") ]]

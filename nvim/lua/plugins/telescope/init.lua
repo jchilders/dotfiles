@@ -57,8 +57,8 @@ function M.init()
       buffer_previewer_maker = require("telescope.previewers").buffer_previewer_maker,
       mappings = {
         i = {
-          ["<esc>"] = actions.close
-        }
+          ["<esc>"] = actions.close,
+        },
       },
     },
     extensions = {
@@ -69,8 +69,7 @@ function M.init()
         case_mode = "smart_case", -- or "ignore_case" or "respect_case"
       },
       project = {
-        base_dirs = {
-        },
+        base_dirs = {},
         max_depth = 4,
         hidden_files = true,
       },

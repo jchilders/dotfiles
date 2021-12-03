@@ -13,7 +13,7 @@ M.send_line_left = function()
   -- move cursor to next line, if there is one
   local row, col = unpack(api.nvim_win_get_cursor(0))
   if row < api.nvim_buf_line_count(0) then
-    api.nvim_win_set_cursor(0, {row + 1, col})
+    api.nvim_win_set_cursor(0, { row + 1, col })
   end
 end
 
@@ -29,13 +29,13 @@ M.send_selection_left = function()
 end
 
 M.send_enter = function()
-  vim.fn.system('tmux send-keys -t left Enter')
+  vim.fn.system("tmux send-keys -t left Enter")
 end
 
 -- Send `text` as UTF-8 characters to the tmux pane to the left. Appends a
 -- carriage return to `text` if one is not already the last character
 M.send_left = function(text)
-  local esc_text = vim.fn.escape(text, '\\\"$`')
+  local esc_text = vim.fn.escape(text, '\\"$`')
   -- the `-l` flag is needed to avoid send-keys from
   -- intepreting strings such 'end' as the end key.
   local send_text = string.format('tmux send-keys -l -t left "%s"', esc_text)
@@ -52,14 +52,14 @@ end
 -- See: http://man.openbsd.org/OpenBSD-current/man1/tmux.1#KEY_BINDINGS
 M.send_keys_left = function(keys)
   for _, key in ipairs(keys) do
-    local esc_text = vim.fn.escape(key, '\"$`')
+    local esc_text = vim.fn.escape(key, '"$`')
     local text_to_send = string.format('tmux send-keys -t left "%s"', esc_text)
     vim.fn.system(text_to_send)
   end
 end
 
 function M.visual_selection_range()
-  local vis_start = vim.fn.getpos('v')[2]
+  local vis_start = vim.fn.getpos("v")[2]
   local vis_end = vim.fn.getcurpos()[2]
 
   -- If selection was done from the bottom up then switch start & end

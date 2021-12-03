@@ -4,21 +4,21 @@
 -- also a lot of configuration for plugins can be found
 -- in the packer config setup
 -- because of lazyloading
-local g, opt = vim.g, vim.opt
+local g = vim.g
 
 -- disable unused vim builtins -- decreases startup time
 local disabled_built_ins = {
-  "zip",
-  "zipPlugin",
-  "tar",
-  "tarPlugin",
+  "2html_plugin",
   "getscript",
   "getscriptPlugin",
-  "vimball",
-  "vimballPlugin",
-  "2html_plugin",
   "logipat",
   "rrhelper",
+  "tar",
+  "tarPlugin",
+  "vimball",
+  "vimballPlugin",
+  "zip",
+  "zipPlugin",
 }
 
 for _, plugin in pairs(disabled_built_ins) do

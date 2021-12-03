@@ -9,19 +9,18 @@ function M.load_options()
 
   opt.autoindent = true
   opt.cursorline = true -- highlight current line
-  opt.fileformat = 'unix'
-  opt.grepprg = 'rg'
+  opt.fileformat = "unix"
+  opt.grepprg = "rg"
   opt.hidden = true
   opt.hlsearch = true
-  opt.mouse = 'a' -- mouse enabled for all modes. needed for barbar
   opt.number = true
   opt.relativenumber = true
   opt.scrolloff = 5
   opt.sidescrolloff = 15
   opt.sidescroll = 5
-  opt.signcolumn = 'yes'
+  opt.signcolumn = "yes"
   opt.smartcase = true
-  g.tildeopt = true -- let ~ command work with motions: `~w` will change case of curr word, e.g.
+  g.tildeopt = true -- let ~ command work with motions: `~w` will toggle case of curr word, e.g.
   opt.wrap = true
   g.showtabline = 0
 

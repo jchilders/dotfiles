@@ -13,10 +13,10 @@ function M.init()
           cmds = {
             "bin/rails server",
             "foreman start",
-          }
-        }
-      }
-    }
+          },
+        },
+      },
+    },
   })
 end
 
