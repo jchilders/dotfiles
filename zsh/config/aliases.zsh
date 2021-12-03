@@ -1,5 +1,6 @@
 alias ..='cd ..'
 alias ...='cd ../..'
+alias diff='delta' # viewer for `git diff` and `diff`
 alias l='exa --all --classify --git --header --icons --long --no-permissions --no-user --color-scale'
 alias tree='exa --tree'
 

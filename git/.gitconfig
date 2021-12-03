@@ -10,29 +10,29 @@
   whitespace-error-style = 22 reverse
   hunk-header-style = omit
 [interactive]
-    diffFilter = delta --color-only
+  diffFilter = delta --color-only
 [diff]
-    tool = diffsitter
+  tool = diffsitter
 [difftool]
-    prompt = false
+  prompt = false
 [difftool "diffsitter"]
-    cmd = diffsitter "$LOCAL" "$REMOTE"
+  cmd = diffsitter "$LOCAL" "$REMOTE"
 ; [diff]
 ;   algorithm = patience
 ;   colorMoved = default
 [merge]
-	tool = vimdiff
+  tool = vimdiff
 [pull]
-	rebase = true
+  rebase = true
 [push]
-	default = current
+  default = current
 [rerere]
-	enabled = true
+  enabled = true
 [rebase]
   autoStash = true
 
 [color]
-  ui = auto
+  ui = always
 [color "branch"]
   current = yellow reverse
   local = yellow
@@ -62,17 +62,17 @@
 
   # undo last commit
   undo = !git reset --hard remotes/origin/$(git rev-parse --abbrev-ref HEAD)
- 
+
   ; git for-each-ref refs/heads/pr/* --format=\"%(refname)\" | while read ref ; do branch=${ref#refs/heads/} ; git branch -D $branch ; done
 [user]
-	name = James Childers
-	email = james.childers@gmail.com
+  name = James Childers
+  email = james.childers@gmail.com
 [init]
-	defaultBranch = main
+  defaultBranch = main
 [credential]
-	helper = cache --timeout=600
+  helper = cache --timeout=600
 [filter "lfs"]
-	clean = git-lfs clean -- %f
-	smudge = git-lfs smudge -- %f
-	process = git-lfs filter-process
-	required = true
+  clean = git-lfs clean -- %f
+  smudge = git-lfs smudge -- %f
+  process = git-lfs filter-process
+  required = true
