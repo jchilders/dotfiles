@@ -206,11 +206,14 @@ misc-cfg: ## Miscellany
 	@[ -e $$HISTFILE ] || touch $$HISTFILE
 	@[ -d $(XDG_CONFIG_HOME)/ripgrep ] || mkdir $(XDG_CONFIG_HOME)/ripgrep
 	stow --restow --target=$(XDG_CONFIG_HOME)/ripgrep ripgrep
+	@[ -d $(XDG_CONFIG_HOME)/lazygit ] || mkdir $(XDG_CONFIG_HOME)/lazygit
+	stow --restow --target=$(XDG_CONFIG_HOME)/lazygit lazygit
 
 misc-cfg-clean: ## Unlink misc configs
 	stow --target=$(XDG_CONFIG_HOME) --delete starship
 	stow --target=$(XDG_CONFIG_HOME)/kitty --delete kitty
 	stow --target=$(XDG_CONFIG_HOME)/ripgrep --delete ripgrep
+	stow --target=$(XDG_CONFIG_HOME)/lazygit --delete lazygit
 
 ssh: ## Install ssh related files
 	@[ -d $$HOME/.ssh ] || mkdir $$HOME/.ssh

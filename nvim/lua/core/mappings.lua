@@ -157,16 +157,25 @@ function M.mappings()
   -- git
   -- switch branches
   map_ctrlo_tele("gb", "git_branches")
+  -- git diff of current buffer. WIP
+  map_ctrlo("gd", "<cmd>lua require('plugins.toggleterm').toggle_curr_diff()<CR>")
   -- git history of file in current buffer
   map_ctrlo_tele("gh", "git_bcommits")
+  -- open lazygit
+  map_ctrlo("gl", "<cmd>lua require('plugins.toggleterm').toggle_lazygit()<CR>")
   -- edit changed file
   map_ctrlo_tele("gs", "git_status")
 
   -- files
   map_ctrlo_tele("o", "find_files")
   map_ctrlo_tele("O", "search_all_files")
+
+  -- rails
+  map_ctrlo_tele("rc", "find_files", { search_dir = "app/controllers" })
+  map_ctrlo_tele("rm", "find_files", { search_dir = "app/models" })
+  map_ctrlo_tele("rv", "find_files", { search_dir = "app/views" })
+
   map_ctrlo_tele("q", "quickfix")
-  map_ctrlo_tele("z", "search_only_files_of_type")
 
   -- LSP
   -- little r -> Search for LSP references to word under cursor
@@ -183,12 +192,8 @@ function M.mappings()
   -- Big T -> Search list of symbols (tags) from entire workspace
   map_ctrlo_tele("T", "lsp_workspace_symbols")
 
+  -- not using this much; may delete
   remap("n", "<leader>tt", "<cmd>LspTroubleToggle<CR>")
-
-  -- rails
-  map_ctrlo_tele("rc", "find_files", { search_dir = "app/controllers" })
-  map_ctrlo_tele("rm", "find_files", { search_dir = "app/models" })
-  map_ctrlo_tele("rv", "find_files", { search_dir = "app/views" })
 
   -- format.nvim
   remap("n", "<leader>fb", "<cmd>Format<CR>")
@@ -206,6 +211,16 @@ function M.mappings()
   remap("n", "<C-j>", "<cmd>lua R('harpoon.ui').nav_file(2)<CR>")
   remap("n", "<C-k>", "<cmd>lua R('harpoon.ui').nav_file(3)<CR>")
   remap("n", "<C-l>", "<cmd>lua R('harpoon.ui').nav_file(4)<CR>")
+
+  -- terminal
+  remap('t', '<esc>', [[<C-\><C-n>]])
+  remap('t', 'jk', [[<C-\><C-n>]])
+  remap('t', '<C-h>', [[<C-\><C-n><C-W>h]])
+  remap('t', '<C-j>', [[<C-\><C-n><C-W>j]])
+  remap('t', '<C-k>', [[<C-\><C-n><C-W>k]])
+  remap('t', '<C-l>', [[<C-\><C-n><C-W>l]])
+
+  -- toggleterm
 
   -- dap NOTE: Lazyloaded
   -- also NOTE: not working atm

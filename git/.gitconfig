@@ -5,21 +5,12 @@
   pager = delta
 [branch]
   autoSetupMerge = true
-[delta]
-  features = dark side-by-side line-numbers decorations
-  whitespace-error-style = 22 reverse
-  hunk-header-style = omit
 [interactive]
   diffFilter = delta --color-only
 [diff]
-  tool = diffsitter
+  tool = delta
 [difftool]
   prompt = false
-[difftool "diffsitter"]
-  cmd = diffsitter "$LOCAL" "$REMOTE"
-; [diff]
-;   algorithm = patience
-;   colorMoved = default
 [merge]
   tool = vimdiff
 [pull]
@@ -30,23 +21,6 @@
   enabled = true
 [rebase]
   autoStash = true
-
-[color]
-  ui = always
-[color "branch"]
-  current = yellow reverse
-  local = yellow
-  remote = green
-[color "diff"]
-  meta = yellow bold
-  frag = magenta bold
-  old = red bold
-  new = green bold
-  whitespace = red reverse
-[color "status"]
-  added = yellow
-  changed = green
-  untracked = cyan
 
 [alias]
   l = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n'' %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all
@@ -76,3 +50,37 @@
   smudge = git-lfs smudge -- %f
   process = git-lfs filter-process
   required = true
+
+; Various themes for the delta diff tool are here:
+; https://raw.githubusercontent.com/dandavison/delta/master/themes.gitconfig
+[delta "calochortus-lyallii"]
+    # author: https://github.com/manojkarthick
+  commit-decoration-style = none
+  dark = true
+  file-added-label = [+]
+  file-copied-label = [C]
+  file-decoration-style = none
+  file-modified-label = [M]
+  file-removed-label = [-]
+  file-renamed-label = [R]
+  file-style = 232 bold 184
+  hunk-header-decoration-style = none
+  hunk-header-file-style = "#999999"
+  hunk-header-line-number-style = bold "#03a4ff"
+  hunk-header-style = file line-number syntax
+  line-numbers = true
+  line-numbers-left-style = black
+  line-numbers-minus-style = "#B10036"
+  line-numbers-plus-style = "#03a4ff"
+  line-numbers-right-style = black
+  line-numbers-zero-style = "#999999"
+  minus-emph-style = syntax bold "#780000"
+  minus-style = syntax "#400000"
+  plus-emph-style = syntax bold "#007800"
+  plus-style = syntax "#004000"
+  whitespace-error-style = "#280050" reverse
+  zero-style = syntax
+  syntax-theme = Nord
+
+[delta]
+  features = calochortus-lyallii ; seq. yello filenames. line #s. subtle green/red

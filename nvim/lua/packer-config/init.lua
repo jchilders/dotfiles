@@ -36,6 +36,23 @@ local function init()
   packer.reset()
   local use = packer.use
 
+  -- persist and toggle multiple terminals
+  -- :ToggleTerm size=40 dir=~/my_project direction=horizontal
+  --
+  -- `:h window`, but a few key mappings to know:
+  --
+  -- <C-W>L - move window to left (vim builtin)
+  -- <C-W>R - move window to right (vim builtin)
+  -- <C-W>X - Exchange curr window with next one.
+  -- <C-W><C-X> - Same as above.
+  --
+  -- TODO: Add https://github.com/tknightz/telescope-termfinder.nvim
+  -- TermExec cmd="git status"
+  use ({
+    "akinsho/toggleterm.nvim",
+    config = require("plugins.toggleterm").init,
+  })
+
   -- telescope
   use({
     "nvim-telescope/telescope.nvim",
@@ -65,14 +82,14 @@ local function init()
     config = require("plugins.harpoon").init,
   })
 
-  -- faster lua-based filetype detection. improves startup time.
+  -- faster lua-based filetype detection. helps with startup time.
   use({ "nathom/filetype.nvim" })
 
   -- automaticaly set `shiftwidth` & `expandtab`
   use({ "tpope/vim-sleuth" })
 
-  -- code formatter. can handle embedded syntax blocks via
-  -- `start_pattern`/`end_pattern` keys
+  -- code formatter. can handle embedded syntax blocks via `start_pattern`/`end_pattern` keys
+  -- :Format
   use({
     "lukas-reineke/format.nvim",
     config = require("format").setup({

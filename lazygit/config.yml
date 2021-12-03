@@ -1,0 +1,15 @@
+gui:
+  showFileTree: false
+  theme:
+    lightTheme: false # For terminals with a light background
+    activeBorderColor:
+      - blue
+      - bold
+    inactiveBorderColor:
+      - gray
+    selectedLineBgColor:
+      - reverse
+git:
+  paging:
+    colorArg: always
+    pager: delta --dark --paging=never

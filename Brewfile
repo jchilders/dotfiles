@@ -16,6 +16,7 @@ brew 'httpie'
 brew 'htop'
 brew 'imagemagick'
 brew 'jq' # json processor
+brew 'lazygit'
 brew 'lua'
 brew 'luarocks'
 brew 'memcached'
