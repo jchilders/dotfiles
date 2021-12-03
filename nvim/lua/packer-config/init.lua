@@ -36,41 +36,6 @@ local function init()
   packer.reset()
   local use = packer.use
 
-  use({ "kyazdani42/nvim-web-devicons" })
-
-  -- statusline
-  --[[ use({
-    "windwp/windline.nvim",
-    config = function()
-      require("plugins.statusline.windline")
-    end,
-  }) ]]
-
-  -- colorscheme
-  use({
-    "folke/tokyonight.nvim",
-    config = function()
-      vim.o.background = "dark" -- or light if you so prefer
-      vim.g.tokyonight_style = "night"
-
-      vim.cmd([[colorscheme tokyonight]])
-      require("core.highlights")
-    end,
-  })
-
-  use({
-    "vim-test/vim-test",
-    cmd = { "TestFile" },
-    requires = {
-      {
-        "neomake/neomake",
-        cmd = { "Neomake" },
-      },
-      { "tpope/vim-dispatch", cmd = { "Dispatch" } },
-    },
-    wants = { "vim-dispatch", "neomake" },
-  })
-
   -- telescope
   use({
     'nvim-telescope/telescope.nvim',
@@ -163,6 +128,19 @@ local function init()
     end,
   })
 
+  use({
+    "vim-test/vim-test",
+    cmd = { "TestFile" },
+    requires = {
+      {
+        "neomake/neomake",
+        cmd = { "Neomake" },
+      },
+      { "tpope/vim-dispatch", cmd = { "Dispatch" } },
+    },
+    wants = { "vim-dispatch", "neomake" },
+  })
+
   -- automatically close & rename tags using treesitter
   use({
     "windwp/nvim-ts-autotag",
@@ -227,12 +205,53 @@ local function init()
   -- autoclose parens, etc.
   use({ "windwp/nvim-autopairs" })
 
+  -- look and feel of neovim
+  -- colorscheme
+  require("core.highlights") -- load before colorscheme cfg
+  use({
+    "folke/tokyonight.nvim",
+    config = function()
+      vim.o.background = "dark" -- or light if you so prefer
+      vim.g.tokyonight_style = "night"
+
+      vim.cmd([[colorscheme tokyonight]])
+    end,
+  })
+
+  -- statusline
+  use({
+    "windwp/windline.nvim",
+    config = function()
+      require("plugins.statusline.windline")
+    end,
+  })
+
+  -- adds current function/class/etc. name to statusline
+  use({
+    "SmiteshP/nvim-gps",
+    requires = "nvim-treesitter/nvim-treesitter",
+  })
+
   -- better wild menu: e.g.: when you do `:e` and you want to navigate the completion popup
   -- currently funky.
   --[[ use({
     "gelguy/wilder.nvim",
     opt = true,
   }) ]]
+
+  use({
+    "Shatur/neovim-session-manager",
+    config = function()
+      require('session_manager').setup({
+        -- Define what to do when Neovim is started without arguments. Possible
+        -- values: Disabled, CurrentDir, LastSession
+        autoload_mode = require('session_manager.config').AutoloadMode.CurrentDir,
+        -- Automatically save last session on exit
+        autosave_last_session = true,
+      })
+      require('telescope').load_extension('sessions')
+    end,
+  })
 
   use({ "wbthomason/packer.nvim", opt = true })
 end

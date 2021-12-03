@@ -6,6 +6,7 @@ M.__index = M
 M.init = function()
   require("plugins.autopairs").init()
   require("plugins.lspconfig").init()
+  require("nvim-gps").setup()
   -- require("plugins.build"):init()
 
 --  require("plugins.web-devicons").init()

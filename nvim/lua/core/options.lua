@@ -1,12 +1,14 @@
-local cmd = vim.cmd
 local g, b, opt, go, wo, o = vim.g, vim.b, vim.opt, vim.go, vim.wo, vim.o
 local M = {}
 
 function M.load_options()
+  g.mapleader = ","
+
   opt.backup = false
   opt.swapfile = false
 
   opt.autoindent = true
+  opt.cursorline = true -- highlight current line
   opt.fileformat = 'unix'
   opt.grepprg = 'rg'
   opt.hidden = true
@@ -19,7 +21,9 @@ function M.load_options()
   opt.sidescroll = 5
   opt.signcolumn = 'yes'
   opt.smartcase = true
+  g.tildeopt = true -- let ~ command work with motions: `~w` will change case of curr word, e.g.
   opt.wrap = true
+  g.showtabline = 0
 
   -- completion menu settings
   opt.completeopt = "menu,menuone,noselect,noinsert" -- completion behaviour
@@ -29,7 +33,7 @@ function M.load_options()
   opt.list = false
   opt.listchars:append("eol:↴")
 
-  -- Set so that folders are index for find command
+  -- Set so that folders are indexed for find command
   opt.path = "**/*"
   opt.wildignore:append({
     "node_modules",
@@ -38,8 +42,6 @@ function M.load_options()
     "coverage",
     "build",
   })
-
-  g.mapleader = "," -- comma leader
 
   -- Tag Jump
   b.match_words = table.concat({

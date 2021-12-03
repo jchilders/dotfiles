@@ -1,15 +1,14 @@
 local windline = require("windline")
 local helper = require("windline.helpers")
 local b_components = require("windline.components.basic")
-local animation = require("wlanimation")
-local efffects = require("wlanimation.effects")
-local make = require("plugins.build")
+-- local animation = require("wlanimation")
+-- local efffects = require("wlanimation.effects")
 local state = _G.WindLine.state
 
 local lsp_comps = require("windline.components.lsp")
 local git_comps = require("windline.components.git")
 
-local anim_colors = {
+--[[ local anim_colors = {
   "#90CAF9",
   "#64B5F6",
   "#42A5F5",
@@ -18,8 +17,7 @@ local anim_colors = {
   "#1976D2",
   "#1565C0",
   "#0D47A1",
-}
-local loading_text = ""
+} ]]
 
 local hl_list = {
   Normal = { "NormalFg", "NormalBg" },
@@ -28,6 +26,7 @@ local hl_list = {
   Inactive = { "InactiveFg", "InactiveBg" },
   Active = { "ActiveFg", "ActiveBg" },
 }
+
 local basic = {}
 
 local breakpoint_width = 90
@@ -35,7 +34,7 @@ basic.divider = { b_components.divider, "" }
 basic.bg = { " ", "StatusLine" }
 
 local colors_mode = {
-  Normal = { "red", "black" },
+  Normal = { "blue", "black" },
   Insert = { "green", "black" },
   Visual = { "yellow", "black" },
   Replace = { "blue_light", "black" },
@@ -50,6 +49,7 @@ local language_mode = {
   javascriptreact = { "red", "black" },
   sh = { "white", "black" },
   zsh = { "white", "black" },
+  ruby = { "red", "black" },
   rust = { "orange", "black" },
   java = { "red", "black" },
   python = { "blue", "black" },
@@ -62,13 +62,34 @@ basic.vi_mode = {
   name = "vi_mode",
   hl_colors = colors_mode,
   text = function()
-    return { { "   ", state.mode[2] } }
+    -- water
+    return { { " ⽔ ", state.mode[2] } }
   end,
 }
+
 basic.square_mode = {
   hl_colors = colors_mode,
   text = function()
     return { { "▊", state.mode[2] } }
+  end,
+}
+
+basic.source_context = {
+  name = "source_context",
+  hl_colors = colors_mode,
+  text = function()
+    local gps = require("nvim-gps")
+
+    if gps.is_available() then
+      return {
+        { gps.get_location(), "white" }
+      }
+    else
+      return {
+        { b_components.line_col, "white" },
+        { b_components.progress, "" },
+      }
+    end
   end,
 }
 
@@ -79,7 +100,7 @@ basic.lsp_diagnos = {
     yellow = { "yellow", "black" },
     blue = { "blue", "black" },
     trans = { "transparent", "transparent" },
-    sep = { "black", "transparent" },
+    sep = { "black", "white" },
     spacer = { "black", "black" },
   },
   width = breakpoint_width,
@@ -130,13 +151,9 @@ basic.file = {
 
     if width > breakpoint_width then
       return {
-        { b_components.cache_file_size(), "default" },
-        { " ", "" },
         icon_comp(bufnr),
         { " ", "" },
         { b_components.cache_file_name("[No Name]", ""), "magenta" },
-        { b_components.line_col, "white" },
-        { b_components.progress, "" },
         { " ", "" },
         { b_components.file_modified(" "), "magenta" },
       }
@@ -151,7 +168,8 @@ basic.file = {
     end
   end,
 }
-basic.file_right = {
+
+basic.file_position = {
   hl_colors = {
     default = hl_list.Black,
     white = { "white", "black" },
@@ -166,6 +184,7 @@ basic.file_right = {
     end
   end,
 }
+
 basic.git = {
   name = "git",
   hl_colors = {
@@ -241,55 +260,6 @@ basic.git = {
   end,
 }
 
-basic.make = {
-  name = "make",
-  hl_colors = {
-    green = { "green", "grey" },
-    red = { "red", "grey" },
-    sep = { "grey", "black" },
-    spacer = { "black", "grey" },
-    wave_anim1 = { "waveright2", "grey" },
-    wave_anim2 = { "waveright3", "grey" },
-    wave_anim3 = { "waveright4", "grey" },
-    wave_anim4 = { "waveright5", "grey" },
-    wave_anim5 = { "waveright6", "grey" },
-    wave_anim6 = { "waveright7", "grey" },
-  },
-  width = breakpoint_width,
-  text = function()
-    if packer_plugins["neomake"] ~= nil and packer_plugins["neomake"].loaded then
-      if make:GetRunning() then
-        return {
-          { helper.separators.slant_left, "sep" },
-          { " ", "spacer" },
-          { "", "wave_anim1" },
-          { " ", "spacer" },
-          { "M", "wave_anim2" },
-          { "a", "wave_anim3" },
-          { "k", "wave_anim4" },
-          { "e", "wave_anim5" },
-          { " ", "spacer" },
-          { loading_text, "wave_anim6" },
-          { " ", "spacer" },
-        }
-      end
-      if make.failed then
-        return {
-          { helper.separators.slant_left, "sep" },
-          { " ", "spacer" },
-          { make:Status(), "red" },
-        }
-      end
-      return {
-        { helper.separators.slant_left, "sep" },
-        { " ", "spacer" },
-        { make:Status(), "green" },
-      }
-    end
-    return ""
-  end,
-}
-
 basic.lsp_names = {
   name = "lsp_names",
   hl_colors = {
@@ -302,7 +272,6 @@ basic.lsp_names = {
   width = breakpoint_width,
   text = function()
     if lsp_comps.check_lsp() then
-      local lsp_status = require("plugins.lspStatus").lsp_status
       return {
         {
           helper.separators.slant_left,
@@ -312,14 +281,13 @@ basic.lsp_names = {
         { lsp_comps.lsp_name(), "magenta" },
         { " ", "spacer" },
         { helper.separators.slant_left_thin, "magenta" },
-        { lsp_status.status(), "magenta" },
       }
     end
     return ""
   end,
 }
 
-basic.gh_num = {
+--[[ basic.gh_num = {
   name = "gh_num",
   hl_colors = {
     green = { "green", "black" },
@@ -339,7 +307,7 @@ basic.gh_num = {
     end
     return ""
   end,
-}
+} ]]
 
 --[[
 basic.dap = {
@@ -372,12 +340,6 @@ local quickfix = {
   active = {
     { "🚦 Quickfix ", { "white", "black" } },
     { helper.separators.slant_right, { "black", "black_light" } },
-    {
-      function()
-        return vim.fn.getqflist({ title = 0 }).title
-      end,
-      { "cyan", "black_light" },
-    },
     { " Total : %L ", { "cyan", "black_light" } },
     { helper.separators.slant_right, { "black_light", "transparent" } },
     { " ", { "InactiveFg", "transparent" } },
@@ -388,20 +350,7 @@ local quickfix = {
   always_active = true,
 }
 
-local explorer = {
-  filetypes = { "fern", "NvimTree", "lir" },
-  active = {
-    { "  ", { "white", "black" } },
-    { helper.separators.slant_right, { "black", "transparent" } },
-    { b_components.divider, "" },
-    { helper.separators.slant_left, { "black_light", "transparent" } },
-    { b_components.file_name(""), { "white", "black_light" } },
-  },
-  always_active = true,
-  show_last_status = true,
-}
-
-local repl = {
+--[[ local repl = {
   filetypes = { "dap-repl" },
   active = {
     { "  ", { "white", "black" } },
@@ -412,45 +361,27 @@ local repl = {
   },
   always_active = true,
   show_last_status = true,
-}
-
-local dashboard = {
-  filetypes = { "dashboard" },
-  active = {
-    { " ", { "transparent", "transparent" } },
-  },
-  always_active = true,
-  show_last_status = true,
-}
+} ]]
 
 local default = {
   filetypes = { "default", "terminal" },
   active = {
     basic.vi_mode,
     basic.file,
-    basic.lsp_diagnos,
+    basic.source_context,
     basic.divider,
-    basic.file_right,
-    basic.dap,
+    basic.file_position,
     basic.lsp_names,
-    --basic.lsp_workspace,
-    basic.make,
-    basic.git,
-    basic.gh_num,
-    {
-      git_comps.git_branch(),
-      { "magenta", "black_light" },
-      breakpoint_width,
-    },
+    basic.lsp_diagnos,
     { " ", { "black_light", "black_light" } },
   },
-  always_active = true,
   show_last_status = true,
   inactive = {
     basic.vi_mode,
     basic.file,
     basic.divider,
-    basic.file_right,
+    basic.source_context,
+    basic.file_position,
     basic.git,
     { git_comps.git_branch(), { "magenta", "black" }, breakpoint_width },
     { " ", hl_list.Black },
@@ -462,8 +393,9 @@ windline.setup({
     -- print(vim.inspect(colors))
     -- ADD MORE COLOR HERE ----
     colors.FilenameFg = colors.white_light
-    colors.FilenameBg = colors.black_light
-    colors.transparent = "none"
+    -- colors.FilenameBg = colors.black_light
+    colors.FilenameBg = colors.magenta
+    colors.transparent = "#38303f"
     colors.grey = "#3d3d3d"
     colors.orange = "#d8a657"
 
@@ -484,13 +416,13 @@ windline.setup({
   statuslines = {
     default,
     quickfix,
-    repl,
-    explorer,
-    dashboard,
+    -- repl,
+    -- explorer,
+    -- dashboard,
   },
 })
 
-animation.stop_all()
+--[[ animation.stop_all()
 
 animation.animation({
   data = {
@@ -518,4 +450,4 @@ animation.basic_animation({
   on_tick = function(value)
     loading_text = value
   end,
-})
+}) ]]
