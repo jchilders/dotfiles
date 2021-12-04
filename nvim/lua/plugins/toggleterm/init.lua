@@ -1,7 +1,8 @@
 local M = {}
 M.__index = M
 
-local Terminal = require('toggleterm.terminal').Terminal
+local togterm = require("toggleterm.terminal")
+local Terminal = togterm.Terminal
 
 function M.init()
   require("toggleterm").setup({
@@ -22,7 +23,7 @@ local function float_term(cmd, opts)
     dir = "git_dir",
     direction = "float",
     float_opts = {
-      border = "none",
+      border = "single",
     },
     -- function to run on opening the terminal
     on_open = function(term)
@@ -48,12 +49,28 @@ end
 
 local curr_diff_float = float_term("git diff " .. vim.fn.expand("%:p"), {
   close_on_exit = false,
-  float_opts = {
-    border = "single",
-  }
 })
 function M.toggle_curr_diff()
   curr_diff_float:toggle()
+end
+
+local left_term = function()
+  local term_id = togterm.get_toggled_id()
+
+  if term_id == nil then
+    return Terminal:new({
+      direction = "vertical",
+      size = vim.o.columns * 0.5,
+      on_open = function(_)
+	vim.cmd([[wincmd H]])
+      end,
+    })
+  else
+    return togterm.get(term_id)
+  end
+end
+function M.toggle_left_term()
+  return left_term():toggle()
 end
 
 return M

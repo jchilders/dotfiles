@@ -213,14 +213,15 @@ function M.mappings()
   remap("n", "<C-l>", "<cmd>lua R('harpoon.ui').nav_file(4)<CR>")
 
   -- terminal
-  remap('t', '<esc>', [[<C-\><C-n>]])
-  remap('t', 'jk', [[<C-\><C-n>]])
-  remap('t', '<C-h>', [[<C-\><C-n><C-W>h]])
-  remap('t', '<C-j>', [[<C-\><C-n><C-W>j]])
-  remap('t', '<C-k>', [[<C-\><C-n><C-W>k]])
-  remap('t', '<C-l>', [[<C-\><C-n><C-W>l]])
+  remap("t", "<esc>", [[<C-\><C-n>]])
+  remap("t", "jk", [[<C-\><C-n>]])
+  remap("t", "<C-h>", [[<C-\><C-n><C-W>h]])
+  remap("t", "<C-j>", [[<C-\><C-n><C-W>j]])
+  remap("t", "<C-k>", [[<C-\><C-n><C-W>k]])
+  remap("t", "<C-l>", [[<C-\><C-n><C-W>l]])
 
   -- toggleterm
+  remap("n", "<leader>ot", "<cmd>lua R('plugins.toggleterm').toggle_left_term()<CR>")
 
   -- dap NOTE: Lazyloaded
   -- also NOTE: not working atm
