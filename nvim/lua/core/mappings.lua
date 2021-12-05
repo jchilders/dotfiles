@@ -106,6 +106,9 @@ function M.mappings()
   -- Open Scratch file for this project
   remap("n", "<leader>rs", "<cmd>lua require('jc.scratch').split_open_scratch_file()<CR>")
 
+  -- Lua Inspect
+  remap("n", "<leader>li", "<cmd>lua print(require('utils.inspect').inspect(loadstring(\"return \" .. vim.fn.getline('.'))()))<CR>")
+
   -- Send the current line to the left tmux pane
   remap("n", "<leader>sl", "<cmd>lua require('jc.tmux-utils').send_line_left()<CR>")
   -- Send the selected text to the left tmux pane
@@ -124,10 +127,10 @@ function M.mappings()
   remap("n", "<leader>rt", "<cmd>lua require('jc.tmux-utils').run_mru_rails_test()<CR>")
 
   -- Toggle treesitter highlighting
-  remap("n", "<leader>tog", "<cmd>TSBufToggle highlight<CR>")
+  remap("n", "<leader>tstog", "<cmd>TSBufToggle highlight<CR>")
 
   -- Show tree-sitter highlight group(s) for current cursor position
-  remap("n", "<leader>hi", "<cmd>TSHighlightCapturesUnderCursor<CR>")
+  remap("n", "<leader>tshi", "<cmd>TSHighlightCapturesUnderCursor<CR>")
 
   -- general
   remap("v", "J", "<cmd>m '>+1<CR>gv=gv") -- move lines
