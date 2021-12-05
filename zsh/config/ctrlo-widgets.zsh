@@ -25,7 +25,7 @@ function __is_git_repo {
 
 function edit_file {
   if __is_git_repo; then
-    __find_file "fd --type=file"
+    __find_file "fd --type=file --type=symlink"
     __eval_found_file "${EDITOR:-nvim}"
   else
     edit_any_file
@@ -36,32 +36,11 @@ bindkey '^oo' edit_file
 
 # ANY file
 function edit_any_file {
-  __find_file "fd --type=file --hidden --no-ignore"
+  __find_file "fd --type=file --type=symlink --hidden --no-ignore"
   __eval_found_file "${EDITOR:-nvim}"
 }
 zle -N edit_any_file
 bindkey '^oO' edit_any_file
-
-function edit_rails_controller {
-  __find_file "fd --type=file . 'app/controllers'"
-  __eval_found_file "${EDITOR:-nvim}"
-}
-zle -N edit_rails_controller
-bindkey '^orc' edit_rails_controller
-
-function edit_rails_model {
-  __find_file "fd --type=file . 'app/models'"
-  __eval_found_file "${EDITOR:-nvim}"
-}
-zle -N edit_rails_model
-bindkey '^orm' edit_rails_model
-
-function edit_rails_view {
-  __find_file "fd --type=file . 'app/views'"
-  __eval_found_file "${EDITOR:-nvim}"
-}
-zle -N edit_rails_view
-bindkey '^orv' edit_rails_view
 
 # Git stuff. All are prefixed with ^og
 
