@@ -252,6 +252,17 @@ local function init()
     requires = "nvim-treesitter/nvim-treesitter",
   })
 
+  -- indicate changed lines in gutter
+  -- TODO: has mappings to stage chunks, other goodies. use.
+  --
+  use({
+    'lewis6991/gitsigns.nvim',
+    requires = 'nvim-lua/plenary.nvim',
+    config = function()
+      require('gitsigns').setup()
+    end
+  })
+
   -- better wild menu: e.g.: when you do `:e` and you want to navigate the completion popup
   -- currently funky.
   --[[ use({
@@ -272,6 +283,10 @@ local function init()
       require("telescope").load_extension("sessions")
     end,
   })
+
+  -- {{ to investigate }}
+  -- tpope/vim-repeat - allows `.` command to work w/ mappings
+  -- jose-elias-alvarez/null-ls.nvim - lets you run shell cmds & send output to LSP which can then be read by nvim
 
   use({ "wbthomason/packer.nvim", opt = true })
 end
