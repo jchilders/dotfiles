@@ -11,6 +11,7 @@ install: macos xdg-setup homebrew homebrew-bundle -fonts -ruby -python -cfg -neo
 clean: -homebrew-clean -fonts-clean -rvm-clean -neovim-clean -misc-cfg-clean -tmux-clean -zsh-cfg-clean ## Uninstall all the things
 
 cfg: xdg-setup -git-cfg -zsh-cfg -neovim-cfg -tmux-cfg -kitty-cfg misc-cfg ## Link configuration files
+	ssh-cfg
 	stow --restow --target=$(XDG_CONFIG_HOME)/ starship
 
 cfg-clean: -git-cfg-clean -misc-cfg-clean -neovim-cfg-clean -tmux-cfg-clean -zsh-cfg-clean -kitty-cfg-clean ## Unlink all configuration files
@@ -215,7 +216,7 @@ misc-cfg-clean: ## Unlink misc configs
 	stow --target=$(XDG_CONFIG_HOME)/ripgrep --delete ripgrep
 	stow --target=$(XDG_CONFIG_HOME)/lazygit --delete lazygit
 
-ssh: ## Install ssh related files
+ssh-cfg: ## Install ssh related files
 	@[ -d $$HOME/.ssh ] || mkdir $$HOME/.ssh
 	stow --target=$$HOME/.ssh .ssh
 

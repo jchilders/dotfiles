@@ -15,7 +15,7 @@ scratch.open_project_scratch_file = function(bufnr)
     end
   end
 
-  fname_prefix = ""
+  local fname_prefix = ""
   if git_utils.is_git_repo() == true then
     fname_prefix = git_utils.current_repo_name() .. "_"
   end

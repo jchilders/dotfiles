@@ -1,7 +1,15 @@
 local M = {}
 
+--[[
+git rev-parse --show-toplevel # dir path "of working tree" (i.e. the project dir. has nothing to do with worktrees.)
+git rev-parse --is-inside-work-tree # true/false
+git rev-parse --show-prefix # get current dir only
+git rev-parse --git-dir # <full path>/.git
+git rev-parse --show-superproject-working-tree
+ ]]
+
 -- @return {boolean}
-M.is_git_repo = function()
+M.is_worktree = function()
   local f = io.popen("git rev-parse --is-inside-work-tree")
   local is_inside_work_tree = f:read("*a")
   f:close()

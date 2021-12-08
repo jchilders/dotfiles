@@ -20,7 +20,7 @@ function M.load_options()
   opt.sidescroll = 5
   opt.signcolumn = "yes"
   opt.smartcase = true
-  g.tildeopt = true -- let ~ command work with motions: `~w` will toggle case of curr word, e.g.
+  g.tildeop = true -- let ~ command work with motions: `~w` will toggle case of curr word, e.g.
   opt.wrap = true
   g.showtabline = 0
 
@@ -51,12 +51,10 @@ function M.load_options()
 
   opt.ignorecase = true
 
-  opt.showmode = false -- modes
   opt.autoread = true -- reload files changed other edit
-
-  opt.updatetime = 300 -- update interval for gitsigns
-  opt.timeoutlen = 500
   opt.clipboard = "unnamedplus" -- clipboard yank
+  opt.showmode = false -- modes
+  opt.timeoutlen = 500
   opt.wildmenu = true
   opt.wildmode = "longest,full"
 
@@ -68,13 +66,6 @@ function M.load_options()
   go.foldlevelstart = 99
   wo.foldnestmax = 3
   wo.foldminlines = 1
-
-  vim.api.nvim_exec(
-    [[
-  command! GithubCI lua require('utils').ci()
-  ]],
-    false
-  )
 end
 
 return M
