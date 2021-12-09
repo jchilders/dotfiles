@@ -10,11 +10,28 @@ install: macos xdg-setup homebrew homebrew-bundle -fonts -ruby -python -cfg -neo
 
 clean: -homebrew-clean -fonts-clean -rvm-clean -neovim-clean -misc-cfg-clean -tmux-clean -zsh-cfg-clean ## Uninstall all the things
 
-cfg: xdg-setup -git-cfg -zsh-cfg -neovim-cfg -tmux-cfg -kitty-cfg misc-cfg ## Link configuration files
-	ssh-cfg
+cfg: ## Link configuration files
+	$(MAKE) xdg-setup
+	$(MAKE) git-cfg
+	$(MAKE) kitty-cfg
+	$(MAKE) neovim-cfg
+	$(MAKE) ssh-cfg
+	$(MAKE) tmux-cfg
+	$(MAKE) zsh-cfg
+	$(MAKE) misc-cfg
 	stow --restow --target=$(XDG_CONFIG_HOME)/ starship
+	ln -sf $(cwd)/scripts $$HOME/scripts
+	@[ -d $(XDG_CONFIG_HOME) ] || mkdir -p $(XDG_CONFIG_HOME)
 
-cfg-clean: -git-cfg-clean -misc-cfg-clean -neovim-cfg-clean -tmux-cfg-clean -zsh-cfg-clean -kitty-cfg-clean ## Unlink all configuration files
+cfg-clean:
+	$(MAKE) git-cfg-clean
+	$(MAKE) kitty-cfg-clean
+	$(MAKE) neovim-cfg-clean
+	$(MAKE) ssh-cfg-clean
+	$(MAKE) tmux-cfg-clean
+	$(MAKE) zsh-cfg-clean
+	$(MAKE) misc-cfg-clean
+	rm $$HOME/scripts
 
 # This is needed by the rvm target: they sign their releases with GPG, so we
 # need to import their PKs.  This process can be buggy due to the keyservers
@@ -203,6 +220,16 @@ git-cfg: ## Link git configuration files
 git-cfg-clean: ## Unlink git configuration files
 	-stow --target=$$HOME --delete git
 
+ssh-cfg: ## Install ssh related files
+	@[ -d $$HOME/.ssh ] || mkdir $$HOME/.ssh
+	stow --target=$$HOME/.ssh .ssh
+
+ssh-cfg-clean: ## Install ssh related files
+	stow --target=$$HOME/.ssh .ssh
+
+ssh-add-key: -ssh ## Add key to SSH agent
+	ssh-add -K ~/.ssh/id_ed25519
+
 misc-cfg: ## Miscellany
 	@[ -e $$HISTFILE ] || touch $$HISTFILE
 	@[ -d $(XDG_CONFIG_HOME)/ripgrep ] || mkdir $(XDG_CONFIG_HOME)/ripgrep
@@ -215,13 +242,6 @@ misc-cfg-clean: ## Unlink misc configs
 	stow --target=$(XDG_CONFIG_HOME)/kitty --delete kitty
 	stow --target=$(XDG_CONFIG_HOME)/ripgrep --delete ripgrep
 	stow --target=$(XDG_CONFIG_HOME)/lazygit --delete lazygit
-
-ssh-cfg: ## Install ssh related files
-	@[ -d $$HOME/.ssh ] || mkdir $$HOME/.ssh
-	stow --target=$$HOME/.ssh .ssh
-
-ssh-add-key: -ssh ## Add key to SSH agent
-	ssh-add -K ~/.ssh/id_ed25519
 
 xdg-setup: ## Create XDG dirs (XDG_CONFIG_HOME, etc.)
 	@[ -d $(XDG_CONFIG_HOME) ] || mkdir -p $(XDG_CONFIG_HOME)

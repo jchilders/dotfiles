@@ -1,7 +1,5 @@
 export XDG_DATA_HOME="$HOME/.local/share"
 
-export JC_DOTFILES_HOME="$HOME/workspace/dotfiles"
-
 # In all my years of doing Rails development Spring has caused far, far more
 # issues than time it has saved. Disable it, with a vengeance.
 export DISABLE_SPRING=1
@@ -19,7 +17,7 @@ typeset -U path
 
 export PATH="/usr/local/sbin:$PATH"
 # export PATH="/usr/local/opt/openssl@1.1/bin:$PATH"
-export PATH="$PATH:$JC_DOTFILES_HOME/scripts"
+export PATH="$PATH:$HOME/scripts"
 export PATH="/usr/local/opt/postgresql@11/bin:$PATH"
 # Rust binaries
 export PATH="$PATH:$HOME/.cargo/bin"
