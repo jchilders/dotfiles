@@ -29,6 +29,19 @@ export PATH="$HOME/.rvm/bin:$PATH"
 export FZF_DEFAULT_OPTS="--height 30% --border --tiebreak=index --info=inline"
 export FZF_DEFAULT_COMMAND="fd"
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "/usr/local/opt/nvm/nvm.sh" ] && . "/usr/local/opt/nvm/nvm.sh"  # This loads nvm
-[ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && . "/usr/local/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+# Lazy load nvm/node/yarn stuff. Graciously provided by christophemarois
+# https://gist.github.com/fl0w/07ce79bd44788f647deab307c94d6922
+NODE_GLOBALS=(`find ~/.nvm/versions/node -maxdepth 3 -type l -wholename '*/bin/*' | xargs -n1 basename | sort | uniq`)
+NODE_GLOBALS+=("node")
+NODE_GLOBALS+=("nvm")
+
+# Lazy-loading nvm + npm on node globals call
+load_nvm () {
+  export NVM_DIR=~/.nvm
+  [ -s "$(brew --prefix nvm)/nvm.sh" ] && . "$(brew --prefix nvm)/nvm.sh"
+}
+
+# Making node global trigger the lazy loading
+for cmd in "${NODE_GLOBALS[@]}"; do
+  eval "${cmd}(){ unset -f ${NODE_GLOBALS}; load_nvm; ${cmd} \$@ }"
+done
