@@ -9,7 +9,7 @@ git rev-parse --show-superproject-working-tree
  ]]
 
 -- @return {boolean}
-M.is_worktree = function()
+M.is_git_repo = function()
   local f = io.popen("git rev-parse --is-inside-work-tree")
   local is_inside_work_tree = f:read("*a")
   f:close()

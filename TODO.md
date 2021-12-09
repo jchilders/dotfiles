@@ -9,3 +9,4 @@
 - [ ] fix err (sometimes?) when quitting vim: "__eval_found_file:zle:6: widgets
   can only be called when ZLE is active"
 - [ ] nvim: make scratch.lua save to ~/.local/share/nvim instead of ~/temp
+- [ ] nvim: use `winsaveview()`
