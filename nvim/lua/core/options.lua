@@ -8,20 +8,29 @@ function M.load_options()
   opt.swapfile = false
 
   opt.autoindent = true
+  opt.autoread = true -- reload files on external change
+  opt.clipboard = "unnamedplus" -- clipboard yank
   opt.cursorline = true -- highlight current line
+  opt.expandtab = true -- insert spaces instead of tabs when indenting
   opt.fileformat = "unix"
   opt.grepprg = "rg"
   opt.hidden = true
   opt.hlsearch = true
+  opt.ignorecase = true
   opt.number = true
   opt.relativenumber = true
-  opt.scrolloff = 5
-  opt.sidescrolloff = 15
+  opt.scrolloff = 3
+  opt.showmode = false -- modes
   opt.sidescroll = 5
+  opt.sidescrolloff = 15
   opt.signcolumn = "yes"
   opt.smartcase = true
-  g.tildeop = true -- let ~ command work with motions: `~w` will toggle case of curr word, e.g.
+  opt.timeoutlen = 500
+  opt.wildmenu = true
+  opt.wildmode = "longest,full"
   opt.wrap = true
+
+  g.tildeop = true -- let ~ command work with motions: `~w` will toggle case of curr word, e.g.
   g.showtabline = 0
 
   -- completion menu settings
@@ -48,15 +57,6 @@ function M.load_options()
     "<\\@<=\\([^/][^ \t>]*\\)[^>]*\\%(>\\|$\\):<\\@<=/\1>",
   })
   opt.matchpairs:append("<:>")
-
-  opt.ignorecase = true
-
-  opt.autoread = true -- reload files changed other edit
-  opt.clipboard = "unnamedplus" -- clipboard yank
-  opt.showmode = false -- modes
-  opt.timeoutlen = 500
-  opt.wildmenu = true
-  opt.wildmode = "longest,full"
 
   -- fold settings
   wo.foldmethod = "expr"
