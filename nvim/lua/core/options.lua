@@ -7,6 +7,9 @@ function M.load_options()
   opt.backup = false
   opt.swapfile = false
 
+  --[[ set path=.,src,node_nodules
+  set suffixesadd=.js,.jsx ]]
+
   opt.autoindent = true
   opt.autoread = true -- reload files on external change
   opt.clipboard = "unnamedplus" -- clipboard yank
@@ -66,6 +69,29 @@ function M.load_options()
   go.foldlevelstart = 99
   wo.foldnestmax = 3
   wo.foldminlines = 1
+
+  -- teej
+  opt.formatoptions = opt.formatoptions
+    - "a" -- Auto formatting is BAD.
+    - "t" -- Don't auto format my code. I got linters for that.
+    + "c" -- In general, I like it when comments respect textwidth
+    + "q" -- Allow formatting comments w/ gq
+    - "o" -- O and o, don't continue comments (doesn't work?)
+    + "r" -- But do continue when pressing enter.
+    + "n" -- Indent past the formatlistpat, not underneath it.
+    + "j" -- Auto-remove comments if possible.
+    - "2" -- I'm not in gradeschool anymore
+
+  -- shada file is used to save vim state
+  -- :h shada for general info
+  -- :h E526 for shada options
+  opt.shada = {
+    "!",     -- save global vars whose name is all uppercase
+    "'1000", -- max num files for which marks are remembered
+    "<50",   -- max num lines saved for each register
+    "s10",   -- max size of item contents in KiB
+    "h",     -- disable effect of hlsearch when loading shada file
+  }
 end
 
 return M

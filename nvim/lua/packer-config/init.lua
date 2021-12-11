@@ -105,36 +105,40 @@ local function init()
     }),
   })
 
-  -- manage package.json files. "All the npm/yarn/pnpm commands I don't want to type"
-  use({
-    "vuki656/package-info.nvim",
-    disable = true,
-    requires = "MunifTanjim/nui.nvim",
-    ft = { "json" },
-    config = function()
-      require("package-info").setup()
-    end,
-  })
-
   -- {{ Tree-sitter treesitter }} --
   use({
     "nvim-treesitter/nvim-treesitter",
     config = require("plugins.nvim-treesitter").init,
   })
+
+  -- :TSPlaygroundToggle
   use({ "nvim-treesitter/playground" })
-  use({ "nvim-treesitter/nvim-treesitter-textobjects" }) -- custom textobjects
+
+  -- smart selection/moving/previewing of TS/LSP objects
+  use({
+    "nvim-treesitter/nvim-treesitter-textobjects",
+    disable = true -- disabled until I make keymaps for it
+  })
+
+  -- Use `v.` in normal mode in treesitter-enabled buffer to visually select
+  -- progressively broader TS nodes
   use({ "RRethy/nvim-treesitter-textsubjects" })
 
   -- know how you can have e.g. HTML inside of a React file? If you want to
   -- comment out that HTML, this will use HTML comments instead of JS ones.
   use({
     "JoosepAlviste/nvim-ts-context-commentstring",
-    disable = true, -- disabling until I can integrate it with kommentary
+    disable = false, -- disabling until I can integrate it with kommentary
   })
 
   use({
     "b3nj5m1n/kommentary",
+    -- all config here is recommented by nvim-ts-context-commentstring docs
     config = function()
+      require("kommentary.config").configure_language("default", {
+        prefer_multi_line_comments = false,
+      })
+
       require("nvim-treesitter.configs").setup({
         context_commentstring = {
           enable = true,
@@ -142,9 +146,16 @@ local function init()
         },
       })
 
-      require("kommentary.config").configure_language("default", {
-        prefer_multi_line_comments = false,
-      })
+      local filetypes = { "javascriptreact", "typescriptreact"}
+      for _, filetype in pairs(filetypes) do
+        require("kommentary.config").configure_language(filetype, {
+          single_line_comment_string = "auto",
+          multi_line_comment_strings = "auto",
+          hook_function = function()
+            require("ts_context_commentstring.internal").update_commentstring()
+          end,
+        })
+      end
     end,
   })
 
@@ -272,6 +283,7 @@ local function init()
 
   use({
     "Shatur/neovim-session-manager",
+    disable = true,
     config = function()
       require("session_manager").setup({
         -- Define what to do when Neovim is started without arguments. Possible
