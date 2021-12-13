@@ -62,7 +62,7 @@ basic.vi_mode = {
   name = "vi_mode",
   hl_colors = colors_mode,
   text = function()
-    -- water
+    -- ⽔ (water)
     return { { " ⽔ ", state.mode[2] } }
   end,
 }
@@ -380,8 +380,6 @@ local default = {
     basic.vi_mode,
     basic.file,
     basic.divider,
-    basic.source_context,
-    basic.file_position,
     basic.git,
     { git_comps.git_branch(), { "magenta", "black" }, breakpoint_width },
     { " ", hl_list.Black },
@@ -399,7 +397,7 @@ windline.setup({
     colors.grey = "#3d3d3d"
     colors.orange = "#d8a657"
 
-    colors.wavedefault = colors.black
+    --[[ colors.wavedefault = colors.black
 
     colors.waveright1 = colors.wavedefault
     colors.waveright2 = colors.wavedefault
@@ -409,7 +407,7 @@ windline.setup({
     colors.waveright6 = colors.wavedefault
     colors.waveright7 = colors.wavedefault
     colors.waveright8 = colors.wavedefault
-    colors.waveright9 = colors.wavedefault
+    colors.waveright9 = colors.wavedefault ]]
 
     return colors
   end,

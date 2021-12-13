@@ -202,6 +202,9 @@ function M.mappings()
   remap("n", "<leader>fb", "<cmd>Format<CR>")
   remap("v", "<leader>fb", "<cmd>Format<CR>")
 
+  -- neogen
+  remap("n", "<leader>doc", "<cmd>lua require('neogen').generate()<CR>")
+
   -- harpoon
   remap("n", "<leader>ha", "<cmd>lua R('harpoon.mark').add_file()<CR>")
   -- open list of files marked as harpooned
@@ -239,12 +242,6 @@ function M.mappings()
     <cmd>lua require("plugins.dap.attach"):addPlug(); require'dap'.toggle_breakpoint()<CR>
   ) ]]
 
-  -- compe: NOTE: Lazyloaded
-  --[[ remap("i", "<C-space>", "compe#complete()", true)
-  remap("i", "<C-e>", "compe#close('<C-e>')", true)
-  remap("i", "<C-f>", "compe#scroll({ delta: +4 })", true)
-  remap("i", "<C-d>", "compe#scroll({ delta: -4 })", true) ]]
-
   -- marker: NOTE: Lazyloaded
   --[[ remap("v", "<leader>1", "<cmd><c-u>HSHighlight 1<CR>")
   remap("v", "<leader>2", "<cmd><c-u>HSHighlight 2<CR>")
@@ -261,9 +258,6 @@ function M.mappings()
   -- remap("n", "<leader>ms", "<cmd>Neomake<CR>")
   -- remap("n", "<leader>mt", "<cmd>TestFile<CR>")
   -- remap("n", "<leader>mu", "<cmd>Ultest<CR>")
-
-  -- neogen
-  --[[ remap("n", "<leader>nf", "<cmd>DocGen<CR>") ]]
 end
 
 return M

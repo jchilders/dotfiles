@@ -32,7 +32,6 @@ function M.init()
     },
     snippet = {
       expand = function(args)
-        -- For `luasnip` user.
         require("luasnip").lsp_expand(args.body)
       end,
     },
@@ -40,9 +39,9 @@ function M.init()
       completeopt = "menu,menuone,noselect,noinsert",
       keyword_length = 1,
     },
-    experimental = {
+    --[[ experimental = {
       ghost_text = true,
-    },
+    }, ]]
     mapping = {
       ["<S-Tab>"] = cmp.mapping(function(fallback)
         if cmp.visible() then
@@ -105,11 +104,13 @@ function M.init()
       ["<CR>"] = cmp.mapping.confirm({ select = true }),
     },
     -- preselect = cmp.PreselectMode.Item,
-    sources = {
+    sources = cmp.config.sources({
       { name = "nvim_lsp" },
       { name = "luasnip" },
       { name = "path" },
-    },
+    }, {
+       { name = "buffer" },
+    }),
   })
 
   cmp.setup.cmdline("/", {

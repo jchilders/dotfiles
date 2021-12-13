@@ -11,6 +11,7 @@ setopt NO_CDABLE_VARS # Don't expand arguments given to a cd command.
 setopt NO_CHASE_DOTS # Don't resolve symbolic links upon path segments.
 setopt NO_CHASE_LINKS # Don't resolve symbolic links upon changing directories.
 setopt NO_POSIX_CD # Make cd command POSIX incompatible.
+setopt EXTENDED_GLOB # Treat the `#', `~' and `^' characters as part of patterns (regex-like)
 setopt PUSHD_IGNORE_DUPS # Don't push multiple copies of the same directory onto the stack.
 setopt PUSHD_MINUS # Exchanges  the  meanings of `+` and `-` for pushd.
 setopt PUSHD_SILENT # Do not print the directory stack after pushd or popd.

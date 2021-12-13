@@ -180,13 +180,14 @@ local function init()
 
   use({ "ray-x/lsp_signature.nvim", opt = true }) -- auto signature trigger
 
-  -- helper for generating doc comments like:
-  --   @param [String] my_param The paremeter that does a thing
+  -- helper for generating doc comments
   use({
     "danymat/neogen",
-    disable = true, -- no ruby support yet
-    cmd = { "DocGen" },
-    config = require("plugins.neogen").init,
+    config =  function()
+      require("neogen").setup({
+        enabled = true,
+      })
+    end,
     requires = "nvim-treesitter/nvim-treesitter",
   })
 
@@ -219,7 +220,7 @@ local function init()
   -- {{ /LSP }}
 
   -- completion
-  --[[ use({
+  use({
     "hrsh7th/nvim-cmp",
     config = require("plugins.cmp").init,
     requires = {
@@ -229,9 +230,9 @@ local function init()
       { "hrsh7th/cmp-path" },
       { "saadparwaiz1/cmp_luasnip" },
       { "L3MON4D3/LuaSnip" },
-      { "rafamadriz/friendly-snippets" },
+      -- { "rafamadriz/friendly-snippets" },
     },
-  }) ]]
+  })
 
   -- autoclose parens, etc.
   use({ "windwp/nvim-autopairs" })
