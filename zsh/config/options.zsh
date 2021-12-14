@@ -1,10 +1,12 @@
 typeset -g zle_highlight=(region:bg=black) # Highlight the background of the text when selecting.
 typeset -g WORDCHARS='*?_-.[]~=&;!#$%^(){}<>' # List of characters considered part of a word.
+typeset -U path # prevent duplicate PATH entries
+
 setopt NO_BEEP # Don't beep on errors.
 setopt VI # Use vi emulation mode.
 
 # Changing Directories
-typeset -g DIRSTACKSIZE=9 # The maximum size of the directory stack for `pushd` and `popd`.
+typeset -g DIRSTACKSIZE=10 # The maximum size of the directory stack for `pushd` and `popd`.
 setopt AUTO_CD # If can't execute the directory, perform the cd command to that.
 setopt AUTO_PUSHD # Make cd push the old directory onto the directory stack.
 setopt NO_CDABLE_VARS # Don't expand arguments given to a cd command.

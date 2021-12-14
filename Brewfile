@@ -36,6 +36,7 @@ brew 'toilet' # ascii banners
 brew 'universal-ctags' # better ctags
 brew 'watchexec' # auto-restart process on file changes
 brew 'zsh-autosuggestions'
+brew 'zsh-syntax-highlighting' # syntax highlighting of shell commands
 brew 'zoxide' # smarter cd command
 
 cask '1password'

@@ -1,6 +1,6 @@
 local wezterm = require("wezterm")
 
-function font_with_fallback(name, params)
+local function font_with_fallback(name, params)
   local names = {
     name,
     "Fantasque Sans Mono",
