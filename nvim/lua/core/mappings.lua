@@ -132,10 +132,13 @@ function M.mappings()
   -- Show tree-sitter highlight group(s) for current cursor position
   remap("n", "<leader>tshi", "<cmd>TSHighlightCapturesUnderCursor<CR>")
 
-  -- general
-  remap("v", "J", "<cmd>m '>+1<CR>gv=gv") -- move lines
-  remap("v", "K", "<cmd>m '<-2<CR>gv=gv") -- move lines
-  remap("v", "<leader>p", '"_dP') -- delete into blackhole and paste last yank
+  -- move current function up
+  remap("n", "J", "<cmd>TSTextobjectSwapNext @function.outer<CR>")
+  -- move current function down
+  remap("n", "K", "<cmd>TSTextobjectSwapPrevious @function.outer<CR>")
+
+  -- delete into blackhole and paste last yank
+  remap("v", "<leader>p", '"_dP')
 
   -- quickfix
   remap("n", "<leader>qo", "<cmd>lua require('utils').toggle_qf()<CR>")
@@ -187,7 +190,7 @@ function M.mappings()
   remap("n", "]]", "<cmd>lua vim.lsp.diagnostic.goto_next()<CR>")
   remap("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>")
   remap("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>")
-  remap("n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>")
+  -- remap("n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>")
   remap("n", "<space>wl", "<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>")
 
   -- little t -> Search list of symbols (tags) for current document

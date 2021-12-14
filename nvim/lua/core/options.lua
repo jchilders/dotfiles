@@ -1,6 +1,7 @@
 local g, b, opt, go, wo, o = vim.g, vim.b, vim.opt, vim.go, vim.wo, vim.o
 local M = {}
 
+-- vim.g.tildeop
 function M.load_options()
   g.mapleader = ","
 
@@ -23,18 +24,17 @@ function M.load_options()
   opt.number = true
   opt.relativenumber = true
   opt.scrolloff = 3
-  opt.showmode = false -- modes
+  opt.showmode = false -- let status bar handle it
+  opt.showtabline = 0 -- I don't use tablines, so...
   opt.sidescroll = 5
   opt.sidescrolloff = 15
   opt.signcolumn = "yes"
   opt.smartcase = true
+  opt.tildeop = true -- let ~ command work with motions: `~w` will toggle case of curr word, e.g.
   opt.timeoutlen = 500
   opt.wildmenu = true
   opt.wildmode = "longest,full"
   opt.wrap = true
-
-  g.tildeop = true -- let ~ command work with motions: `~w` will toggle case of curr word, e.g.
-  g.showtabline = 0
 
   -- completion menu settings
   opt.completeopt = "menu,menuone,noselect,noinsert" -- completion behaviour

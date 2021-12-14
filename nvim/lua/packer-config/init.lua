@@ -117,7 +117,6 @@ local function init()
   -- smart selection/moving/previewing of TS/LSP objects
   use({
     "nvim-treesitter/nvim-treesitter-textobjects",
-    disable = true -- disabled until I make keymaps for it
   })
 
   -- Use `v.` in normal mode in treesitter-enabled buffer to visually select

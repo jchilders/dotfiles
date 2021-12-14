@@ -1,6 +1,7 @@
 local cmd = vim.cmd
 
-cmd("autocmd ColorScheme * highlight Normal ctermbg=Black guibg=#000000")
+-- cmd("autocmd ColorScheme * highlight Normal ctermbg=Black guibg=#000000")
+cmd("autocmd ColorScheme * highlight normal ctermbg=NONE guibg=NONE")
 cmd("autocmd ColorScheme * highlight CursorLineNr cterm=underline ctermbg=Black guibg=#18101f")
 cmd("autocmd ColorScheme * highlight CursorLine cterm=underline ctermbg=Black guibg=#18101f")
 cmd("autocmd ColorScheme * highlight NotifyBG guibg=#3d3d3d guifg=#3e4451")
