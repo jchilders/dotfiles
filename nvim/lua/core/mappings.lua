@@ -1,5 +1,4 @@
 local remap = require("utils").map_global
-local qtoggler = require("jc.quote-toggler")
 
 local M = {}
 
@@ -124,14 +123,15 @@ function M.mappings()
   remap("n", "<leader>tshi", "<cmd>TSHighlightCapturesUnderCursor<CR>")
 
   -- move current treesitter object up
-  remap("n", "J", "<cmd>lua require('jc.quote-toggler').node_swapper(false)<CR>")
+  remap("n", "J", "<cmd>lua require('jc.tireswing').node_swapper(false)<CR>")
   -- move current treesitter object down
-  remap("n", "K", "<cmd>lua require('jc.quote-toggler').node_swapper(true)<CR>")
+  remap("n", "K", "<cmd>lua require('jc.tireswing').node_swapper(true)<CR>")
 
   -- delete into blackhole and paste last yank
   remap("v", "<leader>p", '"_dP')
 
-  remap("n", "<leader>tq", "<cmd>lua require('jc.quote-toggler').toggle_quotes()<CR>")
+  -- toggle between single/double quotes
+  remap("n", "<leader>tq", "<cmd>lua require('jc.tireswing').toggle_quotes()<CR>")
 
   -- quickfix
   remap("n", "<leader>qo", "<cmd>lua require('utils').toggle_qf()<CR>")
