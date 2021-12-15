@@ -1,4 +1,5 @@
 local remap = require("utils").map_global
+local qtoggler = require("jc.quote-toggler")
 
 local M = {}
 
@@ -88,16 +89,6 @@ function M.mappings()
   -- Hit <CR> to clear hlsearch after doing a search
   remap("n", "<CR>", '{-> v:hlsearch ? "<cmd>nohl\\<CR>" : "\\<CR>"}()', true)
 
-  -- `n`/`N` will go to next/previous search match and center it on screen
-  remap("n", "n", "nzz")
-  remap("n", "N", "Nzz")
-
-  -- scroll down/up and center
-  remap("n", "<C-d>", "<C-d>zz")
-  remap("n", "<C-u>", "<C-u>zz")
-  remap("n", "<C-f>", "<C-f>zz")
-  remap("n", "<C-b>", "<C-b>zz")
-
   remap("n", "<leader>w", "<cmd>wa<CR>")
   remap("n", "<leader>W", "<cmd>wqa<CR>")
 
@@ -132,18 +123,19 @@ function M.mappings()
   -- Show tree-sitter highlight group(s) for current cursor position
   remap("n", "<leader>tshi", "<cmd>TSHighlightCapturesUnderCursor<CR>")
 
-  -- move current function up
-  remap("n", "J", "<cmd>TSTextobjectSwapNext @function.outer<CR>")
-  -- move current function down
-  remap("n", "K", "<cmd>TSTextobjectSwapPrevious @function.outer<CR>")
+  -- move current treesitter object up
+  remap("n", "J", "<cmd>lua require('jc.quote-toggler').node_swapper(false)<CR>")
+  -- move current treesitter object down
+  remap("n", "K", "<cmd>lua require('jc.quote-toggler').node_swapper(true)<CR>")
 
   -- delete into blackhole and paste last yank
   remap("v", "<leader>p", '"_dP')
 
+  remap("n", "<leader>tq", "<cmd>lua require('jc.quote-toggler').toggle_quotes()<CR>")
+
   -- quickfix
   remap("n", "<leader>qo", "<cmd>lua require('utils').toggle_qf()<CR>")
   remap("n", "<leader>qn", "<cmd>cnext<CR>")
-  remap("n", "<leader>qo", "<cmd>copen<CR>")
   remap("n", "<leader>qp", "<cmd>cprev<CR>")
 
   -- locationlist

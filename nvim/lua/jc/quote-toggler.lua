@@ -3,12 +3,36 @@ local query = require("vim.treesitter.query")
 
 local M = {}
 
+local function sibling_or_parent_sibling(node, up)
+  local sibling = up and node:prev_named_sibling() or node:next_named_sibling()
+
+  if sibling ~= nil and node:type() == sibling:type() then
+    return { node, sibling }
+  end
+
+  -- walk the ts tree up until we either get a matching pair, or hit the root
+  local parent = node:parent()
+  if parent ~= nil then
+    return sibling_or_parent_sibling(parent, up)
+  end
+end
+
 local function string_node_for_node(node)
   if node:type() == "string" then
     return node
   elseif node:parent() ~= nil then
     return string_node_for_node(node:parent())
   end
+end
+
+M.node_swapper = function(up)
+  local node = ts_utils.get_node_at_cursor()
+  local result = sibling_or_parent_sibling(node, up)
+  if result == nil then
+    return
+  end
+  ts_utils.swap_nodes(result[1], result[2], 0, false)
+  ts_utils.goto_node(result[2])
 end
 
 -- Toggle between single and double quotes for the string under the cursor

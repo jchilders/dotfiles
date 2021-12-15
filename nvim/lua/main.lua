@@ -1,9 +1,3 @@
--- Main Load File
--- Execution Flow of each loaded configuration
--- for various plugins
--- also a lot of configuration for plugins can be found
--- in the packer config setup
--- because of lazyloading
 local g = vim.g
 
 -- disable unused vim builtins -- decreases startup time
