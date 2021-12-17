@@ -1,0 +1,14 @@
+Results of running ./term_test under various terminal emulators:
+
+15/12/2021
+----------
+Alacritty: "single red underline": no red. no ligatures.
+Alacritty+tmux: "single red underline": no red. no ligatures.
+Kitty: all pass
+Kitty+tmux: all pass
+Warp: no ligatures. probs w/ mult modifiers ("yellow ital underlined" text)
+Warp+tmux: no italics, no bold italics, other issues. generally failed.
+Wezterm: all pass
+Wezterm+tmux: better than Warp, but not much. ligatures work.
+Terminal.app: generally failed. 
+Terminal.app+tmux: Also very no.

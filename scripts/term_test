@@ -20,4 +20,5 @@ echo -e "\x1B[31mHello Red World 2\e[0m"
 echo -e "\e[3;4;33mThis should be italicized, underlined, and yellow\n\e[0m"
 echo -e "Ligature: =>"
 echo
+./glyphs
 echo "Done. If you are using tmux make sure you run this script both inside and outside of it."

@@ -25,6 +25,7 @@ brew 'python'
 brew 'redis'
 brew 'rg' # ripgrep
 brew 'rust'
+brew 'showkey' # type a key, see it in terminal. yay.
 brew 'starship' # prompt
 brew 'stylua' # lua code formatter
 brew 'stow' # dotfiles management

@@ -13,6 +13,7 @@ clean: -homebrew-clean -fonts-clean -rvm-clean -neovim-clean -misc-cfg-clean -tm
 cfg: ## Link configuration files
 	$(MAKE) xdg-setup
 	$(MAKE) git-cfg
+	$(MAKE) alacritty-cfg
 	$(MAKE) kitty-cfg
 	$(MAKE) neovim-cfg
 	$(MAKE) ssh-cfg
@@ -25,6 +26,7 @@ cfg: ## Link configuration files
 
 cfg-clean:
 	$(MAKE) git-cfg-clean
+	$(MAKE) alacritty-cfg-clean
 	$(MAKE) kitty-cfg-clean
 	$(MAKE) neovim-cfg-clean
 	$(MAKE) ssh-cfg-clean
@@ -96,6 +98,21 @@ neovim-plugins: neovim-cfg ## Install neovim plugins
 	sh -c 'curl -fLo $(HOME)/.local/share/nvim/site/autoload/plug.vim --create-dirs \
 	       https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 	nvim --headless -u $(NEOVIM_CFG_DIR)/config/plugins.vim +PlugInstall +UpdateRemotePlugins +qa
+
+##@ Alacritty
+
+ALACRITTY_CFG_DIR := "$(XDG_CONFIG_HOME)/alacritty"
+
+alacritty: alacritty-cfg ## Install alacritty terminal emulator
+
+alacritty-clean: alacritty-cfg-clean ## Remove alacritty terminal emulator
+
+alacritty-cfg: ## Link alacritty configuration files
+	@[ -d $(ALACRITTY_CFG_DIR) ] || mkdir $(ALACRITTY_CFG_DIR)
+	stow --target=$(ALACRITTY_CFG_DIR) alacritty
+
+alacritty-cfg-clean: ## Unlink alacritty configuration files
+	stow --target=$(ALACRITTY_CFG_DIR) --delete alacritty
 
 ##@ Kitty
 
@@ -239,6 +256,7 @@ misc-cfg: ## Miscellany
 
 misc-cfg-clean: ## Unlink misc configs
 	stow --target=$(XDG_CONFIG_HOME) --delete starship
+	stow --target=$(XDG_CONFIG_HOME)/alacritty --delete alacritty
 	stow --target=$(XDG_CONFIG_HOME)/kitty --delete kitty
 	stow --target=$(XDG_CONFIG_HOME)/ripgrep --delete ripgrep
 	stow --target=$(XDG_CONFIG_HOME)/lazygit --delete lazygit
