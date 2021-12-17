@@ -253,7 +253,7 @@ local function init()
   use({
     "windwp/windline.nvim",
     config = function()
-      require("plugins.statusline.windline")
+      require("plugins.statusline.airline")
     end,
   })
 

@@ -23,39 +23,41 @@ local hl_list = {
   Normal = { "NormalFg", "NormalBg" },
   Black = { "white", "black" },
   White = { "black", "white" },
-  Inactive = { "InactiveFg", "InactiveBg" },
-  Active = { "ActiveFg", "ActiveBg" },
+  -- Inactive = { "InactiveFg", "InactiveBg" },
+  Inactive = { "yellow", "red" },
+  -- Active = { "ActiveFg", "ActiveBg" },
+  Active = { "white", "green" },
 }
 
 local basic = {}
 
 local breakpoint_width = 90
 basic.divider = { b_components.divider, "" }
-basic.bg = { " ", "StatusLine" }
+basic.bg = { "StatusLine", "StatusLineNC" }
 
 local colors_mode = {
-  Normal = { "blue", "black" },
-  Insert = { "green", "black" },
-  Visual = { "yellow", "black" },
-  Replace = { "blue_light", "black" },
-  Command = { "magenta", "black" },
+  Normal = { "blue", "green" },
+  Insert = { "green", "transparent" },
+  Visual = { "yellow", "transparent" },
+  Replace = { "blue_light", "transparent" },
+  Command = { "magenta", "transparent" },
 }
 
 local language_mode = {
-  lua = { "blue", "black" },
-  typescript = { "blue", "black" },
-  typescriptreact = { "blue", "black" },
+  default = { "white", "black" },
+  java = { "red", "black" },
   javascript = { "red", "black" },
   javascriptreact = { "red", "black" },
-  sh = { "white", "black" },
-  zsh = { "white", "black" },
+  lua = { "blue", "black" },
+  magenta = { "magenta", "black" },
+  python = { "blue", "black" },
   ruby = { "red", "black" },
   rust = { "orange", "black" },
-  java = { "red", "black" },
-  python = { "blue", "black" },
+  sh = { "white", "black" },
+  typescript = { "blue", "black" },
+  typescriptreact = { "blue", "black" },
   white = { "white", "black" },
-  default = { "white", "black" },
-  magenta = { "magenta", "black" },
+  zsh = { "white", "black" },
 }
 
 basic.vi_mode = {
@@ -64,13 +66,6 @@ basic.vi_mode = {
   text = function()
     -- ⽔ (water)
     return { { " ⽔ ", state.mode[2] } }
-  end,
-}
-
-basic.square_mode = {
-  hl_colors = colors_mode,
-  text = function()
-    return { { "▊", state.mode[2] } }
   end,
 }
 
@@ -287,82 +282,6 @@ basic.lsp_names = {
   end,
 }
 
---[[ basic.gh_num = {
-  name = "gh_num",
-  hl_colors = {
-    green = { "green", "black" },
-    magenta = { "magenta", "black_light" },
-    sep = { "black", "transparent" },
-    sepdebug = { "black", "yellow" },
-    spacer = { "black", "black_light" },
-  },
-  width = breakpoint_width,
-  text = function()
-    if git_comps.is_git() then
-      local num = require("github-notifications").statusline_notification_count
-      return {
-        { " ", "spacer" },
-        { num, "magenta" },
-      }
-    end
-    return ""
-  end,
-} ]]
-
---[[
-basic.dap = {
-  name = "dap",
-  hl_colors = {
-    yellow = { "red", "yellow" },
-    spacer = { "yellow", "yellow" },
-    sep = { "yellow", "transparent" },
-  },
-  width = breakpoint_width,
-  text = function()
-    local debug = require("plugins.dap.attach")
-    if debug.dap then
-      if debug.dap.session() then
-        local status = debug:getStatus()
-        return {
-          { helper.separators.slant_left, "sep" },
-          { " ", "spacer" },
-          { "DAP: " .. status .. " ", "yellow" },
-        }
-      end
-    end
-    return ""
-  end,
-}
---]]
-
-local quickfix = {
-  filetypes = { "qf", "Trouble" },
-  active = {
-    { "🚦 Quickfix ", { "white", "black" } },
-    { helper.separators.slant_right, { "black", "black_light" } },
-    { " Total : %L ", { "cyan", "black_light" } },
-    { helper.separators.slant_right, { "black_light", "transparent" } },
-    { " ", { "InactiveFg", "transparent" } },
-    basic.divider,
-    { helper.separators.slant_left_2, { "black", "transparent" } },
-    { "🧛 ", { "white", "black" } },
-  },
-  always_active = true,
-}
-
---[[ local repl = {
-  filetypes = { "dap-repl" },
-  active = {
-    { "  ", { "white", "black" } },
-    { helper.separators.slant_right, { "black", "transparent" } },
-    { b_components.divider, "" },
-    { helper.separators.slant_left, { "black_light", "transparent" } },
-    { b_components.file_name(""), { "white", "black_light" } },
-  },
-  always_active = true,
-  show_last_status = true,
-} ]]
-
 local default = {
   filetypes = { "default", "terminal" },
   active = {
@@ -386,6 +305,21 @@ local default = {
   },
 }
 
+local quickfix = {
+  filetypes = { "qf", "Trouble" },
+  active = {
+    { "🚦 Quickfix ", { "white", "black" } },
+    { helper.separators.slant_right, { "black", "black_light" } },
+    { " Total : %L ", { "cyan", "black_light" } },
+    { helper.separators.slant_right, { "black_light", "transparent" } },
+    { " ", { "InactiveFg", "transparent" } },
+    basic.divider,
+    { helper.separators.slant_left_2, { "black", "transparent" } },
+    { "🧛 ", { "white", "black" } },
+  },
+  always_active = true,
+}
+
 windline.setup({
   colors_name = function(colors)
     -- print(vim.inspect(colors))
@@ -396,18 +330,6 @@ windline.setup({
     colors.transparent = "#38303f"
     colors.grey = "#3d3d3d"
     colors.orange = "#d8a657"
-
-    --[[ colors.wavedefault = colors.black
-
-    colors.waveright1 = colors.wavedefault
-    colors.waveright2 = colors.wavedefault
-    colors.waveright3 = colors.wavedefault
-    colors.waveright4 = colors.wavedefault
-    colors.waveright5 = colors.wavedefault
-    colors.waveright6 = colors.wavedefault
-    colors.waveright7 = colors.wavedefault
-    colors.waveright8 = colors.wavedefault
-    colors.waveright9 = colors.wavedefault ]]
 
     return colors
   end,

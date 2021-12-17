@@ -17,7 +17,7 @@ M.init = function()
   --[[ require("plugins.wildmenu") ]]
 
   -- load last to overwrite every highlight that has been added by a plugin
-  --[[ require("core.highlights") ]]
+  require("core.highlights")
 end
 
 return M

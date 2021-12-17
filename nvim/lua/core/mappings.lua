@@ -85,7 +85,7 @@ function M.mappings()
   local search_cmd = [[:let @/='<C-R>=expand("<cword>")<CR>'<CR>:set hls<CR>]]
   remap("n", "*", search_cmd)
 
-  -- Hit <CR> to clear hlsearch after doing a search
+  -- Hit <CR> to clear highlighted search matches
   remap("n", "<CR>", '{-> v:hlsearch ? "<cmd>nohl\\<CR>" : "\\<CR>"}()', true)
 
   remap("n", "<leader>w", "<cmd>wa<CR>")
@@ -130,7 +130,7 @@ function M.mappings()
   -- delete into blackhole and paste last yank
   remap("v", "<leader>p", '"_dP')
 
-  -- toggle between single/double quotes
+  -- toggle between single/double quotes for string under cursor
   remap("n", "<leader>tq", "<cmd>lua require('jc.tireswing').toggle_quotes()<CR>")
 
   -- quickfix
@@ -189,9 +189,6 @@ function M.mappings()
   map_ctrlo_tele("t", "lsp_document_symbols")
   -- Big T -> Search list of symbols (tags) from entire workspace
   map_ctrlo_tele("T", "lsp_workspace_symbols")
-
-  -- not using this much; may delete
-  remap("n", "<leader>tt", "<cmd>LspTroubleToggle<CR>")
 
   -- format.nvim
   remap("n", "<leader>fb", "<cmd>Format<CR>")

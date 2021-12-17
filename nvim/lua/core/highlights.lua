@@ -7,6 +7,8 @@ cmd("autocmd ColorScheme * highlight CursorLine cterm=underline ctermbg=Black gu
 cmd("autocmd ColorScheme * highlight NotifyBG guibg=#3d3d3d guifg=#3e4451")
 cmd("autocmd ColorScheme * highlight LineNr guibg = none")
 cmd("autocmd ColorScheme * highlight SignColumn guibg = none")
+cmd("autocmd ColorScheme * highlight StatusLine ctermbg=Green guibg=#0044cc")
+cmd("autocmd ColorScheme * highlight StatusLineNC ctermbg=White guibg=#1B3A59")
 cmd("autocmd ColorScheme * highlight VertSplit guibg = none")
 
 cmd("autocmd ColorScheme * highlight TelescopeBorder         guifg=#3e4451")
