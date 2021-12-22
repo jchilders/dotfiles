@@ -94,7 +94,7 @@ function M.mappings()
   remap("n", "<leader>g", "<cmd>lua require('jc.utils').toggle_gutter()<CR>")
 
   -- Open Scratch file for this project
-  remap("n", "<leader>rs", "<cmd>lua require('jc.scratch').split_open_scratch_file()<CR>")
+  remap("n", "<leader>rs", "<cmd>lua require('jc.scratcher').split_open_scratch_file()<CR>")
 
   -- Lua Inspect
   remap("n", "<leader>li", "<cmd>lua print(require('utils.inspect').inspect(loadstring(\"return \" .. vim.fn.getline('.'))()))<CR>")
