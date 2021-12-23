@@ -61,7 +61,25 @@ function rs {
   eval $rails_cmd
 }
 
-# Change directory to source dir for given gem
+# Change directory to source dir for given Homebrew forumla or cask
+function cdbrew {
+  if [[ $# -eq 0 ]]; then
+      echo "Usage: $0 <formula or cask name>"
+      return 1
+  fi
+
+  fcellar="$(brew --cellar $1)"
+  fver="$(brew info --json $1 | jq -r 'map(.installed)[0][0] | .version')"
+  fdir="$fcellar/$fver"
+  if [[ -d $fdir ]]; then
+    cd $fdir
+  else
+    echo "$0: can't go to $fdir"
+    return 1
+  fi
+}
+
+# Change directory to source dir for given RubyGem
 function cdgem () {
   if [[ $# -eq 0 ]]; then
       echo "Usage: $0 <gem>"

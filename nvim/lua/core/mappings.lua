@@ -130,8 +130,8 @@ function M.mappings()
   -- delete into blackhole and paste last yank
   remap("v", "<leader>p", '"_dP')
 
-  -- toggle between single/double quotes for string under cursor
-  remap("n", "<leader>tq", "<cmd>lua require('jc.tireswing').toggle_quotes()<CR>")
+  -- Quote Toggler: toggle between single/double quotes for string under cursor.
+  remap("n", "<leader>qt", "<cmd>lua require('jc.tireswing').toggle_quotes()<CR>")
 
   -- quickfix
   remap("n", "<leader>qo", "<cmd>lua require('utils').toggle_qf()<CR>")
