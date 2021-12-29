@@ -1,10 +1,11 @@
 local execute = vim.api.nvim_command
 local fn = vim.fn
-local global = require("core.global")
+local global = require("core.globals")
 local data_path = global.data_path
 local sep_os_replacer = require("utils").sep_os_replacer
 local packer_compiled = data_path .. "packer_compiled.vim"
 local compile_to_lua = data_path .. "lua" .. global.path_sep .. "_compiled.lua"
+local disable_things = false
 
 -- ??Problems??
 -- :PackerInstall
@@ -36,26 +37,10 @@ local function init()
   packer.reset()
   local use = packer.use
 
-  -- persist and toggle multiple terminals
-  -- :ToggleTerm size=40 dir=~/my_project direction=horizontal
-  --
-  -- `:h window`, but a few key mappings to know:
-  --
-  -- <C-W>L - move window to left (vim builtin)
-  -- <C-W>R - move window to right (vim builtin)
-  -- <C-W>X - Exchange curr window with next one.
-  -- <C-W><C-X> - Same as above.
-  --
-  -- TODO: Add https://github.com/tknightz/telescope-termfinder.nvim
-  -- TermExec cmd="git status"
-  use ({
-    "akinsho/toggleterm.nvim",
-    config = require("plugins.toggleterm").init,
-  })
-
   -- telescope
   use({
     "nvim-telescope/telescope.nvim",
+    disable = false,
     config = require("plugins.telescope").init,
     requires = {
       { "nvim-lua/plenary.nvim" },
@@ -72,6 +57,7 @@ local function init()
   -- :Telescope tmux windows
   use({
     "jchilders/telescope-tmux.nvim",
+    disable = false,
     branch = "incl_curr_session_opt",
   })
 
@@ -79,63 +65,50 @@ local function init()
   -- and quickly nav to them
   use({
     "ThePrimeagen/harpoon",
+    disable = false,
     config = require("plugins.harpoon").init,
   })
 
   -- faster lua-based filetype detection. helps with startup time.
-  use({ "nathom/filetype.nvim" })
-
-  -- automaticaly set `shiftwidth` & `expandtab`
-  use({ "tpope/vim-sleuth" })
-
-  -- code formatter. can handle embedded syntax blocks via `start_pattern`/`end_pattern` keys
-  -- :Format
   use({
-    "lukas-reineke/format.nvim",
-    config = require("format").setup({
-      ["*"] = {
-        { cmd = { "sed -i 's/[ \t]*$//'" } }, -- remove trailing whitespace
-      },
-      lua = {
-        { cmd = { "stylua" } },
-      },
-      python = {
-        { cmd = { "black" } },
-      },
-    }),
+    "nathom/filetype.nvim",
+    disable = false,
   })
 
   -- {{ Tree-sitter treesitter }} --
   use({
     "nvim-treesitter/nvim-treesitter",
+    disable = false,
     config = require("plugins.nvim-treesitter").init,
   })
 
   -- :TSPlaygroundToggle
-  use({ "nvim-treesitter/playground" })
+  use({
+    "nvim-treesitter/playground",
+    disable = false,
+	})
 
   -- smart selection/moving/previewing of TS/LSP objects
   use({
     "nvim-treesitter/nvim-treesitter-textobjects",
+    disable = false,
   })
 
   -- Use `v.` in normal mode in treesitter-enabled buffer to visually select
   -- progressively broader TS nodes
-  use({ "RRethy/nvim-treesitter-textsubjects" })
-
-  -- know how you can have e.g. HTML inside of a React file? If you want to
-  -- comment out that HTML, this will use HTML comments instead of JS ones.
   use({
-    "JoosepAlviste/nvim-ts-context-commentstring",
-    disable = false, -- disabling until I can integrate it with kommentary
-  })
+	 	"RRethy/nvim-treesitter-textsubjects",
+    disable = false,
+	})
 
   use({
     "b3nj5m1n/kommentary",
+    disable = false,
     -- all config here is recommented by nvim-ts-context-commentstring docs
     config = function()
       require("kommentary.config").configure_language("default", {
         prefer_multi_line_comments = false,
+        use_consistent_indentation = true,
       })
 
       require("nvim-treesitter.configs").setup({
@@ -160,6 +133,7 @@ local function init()
 
   use({
     "vim-test/vim-test",
+    disable = true,
     cmd = { "TestFile" },
     requires = {
       {
@@ -174,33 +148,32 @@ local function init()
   -- automatically close & rename tags using treesitter
   use({
     "windwp/nvim-ts-autotag",
+    disable = true,
     ft = { "typescriptreact", "javascriptreact", "html" },
   })
 
-  use({ "ray-x/lsp_signature.nvim", opt = true }) -- auto signature trigger
-
-  -- helper for generating doc comments
-  use({
-    "danymat/neogen",
-    config =  function()
-      require("neogen").setup({
-        enabled = true,
-      })
-    end,
-    requires = "nvim-treesitter/nvim-treesitter",
-  })
+  -- use({ "ray-x/lsp_signature.nvim", opt = true }) -- auto signature trigger
 
   -- {{ LSP }}
 
   use({
     "neovim/nvim-lspconfig",
-    "williamboman/nvim-lsp-installer",
+    disable = false,
   })
 
-  use({ "nvim-lua/lsp-status.nvim" })
+  use({
+    "williamboman/nvim-lsp-installer",
+    disable = false,
+  })
+
+  use({
+		"nvim-lua/lsp-status.nvim",
+    disable = false,
+	})
 
   use({
     "onsails/lspkind-nvim",
+    disable = false,
     config = require("plugins.lspkind-nvim").init,
   })
 
@@ -209,6 +182,7 @@ local function init()
   -- trouble your code is causing.
   use({
     "folke/lsp-trouble.nvim",
+    disable = true,
     config = function()
       require("trouble").setup()
     end,
@@ -221,6 +195,7 @@ local function init()
   -- completion
   use({
     "hrsh7th/nvim-cmp",
+    disable = true,
     config = require("plugins.cmp").init,
     requires = {
       { "hrsh7th/cmp-cmdline" },
@@ -233,14 +208,28 @@ local function init()
     },
   })
 
+
   -- autoclose parens, etc.
-  use({ "windwp/nvim-autopairs" })
+  --[[ use({
+    "windwp/nvim-autopairs",
+    disable = true,
+  }) ]]
+
+  -- autoclose parens, function defs, etc.
+  --[[ use({
+    "cohama/lexima.vim",
+    config = function()
+      vim.g.lexima_enable_basic_rules = 0 -- turn it off for quotes/parens/etc
+    end,
+  }) ]]
 
   -- look and feel of neovim
   -- colorscheme
   require("core.highlights") -- load before colorscheme cfg
+
   use({
     "folke/tokyonight.nvim",
+    disable = false,
     config = function()
       vim.o.background = "dark" -- or light if you so prefer
       vim.g.tokyonight_style = "night"
@@ -252,6 +241,7 @@ local function init()
   -- statusline
   use({
     "windwp/windline.nvim",
+    disable = false,
     config = function()
       require("plugins.statusline.airline")
     end,
@@ -260,6 +250,7 @@ local function init()
   -- adds current function/class/etc. name to statusline
   use({
     "SmiteshP/nvim-gps",
+    disable = false,
     requires = "nvim-treesitter/nvim-treesitter",
   })
 
@@ -268,6 +259,7 @@ local function init()
   --
   use({
     'lewis6991/gitsigns.nvim',
+    disable = false,
     requires = 'nvim-lua/plenary.nvim',
     config = function()
       require('gitsigns').setup()
@@ -276,10 +268,11 @@ local function init()
 
   -- better wild menu: e.g.: when you do `:e` and you want to navigate the completion popup
   -- currently funky.
-  --[[ use({
+  use({
     "gelguy/wilder.nvim",
+    disable = false,
     opt = true,
-  }) ]]
+  })
 
   use({
     "Shatur/neovim-session-manager",

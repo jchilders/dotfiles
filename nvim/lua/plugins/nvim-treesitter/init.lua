@@ -12,9 +12,13 @@ function M.init()
       additional_vim_regex_highlighting = true,
       -- or -- additional_vim_regex_highlighting = { ruby=true },
     },
+
+    -- indents via treesitter currently borked. disabling for now. see:
+    -- https://github.com/nvim-treesitter/nvim-treesitter/projects/6#card-62266696
     indent = {
-      enable = true,
+      enable = false,
     },
+
     -- windwp/nvim-ts-autotag auto close/rename html tags
     autotag = {
       enable = true,

@@ -101,8 +101,15 @@ basic.section_a_inactive = {
 
 local section_b_body = function()
     if gps.is_available() then
+        local loc_or_fname = gps.get_location()
+        if gps.get_location() == '' then
+            loc_or_fname = b_components.cache_file_name('[No Name]', 'unique')
+        else
+            loc_or_fname = gps.get_location()
+        end
+
         return {
-            gps.get_location()
+            loc_or_fname
         }
     else
         return {
@@ -129,7 +136,9 @@ basic.section_y = {
     text = function(_,_,width)
         -- this used to have the file_type icon/name in it, but I removed it
         -- keeping it for future use
-        return { { sep.left_filled, state.mode[2] .. 'Sep' } }
+        return {
+            { sep.left_filled, state.mode[2] .. 'Sep' },
+        }
     end,
 }
 

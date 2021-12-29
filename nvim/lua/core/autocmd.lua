@@ -12,7 +12,7 @@ local function augroups()
         "Dashboard",
       }, -- disable tabline in dashboard
       { "BufNewFile,BufRead", "*.toml", "setf toml" }, -- set toml filetype
-      {
+      --[[ {
         "FileType",
         "*.toml",
         "lua require('cmp').setup.buffer { sources = { { name = 'crates' } } }",
@@ -21,7 +21,7 @@ local function augroups()
         "FileType",
         "*.org",
         "lua require('cmp').setup.buffer { sources = { { name = 'orgmode' } } }",
-      },
+      }, ]]
     },
     Terminal = {
       { "TermOpen", "*", "set nonumber" },
@@ -44,7 +44,8 @@ local function augroups()
 end
 
 local function autocmds()
-  -- Restore cursor position (`g'"`) to where it was when a file was last edited
+  -- When opening a file, restore cursor position (`g'"`) to where it was when
+  -- that file was last edited
   utils.autocmd(
     "BufReadPost",
     "*",
