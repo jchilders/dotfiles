@@ -20,7 +20,7 @@ for _, plugin in pairs(disabled_built_ins) do
 end
 
 -- setup conf and lua modules
-require("core.global")
+require("core.globals")
 require("core.options").load_options()
 require("core.mappings").mappings()
 require("core.autocmd").init()
