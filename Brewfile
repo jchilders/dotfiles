@@ -2,6 +2,7 @@ brew 'automake'
 brew 'bat' # cat replacement
 brew 'choose-rust' # sed replacement: `choose 5`
 brew 'cmake'
+brew 'coreutils' # gnu coreutils
 brew 'direnv'
 brew 'exa' # ls replacement
 brew 'fd' # file finder
@@ -48,9 +49,8 @@ cask 'lulu' # allow/deny apps to use the network
 tap 'olets/tap'
 brew 'zsh-abbr'
 
-# find alternate (i.e. test) file
 tap 'uptech/homebrew-oss'
-brew 'uptech/oss/alt'
+brew 'uptech/oss/alt' # find alternate (i.e. test) file
 
 # Semantics-aware diffs using ASTs from tree-sitter
 tap 'afnanenayet/tap'
