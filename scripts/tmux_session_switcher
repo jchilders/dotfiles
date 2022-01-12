@@ -1,6 +1,8 @@
 #!/usr/bin/env zsh
 
-local result="$(tmux list-sessions | fzfp | choose -f : 0)"
+# Open window to select tmux session to switch to
+
+local result=$(tmux list-sessions | fzfp | ruby -F: -ane 'puts $F[0]')
 
 if [[ -z $result ]]; then
   return 0
