@@ -25,7 +25,7 @@ local function string_node_for_node(node)
   end
 end
 
-M.node_swapper = function(up)
+M.swap_nodes = function(up)
   local node = ts_utils.get_node_at_cursor()
   local result = sibling_or_parent_sibling(node, up)
   if result == nil then

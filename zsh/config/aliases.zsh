@@ -9,7 +9,7 @@ if alias -L run-help > /dev/null; then
 fi
 autoload run-help
 export MANPAGER='nvim +Man!'
-export HELPDIR=/usr/share/zsh/$(zsh --version | choose -2)/help
+export HELPDIR=/usr/share/zsh/$(zsh --version | ruby -ane 'puts $F[1]')/help
 
 # override the `man` command so that it can show both help pages for normal
 # executables as well as zsh builtins
@@ -28,11 +28,11 @@ alias python=/usr/local/bin/python3
 abbr add be='bundle exec' > /dev/null 2>&1
 abbr add bi='bundle install' > /dev/null 2>&1
 
-alias cpwd="pwd | tr -d '\n' | pbcopy"
+alias cpwd="pwd | tr -d '\n' | pbcopy; print 'Current diretory sent to pasteboard'"
 
 abbr add dcom='docker-compose' > /dev/null 2>&1
 
-alias gcb="git branch --show-current | tr -d '\n' | pbcopy"
+alias gcb="git branch --show-current | tr -d '\n' | pbcopy; print 'Current branch sent to pasteboard'"
 abbr add gd='git diff' > /dev/null 2>&1
 abbr add gst='git status -sb' > /dev/null 2>&1
 abbr add muxi='tmuxinator' > /dev/null 2>&1
