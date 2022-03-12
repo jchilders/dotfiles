@@ -1,33 +1,29 @@
 .DEFAULT_GOAL:=help
 SHELL:=/bin/zsh
-XDG_CONFIG_HOME := $$HOME/.config
-XDG_DATA_HOME := $$HOME/.local/share
+XDG_CONFIG_HOME := $(HOME)/.config
+XDG_DATA_HOME := $(HOME)/.local/share
 
 cwd := $(shell pwd)
 
 ##@ Install
-install: macos xdg-setup homebrew homebrew-bundle -fonts -ruby -python -cfg -neovim -tmux -ssh -zsh -kitty ## Install all the things
+install: macos xdg-setup homebrew homebrew-bundle -fonts ruby -python cfg -tmux -zsh ## Install all the things
 
-clean: -homebrew-clean -fonts-clean -rvm-clean -neovim-clean -misc-cfg-clean -tmux-clean -zsh-cfg-clean ## Uninstall all the things
+clean: -fonts-clean -ruby-clean -cfg-clean -tmux-clean -homebrew-clean ## Uninstall all the things
 
 cfg: ## Link configuration files
 	$(MAKE) xdg-setup
 	$(MAKE) git-cfg
 	$(MAKE) alacritty-cfg
-	$(MAKE) kitty-cfg
 	$(MAKE) neovim-cfg
 	$(MAKE) ssh-cfg
 	$(MAKE) tmux-cfg
 	$(MAKE) zsh-cfg
 	$(MAKE) misc-cfg
-	stow --restow --target=$(XDG_CONFIG_HOME)/ starship
 	ln -sf $(cwd)/scripts $$HOME/scripts
-	@[ -d $(XDG_CONFIG_HOME) ] || mkdir -p $(XDG_CONFIG_HOME)
 
 cfg-clean:
 	$(MAKE) git-cfg-clean
 	$(MAKE) alacritty-cfg-clean
-	$(MAKE) kitty-cfg-clean
 	$(MAKE) neovim-cfg-clean
 	$(MAKE) ssh-cfg-clean
 	$(MAKE) tmux-cfg-clean
@@ -35,9 +31,9 @@ cfg-clean:
 	$(MAKE) misc-cfg-clean
 	rm $$HOME/scripts
 
-# This is needed by the rvm target: they sign their releases with GPG, so we
-# need to import their PKs.  This process can be buggy due to the keyservers
-# being slow or inoperational.
+# This is needed by the rvm target: RVM signs their releases with GPG, so we
+# need to import their PKs. Note that this process can be buggy due to the
+# keyservers being slow or inoperational.
 gpg-receive-keys:
 	@if ! gpg --list-keys 409B6B1796C275462A1703113804BB82D39DC0E3 &> /dev/null; then \
 		gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 ; \
@@ -57,7 +53,7 @@ homebrew-bundle: ## Install default homebrew formulae
 	brew bundle # see Brewfile
 
 homebrew-clean: ## Uninstall homebrew
-	curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall.sh | /bin/bash
+	sudo curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall.sh | /bin/bash
 	rm -r /usr/local/var/homebrew
 
 ##@ Neovim
@@ -104,8 +100,12 @@ neovim-plugins: neovim-cfg ## Install neovim plugins
 ALACRITTY_CFG_DIR := "$(XDG_CONFIG_HOME)/alacritty"
 
 alacritty: alacritty-cfg ## Install alacritty terminal emulator
+	brew install --cask alacritty
+	# Need to unquarantine it for Catalina & above
+	xattr -d com.apple.quarantine /Applications/Alacritty.app
 
 alacritty-clean: alacritty-cfg-clean ## Remove alacritty terminal emulator
+	brew uninstall --cask alacritty
 
 alacritty-cfg: ## Link alacritty configuration files
 	@[ -d $(ALACRITTY_CFG_DIR) ] || mkdir $(ALACRITTY_CFG_DIR)
@@ -113,26 +113,12 @@ alacritty-cfg: ## Link alacritty configuration files
 
 alacritty-cfg-clean: ## Unlink alacritty configuration files
 	stow --target=$(ALACRITTY_CFG_DIR) --delete alacritty
-
-##@ Kitty
-
-KITTY_CFG_DIR := "$(XDG_CONFIG_HOME)/kitty"
-
-kitty: kitty-cfg ## Install Kitty terminal emulator
-
-kitty-clean: kitty-cfg-clean ## Remove Kitty terminal emulator
-
-kitty-cfg: ## Link Kitty configuration files
-	@[ -d $(KITTY_CFG_DIR) ] || mkdir $(KITTY_CFG_DIR)
-	stow --target=$(KITTY_CFG_DIR) kitty
-
-kitty-cfg-clean: ## Unlink Kitty configuration files
-	stow --target=$(KITTY_CFG_DIR) --delete kitty
+	@[ -d $(ALACRITTY_CFG_DIR) ] || rmdir $(ALACRITTY_CFG_DIR)
 
 ##@ Languages
 ruby: ruby-cfg rvm ## Install Ruby
-	rvm install ruby-3
-	rvm alias create default ruby-3
+	$$HOME/.rvm/bin/rvm install ruby-3
+	$$HOME/.rvm/bin/rvm alias create default ruby-2
 
 ruby-clean: ruby-cfg-clean rvm-clean ## Uninstall Ruby
 
@@ -143,6 +129,7 @@ ruby-cfg: ## Link Ruby configuration files
 	stow --dir=ruby --target=$(XDG_CONFIG_HOME)/pry pry
 
 ruby-cfg-clean: ## Unlink Ruby configuration files
+	stow --dir=ruby --target=$$HOME --delete ruby
 	stow --dir=ruby --target=$$HOME --delete gem
 	stow --dir=ruby --target=$(XDG_CONFIG_HOME)/pry --delete pry
 
@@ -156,6 +143,12 @@ rvm: gpg-receive-keys ## Install Ruby Version Manager
 rvm-clean: -gpg-delete-keys ## Uninstall Ruby Version Manager
 	rvm implode --force
 
+nvm: ## Node Version Manager
+	@[ -d $(XDG_DATA_HOME)/nvm ] || mkdir $(XDG_DATA_HOME)/nvm
+
+nvm-clean: ## Uninstall Node Version Manager
+	rm -rf ${XDG_DATA_HOME}/nvm
+
 python: -python-packages ## Install Python
 
 # The pynvim package is needed by the vim-ultest plugin
@@ -164,34 +157,25 @@ python-packages: ## Install Python packages
 	-python3 -m pip install --user --upgrade black # py code formatter
 
 ##@ tmux
+plugin_dir := $(XDG_DATA_HOME)/tpm
 
 tmux: tmux-cfg tmux-plugins ## Install & configure tmux
 
 tmux-clean: -tmux-cfg-clean ## Uninstall tmux & configuration files
-	-rm -rf ~/.tmux
+	-rm -rf $(plugin_dir)
 
 tmux-cfg: ## Link tmux configuration files
-	@[ -d $(XDG_CONFIG_HOME)/tmux ] || mkdir -p $(XDG_CONFIG_HOME)/tmux
 	stow --restow --target=$(XDG_CONFIG_HOME)/tmux tmux
 
 tmux-cfg-clean: ## Unlink tmux configuration files
 	stow --target=$(XDG_CONFIG_HOME)/tmux --delete tmux
 
 tmux-plugins: ## Install plugin manager and other related items
-	@[ -d $$HOME/.tmux ] || mkdir $$HOME/.tmux
-	@[ -d $$HOME/.tmux/plugins/tpm ] || git clone https://github.com/tmux-plugins/tpm $$HOME/.tmux/plugins/tpm
+	git clone https://github.com/tmux-plugins/tpm $(plugin_dir)
+	$(plugin_dir)/bin/install_plugins
 
-##@ WezTerm
-wezterm: -wezterm-cfg ## Install WezTerm terminal emulator
-	brew install --cask wezterm-nightly --no-quarantine
-
-wezterm-cfg: ## Link WezTerm configuration files
-	@[ -d $(XDG_CONFIG_HOME)/wezterm ] || mkdir $(XDG_CONFIG_HOME)/wezterm
-	stow --target=$(XDG_CONFIG_HOME)/wezterm wezterm
-
-wezterm-clean:
-	brew uninstall --cask wezterm-nightly
-	stow --target=$(XDG_CONFIG_HOME)/wezterm --delete wezterm
+tmux-plugins-clean: ## Uninstall tmux plugins
+	-rm -rf $(plugin_dir)
 
 ##@ zsh
 zsh: -zsh-cfg ## Install zsh-related items
@@ -216,20 +200,18 @@ ifeq ($(shell uname -s), Darwin)
 ifeq ($(XCODE_INSTALLED), 1)
 	xcode-select --install
 endif
+	softwareupdate --install --recommended
 	./macos
 	killall Dock
 endif
 
 fonts: ## Install fonts
-	curl -OL https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/AnonymousPro.zip
-	unzip -n AnonymousPro.zip -x 'Anonymice Nerd Font Complete Windows Compatible.ttf' 'Anonymice Nerd Font Complete Mono Windows Compatible.ttf' -d $$HOME/Library/Fonts
-	rm AnonymousPro.zip
-	## We are using this font with toilet banner generator tool
+	## Font used with toilet banner generator
 	cp cosmic.flf /usr/local/Cellar/toilet/0.3/share/figlet
 
 fonts-clean: ## Uninstall fonts
-	rm $$HOME/Library/Fonts/Anonymice*.ttf
-	rm /usr/local/Cellar/toilet/0.3/share/figlet/cosmic.flf
+	-rm $$HOME/Library/Fonts/*
+	-rm /usr/local/Cellar/toilet/0.3/share/figlet/cosmic.flf
 
 git-cfg: ## Link git configuration files
 	stow --target=$$HOME git
@@ -249,6 +231,7 @@ ssh-add-key: -ssh ## Add key to SSH agent
 
 misc-cfg: ## Miscellany
 	@[ -e $$HISTFILE ] || touch $$HISTFILE
+	stow --restow --target=$(XDG_CONFIG_HOME)/ starship
 	@[ -d $(XDG_CONFIG_HOME)/ripgrep ] || mkdir $(XDG_CONFIG_HOME)/ripgrep
 	stow --restow --target=$(XDG_CONFIG_HOME)/ripgrep ripgrep
 	@[ -d $(XDG_CONFIG_HOME)/lazygit ] || mkdir $(XDG_CONFIG_HOME)/lazygit
@@ -256,8 +239,6 @@ misc-cfg: ## Miscellany
 
 misc-cfg-clean: ## Unlink misc configs
 	stow --target=$(XDG_CONFIG_HOME) --delete starship
-	stow --target=$(XDG_CONFIG_HOME)/alacritty --delete alacritty
-	stow --target=$(XDG_CONFIG_HOME)/kitty --delete kitty
 	stow --target=$(XDG_CONFIG_HOME)/ripgrep --delete ripgrep
 	stow --target=$(XDG_CONFIG_HOME)/lazygit --delete lazygit
 

@@ -1,56 +1,58 @@
 brew 'automake'
 brew 'bat' # cat replacement
-brew 'choose-rust' # sed replacement: `choose 5`
+brew 'choose-rust' # sed replacement. e.g.: `bat things.csv | choose 5`
 brew 'cmake'
 brew 'coreutils' # gnu coreutils
-brew 'direnv'
-brew 'exa' # ls replacement
+brew 'direnv' # directory-specific env vars
+brew 'exa' # git-aware ls replacement
 brew 'fd' # file finder
 brew 'fzf' # fuzzy finder
-brew 'gh'  # GitHub CLI
+brew 'gh' # GitHub CLI
 brew 'git'
 brew 'git-delta' # git-diff replacement
 brew 'git-lfs' # handle Large Files in git
 brew 'golang'
 brew 'gpg'
-brew 'httpie'
-brew 'htop'
+brew 'grep' # gnu grep
+brew 'httpie' # cURL replacement. e.g.: `http POST pie.dev/post hello=world`
 brew 'imagemagick'
 brew 'jq' # json processor
-brew 'lazygit'
+brew 'lazygit' # git TUI
 brew 'lua'
-brew 'luarocks'
+brew 'luarocks' # lua package manager
+brew 'neovim'
+brew 'node'
+brew 'nvm'
 brew 'memcached'
 brew 'parallel' # gnu parallel
 brew 'python'
-brew 'redis'
+brew 'redis' # redis is redis
 brew 'rg' # ripgrep
 brew 'rust'
-brew 'showkey' # type a key, see it in terminal. yay.
+brew 'showkey' # type a key and see it echoed in the terminal
 brew 'starship' # prompt
 brew 'stylua' # lua code formatter
 brew 'stow' # dotfiles management
-brew 'tldr' # man page supplement
+brew 'tldr' # man page supplement. brief desc, then examples
 brew 'tig'  # git history viewer
 brew 'tmux'
-brew 'tmuxinator'
-brew 'toilet' # ascii banners
+brew 'toilet' # ascii banners :)
 brew 'universal-ctags' # better ctags
-brew 'watchexec' # auto-restart process on file changes
+brew 'watchexec' # auto-restart process when file(s) change
 brew 'zsh-autosuggestions'
-brew 'zsh-syntax-highlighting' # syntax highlighting of shell commands
+brew 'zsh-syntax-highlighting' # syntax highlighting while typing
 brew 'zoxide' # smarter cd command
 
-cask '1password'
-cask 'kitty' # terminal emulator
-cask 'lulu' # allow/deny apps to use the network
+cask 'alacritty' # fast(est) terminal emulator
+cask 'lulu' # allow/deny apps network access
 
-# fish-like abbreviations for zsh
+# fish-like abbreviations for zsh: aliases that expand when you hit enter
 tap 'olets/tap'
 brew 'zsh-abbr'
 
+# find alternate (i.e. test) file
 tap 'uptech/homebrew-oss'
-brew 'uptech/oss/alt' # find alternate (i.e. test) file
+brew 'uptech/oss/alt'
 
 # Semantics-aware diffs using ASTs from tree-sitter
 tap 'afnanenayet/tap'
@@ -61,11 +63,3 @@ tap 'homebrew/cask-fonts'
 cask 'font-inconsolata'
 cask 'font-fantasque-sans-mono'
 cask 'font-powerline-symbols'
-
-tap 'wez/wezterm'
-# $ brew install --cask wezterm-nightly --no-quarantine
-#
-# to upgrade to a newer nightly, it is simplest to remove then install:
-#
-# $ brew rm --cask wezterm-nightly
-# $ brew upgrade --cask wezterm-nightly
