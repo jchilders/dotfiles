@@ -143,12 +143,6 @@ rvm: gpg-receive-keys ## Install Ruby Version Manager
 rvm-clean: -gpg-delete-keys ## Uninstall Ruby Version Manager
 	rvm implode --force
 
-nvm: ## Node Version Manager
-	@[ -d $(XDG_DATA_HOME)/nvm ] || mkdir $(XDG_DATA_HOME)/nvm
-
-nvm-clean: ## Uninstall Node Version Manager
-	rm -rf ${XDG_DATA_HOME}/nvm
-
 python: -python-packages ## Install Python
 
 # The pynvim package is needed by the vim-ultest plugin
