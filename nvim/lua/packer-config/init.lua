@@ -9,6 +9,7 @@ local disable_things = false
 
 -- ??Problems??
 -- :PackerInstall
+-- :PackerClean
 -- :PackerCompile
 -- quit/reload
 
@@ -167,13 +168,13 @@ local function init()
   })
 
   use({
-		"nvim-lua/lsp-status.nvim",
+    "nvim-lua/lsp-status.nvim",
     disable = false,
-	})
+  })
 
   use({
     "onsails/lspkind-nvim",
-    disable = false,
+    disable = true,
     config = require("plugins.lspkind-nvim").init,
   })
 
