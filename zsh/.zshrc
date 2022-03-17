@@ -18,6 +18,7 @@ if type brew &>/dev/null; then
   autoload -Uz compinit
   compinit
 fi
+
 # zoxide: smarter cd
 if type zoxide &> /dev/null; then
   eval "$(zoxide init zsh)"

@@ -11,7 +11,6 @@ brew 'gh' # GitHub CLI
 brew 'git'
 brew 'git-delta' # git-diff replacement
 brew 'git-lfs' # handle Large Files in git
-brew 'golang'
 brew 'gpg'
 brew 'grep' # gnu grep
 brew 'httpie' # cURL replacement. e.g.: `http POST pie.dev/post hello=world`
@@ -23,6 +22,7 @@ brew 'luarocks' # lua package manager
 brew 'neovim'
 brew 'node'
 brew 'nvm'
+brew 'make' # gnu make
 brew 'memcached'
 brew 'parallel' # gnu parallel
 brew 'python'
@@ -43,9 +43,6 @@ brew 'zsh-autosuggestions'
 brew 'zsh-syntax-highlighting' # syntax highlighting while typing
 brew 'zoxide' # smarter cd command
 
-cask 'alacritty' # fast(est) terminal emulator
-cask 'lulu' # allow/deny apps network access
-
 # fish-like abbreviations for zsh: aliases that expand when you hit enter
 tap 'olets/tap'
 brew 'zsh-abbr'
@@ -63,3 +60,8 @@ tap 'homebrew/cask-fonts'
 cask 'font-inconsolata'
 cask 'font-fantasque-sans-mono'
 cask 'font-powerline-symbols'
+
+# TODO: Fix this so calling `brew bundle` doesn't fail when these are already
+# installed
+cask 'alacritty' # fast(est) terminal emulator
+cask 'lulu' # allow/deny apps network access

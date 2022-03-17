@@ -3,32 +3,31 @@ SHELL:=/bin/zsh
 XDG_CONFIG_HOME := $(HOME)/.config
 XDG_DATA_HOME := $(HOME)/.local/share
 
+.PHONY: all
+
 cwd := $(shell pwd)
 
 ##@ Install
-install: macos xdg-setup homebrew homebrew-bundle -fonts ruby -python cfg -tmux -zsh ## Install all the things
+install: macos xdg-setup homebrew homebrew-bundle alacritty -fonts ruby tmux tmux zsh cfg ## Install all the things
 
-clean: -fonts-clean -ruby-clean -cfg-clean -tmux-clean -homebrew-clean ## Uninstall all the things
+clean: fonts-clean ruby-clean cfg-clean tmux-clean neovim-clean zsh-clean homebrew-clean ## Uninstall all the things
 
-cfg: ## Link configuration files
-	$(MAKE) xdg-setup
+cfg: xdg-setup alacritty-cfg nvim-cfg zsh-cfg ## Link configuration files
 	$(MAKE) git-cfg
-	$(MAKE) alacritty-cfg
-	$(MAKE) neovim-cfg
 	$(MAKE) ssh-cfg
 	$(MAKE) tmux-cfg
-	$(MAKE) zsh-cfg
 	$(MAKE) misc-cfg
 	ln -sf $(cwd)/scripts $$HOME/scripts
 
-cfg-clean:
-	$(MAKE) git-cfg-clean
-	$(MAKE) alacritty-cfg-clean
-	$(MAKE) neovim-cfg-clean
-	$(MAKE) ssh-cfg-clean
-	$(MAKE) tmux-cfg-clean
-	$(MAKE) zsh-cfg-clean
-	$(MAKE) misc-cfg-clean
+%-cfg:
+	[ -d $(XDG_CONFIG_HOME)/$* ] || mkdir $(XDG_CONFIG_HOME)/$*
+	stow --target=$(XDG_CONFIG_HOME)/$* $*
+
+%-cfg-clean: ## Clean $*
+	-stow --target=$(XDG_CONFIG_HOME)/$* --delete $*
+	-[ -d $(XDG_CONFIG_HOME)/$* ] && rmdir $(XDG_CONFIG_HOME)/$*
+
+cfg-clean: git-cfg-clean alacritty-cfg-clean nvim-cfg-clean ssh-cfg-clean tmux-cfg-clean zsh-cfg-clean misc-cfg-clean
 	rm $$HOME/scripts
 
 # This is needed by the rvm target: RVM signs their releases with GPG, so we
@@ -61,9 +60,9 @@ homebrew-clean: ## Uninstall homebrew
 NEOVIM_SRC_DIR := "$$HOME/workspace/neovim"
 NEOVIM_CFG_DIR := "$(XDG_CONFIG_HOME)/nvim"
 
-neovim: -neovim-build -neovim-cfg -neovim-plugins ## Install Neovim, configurations, & plugins
+neovim: -neovim-build neovim-cfg -neovim-plugins ## Install Neovim, configurations, & plugins
 
-neovim-clean: -neovim-cfg-clean ## Uninstall Neovim, configurations, & plugins
+neovim-clean: nvim-cfg-clean ## Uninstall Neovim, configurations, & plugins
 	-sudo rm /usr/local/bin/nvim
 	-sudo rm /usr/local/bin/vi
 	-sudo rm -r /usr/local/lib/nvim
@@ -83,21 +82,12 @@ neovim-build: ## Build and install neovim nightly from source
 	$(MAKE) -C $(NEOVIM_SRC_DIR) CMAKE_BUILD_TYPE=RelWithDebInfo; \
 	sudo $(MAKE) -C $(NEOVIM_SRC_DIR) CMAKE_INSTALL_PREFIX=/usr/local install; \
 
-neovim-cfg: ## Link neovim configuration files
-	@[ -d $(NEOVIM_CFG_DIR) ] || mkdir $(NEOVIM_CFG_DIR)
-	stow --restow --target=$(NEOVIM_CFG_DIR) nvim
-
-neovim-cfg-clean: ## Unlink neovim configuration files
-	stow --target=$(NEOVIM_CFG_DIR) --delete nvim
-
-neovim-plugins: neovim-cfg ## Install neovim plugins
+neovim-plugins: nvim-cfg ## Install neovim plugins
 	sh -c 'curl -fLo $(HOME)/.local/share/nvim/site/autoload/plug.vim --create-dirs \
 	       https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 	nvim --headless -u $(NEOVIM_CFG_DIR)/config/plugins.vim +PlugInstall +UpdateRemotePlugins +qa
 
-##@ Alacritty
-
-ALACRITTY_CFG_DIR := "$(XDG_CONFIG_HOME)/alacritty"
+##@ Terminal Emulator
 
 alacritty: alacritty-cfg ## Install alacritty terminal emulator
 	brew install --cask alacritty
@@ -106,14 +96,6 @@ alacritty: alacritty-cfg ## Install alacritty terminal emulator
 
 alacritty-clean: alacritty-cfg-clean ## Remove alacritty terminal emulator
 	brew uninstall --cask alacritty
-
-alacritty-cfg: ## Link alacritty configuration files
-	@[ -d $(ALACRITTY_CFG_DIR) ] || mkdir $(ALACRITTY_CFG_DIR)
-	stow --target=$(ALACRITTY_CFG_DIR) alacritty
-
-alacritty-cfg-clean: ## Unlink alacritty configuration files
-	stow --target=$(ALACRITTY_CFG_DIR) --delete alacritty
-	@[ -d $(ALACRITTY_CFG_DIR) ] || rmdir $(ALACRITTY_CFG_DIR)
 
 ##@ Languages
 ruby: ruby-cfg rvm ## Install Ruby
@@ -134,14 +116,16 @@ ruby-cfg-clean: ## Unlink Ruby configuration files
 	stow --dir=ruby --target=$(XDG_CONFIG_HOME)/pry --delete pry
 
 rvm: gpg-receive-keys ## Install Ruby Version Manager
-	@if ! which rvm &> /dev/null ; then \
+	if ! which rvm &> /dev/null ; then \
 	  curl -sSL https://get.rvm.io | bash -s stable --with-default-gems="bundler rails neovim ripper-tags" --ignore-dotfiles; \
 	else \
 	  print 'RVM already installed. Doing nothing'; \
 	fi
 
 rvm-clean: -gpg-delete-keys ## Uninstall Ruby Version Manager
-	rvm implode --force
+	@if which rvm &> /dev/null ; then \
+	  rvm implode --force; \
+	fi
 
 python: -python-packages ## Install Python
 
@@ -151,43 +135,36 @@ python-packages: ## Install Python packages
 	-python3 -m pip install --user --upgrade black # py code formatter
 
 ##@ tmux
-plugin_dir := $(XDG_DATA_HOME)/tpm
+plugin_dir := $(XDG_CONFIG_HOME)/tmux/tpm
 
-tmux: tmux-cfg tmux-plugins ## Install & configure tmux
+tmux: tmux-cfg tmux-plugins ## Link tmux configuration files & install plugins
 
-tmux-clean: -tmux-cfg-clean ## Uninstall tmux & configuration files
-	-rm -rf $(plugin_dir)
+tmux-clean: tmux-plugins-clean tmux-cfg-clean ## Unlink tmux configuration files & uninstall plugins
 
-tmux-cfg: ## Link tmux configuration files
-	stow --restow --target=$(XDG_CONFIG_HOME)/tmux tmux
+tmux-plugins: ## Install tmux plugin manager and plugins
+	if [ ! -d $(plugin_dir) ] ; then \
+	  git clone https://github.com/tmux-plugins/tpm $(plugin_dir); \
+	fi
+	tmux start-server \; source-file $$XDG_CONFIG_HOME/tmux/tmux.conf 
 
-tmux-cfg-clean: ## Unlink tmux configuration files
-	stow --target=$(XDG_CONFIG_HOME)/tmux --delete tmux
-
-tmux-plugins: ## Install plugin manager and other related items
-	git clone https://github.com/tmux-plugins/tpm $(plugin_dir)
 	$(plugin_dir)/bin/install_plugins
 
 tmux-plugins-clean: ## Uninstall tmux plugins
 	-rm -rf $(plugin_dir)
 
 ##@ zsh
-zsh: -zsh-cfg ## Install zsh-related items
+zsh: zsh-cfg zsh-cfg-env ## Install zsh-related items
 
-.PHONY : zsh-cfg
-zsh-cfg: ## Link zsh configuration files
+zsh-clean: zsh-cfg-clean zsh-cfg-env-clean ## Uninstall zsh-related items
+
+zsh-cfg-env: ## Link ~/.zshenv
 	ln -sf $(cwd)/.zshenv $$HOME/.zshenv
-	@[ -d $(XDG_CONFIG_HOME)/zsh ] || mkdir $(XDG_CONFIG_HOME)/zsh
-	stow --restow --target=$(XDG_CONFIG_HOME)/zsh zsh
-	@[ -d $(XDG_DATA_HOME)/zsh ] || mkdir $(XDG_DATA_HOME)/zsh
 
-zsh-cfg-clean: ## Unlink zsh configuration files
-	stow --target=$(XDG_CONFIG_HOME)/zsh --delete zsh
-	-rm $$HOME/.zshenv
+zsh-cfg-env-clean: ## Unlink ~/.zshenv
+	rm $$HOME/.zshenv
 
 ##@ Misc
 
-.PHONY : macos
 XCODE_INSTALLED := $(shell xcode-select -p 1>/dev/null; echo $$?)
 macos: ## Set macOS defaults and install XCode command line developer tools
 ifeq ($(shell uname -s), Darwin)
@@ -223,18 +200,12 @@ ssh-cfg-clean: ## Install ssh related files
 ssh-add-key: -ssh ## Add key to SSH agent
 	ssh-add -K ~/.ssh/id_ed25519
 
-misc-cfg: ## Miscellany
+misc-cfg: ripgrep-cfg lazygit-cfg ## Miscellany
 	@[ -e $$HISTFILE ] || touch $$HISTFILE
 	stow --restow --target=$(XDG_CONFIG_HOME)/ starship
-	@[ -d $(XDG_CONFIG_HOME)/ripgrep ] || mkdir $(XDG_CONFIG_HOME)/ripgrep
-	stow --restow --target=$(XDG_CONFIG_HOME)/ripgrep ripgrep
-	@[ -d $(XDG_CONFIG_HOME)/lazygit ] || mkdir $(XDG_CONFIG_HOME)/lazygit
-	stow --restow --target=$(XDG_CONFIG_HOME)/lazygit lazygit
 
-misc-cfg-clean: ## Unlink misc configs
+misc-cfg-clean: ripgrep-cfg-clean lazygit-cfg-clean ## Unlink misc configs
 	stow --target=$(XDG_CONFIG_HOME) --delete starship
-	stow --target=$(XDG_CONFIG_HOME)/ripgrep --delete ripgrep
-	stow --target=$(XDG_CONFIG_HOME)/lazygit --delete lazygit
 
 xdg-setup: ## Create XDG dirs (XDG_CONFIG_HOME, etc.)
 	@[ -d $(XDG_CONFIG_HOME) ] || mkdir -p $(XDG_CONFIG_HOME)
