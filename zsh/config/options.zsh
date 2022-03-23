@@ -1,3 +1,6 @@
+autoload -U compinit
+compinit
+
 typeset -g zle_highlight=(region:bg=black) # Highlight the background of the text when selecting.
 typeset -g WORDCHARS='*?_-.[]~=&;!#$%^(){}<>' # List of characters considered part of a word.
 typeset -U path # prevent duplicate PATH entries

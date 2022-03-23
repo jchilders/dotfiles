@@ -14,9 +14,12 @@ unset file
 # Source the completions installed by homebrew
 if type brew &>/dev/null; then
   FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
+fi
 
-  autoload -Uz compinit
-  compinit
+# 1password completions
+if type op &>/dev/null; then
+  eval "$(op completion zsh)"
+  compdef _op op
 fi
 
 # zoxide: smarter cd

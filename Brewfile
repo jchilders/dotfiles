@@ -61,7 +61,11 @@ cask 'font-inconsolata'
 cask 'font-fantasque-sans-mono'
 cask 'font-powerline-symbols'
 
-# TODO: Fix this so calling `brew bundle` doesn't fail when these are already
-# installed
+tap '1Password/homebrew-tap'
+cask '1password-cli'
+
 cask 'alacritty' # fast(est) terminal emulator
-cask 'lulu' # allow/deny apps network access
+
+# Optionals. Uncomment to install
+
+# cask 'lulu' # allow/deny apps network access
