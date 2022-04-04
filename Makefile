@@ -99,8 +99,8 @@ alacritty-clean: alacritty-cfg-clean ## Remove alacritty terminal emulator
 
 ##@ Languages
 ruby: ruby-cfg rvm ## Install Ruby
-	$$HOME/.rvm/bin/rvm install ruby-3
-	$$HOME/.rvm/bin/rvm alias create default ruby-2
+	$$HOME/.rvm/bin/rvm install --no-docs ruby-3
+	$$HOME/.rvm/bin/rvm alias create default ruby-3
 
 ruby-clean: ruby-cfg-clean rvm-clean ## Uninstall Ruby
 
@@ -123,6 +123,7 @@ rvm: gpg-receive-keys ## Install Ruby Version Manager
 	fi
 
 rvm-clean: -gpg-delete-keys ## Uninstall Ruby Version Manager
+	[ -f $$HOME/.rvmrc ] && rm $$HOME/.rvmrc
 	@if which rvm &> /dev/null ; then \
 	  rvm implode --force; \
 	fi
