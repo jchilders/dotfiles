@@ -5,7 +5,7 @@ HB_CNF_HANDLER="$(brew --prefix)/Homebrew/Library/Taps/homebrew/homebrew-command
 
 source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-source /usr/local/share/zsh-abbr/zsh-abbr.zsh # like aliases, but they expand in place
+# source /usr/local/share/zsh-abbr/zsh-abbr.zsh # like aliases, but they expand in place
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 

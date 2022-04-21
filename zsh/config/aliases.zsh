@@ -18,59 +18,79 @@ function man() {
   fi
 }
 
-# Aliases and abbrs
-alias ..='cd ..'
+# Aliases
 alias ...='cd ../..'
-
+alias cpwd="pwd | tr -d '\n' | pbcopy; print 'Current directory copied to pasteboard'"
+alias diff='delta' # viewer for `git diff` and `diff`
+alias gcb="git branch --show-current | tr -d '\n' | pbcopy; print 'Current branch copied to pasteboard'"
+alias l='exa --all --classify --git --header --icons --long --no-permissions --no-user --color-scale'
+alias tree='exa --tree'
 alias python=/usr/local/bin/python3
 
-abbr add be='bundle exec' > /dev/null 2>&1
-abbr add bi='bundle install' > /dev/null 2>&1
+# Abbreviations
+# Silence "already exists" warnings from `abbr` when loading new shells
 
-alias cpwd="pwd | tr -d '\n' | pbcopy; print 'Current directory copied to pasteboard'"
+function addAbbreviations() {
+  # Exit if abbreviations already defined. (`-s` is "file exists and has size > 0")
+  [[ -s $ABBR_USER_ABBREVIATIONS_FILE ]] && return 1
 
-abbr add dcom='docker-compose' > /dev/null 2>&1
+  source /usr/local/share/zsh-abbr/zsh-abbr.zsh # like aliases, but they expand in place
 
-alias diff='delta' # viewer for `git diff` and `diff`
+  export ABBR_QUIET=1
+  export ABBR_FORCE=1
+  abbr add bi='bundle install'
+  abbr add dcom='docker-compose'
+  abbr add gd='git diff'
+  abbr add gst='git status -sb'
 
-alias gcb="git branch --show-current | tr -d '\n' | pbcopy; print 'Current branch copied to pasteboard'"
-abbr add gd='git diff' > /dev/null 2>&1
-abbr add gst='git status -sb' > /dev/null 2>&1
+  # Ruby and Rails helpers
+  abbr add rc='rails console'
+  abbr add rs='rails server' > /dev/null 2>&1
+  abbr add rdbm='rails db:migrate'
+  abbr add rdbms='rails db:migrate:status'
+  abbr add rdbmt='rails db:migrate RAILS_ENV=test'
+  abbr add rdbmst='rails db:migrate:status RAILS_ENV=test'
+  unset ABBR_FORCE
+  unset ABBR_QUIET
+}
+addAbbreviations
 
-alias l='exa --all --classify --git --header --icons --long --no-permissions --no-user --color-scale'
-
-abbr add muxi='tmuxinator' > /dev/null 2>&1
-
-# Rails
-abbr add rdbm='rails db:migrate' > /dev/null 2>&1
-abbr add rdbms='rails db:migrate:status' > /dev/null 2>&1
-abbr add rdbmt='rails db:migrate RAILS_ENV=test' > /dev/null 2>&1
-abbr add rdbmst='rails db:migrate:status RAILS_ENV=test'> /dev/null 2>&1
-
-alias tree='exa --tree'
-
-# Functions
-
-function rc() {
-  if [[ -f bin/rails ]]; then
-    bin/rails console
-  elif [[ -f bin/console ]]; then
-    bin/console
+function killr() {
+  if [[ -f tmp/pids/server.pid ]]; then
+    pid=$(cat tmp/pids/server.pid)
+    echo "Killing PID $pid"
+    kill -5 $pid
+    return 0
   else
-    echo "No console found"
+    echo "server.pid file not found"
     return 1
   fi
 }
 
-function rs {
-  # If $PORT is defined, then start rails with the -p param. Otherwise... don't.
-  [[ -v PORT ]] && port_arg=("-p $PORT") || unset port_arg
-  rails_cmd=("bin/rails server $port_arg")
-  echo $rails_cmd
-  eval $rails_cmd
-}
+# Needed these `rc` and `rs` functions when I was working on (very) different
+# Rails versions simultaneously. Keeping them for a bit until I'm sure they can
+# be replaced with simple aliases
+#
+# function rc() {
+#   if [[ -f bin/rails ]]; then
+#     bin/rails console
+#   elif [[ -f bin/console ]]; then
+#     bin/console
+#   else
+#     echo "No console found"
+#     return 1
+#   fi
+# }
+#
+# function rs {
+#   # If $PORT is defined, then start rails with the -p param. Otherwise... don't.
+#   [[ -v PORT ]] && port_arg=("-p $PORT") || unset port_arg
+#   rails_cmd=("bin/rails server $port_arg")
+#   echo $rails_cmd
+#   eval $rails_cmd
+# }
 
-# Change directory to source dir for given Homebrew forumla or cask
+# Change directory to source dir for given Homebrew formula or cask
 function cdbrew {
   if [[ $# -eq 0 ]]; then
       echo "Usage: $0 <formula or cask name>"
