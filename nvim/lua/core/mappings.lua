@@ -123,9 +123,12 @@ function M.mappings()
   remap("n", "<leader>tshi", "<cmd>TSHighlightCapturesUnderCursor<CR>")
 
   -- move current treesitter object up
-  remap("n", "J", "<cmd>lua require('jc.tireswing').swap_nodes(false)<CR>")
+  -- remap("n", "J", "<cmd>lua require('jc.tireswing').swap_nodes(false)<CR>")
   -- move current treesitter object down
-  remap("n", "K", "<cmd>lua require('jc.tireswing').swap_nodes(true)<CR>")
+  -- remap("n", "K", "<cmd>lua require('jc.tireswing').swap_nodes(true)<CR>")
+
+  -- Copy to system clipboard with ctrl-c
+  remap("v", "<C-c>", '"+y')
 
   -- delete into blackhole and paste last yank
   remap("v", "<leader>p", '"_dP')
@@ -166,7 +169,7 @@ function M.mappings()
 
   -- files
   map_ctrlo_tele("o", "find_files")
-  map_ctrlo_tele("O", "search_all_files")
+  map_ctrlo_tele("O", "search_all_files") -- TODO: Make work like rg
 
   -- rails
   map_ctrlo_tele("rc", "find_files", { search_dir = "app/controllers" })
@@ -219,7 +222,7 @@ function M.mappings()
   remap("t", "<C-l>", [[<C-\><C-n><C-W>l]])
 
   -- toggleterm
-  remap("n", "<leader>ot", "<cmd>lua R('plugins.toggleterm').toggle_left_term()<CR>")
+  -- remap("n", "<leader>ot", "<cmd>lua R('plugins.toggleterm').toggle_left_term()<CR>")
 
   -- dap NOTE: Lazyloaded
   -- also NOTE: not working atm

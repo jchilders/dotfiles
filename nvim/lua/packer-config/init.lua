@@ -87,7 +87,7 @@ local function init()
   use({
     "nvim-treesitter/playground",
     disable = false,
-	})
+  })
 
   -- smart selection/moving/previewing of TS/LSP objects
   use({
@@ -98,9 +98,9 @@ local function init()
   -- Use `v.` in normal mode in treesitter-enabled buffer to visually select
   -- progressively broader TS nodes
   use({
-	 	"RRethy/nvim-treesitter-textsubjects",
+    "RRethy/nvim-treesitter-textsubjects",
     disable = false,
-	})
+  })
 
   use({
     "b3nj5m1n/kommentary",
@@ -208,7 +208,6 @@ local function init()
       -- { "rafamadriz/friendly-snippets" },
     },
   })
-
 
   -- autoclose parens, etc.
   --[[ use({
