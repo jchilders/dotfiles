@@ -42,10 +42,10 @@ alias l='exa --all --classify --git --header --icons --long --no-permissions --n
 abbr add muxi='tmuxinator' > /dev/null 2>&1
 
 # Rails
-abbr add rdbm='bin/rake db:migrate' > /dev/null 2>&1
-abbr add rdbms='bin/rake db:migrate:status' > /dev/null 2>&1
-abbr add rdbmt='bin/rake db:migrate RAILS_ENV=test' > /dev/null 2>&1
-abbr add rdbmst='bin/rake db:migrate:status RAILS_ENV=test'> /dev/null 2>&1
+abbr add rdbm='rails db:migrate' > /dev/null 2>&1
+abbr add rdbms='rails db:migrate:status' > /dev/null 2>&1
+abbr add rdbmt='rails db:migrate RAILS_ENV=test' > /dev/null 2>&1
+abbr add rdbmst='rails db:migrate:status RAILS_ENV=test'> /dev/null 2>&1
 
 alias tree='exa --tree'
 
