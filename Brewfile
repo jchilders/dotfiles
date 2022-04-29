@@ -55,12 +55,6 @@ brew 'uptech/oss/alt'
 tap 'afnanenayet/tap'
 brew 'diffsitter'
 
-# fonts
-tap 'homebrew/cask-fonts'
-cask 'font-inconsolata'
-cask 'font-fantasque-sans-mono'
-cask 'font-powerline-symbols'
-
 tap '1Password/homebrew-tap'
 cask '1password-cli'
 

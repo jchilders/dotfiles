@@ -12,7 +12,7 @@ install: macos xdg-setup homebrew homebrew-bundle alacritty -fonts ruby tmux tmu
 
 clean: fonts-clean ruby-clean cfg-clean tmux-clean neovim-clean zsh-clean homebrew-clean ## Uninstall all the things
 
-cfg: xdg-setup alacritty-cfg nvim-cfg zsh-cfg ## Link configuration files
+cfg: xdg-setup alacritty-cfg nvim-cfg zsh ## Link configuration files
 	$(MAKE) git-cfg
 	$(MAKE) ssh-cfg
 	$(MAKE) tmux-cfg
@@ -92,7 +92,11 @@ neovim-plugins: nvim-cfg ## Install neovim plugins
 alacritty: alacritty-cfg ## Install alacritty terminal emulator
 	brew install --cask alacritty
 	# Need to unquarantine it for Catalina & above
-	xattr -d com.apple.quarantine /Applications/Alacritty.app
+	@if xattr -p com.apple.quarantine /Applications/Alacritty.app &> /dev/null ; then \
+	  xattr -d com.apple.quarantine /Applications/Alacritty.app; \
+	else \
+	  print 'Alacritty already unquarantined.'; \
+	fi
 
 alacritty-clean: alacritty-cfg-clean ## Remove alacritty terminal emulator
 	brew uninstall --cask alacritty
@@ -102,11 +106,13 @@ ruby: ruby-cfg rvm ## Install Ruby
 	$$HOME/.rvm/bin/rvm install --no-docs ruby-3
 	$$HOME/.rvm/bin/rvm alias create default ruby-3
 
-ruby-clean: ruby-cfg-clean rvm-clean ## Uninstall Ruby
+ruby-clean: -ruby-cfg-clean -rvm-clean ## Uninstall Ruby
 
 ruby-cfg: ## Link Ruby configuration files
 	stow --dir=ruby --target=$$HOME ruby
 	stow --dir=ruby --target=$$HOME gem
+	@[ -d $(XDG_CONFIG_HOME)/rails ] || mkdir $(XDG_CONFIG_HOME)/rails
+	stow --dir=ruby --target=$(XDG_CONFIG_HOME)/rails rails
 	@[ -d $(XDG_CONFIG_HOME)/pry ] || mkdir $(XDG_CONFIG_HOME)/pry
 	stow --dir=ruby --target=$(XDG_CONFIG_HOME)/pry pry
 
@@ -114,6 +120,7 @@ ruby-cfg-clean: ## Unlink Ruby configuration files
 	stow --dir=ruby --target=$$HOME --delete ruby
 	stow --dir=ruby --target=$$HOME --delete gem
 	stow --dir=ruby --target=$(XDG_CONFIG_HOME)/pry --delete pry
+	stow --dir=ruby --target=$(XDG_CONFIG_HOME)/rails --delete rails
 
 rvm: gpg-receive-keys ## Install Ruby Version Manager
 	if ! which rvm &> /dev/null ; then \
@@ -180,16 +187,17 @@ endif
 fonts: ## Install fonts
 	## Font used with toilet banner generator
 	cp cosmic.flf /usr/local/Cellar/toilet/0.3/share/figlet
+	brew bundle install --file Brewfile.fonts
 
 fonts-clean: ## Uninstall fonts
-	-rm $$HOME/Library/Fonts/*
-	-rm /usr/local/Cellar/toilet/0.3/share/figlet/cosmic.flf
+	rm $$HOME/Library/Fonts/*
+	rm /usr/local/Cellar/toilet/0.3/share/figlet/cosmic.flf
 
 git-cfg: ## Link git configuration files
 	stow --target=$$HOME git
 
 git-cfg-clean: ## Unlink git configuration files
-	-stow --target=$$HOME --delete git
+	stow --target=$$HOME --delete git
 
 ssh-cfg: ## Install ssh related files
 	@[ -d $$HOME/.ssh ] || mkdir $$HOME/.ssh
