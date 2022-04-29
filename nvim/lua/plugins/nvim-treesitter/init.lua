@@ -3,8 +3,8 @@ M.__index = M
 
 function M.init()
   require("nvim-treesitter.configs").setup({
-    -- one of "all", "maintained" (parsers with maintainers), or a list of languages
-    ensure_installed = "maintained",
+    -- one of "all" or a list of languages
+    ensure_installed = "all",
     highlight = {
       enable = true,
       -- the following is needed to fix matchit/% code block matching from breaking
