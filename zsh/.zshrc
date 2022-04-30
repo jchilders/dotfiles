@@ -1,9 +1,9 @@
 # these need to happen in the given order
 foreach file (
   options.zsh
+  exports.zsh
   sources.zsh
   aliases.zsh
-  exports.zsh
   ctrlo-widgets.zsh
   misc-widgets.zsh
 ) {
