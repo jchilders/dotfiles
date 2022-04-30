@@ -1,7 +1,7 @@
 # Custom widgets
 
 function __find_file {
-  IFS=$'\n' export found_file=("$(eval $1 | fzf --ansi --tac --no-sort --preview='bat -f {-1}')")
+  IFS=$'\n' export found_file=("$(eval $1 | fzf --ansi --multi --preview='bat -f {-1}')")
 }
 
 function __eval_found_file {
