@@ -1,4 +1,4 @@
-# Custom widgets
+# Custom zsh widgets
 
 function __find_file {
   IFS=$'\n' export found_file=("$(eval $1 | fzf --ansi --multi --preview='bat -f {-1}')")
@@ -33,6 +33,7 @@ function edit_file {
 }
 zle -N edit_file
 bindkey '^oo' edit_file
+bindkey '^o^o' edit_file
 
 # ANY file
 function edit_any_file {

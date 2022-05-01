@@ -1,8 +1,7 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-# This script is used to sort the results of `git status` so that staged
-# changes come at the beginning, and unstaged/new changes come after.
+# Sort the results of `git status` for use by our Ctrl-O widgets.
 
 # Handle a single line returned from `git status --porcelain=v2`. Example:
 # Simple changed entries look like this:
@@ -41,8 +40,8 @@ class StatusLine
   end
 
   def <=>(other)
-    return -1 if staged? && !other.staged?
-    return 1 if !staged? && other.staged?
+    return 1 if staged? && !other.staged?
+    return -1 if !staged? && other.staged?
 
     mtime <=> other.mtime
   end

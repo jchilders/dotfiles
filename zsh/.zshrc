@@ -41,3 +41,5 @@ fi
 if type direnv &>/dev/null; then
   eval "$(direnv hook zsh)"
 fi
+
+[ -f "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh ] && source "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh

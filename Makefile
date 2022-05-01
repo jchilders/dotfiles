@@ -124,7 +124,7 @@ ruby-cfg-clean: ## Unlink Ruby configuration files
 
 rvm: gpg-receive-keys ## Install Ruby Version Manager
 	if ! which rvm &> /dev/null ; then \
-	  curl -sSL https://get.rvm.io | bash -s stable --with-default-gems="bundler rails neovim ripper-tags" --ignore-dotfiles; \
+	  curl -sSL https://get.rvm.io | bash -s stable --with-default-gems="bundler rails neovim ripper-tags gemsmith" --ignore-dotfiles; \
 	else \
 	  print 'RVM already installed. Doing nothing'; \
 	fi

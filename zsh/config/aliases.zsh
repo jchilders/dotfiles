@@ -6,8 +6,8 @@ autoload run-help
 export MANPAGER='nvim +Man!'
 export HELPDIR=/usr/share/zsh/$(zsh --version | ruby -ane 'puts $F[1]')/help
 
-# Override `man` so that it shows help pages for zsh builtins as well as for
-# normal executables.
+# Override the `man` command so that it shows help pages for zsh builtins as
+# well as for "normal" executables.
 function man() {
   readonly page=${1:?"usage: man <command or builtin>"}
 
@@ -38,6 +38,7 @@ function addAbbreviations() {
 
   export ABBR_QUIET=1
   export ABBR_FORCE=1
+  abbr add be='bundle exec'
   abbr add bi='bundle install'
   abbr add dcom='docker-compose'
   abbr add gd='git diff'
@@ -66,29 +67,6 @@ function killr() {
     return 1
   fi
 }
-
-# Needed these `rc` and `rs` functions when I was working on (very) different
-# Rails versions simultaneously. Keeping them for a bit until I'm sure they can
-# be replaced with simple aliases
-#
-# function rc() {
-#   if [[ -f bin/rails ]]; then
-#     bin/rails console
-#   elif [[ -f bin/console ]]; then
-#     bin/console
-#   else
-#     echo "No console found"
-#     return 1
-#   fi
-# }
-#
-# function rs {
-#   # If $PORT is defined, then start rails with the -p param. Otherwise... don't.
-#   [[ -v PORT ]] && port_arg=("-p $PORT") || unset port_arg
-#   rails_cmd=("bin/rails server $port_arg")
-#   echo $rails_cmd
-#   eval $rails_cmd
-# }
 
 # Change directory to source dir for given Homebrew formula or cask
 function cdbrew {
