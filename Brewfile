@@ -37,7 +37,6 @@ brew 'rust'
 brew 'showkey' # type a key and see it echoed in the terminal
 brew 'starship' # prompt
 brew 'stylua' # lua code formatter
-brew 'stow' # dotfiles management
 brew 'tealdeer' # Rust impl of `tldr`: man page supplement. brief desc, then examples
 brew 'tig'  # git history viewer
 brew 'tmux'
