@@ -159,13 +159,13 @@ Additional mappings (widgets) available to zsh:
 Uses `zoxide`. For example:
 
 ```
-➜ cd ~/workspace/myrailsproj
+➜ cd ~/work/myrailsproj
 ➜ pwd
-/Users/jchilders/workspace/myrailsproj
+/Users/jchilders/work/myrailsproj
 ➜ cd
 ➜ pwd
 /Users/jchilders
-➜ z myr # <-- easy!
+➜ z myr
 ➜ pwd
-/Users/jchilders/workspace/myrailsproj
+/Users/jchilders/work/myrailsproj
 ```
