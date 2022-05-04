@@ -4,3 +4,8 @@ Brewfile.lock.json
 default.gems.lock
 node_modules/
 Session.vim
+xdg_config/fzf
+xdg_config/gh/hosts.yml
+.zcompdump
+.zsh_history
+abbreviations
