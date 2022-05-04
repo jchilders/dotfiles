@@ -138,11 +138,11 @@ Additional mappings (widgets) available to zsh:
 | <kbd>^r</kbd> | Search command history (`^r<enter>` to run last command) |
 
 ## Aliases
-Defined in `zsh/config/aliases.zsh`
 
 | alias | description |
 | :---: | :---------- |
 | <kbd>bi</kbd> | `bundle install` |
+| <kbd>fc</kbd> | Edit last command in $EDITOR
 | <kbd>gcb</kbd> | Copies current branch name to pasteboard (clipboard) |
 | <kbd>gd</kbd> | `git diff` |
 | <kbd>gst</kbd> |  `git status -sb` |
