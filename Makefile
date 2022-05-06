@@ -143,11 +143,12 @@ python-packages: ## Install Python packages
 	-python3 -m pip install --user --upgrade black # py code formatter
 
 ##@ tmux
-plugin_dir := $(XDG_CONFIG_HOME)/tmux/tpm
 
 tmux: tmux-cfg tmux-plugins ## Link tmux configuration files & install plugins
 
 tmux-clean: tmux-plugins-clean tmux-cfg-clean ## Unlink tmux configuration files & uninstall plugins
+
+plugin_dir := $(XDG_DATA_HOME)/tmux/tpm
 
 tmux-plugins: ## Install tmux plugin manager and plugins
 	if [ ! -d $(plugin_dir) ] ; then \

@@ -1,10 +1,10 @@
 .DS_Store
-nvim/.netrwhist
-Brewfile.lock.json
-default.gems.lock
-node_modules/
-Session.vim
-xdg_config/gh/hosts.yml
 .zcompdump
 .zsh_history
+Brewfile.lock.json
+Session.vim
 abbreviations
+default.gems.lock
+node_modules/
+nvim/.netrwhist
+xdg_config/gh/hosts.yml
