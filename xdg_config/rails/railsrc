@@ -1,2 +1,0 @@
---skip-test # don't want test-unit
---database=postgresql
