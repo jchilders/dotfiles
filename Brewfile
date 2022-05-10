@@ -6,6 +6,7 @@ brew 'choose-rust' # sed replacement. e.g.: `bat things.csv | choose 5`
 brew 'cmake'
 brew 'coreutils' # gnu coreutils
 brew 'direnv' # directory-specific env vars
+brew 'dua-cli' # display disk usage, & delete
 brew 'exa' # git-aware ls replacement
 brew 'fd' # file finder
 brew 'fzf' # fuzzy finder

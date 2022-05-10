@@ -1,0 +1,27 @@
+link 'xdg_config', '~/.config' # Creates a link `~/.config` pointing at `<pwd>/xdg_config`
+
+symlink = File.expand_path('~/.config')
+require 'pathname'
+symlink = Pathname.new('~/.config').expand_path
+target = Pathname.new(File.expand_path('xdg_config'))
+symlink.make_symlink(target)
+
+brewfile # Install from default Brewfile
+brewfile 'Brewfile.fonts' # Install from given brewfile
+
+desc 'Add FZF fuzzy completion, as well as CTRL-T/R bindings'
+sh <<~SH
+  /usr/local/opt/fzf/install --xdg --key-bindings --completion --no-bash --no-update-rc
+SH
+
+# mas search $(mas list | tail -1 | choose -0)
+mas "1Password for Safari"
+mas "Pages"
+
+# LuLu - Approve/deny apps requesting outgoing connections
+dmg_install "https://github.com/objective-see/LuLu/releases/download/v2.4.1/LuLu_2.4.1.dmg"
+http --download https://github.com/objective-see/LuLu/releases/download/v2.4.1/LuLu_2.4.1.dmg
+# Download Dash document viewer
+http --download https://sanfrancisco.kapeli.com/downloads/v6/Dash.zip
+
+# vi:ft=ruby
