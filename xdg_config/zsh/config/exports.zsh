@@ -26,10 +26,11 @@ export RIPGREP_CONFIG_PATH=$XDG_CONFIG_HOME/ripgrep/.ripgreprc
 
 export NVM_DIR="$XDG_DATA_HOME/nvm"
 
-# Speed up shell startup by lazy loading nvm/node/yarn stuff. Graciously
-# provided by christophemarois
+# Speed up shell startup by lazy loading nvm/node/yarn stuff. See:
 # https://gist.github.com/fl0w/07ce79bd44788f647deab307c94d6922
-NODE_GLOBALS=(`find $NVM_DIR/versions/node -maxdepth 3 -type l -wholename '*/bin/*' | xargs -n1 basename | sort | uniq`)
+if [ -d $NVM_DIR/versions/node ]; then
+  NODE_GLOBALS+=(`find $NVM_DIR/versions/node -maxdepth 3 -type l -wholename '*/bin/*' | xargs -n1 basename | sort | uniq`)
+fi
 NODE_GLOBALS+=("node")
 NODE_GLOBALS+=("nvm")
 
