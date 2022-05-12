@@ -8,3 +8,4 @@ default.gems.lock
 node_modules/
 nvim/.netrwhist
 xdg_config/gh/hosts.yml
+.zsh_sessions/

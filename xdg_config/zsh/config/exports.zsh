@@ -1,27 +1,13 @@
 export XDG_DATA_HOME="$HOME/.local/share"
 
-# Add brew-managed bins to path, etc.
-eval $(brew shellenv)
-
 # Add RVM binaries for managing different Ruby versions
 path+=($HOME/.rvm/bin)
-
-# GNU grep
-path=('/usr/local/opt/grep/libexec/gnubin' $path)
-
-# GNU make
-path=('/usr/local/opt/make/libexec/gnubin' $path)
 
 # Binaries built by Cargo (Rust)
 path+=($HOME/.cargo/bin)
 
-# Python binaries
-# path+=($HOME/Library/Python/3.8/bin)
-
 # My scripts
 path+=($HOME/scripts)
-
-export PATH
 
 # Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then

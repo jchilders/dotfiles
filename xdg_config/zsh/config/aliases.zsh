@@ -25,7 +25,7 @@ alias diff='delta' # viewer for `git diff` and `diff`
 alias gcb="git branch --show-current | tr -d '\n' | pbcopy; print 'Current branch copied to pasteboard'"
 alias l='exa --all --classify --git --header --icons --long --no-permissions --no-user --color-scale'
 alias tree='exa --tree'
-alias python=/usr/local/bin/python3
+alias python=$HOMEBREW_PREFIX/bin/python3
 
 # Abbreviations
 # Silence "already exists" warnings from `abbr` when loading new shells
@@ -33,8 +33,6 @@ alias python=/usr/local/bin/python3
 function addAbbreviations() {
   # Exit if abbreviations already defined. (`-s` is "file exists and has size > 0")
   [[ -s $ABBR_USER_ABBREVIATIONS_FILE ]] && return 1
-
-  source /usr/local/share/zsh-abbr/zsh-abbr.zsh # like aliases, but they expand in place
 
   export ABBR_QUIET=1
   export ABBR_FORCE=1

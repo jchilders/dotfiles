@@ -1,3 +1,6 @@
+# Add brew-managed bins to path, etc.
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
 # these need to happen in the given order
 foreach file (
   options.zsh
@@ -41,5 +44,3 @@ fi
 if type direnv &>/dev/null; then
   eval "$(direnv hook zsh)"
 fi
-
-[ -f "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh ] && source "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh
