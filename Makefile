@@ -20,20 +20,6 @@ cfg-clean:
 	rm $$HOME/.config
 	rm $$HOME/scripts
 
-# This is needed by the rvm target: RVM signs their releases with GPG, so we
-# need to import their PKs. Note that this process can be buggy due to the
-# keyservers being slow or inoperational.
-rvm-receive-keys:
-	@if ! gpg --list-keys 409B6B1796C275462A1703113804BB82D39DC0E3 &> /dev/null; then \
-		gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 ; \
-	fi
-	@if ! gpg --list-keys 7D2BAF1CF37B13E2069D6956105BD0E739499BDB &> /dev/null; then \
-		gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys 7D2BAF1CF37B13E2069D6956105BD0E739499BDB; \
-	fi
-
-rvm-delete-keys:
-	gpg --batch --delete-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
-
 ##@ Homebrew
 homebrew: ## Install homebrew
 	sudo curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh | /bin/bash
@@ -48,7 +34,6 @@ homebrew-clean: ## Uninstall homebrew
 
 ##@ Neovim
 
-NEOVIM_SRC_DIR := "$$HOME/workspace/neovim"
 NEOVIM_CFG_DIR := "$(XDG_CONFIG_HOME)/nvim"
 
 neovim: neovim-plugins ## Install Neovim, configurations, & plugins
@@ -86,7 +71,7 @@ ruby-cfg-clean: ## Unlink Ruby configuration files
 	rm $$HOME/.gemrc
 
 rvm: rvm-receive-keys ## Install Ruby Version Manager
-	if ! which rvm &> /dev/null ; then \
+	@if ! which rvm &> /dev/null ; then \
 	  curl -sSL https://get.rvm.io | bash -s stable --with-default-gems="bundler rails neovim ripper-tags gemsmith" --ignore-dotfiles; \
 	else \
 	  print 'RVM already installed. Doing nothing'; \
@@ -98,6 +83,20 @@ rvm-clean: -rvm-delete-keys ## Uninstall Ruby Version Manager
 	  rvm implode --force; \
 	fi
 
+# This is needed by the rvm target: RVM signs their releases with GPG, so we
+# need to import their PKs. Note that this process can be buggy due to the
+# keyservers being slow or inoperational.
+rvm-receive-keys:
+	@if ! gpg --list-keys 409B6B1796C275462A1703113804BB82D39DC0E3 &> /dev/null; then \
+		gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 ; \
+	fi
+	@if ! gpg --list-keys 7D2BAF1CF37B13E2069D6956105BD0E739499BDB &> /dev/null; then \
+		gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys 7D2BAF1CF37B13E2069D6956105BD0E739499BDB; \
+	fi
+
+rvm-delete-keys:
+	gpg --batch --delete-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
+
 python: -python-packages ## Install Python
 
 # The pynvim package is needed by the vim-ultest plugin
@@ -107,11 +106,11 @@ python-packages: ## Install Python packages
 
 ##@ tmux
 
+tmux_plugins_dir := $(XDG_DATA_HOME)/tmux/tpm
+
 tmux: tmux-plugins ## Link tmux configuration files & install plugins
 
 tmux-clean: tmux-plugins-clean ## Unlink tmux configuration files & uninstall plugins
-
-tmux_plugins_dir := $(XDG_DATA_HOME)/tmux/tpm
 
 tmux-plugins: ## Install tmux plugin manager and plugins
 	if [ ! -d $(tmux_plugins_dir) ] ; then \
