@@ -4,7 +4,7 @@ M.__index = M
 function M.init()
   require("nvim-treesitter.configs").setup({
     -- one of "all" or a list of languages
-    ensure_installed = "all",
+    ensure_installed = { "ruby" },
     highlight = {
       enable = true,
       -- the following is needed to fix matchit/% code block matching from breaking

@@ -1,3 +1,4 @@
+local jc_utils = require("jc.utils")
 local windline = require("windline")
 local helper = require("windline.helpers")
 local b_components = require("windline.components.basic")
@@ -73,9 +74,9 @@ basic.source_context = {
   name = "source_context",
   hl_colors = colors_mode,
   text = function()
-    local gps = require("nvim-gps")
+    local gps = jc_utils.prequire("nvim-gps")
 
-    if gps.is_available() then
+    if gps and gps.is_available() then
       return {
         { gps.get_location(), "white" },
       }

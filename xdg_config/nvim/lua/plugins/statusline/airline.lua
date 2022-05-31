@@ -1,5 +1,6 @@
+local jc_utils = require("jc.utils")
 local windline = require('windline')
-local gps = require("nvim-gps")
+local gps = jc_utils.prequire("nvim-gps")
 local helper = require('windline.helpers')
 local sep = helper.separators
 local b_components = require('windline.components.basic')
@@ -100,7 +101,7 @@ basic.section_a_inactive = {
 }
 
 local section_b_body = function()
-    if gps.is_available() then
+    if gps and gps.is_available() then
         local loc_or_fname = gps.get_location()
         if gps.get_location() == '' then
             loc_or_fname = b_components.cache_file_name('[No Name]', 'unique')

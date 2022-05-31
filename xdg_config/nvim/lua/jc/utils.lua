@@ -4,7 +4,17 @@ local api = vim.api
 
 -- Grab bag of stuff that may or may not work
 
--- Create silnt normal mode mappings
+-- Like require, but gracefully handles errors
+function M.prequire(m)
+  local ok, err = pcall(require, m)
+  if not ok then
+    print("There was an error when requiring '" .. m .. "'")
+    return nil, err
+  end
+  return err
+end
+
+-- Create silent normal mode mappings
 function M.key_mapper(lhs, rhs)
   if type(rhs) == "table" then
     M.key_mapper(rhs[1], rhs[2])
@@ -54,7 +64,7 @@ function M.lsp_name()
   end
 end
 
-local ts_utils = require("nvim-treesitter.ts_utils")
+local ts_utils = M.prequire("nvim-treesitter.ts_utils")
 
 function M.T()
   print(ts_utils.get_node_at_cursor():type())
