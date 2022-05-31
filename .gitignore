@@ -1,6 +1,4 @@
 .DS_Store
-.zcompdump
-.zsh_history
 Brewfile.lock.json
 Session.vim
 abbreviations

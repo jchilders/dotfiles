@@ -1,5 +1,9 @@
+ZCACHE_HOME=$XDG_CACHE_HOME/zsh
+HISTFILE=$ZCACHE_HOME/history
+ZCOMPDUMP=$ZCACHE_HOME/zcompdump
+zstyle ':completion::complete:*' cache-path "${ZCACHE_HOME}/zcompcache"
 autoload -U compinit
-compinit
+compinit -d $ZCOMPDUMP
 
 typeset -g zle_highlight=(region:bg=black) # Highlight the background of the text when selecting.
 typeset -g WORDCHARS='*?_-.[]~=&;!#$%^(){}<>' # List of characters considered part of a word.

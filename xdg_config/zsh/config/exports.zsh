@@ -1,4 +1,17 @@
-export XDG_DATA_HOME="$HOME/.local/share"
+if [[ -z $XDG_CONFIG_HOME ]]
+then
+  export XDG_CONFIG_HOME="$HOME/.config"
+fi
+
+if [[ -z $XDG_DATA_HOME ]]
+then
+  export XDG_DATA_HOME="$HOME/.local/share"
+fi
+
+if [[ -z $XDG_CACHE_HOME ]]
+then
+  export XDG_CACHE_HOME="$HOME/.cache"
+fi
 
 # Add RVM binaries for managing different Ruby versions
 path+=($HOME/.rvm/bin)
@@ -8,6 +21,11 @@ path+=($HOME/.cargo/bin)
 
 # My scripts
 path+=($HOME/scripts)
+
+# fpath is where zsh looks for command completion scripts
+if type brew &>/dev/null; then
+  fpath+=($(brew --prefix)/share/zsh/site-functions)
+fi
 
 # Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then

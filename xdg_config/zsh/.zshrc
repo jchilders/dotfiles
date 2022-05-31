@@ -3,8 +3,8 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # these need to happen in the given order
 foreach file (
-  options.zsh
   exports.zsh
+  options.zsh
   sources.zsh
   aliases.zsh
   ctrlo-widgets.zsh
@@ -13,11 +13,6 @@ foreach file (
   source $ZDOTDIR/config/$file
 }
 unset file
-
-# Source the completions installed by homebrew
-if type brew &>/dev/null; then
-  FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
-fi
 
 # 1password completions
 if type op &>/dev/null; then
