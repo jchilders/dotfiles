@@ -35,6 +35,7 @@ brew 'redis' # redis is redis
 brew 'rg' # ripgrep
 brew 'rust'
 brew 'showkey' # type a key and see it echoed in the terminal
+brew 'solargraph' # Ruby language server (LSP)
 brew 'starship' # prompt
 brew 'stylua' # lua code formatter
 brew 'tealdeer' # Rust impl of `tldr`: man page supplement. brief desc, then examples
