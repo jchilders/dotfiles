@@ -20,21 +20,11 @@ while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode -bool true
 defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode2 -bool true
 
-# Expand print panel by default
-defaults write NSGlobalDomain PMPrintingExpandedStateForPrint -bool true
-defaults write NSGlobalDomain PMPrintingExpandedStateForPrint2 -bool true
-
-# Automatically quit printer app once the print jobs complete
-defaults write com.apple.print.PrintingPrefs "Quit When Finished" -bool true
-
 # Disable the “Are you sure you want to open this application?” dialog
 defaults write com.apple.LaunchServices LSQuarantine -bool false
 
 # Enable automatic termination of inactive apps
 defaults write NSGlobalDomain NSDisableAutomaticTermination -bool true
-
-# Set Help Viewer windows to non-floating mode
-defaults write com.apple.helpviewer DevMode -bool true
 
 ###############################################################################
 # Trackpad, mouse, keyboard, Bluetooth accessories, and input                 #
@@ -47,38 +37,9 @@ defaults write com.apple.BluetoothAudioAgent "Apple Bitpool Min (editable)" -int
 # (e.g. enable Tab in modal dialogs)
 defaults write NSGlobalDomain AppleKeyboardUIMode -int 3
 
-# Enable full keyboard access for all controls
-# (e.g. enable Tab in modal dialogs)
-defaults write NSGlobalDomain AppleKeyboardUIMode -int 3
-
-# Use scroll gesture with the Ctrl (^) modifier key to zoom
-defaults write com.apple.universalaccess closeViewScrollWheelToggle -bool true
-defaults write com.apple.universalaccess HIDScrollZoomModifierMask -int 262144
-
-# Disable press-and-hold for keys in favor of key repeat
-defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
-
 # Set a blazingly fast keyboard repeat rate
 defaults write NSGlobalDomain KeyRepeat -int 1
 defaults write NSGlobalDomain InitialKeyRepeat -int 25
-
-# Set language and text formats
-# Note: if you’re in the US, replace `EUR` with `USD`, `Centimeters` with
-# `Inches`, `en_GB` with `en_US`, and `true` with `false`.
-# defaults write NSGlobalDomain AppleLanguages -array "en"
-# defaults write NSGlobalDomain AppleLocale -string "en_US@currency=CAD"
-# defaults write NSGlobalDomain AppleMeasurementUnits -string "Centimeters"
-# defaults write NSGlobalDomain AppleMetricUnits -bool true
-
-# Set the timezone; see `sudo systemsetup -listtimezones` for other values
-# sudo systemsetup -settimezone "America/Montreal" > /dev/null
-
-
-
-###############################################################################
-# Energy saving                                                               #
-###############################################################################
-
 
 # Enable lid wakeup
 sudo pmset -a lidwake 1
@@ -93,8 +54,7 @@ sudo systemsetup -setrestartfreeze on
 sudo pmset -a displaysleep 15
 
 # Disable machine sleep while charging
-# sudo pmset -c sleep 0
-
+sudo pmset -c sleep 0
 
 ###############################################################################
 # Screen                                                                      #
@@ -104,33 +64,9 @@ sudo pmset -a displaysleep 15
 defaults write com.apple.screensaver askForPassword -int 1
 defaults write com.apple.screensaver askForPasswordDelay -int 0
 
-# Save screenshots to the desktop
-defaults write com.apple.screencapture location -string "${HOME}/Desktop"
-
-# Save screenshots in PNG format (other options: BMP, GIF, JPG, PDF, TIFF)
-defaults write com.apple.screencapture type -string "png"
-
-# Disable shadow in screenshots
-defaults write com.apple.screencapture disable-shadow -bool true
-
-# Enable subpixel font rendering on non-Apple LCDs
-# Reference: https://github.com/kevinSuttle/macOS-Defaults/issues/17#issuecomment-266633501
-defaults write NSGlobalDomain AppleFontSmoothing -int 1
-
-# Enable HiDPI display modes (requires restart)
-sudo defaults write /Library/Preferences/com.apple.windowserver DisplayResolutionEnabled -bool true
-
-
 ###############################################################################
 # Finder                                                                      #
 ###############################################################################
-
-# Finder: allow quitting via ⌘ + Q; doing so will also hide desktop icons
-# defaults write com.apple.finder QuitMenuItem -bool true
-
-# Finder: disable window animations and Get Info animations
-# defaults write com.apple.finder DisableAllAnimations -bool true
-
 
 # Finder: show all filename extensions
 defaults write NSGlobalDomain AppleShowAllExtensions -bool false
@@ -256,13 +192,6 @@ defaults write com.apple.commerce AutoUpdate -bool true
 defaults write com.apple.commerce AutoUpdateRestartRequired -bool true
 
 ###############################################################################
-# Photos                                                                      #
-###############################################################################
-
-# Prevent Photos from opening automatically when devices are plugged in
-defaults -currentHost write com.apple.ImageCapture disableHotPlug -bool true
-
-###############################################################################
 # Misc                                                                        #
 ###############################################################################
 printf "%s\n" "TextEdit - Use plain text mode for new documents."
@@ -271,9 +200,6 @@ defaults write com.apple.TextEdit RichText -int 0
 printf "%s\n" "Disk Utility - Enable debug menu."
 defaults write com.apple.DiskUtility DUDebugMenuEnabled -bool true
 defaults write com.apple.DiskUtility advanced-image-options -bool true
-
-printf "%s\n" "Game Center - Disable Game Center."
-defaults write com.apple.gamed Disabled -bool true
 
 printf "%s\n" "App Store - Enable the WebKit Developer Tools in the Mac App Store."
 defaults write com.apple.appstore WebKitDeveloperExtras -bool true
@@ -290,12 +216,3 @@ defaults write com.google.Chrome AppleEnableSwipeNavigateWithScrolls -bool true
 
 defaults write com.google.Chrome AppleEnableMouseSwipeNavigateWithScrolls -bool true
 defaults write com.google.Chrome.canary AppleEnableMouseSwipeNavigateWithScrolls -bool true
-
-# Use the system-native print preview dialog
-defaults write com.google.Chrome DisablePrintPreview -bool true
-defaults write com.google.Chrome.canary DisablePrintPreview -bool true
-
-# Expand the print dialog by default
-defaults write com.google.Chrome PMPrintingExpandedStateForPrint2 -bool true
-defaults write com.google.Chrome.canary PMPrintingExpandedStateForPrint2 -bool true
-

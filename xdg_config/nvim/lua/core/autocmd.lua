@@ -12,6 +12,7 @@ local function augroups()
         "Dashboard",
       }, -- disable tabline in dashboard
       { "BufNewFile,BufRead", "*.toml", "setf toml" }, -- set toml filetype
+      { "BufNewFile,BufRead", "*.jbuilder", "setf ruby" }, -- set toml filetype
       --[[ {
         "FileType",
         "*.toml",

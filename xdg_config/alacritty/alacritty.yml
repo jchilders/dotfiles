@@ -4,7 +4,7 @@ window:
   decorations: transparent
   opacity: 1.0
   # Windowed/Maximized/Fullscreen
-  startup_mode: Windowed
+  startup_mode: Fullscreen
   dynamic_title: true
 
 scrolling:
@@ -12,9 +12,22 @@ scrolling:
 
 font:
   normal:
-    family: Fantasque Sans Mono
+    # https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/FantasqueSansMono
+    family: FantasqueSansMono Nerd Font
     style: Regular
-  size: 16.0
+  bold:
+    # https://github.com/ryanoasis/nerd-fonts/blob/master/patched-fonts/FantasqueSansMono/Bold/complete/Fantasque%20Sans%20Mono%20Bold%20Nerd%20Font%20Complete.ttf
+    family: FantasqueSansMono Nerd Font
+    style: Bold
+  italic:
+    # https://github.com/ryanoasis/nerd-fonts/blob/master/patched-fonts/FantasqueSansMono/Italic/complete/Fantasque%20Sans%20Mono%20Italic%20Nerd%20Font%20Complete.ttf
+    family: FantasqueSansMono Nerd Font
+    style: Italic
+  bold_italic:
+    # https://github.com/ryanoasis/nerd-fonts/blob/master/patched-fonts/FantasqueSansMono/Bold-Italic/complete/Fantasque%20Sans%20Mono%20Bold%20Italic%20Nerd%20Font%20Complete.ttf
+    family: FantasqueSansMono Nerd Font
+    style: Bold Italic
+  size: 17.0
 
   offset:
    x: 1

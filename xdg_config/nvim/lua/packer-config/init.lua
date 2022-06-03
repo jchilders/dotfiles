@@ -13,15 +13,6 @@ local disable_things = false
 -- :PackerCompile
 -- quit/reload
 
--- TODO: Use this idiom where appropriate:
---
---   local ok, icon = pcall(require, "nvim-web-devicons")
---   if ok then
---     web_devicons = icon
---   else
---     web_devicons = false
---    end
-
 -- nil because packer is opt
 local packer = nil
 
@@ -52,14 +43,6 @@ local function init()
         run = "make",
       },
     },
-  })
-
-  -- :Telescope tmux sessions
-  -- :Telescope tmux windows
-  use({
-    "jchilders/telescope-tmux.nvim",
-    disable = false,
-    branch = "incl_curr_session_opt",
   })
 
   -- harpoon lets you mark a small number of key files on a per-project basis,
@@ -102,6 +85,9 @@ local function init()
     disable = false,
   })
 
+  -- comment code using directions or blocks. example:
+  -- gc2j - comment current line and 2 down
+  -- V2jgc - visually select current line & 2 down, then comment
   use({
     "b3nj5m1n/kommentary",
     disable = false,
@@ -132,6 +118,22 @@ local function init()
     end,
   })
 
+  -- completion
+  use({
+    "hrsh7th/nvim-cmp",
+    disable = false,
+    config = require("plugins.cmp").init,
+    requires = {
+      { "hrsh7th/cmp-buffer" },
+      { "hrsh7th/cmp-nvim-lsp" },
+      { "hrsh7th/cmp-nvim-lsp-document-symbol" },
+      { "hrsh7th/cmp-path" },
+      { "saadparwaiz1/cmp_luasnip" },
+      { "L3MON4D3/LuaSnip" },
+      -- { "rafamadriz/friendly-snippets" },
+    },
+  })
+
   use({
     "vim-test/vim-test",
     disable = true,
@@ -144,13 +146,6 @@ local function init()
       { "tpope/vim-dispatch", cmd = { "Dispatch" } },
     },
     wants = { "vim-dispatch", "neomake" },
-  })
-
-  -- automatically close & rename tags using treesitter
-  use({
-    "windwp/nvim-ts-autotag",
-    disable = true,
-    ft = { "typescriptreact", "javascriptreact", "html" },
   })
 
   -- use({ "ray-x/lsp_signature.nvim", opt = true }) -- auto signature trigger
@@ -174,7 +169,7 @@ local function init()
 
   use({
     "onsails/lspkind-nvim",
-    disable = true,
+    disable = false,
     config = require("plugins.lspkind-nvim").init,
   })
 
@@ -193,35 +188,14 @@ local function init()
 
   -- {{ /LSP }}
 
-  -- completion
-  use({
-    "hrsh7th/nvim-cmp",
-    disable = true,
-    config = require("plugins.cmp").init,
-    requires = {
-      { "hrsh7th/cmp-cmdline" },
-      { "hrsh7th/cmp-buffer" },
-      { "hrsh7th/cmp-nvim-lsp" },
-      { "hrsh7th/cmp-path" },
-      { "saadparwaiz1/cmp_luasnip" },
-      { "L3MON4D3/LuaSnip" },
-      -- { "rafamadriz/friendly-snippets" },
-    },
-  })
-
-  -- autoclose parens, etc.
-  --[[ use({
-    "windwp/nvim-autopairs",
-    disable = true,
-  }) ]]
-
   -- autoclose parens, function defs, etc.
-  --[[ use({
+  -- :h lexima.vim
+  use({
     "cohama/lexima.vim",
-    config = function()
+    --[[ config = function()
       vim.g.lexima_enable_basic_rules = 0 -- turn it off for quotes/parens/etc
-    end,
-  }) ]]
+    end, ]]
+  })
 
   -- look and feel of neovim
   -- colorscheme
@@ -256,7 +230,6 @@ local function init()
 
   -- indicate changed lines in gutter
   -- TODO: has mappings to stage chunks, other goodies. use.
-  --
   use({
     'lewis6991/gitsigns.nvim',
     disable = false,
@@ -264,14 +237,6 @@ local function init()
     config = function()
       require('gitsigns').setup()
     end
-  })
-
-  -- better wild menu: e.g.: when you do `:e` and you want to navigate the completion popup
-  -- currently funky.
-  use({
-    "gelguy/wilder.nvim",
-    disable = false,
-    opt = true,
   })
 
   use({
