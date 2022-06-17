@@ -39,7 +39,7 @@ brew 'solargraph' # Ruby language server (LSP)
 brew 'starship' # prompt
 brew 'stylua' # lua code formatter
 brew 'tealdeer' # Rust impl of `tldr`: man page supplement. brief desc, then examples
-brew 'tig'  # git history viewer
+brew 'tig' # git history viewer
 brew 'tmux'
 brew 'toilet' # ascii banners :)
 brew 'universal-ctags' # better ctags
