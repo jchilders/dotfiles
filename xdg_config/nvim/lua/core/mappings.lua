@@ -197,9 +197,6 @@ function M.mappings()
   remap("n", "<leader>fb", "<cmd>Format<CR>")
   remap("v", "<leader>fb", "<cmd>Format<CR>")
 
-  -- neogen
-  remap("n", "<leader>doc", "<cmd>lua require('neogen').generate()<CR>")
-
   -- harpoon
   remap("n", "<leader>ha", "<cmd>lua R('harpoon.mark').add_file()<CR>")
   -- open list of files marked as harpooned

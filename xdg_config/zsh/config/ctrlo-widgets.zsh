@@ -69,7 +69,7 @@ bindkey '^orv' edit_rails_view
 function add_from_git_status {
   if [[ -n "$found_file" ]]; then
     echo
-    read -k "answer?Add $found_file to the git staging area? [Y/n/d] "
+    read -k "answer?Add $found_file to the git staging area? [Y/n/d/c] "
 
     # This monstrosity is necessary b/c I could not get the case statment below
     # to work with the carriage return character, which is what you get when
@@ -91,7 +91,10 @@ function add_from_git_status {
         echo
         git status -s
         ;;
-      (d | D )
+      ( c )
+        __eval_found_file "git checkout"
+        ;;
+      ( d )
         __eval_found_file "git diff"
         ;;
       (*)

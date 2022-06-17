@@ -72,8 +72,8 @@ end
 
 -- Find and run the most recently updated test
 M.run_mru_rails_test = function()
-  local test_file = vim.fn.system("print -l **/*_spec.rb(om) | head -1")
-  local test_cmd = "rspec " .. test_file
+  local test_file = vim.fn.system("print -l (test|spec)/**/*_(test|spec).rb(om) | head -1")
+  local test_cmd = "rails test " .. test_file
 
   M.send_left(test_cmd)
 end

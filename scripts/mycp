@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+
+def apicopy(file)
+  dest = File.join(Dir.home, 'work', 'carerev', 'api_app', file)
+  dest_path = File.path(dest)
+  unless File.directory?(dest_path)
+    FileUtils.mkdir_p(dest_path)
+  end
+  FileUtils.copy_file(file, dest)
+end

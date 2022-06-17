@@ -69,7 +69,7 @@ function M.init()
           luasnip.expand_or_jump()
         elseif packer_plugins["neogen"].loaded then
           local neogen = require("neogen")
-          if neogen.jumpable() then
+          if neogen ~= nil and neogen.jumpable() then
             vim.api.nvim_feedkeys(
               vim.api.nvim_replace_termcodes(
                 "<cmd>lua require('neogen').jump_next()<CR>",

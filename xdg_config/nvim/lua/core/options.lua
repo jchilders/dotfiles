@@ -8,6 +8,9 @@ function M.load_options()
   opt.backup = false
   opt.swapfile = false
 
+  -- Do not fix files (i.e. "add a newline") that do not have a newline as the final character
+  opt.fixendofline = false
+
   --[[ set path=.,src,node_nodules
   set suffixesadd=.js,.jsx ]]
 

@@ -5,6 +5,8 @@ local data_path = global.data_path -- $XDG_DATA_HOME/nvim/site
 local sep_os_replacer = require("utils").sep_os_replacer
 local packer_compiled = data_path .. "packer_compiled.vim"
 local compile_to_lua = data_path .. "lua" .. global.path_sep .. "_compiled.lua"
+local remap = require("utils").map_global
+
 local disable_things = false
 
 -- ??Problems??
@@ -135,6 +137,17 @@ local function init()
   })
 
   use({
+    'andymass/vim-matchup',
+    config = function()
+      require'nvim-treesitter.configs'.setup {
+        matchup = {
+          enable = true
+        }
+      }
+    end
+  })
+
+  use({
     "vim-test/vim-test",
     disable = true,
     cmd = { "TestFile" },
@@ -240,21 +253,20 @@ local function init()
   })
 
   use({
-    "Shatur/neovim-session-manager",
-    disable = true,
+    "danymat/neogen",
     config = function()
-      require("session_manager").setup({
-        -- Define what to do when Neovim is started without arguments. Possible
-        -- values: Disabled, CurrentDir, LastSession
-        autoload_mode = require("session_manager.config").AutoloadMode.CurrentDir,
-        -- Automatically save last session on exit
-        autosave_last_session = true,
-      })
-      require("telescope").load_extension("sessions")
+      require('neogen').setup({})
+
+      local remap = require("utils").map_global
+      remap("n", "<leader>doc", "<cmd>lua require('neogen').generate()<CR>")
     end,
+    requires = "nvim-treesitter/nvim-treesitter",
+    -- Uncomment next line if you want to follow only stable versions
+    -- tag = "*"
   })
 
   -- {{ to investigate }}
+  -- mrjones2014/dash.nvim - Fuzzy search Dash.app (API docsets)
   -- tpope/vim-repeat - allows `.` command to work w/ mappings
   -- jose-elias-alvarez/null-ls.nvim - lets you run shell cmds & send output to LSP which can then be read by nvim
 

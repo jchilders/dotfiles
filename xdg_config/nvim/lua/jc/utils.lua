@@ -64,7 +64,8 @@ function M.lsp_name()
   end
 end
 
-local ts_utils = M.prequire("nvim-treesitter.ts_utils")
+-- local ts_utils = M.prequire("nvim-treesitter.ts_utils")
+local ts_utils = M.prequire("vim.treesitter.query")
 
 function M.T()
   print(ts_utils.get_node_at_cursor():type())
