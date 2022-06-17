@@ -1,0 +1,20 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Run Changed Tests - Run only the tests that have been modified from the current HEAD commit
+
+require 'open3'
+require_relative 'status_lines'
+
+chgd_files = StatusLines.new
+                        .reject(&:deleted?)
+                        .select(&:test_file?)
+                        .map(&:path)
+
+cmd = %w[rails test] + chgd_files
+
+Open3.popen2e(*cmd) do |_stdin, stdout_stderr, _thread|
+  stdout_stderr.each do |line|
+    print line
+  end
+end

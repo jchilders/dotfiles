@@ -12,6 +12,18 @@ foreach font (
   echo
 }
 
+foreach val ($(rct)) {
+  echo "val: $val"
+}
+
+# foreach file ($(rg --files-with-matches AfterSaveFollow)) {
+#   sed -i '' 's/AfterSaveFollowUpJob/GeocodeAddressJob/g' $file
+# }
+
+# foreach file ($(rg --files-with-matches AfterSaveFollow)) {
+#   echo "$file:"
+# }
+
 # for font in ours/*.flf(.); do
   # echo "$font:"
   # toilet --font $font Academy
