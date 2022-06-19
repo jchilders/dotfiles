@@ -1,5 +1,6 @@
 brew 'automake'
 brew 'bat' # cat replacement
+brew 'chafa' # ANSI art renderer
 brew 'choose-rust' # sed replacement. e.g.: `bat things.csv | choose 5`
 brew 'cmake'
 brew 'coreutils' # gnu coreutils
