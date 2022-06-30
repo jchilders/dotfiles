@@ -18,7 +18,7 @@ function M.load_options()
   opt.autoread = true -- reload files on external change
   opt.clipboard = "unnamedplus" -- clipboard yank
   opt.cursorline = true -- highlight current line
-  opt.expandtab = true -- insert spaces instead of tabs when indenting
+  opt.expandtab = false -- insert spaces instead of tabs when indenting
   opt.fileformat = "unix"
   opt.grepprg = "rg"
   opt.hidden = true
@@ -29,11 +29,13 @@ function M.load_options()
   opt.scrolloff = 3
   opt.showmode = false -- let status bar handle it
   opt.showtabline = 0 -- I don't use tablines, so...
+  opt.shiftwidth = 2
   opt.sidescroll = 5
   opt.sidescrolloff = 15
   opt.signcolumn = "yes"
   opt.smartcase = true
-  opt.tildeop = true -- let ~ command work with motions: `~w` will toggle case of curr word, e.g.
+  opt.tabstop = 2
+  opt.tildeop = false -- let ~ command work with motions: `~w` will toggle case of curr word, e.g.
   opt.timeoutlen = 500
   opt.wildmenu = true
   opt.wildmode = "longest,full"
