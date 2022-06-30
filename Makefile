@@ -14,11 +14,11 @@ clean: fonts-clean ruby-clean cfg-clean tmux-clean neovim-clean zsh-clean homebr
 
 cfg: xdg-setup ## Link configuration files
 	ln -s $(cwd)/xdg_config $$HOME/.config
-	ln -sf $(cwd)/scripts $$HOME/scripts
+	ln -sf $(cwd)/bin $$HOME/bin
 
 cfg-clean:
 	rm $$HOME/.config
-	rm $$HOME/scripts
+	rm $$HOME/bin
 
 ##@ Homebrew
 homebrew: ## Install homebrew

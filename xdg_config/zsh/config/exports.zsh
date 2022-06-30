@@ -20,7 +20,7 @@ path+=($HOME/.rvm/bin)
 path+=($HOME/.cargo/bin)
 
 # My scripts
-path+=($HOME/scripts)
+path+=($HOME/bin)
 
 # fpath is where zsh looks for command completion scripts
 if type brew &>/dev/null; then
