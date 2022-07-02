@@ -129,11 +129,13 @@ local function init()
     'andymass/vim-matchup',
     disable = false,
     config = function()
-      require'nvim-treesitter.configs'.setup {
+      vim.g.matchup_matchparen_offscreen = {}
+
+      require'nvim-treesitter.configs'.setup({
         matchup = {
           enable = true
         }
-      }
+      })
     end
   })
 
