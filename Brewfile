@@ -49,7 +49,7 @@ brew 'watchexec' # auto-restart process when file(s) change
 # yank: copy to clipboard via keyboard navigation (arrow keys, hjkl, etc.)
 #
 # get a key or value from `env` & use '=' as a delimiter:
-# env | yank -d = 
+# env | yank -d =
 #
 # select a process and kill it:
 # ps | yank -g '[0-9]+' | xargs kill
@@ -77,5 +77,4 @@ cask '1password-cli'
 cask 'alacritty' # fast(est) terminal emulator
 
 # Optionals. Uncomment to install
-
 # cask 'lulu' # allow/deny apps network access

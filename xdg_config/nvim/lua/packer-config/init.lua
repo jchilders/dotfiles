@@ -6,6 +6,7 @@ local sep_os_replacer = require("utils").sep_os_replacer
 local packer_compiled = data_path .. "packer_compiled.vim"
 local compile_to_lua = data_path .. "lua" .. global.path_sep .. "_compiled.lua"
 local remap = require("utils").map_global
+local bmap = require("utils").map_buffer_new
 
 local disable_things = false
 
@@ -55,11 +56,8 @@ local function init()
     config = require("plugins.harpoon").init,
   })
 
-  -- faster lua-based filetype detection. helps with startup time.
-  use({
-    "nathom/filetype.nvim",
-    disable = false,
-  })
+  -- faster startup time
+  use({ "nathom/filetype.nvim" })
 
   -- {{ Tree-sitter treesitter }} --
   use({
@@ -69,23 +67,14 @@ local function init()
   })
 
   -- :TSPlaygroundToggle
-  use({
-    "nvim-treesitter/playground",
-    disable = false,
-  })
+  use({ "nvim-treesitter/playground" })
 
   -- smart selection/moving/previewing of TS/LSP objects
-  use({
-    "nvim-treesitter/nvim-treesitter-textobjects",
-    disable = false,
-  })
+  use({ "nvim-treesitter/nvim-treesitter-textobjects" })
 
   -- Use `v.` in normal mode in treesitter-enabled buffer to visually select
   -- progressively broader TS nodes
-  use({
-    "RRethy/nvim-treesitter-textsubjects",
-    disable = false,
-  })
+  use({ "RRethy/nvim-treesitter-textsubjects" })
 
   -- comment code using directions or blocks. example:
   -- gc2j - comment current line and 2 down
@@ -138,6 +127,7 @@ local function init()
 
   use({
     'andymass/vim-matchup',
+    disable = false,
     config = function()
       require'nvim-treesitter.configs'.setup {
         matchup = {
@@ -165,21 +155,11 @@ local function init()
 
   -- {{ LSP }}
 
-  use({
-    "neovim/nvim-lspconfig",
-    disable = false,
-  })
+  use({ "neovim/nvim-lspconfig" })
+  use({ "williamboman/nvim-lsp-installer" })
+  use({ "nvim-lua/lsp-status.nvim" })
 
-  use({
-    "williamboman/nvim-lsp-installer",
-    disable = false,
-  })
-
-  use({
-    "nvim-lua/lsp-status.nvim",
-    disable = false,
-  })
-
+	-- Add pictograms to completion window suggestion list
   use({
     "onsails/lspkind-nvim",
     disable = false,
@@ -205,15 +185,17 @@ local function init()
   -- :h lexima.vim
   use({
     "cohama/lexima.vim",
+    disable = false,
     --[[ config = function()
       vim.g.lexima_enable_basic_rules = 0 -- turn it off for quotes/parens/etc
     end, ]]
   })
 
   -- look and feel of neovim
-  -- colorscheme
+
   require("core.highlights") -- load before colorscheme cfg
 
+  -- colorscheme
   use({
     "folke/tokyonight.nvim",
     disable = false,
@@ -242,22 +224,38 @@ local function init()
   })
 
   -- indicate changed lines in gutter
-  -- TODO: has mappings to stage chunks, other goodies. use.
   use({
     'lewis6991/gitsigns.nvim',
     disable = false,
     requires = 'nvim-lua/plenary.nvim',
     config = function()
-      require('gitsigns').setup()
+			require('gitsigns').setup({
+				current_line_blame = false, -- Toggle with `:Gitsigns toggle_current_line_blame`
+				current_line_blame_opts = {
+					virt_text = true,
+					virt_text_pos = 'eol', -- 'eol' | 'overlay' | 'right_align'
+					delay = 500,
+					ignore_whitespace = false,
+				},
+				current_line_blame_formatter = '<author>, <author_time:%Y-%m-%d> - <summary>',
+				on_attach = function(bufnr)
+					local gs = package.loaded.gitsigns
+					local bmap = require("utils").map_buffer_new
+					bmap('n', '<leader>gb', gs.toggle_current_line_blame)
+				end
+			})
     end
   })
 
+  -- Add documentation to a method/class/etc with a mapping.
+  -- Currently set to `<leader>doc`
   use({
     "danymat/neogen",
+    disable = false,
     config = function()
       require('neogen').setup({})
 
-      local remap = require("utils").map_global
+			local remap = require("utils").map_global
       remap("n", "<leader>doc", "<cmd>lua require('neogen').generate()<CR>")
     end,
     requires = "nvim-treesitter/nvim-treesitter",
@@ -268,7 +266,6 @@ local function init()
   -- {{ to investigate }}
   -- mrjones2014/dash.nvim - Fuzzy search Dash.app (API docsets)
   -- tpope/vim-repeat - allows `.` command to work w/ mappings
-  -- jose-elias-alvarez/null-ls.nvim - lets you run shell cmds & send output to LSP which can then be read by nvim
 
   use({ "wbthomason/packer.nvim", opt = true })
 end

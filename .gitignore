@@ -2,7 +2,9 @@
 Brewfile.lock.json
 Session.vim
 abbreviations
+configstore/
 default.gems.lock
+htop/
 node_modules/
 nvim/.netrwhist
 xdg_config/gh/hosts.yml

@@ -40,9 +40,13 @@ export DISABLE_SPRING=1
 
 export FZF_DEFAULT_COMMAND="fd"
 export FZF_DEFAULT_OPTS="--height 30% --border --tiebreak=index --info=inline"
-export RIPGREP_CONFIG_PATH=$XDG_CONFIG_HOME/ripgrep/.ripgreprc
 
 export NVM_DIR="$XDG_DATA_HOME/nvm"
+
+export RIPGREP_CONFIG_PATH=$XDG_CONFIG_HOME/ripgrep/.ripgreprc
+
+# colon-separated list of directories to exclude from zoxide dir switcher
+export _ZO_EXCLUDE_DIRS="$HOME/temp/*"
 
 # Speed up shell startup by lazy loading nvm/node/yarn stuff. See:
 # https://gist.github.com/fl0w/07ce79bd44788f647deab307c94d6922

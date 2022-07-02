@@ -19,7 +19,7 @@ function M.init()
   for _, lsp in ipairs(lsp_servers) do
     lsp_config[lsp.name].setup({
       on_attach = function(client, bufnr)
-        print("Attached to "..jcu.lsp_name())
+        print("Attached to " .. jcu.lsp_name())
       end,
     })
   end
