@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+
+# kill rails
+
+pid_file = 'tmp/pids/server.pid'
+if !File.exists?(pid_file)
+  puts "#{pid_file} not found"
+  exit 1
+end
+
+pid = File.read(pid_file)
+puts "Killing Rails server with PID #{pid}"
+`kill -5 #{pid}`
