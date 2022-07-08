@@ -6,13 +6,36 @@
 -- nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
 -- ~/bin/clean_nvim
 
-return require('packer').startup(function(use)
+-- Autocommand that reloads neovim whenever you save the plugins.lua file
+vim.cmd([[
+  augroup packer_user_config
+    autocmd!
+    autocmd BufWritePost plugins.lua source <afile> | PackerSync
+  augroup end
+]])
+
+-- Use a protected call so we don't error out on first use
+local status_ok, packer = pcall(require, "packer")
+if not status_ok then
+	return
+end
+
+-- Have packer use a popup window
+packer.init({
+	display = {
+		open_fn = function()
+			return require("packer.util").float({ border = "rounded" })
+		end,
+	},
+})
+
+return packer.startup(function(use)
 	use("wbthomason/packer.nvim")
 
   -- {{ Tree-sitter treesitter }} --
 	use({
 		"nvim-treesitter/nvim-treesitter",
-		config = require("plugins.nvim-treesitter").init,
+		config = require("plugins.nvim-treesitter").init(),
 	})
 
   -- telescope
@@ -45,10 +68,10 @@ return require('packer').startup(function(use)
 
   -- smart selection/moving/previewing of TS objects
 --  use({ "nvim-treesitter/nvim-treesitter-textobjects" })
---
---  -- Use `v.` in normal mode in treesitter-enabled buffer to visually select
---  -- progressively broader TS nodes
---  use({ "RRethy/nvim-treesitter-textsubjects" })
+
+  -- Use `v.` in normal mode in treesitter-enabled buffer to visually select
+  -- progressively broader TS nodes
+  use "RRethy/nvim-treesitter-textsubjects" 
 
   -- comment code using directions or blocks. example:
   -- gc2j - comment current line and 2 down
@@ -150,13 +173,13 @@ return require('packer').startup(function(use)
 	use({ "nvim-lua/lsp-status.nvim" })
 
 	-- Show function signature as you type
-	use({ "ray-x/lsp_signature.nvim", opt = false }) 
+	-- use({ "ray-x/lsp_signature.nvim", opt = false }) 
 
 	-- Add pictograms to completion window suggestion list
-  use({
+  --[[ use({
     "onsails/lspkind-nvim",
     config = require("plugins.lspkind-nvim").init,
-  })
+  }) ]]
 
 --  -- Window/split containing a pretty list for showing diagnostics, references,
 --  -- telescope results, quickfix and location lists to help you solve all the
@@ -169,37 +192,37 @@ return require('packer').startup(function(use)
 --    cmd = { "LspTroubleToggle" },
 --    requires = "kyazdani42/nvim-web-devicons",
 --  }) -- window for showing LSP detected issues in code
---
---  -- {{ /LSP }}
---
---  -- look and feel of neovim
---
---  require("core.highlights") -- load before colorscheme cfg
---
---  -- colorscheme
---  use({
---    "folke/tokyonight.nvim",
---    config = function()
---      vim.o.background = "dark" -- or light if you so prefer
---      vim.g.tokyonight_style = "night"
---
---      vim.cmd([[colorscheme tokyonight]])
---    end,
---  })
---
---  -- statusline
---  use({
---    "windwp/windline.nvim",
---    config = function()
---      require("plugins.statusline.airline")
---    end,
---  })
---
---  -- adds current function/class/etc. name to statusline
---  use({
---    "SmiteshP/nvim-gps",
---    requires = "nvim-treesitter/nvim-treesitter",
---  })
+
+  -- {{ /LSP }}
+
+  -- look and feel of neovim
+
+  require("core.highlights") -- load before colorscheme cfg
+
+  -- colorscheme
+  use({
+    "folke/tokyonight.nvim",
+    config = function()
+      vim.o.background = "dark" -- or light if you so prefer
+      vim.g.tokyonight_style = "night"
+
+      vim.cmd([[colorscheme tokyonight]])
+    end,
+  })
+
+  -- statusline
+   use({
+    "windwp/windline.nvim",
+     config = function()
+      require("plugins.statusline.airline")
+    end,
+  })
+
+  -- adds current function/class/etc. name to statusline
+  use({
+    "SmiteshP/nvim-gps",
+    requires = "nvim-treesitter/nvim-treesitter",
+  })
 
 	-- indicate changed lines in gutter
 	use({

@@ -2,21 +2,26 @@ local M = {}
 M.__index = M
 
 function M.init()
-  require("nvim-treesitter.configs").setup({
+  local status_ok, ts_config = pcall(require, "nvim-treesitter.configs")
+  if not status_ok then
+    return
+  end
+
+  ts_config.setup({
     -- one of "all" or a list of languages
     ensure_installed = { "ruby" },
     highlight = {
       enable = true,
       -- the following is needed to fix matchit/% code block matching from breaking
       -- see: https://github.com/andymass/vim-matchup/issues/145#issuecomment-820007797
-      additional_vim_regex_highlighting = true,
+      -- additional_vim_regex_highlighting = true,
       -- or -- additional_vim_regex_highlighting = { ruby=true },
     },
 
     -- indents via treesitter currently borked. disabling for now. see:
     -- https://github.com/nvim-treesitter/nvim-treesitter/projects/6#card-62266696
     indent = {
-      enable = false,
+      enable = true,
     },
 
     -- windwp/nvim-ts-autotag auto close/rename html tags

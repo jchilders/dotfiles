@@ -24,7 +24,7 @@ function M.load()
   opt.relativenumber = true
   opt.scrolloff = 3
   opt.showmode = false -- let status bar handle it
-  opt.showtabline = 0 -- I don't use tablines, so...
+  opt.showtabline = 2 -- 0: Never, 1: Only if there are 2 or more, 2: Always
   opt.shiftwidth = 2
   opt.sidescroll = 5
   opt.sidescrolloff = 15

@@ -8,14 +8,13 @@ function M.init()
     },
     projects = {
       -- Yes $HOME works
-      ["$HOME/workspace/dva/vets-api"] = {
+      --[[ ["$HOME/work/carerev/api_app"] = {
         term = {
           cmds = {
-            "bin/rails server",
-            "foreman start",
+            "rails console"
           },
         },
-      },
+      }, ]]
     },
   })
 end

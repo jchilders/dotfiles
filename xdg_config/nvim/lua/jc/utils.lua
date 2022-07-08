@@ -54,13 +54,24 @@ function M.add_gem_to_lsp_workspace(gem_name)
   vim.lsp.buf.add_workspace_folder(gem_path)
 end
 
+-- returns a string containing a comma-separated list of LSPs the current
+-- buffer is attached to
 function M.lsp_name()
   local bufnr = api.nvim_get_current_buf()
-  local client = vim.lsp.buf_get_clients(bufnr)
-  if #client == 0 then
+  local clients = vim.lsp.get_active_clients({ bufnr = bufnr })
+  if #clients == 0 then
     return "(no client)"
   else
-    return client[1]["name"]
+    local client_names = ""
+    local n = 0
+    for _,v in pairs(clients) do
+      if n > 1 then
+        client_names = client_names .. ", "
+      end
+      n = n + 1
+      client_names = client_names .. v.name
+    end
+    return client_names
   end
 end
 
