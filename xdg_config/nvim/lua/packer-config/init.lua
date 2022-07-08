@@ -1,5 +1,3 @@
-local disable_things = false
-
 -- ??Problems??
 -- :PackerInstall
 -- :PackerClean
@@ -14,14 +12,12 @@ return require('packer').startup(function(use)
   -- {{ Tree-sitter treesitter }} --
 	use({
 		"nvim-treesitter/nvim-treesitter",
-		disable = false,
 		config = require("plugins.nvim-treesitter").init,
 	})
 
   -- telescope
   use({
     "nvim-telescope/telescope.nvim",
-    disable = false,
 --    config = require("plugins.telescope").init,
     requires = {
       { "nvim-lua/plenary.nvim" },
@@ -38,7 +34,6 @@ return require('packer').startup(function(use)
   -- and quickly nav to them
   use({
     "ThePrimeagen/harpoon",
-    disable = false,
     config = require("plugins.harpoon").init,
 		requires = {
       { "nvim-lua/plenary.nvim" },
@@ -60,7 +55,6 @@ return require('packer').startup(function(use)
   -- V2jgc - visually select current line & 2 down, then comment
   use({
     "b3nj5m1n/kommentary",
-    disable = false,
 		requires = "nvim-treesitter/nvim-treesitter",
     -- all config here is recommented by nvim-ts-context-commentstring docs
     config = function()
@@ -94,7 +88,6 @@ return require('packer').startup(function(use)
 --  -- completion
 --  use({
 --    "hrsh7th/nvim-cmp",
---    disable = false,
 --    config = require("plugins.cmp").init,
 --    requires = {
 --      { "hrsh7th/cmp-buffer" },
@@ -113,9 +106,7 @@ return require('packer').startup(function(use)
 		'andymass/vim-matchup',
     requires = "nvim-treesitter/nvim-treesitter",
 		config = function()
-			vim.g.loaded_matchit = 1
-			vim.g.loaded_matchparen = 1
-
+      -- turn off updating statusline when match is outside of viewport
 			vim.g.matchup_matchparen_offscreen = {}
 
 			require'nvim-treesitter.configs'.setup({
@@ -130,7 +121,6 @@ return require('packer').startup(function(use)
 --  -- :h lexima.vim
 --  use({
 --    "cohama/lexima.vim",
---    disable = false,
 --    --[[ config = function()
 --      vim.g.lexima_enable_basic_rules = 0 -- turn it off for quotes/parens/etc
 --    end, ]]
@@ -138,7 +128,6 @@ return require('packer').startup(function(use)
 --
 --  use({
 --    "vim-test/vim-test",
---    disable = true,
 --    cmd = { "TestFile" },
 --    requires = {
 --      {
@@ -161,12 +150,11 @@ return require('packer').startup(function(use)
 	use({ "nvim-lua/lsp-status.nvim" })
 
 	-- Show function signature as you type
-	use({ "ray-x/lsp_signature.nvim", opt = true }) 
+	use({ "ray-x/lsp_signature.nvim", opt = false }) 
 
 	-- Add pictograms to completion window suggestion list
   use({
     "onsails/lspkind-nvim",
-    disable = false,
     config = require("plugins.lspkind-nvim").init,
   })
 
@@ -175,7 +163,6 @@ return require('packer').startup(function(use)
 --  -- trouble your code is causing.
 --  use({
 --    "folke/lsp-trouble.nvim",
---    disable = true,
 --    config = function()
 --      require("trouble").setup()
 --    end,
@@ -192,7 +179,6 @@ return require('packer').startup(function(use)
 --  -- colorscheme
 --  use({
 --    "folke/tokyonight.nvim",
---    disable = false,
 --    config = function()
 --      vim.o.background = "dark" -- or light if you so prefer
 --      vim.g.tokyonight_style = "night"
@@ -204,7 +190,6 @@ return require('packer').startup(function(use)
 --  -- statusline
 --  use({
 --    "windwp/windline.nvim",
---    disable = false,
 --    config = function()
 --      require("plugins.statusline.airline")
 --    end,
@@ -213,7 +198,6 @@ return require('packer').startup(function(use)
 --  -- adds current function/class/etc. name to statusline
 --  use({
 --    "SmiteshP/nvim-gps",
---    disable = false,
 --    requires = "nvim-treesitter/nvim-treesitter",
 --  })
 
@@ -244,7 +228,6 @@ return require('packer').startup(function(use)
 --  -- Currently set to `<leader>doc`
 --  use({
 --    "danymat/neogen",
---    disable = false,
 --    config = function()
 --      require('neogen').setup({})
 --
