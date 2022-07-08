@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-imgs=$(git diff --name-only master -- '*.jpg' '*.png')
-
-for img in $imgs; do
-  convert "./${img}" -strip -quality 50 "./${img}"
-done

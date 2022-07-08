@@ -1,9 +1,13 @@
 #!/usr/bin/env zsh
 
 echo "Below this line should be eight colored lines: two red, two green, two blue, and the last two rainbow-ish:"
-./24-bit-color.sh
+~/bin/24-bit-color.sh
+
+echo 
 echo "Below this line should be a single line with slashes and backslashes, with a background that goes ROYGBIV from left to right:"
-./truecolor-test
+~/bin/truecolor-test
+
+echo 
 echo -e "no formatting"
 echo -e "\e[1mbold\e[0m"
 echo -e "\e[3mitalic\e[0m"
@@ -17,8 +21,25 @@ echo -e "\e[4:4mdashed underline\e[0m"
 echo -e "\e[9mstrikethrough\e[0m"
 echo -e "\e[31mHello Red World 1\e[0m"
 echo -e "\x1B[31mHello Red World 2\e[0m"
-echo -e "\e[3;4;33mThis should be italicized, underlined, and yellow\n\e[0m"
+echo -e "\e[3;4;33mThis should be italicized, underlined, and yellow\e[0m"
+echo
 echo -e "Ligature: =>"
 echo
-./glyphs
+echo -e "Powerline glyphs:\n\
+Code points Glyphe  Description                Old code point
+U+E0A0      \xee\x82\xa0       Version control branch     (U+2B60 \xe2\xad\xa0 )\n\
+U+E0A1      \xee\x82\xa1       LN (line) symbol           (U+2B61 \xe2\xad\xa1 )\n\
+U+E0A2      \xee\x82\xa2       Closed padlock             (U+2B64 \xe2\xad\xa4 )\n\
+U+E0B0      \xee\x82\xb0       Rightwards black arrowhead (U+2B80 \xe2\xae\x80 )\n\
+U+E0B1      \xee\x82\xb1       Rightwards arrowhead       (U+2B81 \xe2\xae\x81 )\n\
+U+E0B2      \xee\x82\xb2       Leftwards black arrowhead  (U+2B82 \xe2\xae\x82 )\n\
+U+E0B3      \xee\x82\xb3       Leftwards arrowhead        (U+2B83 \xe2\xae\x83 )\n\
+"
+echo -e "Nerd Font glyphs:\n\
+U+F071      \xef\x81\xb1       Exclamation Triangle
+U+F057      \xef\x81\x97       Times Circle
+U+F05a      \xef\x81\x9a       Info Circle
+"
+
 echo "Done. If you are using tmux make sure you run this script both inside and outside of it."
+
