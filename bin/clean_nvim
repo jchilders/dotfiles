@@ -1,0 +1,39 @@
+#!/usr/bin/env ruby
+
+require 'fileutils'
+
+def rm_packer
+  rmdir("#{nvim_data}/site/pack/packer")
+end
+
+def rm_packer_compiled
+  rmdir("#{nvim_config}/plugin")
+end
+
+def rm_cache
+  rmdir(nvim_cache)
+end
+
+def rmdir(dir)
+  if Dir.exist?(dir)
+    FileUtils.remove_dir(dir)
+  else
+    puts "#{dir}: directory not found"
+  end
+end
+
+def nvim_config
+  "#{ENV['XDG_CONFIG_HOME']}/nvim"
+end
+
+def nvim_data
+  "#{ENV['XDG_DATA_HOME']}/nvim"
+end
+
+def nvim_cache
+  "#{ENV['XDG_CACHE_HOME']}/nvim"
+end
+
+rm_packer
+rm_packer_compiled
+rm_cache

@@ -35,7 +35,7 @@ local map_ctrlo_tele = function(key, f, tele_options, bufnr)
   map_ctrlo(key, rhs, bufnr)
 end
 
-function M.mappings()
+function M.load()
   -- Quickly toggle between next/previous buffers
   remap("n", "<leader><leader>", "<cmd>b#<CR>")
 

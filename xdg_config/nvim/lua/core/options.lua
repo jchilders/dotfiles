@@ -1,8 +1,7 @@
 local g, b, opt, go, wo, o = vim.g, vim.b, vim.opt, vim.go, vim.wo, vim.o
 local M = {}
 
--- vim.g.tildeop
-function M.load_options()
+function M.load()
   g.mapleader = ","
 
   opt.backup = false
@@ -11,14 +10,11 @@ function M.load_options()
   -- Do not fix files (i.e. "add a newline") that do not have a newline as the final character
   opt.fixendofline = false
 
-  --[[ set path=.,src,node_nodules
-  set suffixesadd=.js,.jsx ]]
-
   opt.autoindent = true
   opt.autoread = true -- reload files on external change
   opt.clipboard = "unnamedplus" -- clipboard yank
   opt.cursorline = true -- highlight current line
-  opt.expandtab = false -- insert spaces instead of tabs when indenting
+  opt.expandtab = true -- insert spaces instead of tabs when indenting
   opt.fileformat = "unix"
   opt.grepprg = "rg"
   opt.hidden = true
@@ -35,7 +31,7 @@ function M.load_options()
   opt.signcolumn = "yes"
   opt.smartcase = true
   opt.tabstop = 2
-  opt.tildeop = false -- let ~ command work with motions: `~w` will toggle case of curr word, e.g.
+  opt.tildeop = false -- lets ~ command work with motions: `~w` will toggle case of curr word, e.g.
   opt.timeoutlen = 500
   opt.wildmenu = true
   opt.wildmode = "longest,full"

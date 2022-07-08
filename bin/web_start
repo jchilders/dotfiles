@@ -1,0 +1,7 @@
+#!/usr/bin/env zsh
+
+cd ~/work/carerev/web_app
+source ~/.config/zsh/config/exports.zsh
+
+# nvm use && API_APP_BASE_URL="http://localhost:10000/api/v1" TOOLS_APP_BASE_URL="http://localhost:10002/tools" npm start
+nvm use && npm start

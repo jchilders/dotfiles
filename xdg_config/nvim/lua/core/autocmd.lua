@@ -54,7 +54,7 @@ local function autocmds()
   )
 end
 
-function M.init()
+function M.load()
   augroups()
   autocmds()
 end
