@@ -224,7 +224,7 @@ return packer.startup(function(use)
     requires = "nvim-treesitter/nvim-treesitter",
   })
 
-	-- indicate changed lines in gutter
+	-- indicate changed lines in gutter, as well as other git goodies
 	use({
 		'lewis6991/gitsigns.nvim',
 		requires = 'nvim-lua/plenary.nvim',
@@ -246,6 +246,45 @@ return packer.startup(function(use)
 			})
 		end
 	})
+
+  -- Delete buffers without affecting layout
+  -- :Bdelete :Bdelete! :Bd!
+  use('famiu/bufdelete.nvim')
+
+  -- Automatically saves nvim session on exit, or loads the saved session on load
+  -- :SaveSession :RestoreSession :DeleteSession
+  use({
+    'rmagatti/auto-session',
+    config = function()
+      require('auto-session').setup {
+        log_level = 'info',
+        auto_restore_enabled = true,
+        auto_save_enabled = true,
+      }
+    end
+  })
+
+  -- Makes vim tab bar show buffers. Trying this out, not sure if I'll keep it
+  -- Seems to overlap (in my usage) with Harpoon, and Harpoon doesn't add
+  -- anything to the UI, which I like better.
+  use({
+    'akinsho/bufferline.nvim',
+    tag = "v2.*",
+    requires = {
+      {
+        'kyazdani42/nvim-web-devicons',
+        'famiu/bufdelete.nvim',
+      }
+    },
+    config = function()
+      require("bufferline").setup({
+        options = {
+          mode = "tabs",
+          close_command = "Bdelete!",
+        }
+      })
+    end
+  })
 
 --  -- Add documentation to a method/class/etc with a mapping.
 --  -- Currently set to `<leader>doc`

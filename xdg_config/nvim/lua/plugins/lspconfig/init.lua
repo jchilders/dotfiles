@@ -1,8 +1,7 @@
 local M = {}
 M.__index = M
 
-local jcu = require("jc.utils")
-local lsp_config = require('lspconfig')
+local lspconfig = require('lspconfig')
 local lsp_installer = require("nvim-lsp-installer")
 
 -- {{ lsp_installer }} --
@@ -15,13 +14,29 @@ function M.init()
     automatic_installation = true,
   })
 
-  local lsp_servers = lsp_installer.get_installed_servers()
-  for _, lsp in ipairs(lsp_servers) do
-    lsp_config[lsp.name].setup({
-      on_attach = function(client, bufnr)
-        print("Attached to " .. jcu.lsp_name())
-      end,
-    })
+  local servers = lsp_installer.get_installed_servers()
+  for _, server in ipairs(servers) do
+    local attach_noty = function(_, bufnr)
+      print("Buffer " .. bufnr .. " attached to " .. server.name)
+    end
+
+    if server.name == 'sumneko_lua' then
+      lspconfig.sumneko_lua.setup({
+        on_attach = attach_noty,
+        settings = {
+          Lua = {
+            diagnostics = {
+              -- Silence the `undefined global 'vim'` warning sumneko gives
+              globals = { 'vim' }
+            }
+          }
+        }
+      })
+    else
+      lspconfig[server.name].setup({
+        on_attach = attach_noty,
+      })
+    end
   end
 end
 

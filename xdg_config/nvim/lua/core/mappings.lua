@@ -37,10 +37,16 @@ end
 
 function M.load()
   -- Quickly toggle between next/previous buffers
-  remap("n", "<leader><leader>", "<cmd>b#<CR>")
+  vim.keymap.set("n", "<leader><leader>", "<cmd>b#<CR>")
 
   -- Prevent `Q` from taking us into Ex mode, because it isn't 1977 any longer
-  remap("n", "Q", "<NOP>")
+  vim.keymap.set("n", "Q", "<NOP>")
+
+  -- center screen after search
+  -- nnoremap n nzzzv
+  vim.keymap.set('n', 'n', 'nzzzv')
+  -- nnoremap N Nzzzv
+  vim.keymap.set('n', 'N', 'Nzzzv')
 
   -- `*` still searches what is under the cursor, but doesn't immediately jump
   -- to the next match. Found this on StackOverflow a long time ago. Diving

@@ -24,6 +24,8 @@ function M.load()
   opt.relativenumber = true
   opt.scrolloff = 3
   opt.showmode = false -- let status bar handle it
+  -- sessionoptions for mksession command
+  opt.sessionoptions = "blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal"
   opt.showtabline = 2 -- 0: Never, 1: Only if there are 2 or more, 2: Always
   opt.shiftwidth = 2
   opt.sidescroll = 5
@@ -31,6 +33,7 @@ function M.load()
   opt.signcolumn = "yes"
   opt.smartcase = true
   opt.tabstop = 2
+  opt.termguicolors = true -- recommended by bufferlines plugin
   opt.tildeop = false -- lets ~ command work with motions: `~w` will toggle case of curr word, e.g.
   opt.timeoutlen = 500
   opt.wildmenu = true
