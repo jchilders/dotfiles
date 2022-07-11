@@ -108,20 +108,20 @@ return packer.startup(function(use)
     end,
   })
 
---  -- completion
---  use({
---    "hrsh7th/nvim-cmp",
---    config = require("plugins.cmp").init,
---    requires = {
---      { "hrsh7th/cmp-buffer" },
---      { "hrsh7th/cmp-nvim-lsp" },
---      { "hrsh7th/cmp-nvim-lsp-document-symbol" },
---      { "hrsh7th/cmp-path" },
---      { "saadparwaiz1/cmp_luasnip" },
---      { "L3MON4D3/LuaSnip" },
---      -- { "rafamadriz/friendly-snippets" },
---    },
---  })
+   -- completion
+   use({
+     "hrsh7th/nvim-cmp",
+     -- config = require("plugins.cmp").init,
+     requires = {
+       { "hrsh7th/cmp-buffer" },
+       { "hrsh7th/cmp-nvim-lsp" },
+       { "hrsh7th/cmp-nvim-lsp-document-symbol" },
+       { "hrsh7th/cmp-path" },
+       { "saadparwaiz1/cmp_luasnip" },
+       { "L3MON4D3/LuaSnip" },
+       -- { "rafamadriz/friendly-snippets" },
+     },
+   })
 
 	-- Displays visual indicator of matching parenthesis, bracket, function
 	-- `def`/`end`, etc.
@@ -142,12 +142,12 @@ return packer.startup(function(use)
 
 --  -- autoclose parens, function defs, etc.
 --  -- :h lexima.vim
---  use({
---    "cohama/lexima.vim",
---    --[[ config = function()
---      vim.g.lexima_enable_basic_rules = 0 -- turn it off for quotes/parens/etc
---    end, ]]
---  })
+ use({
+   "cohama/lexima.vim",
+   --[[ config = function()
+     vim.g.lexima_enable_basic_rules = 0 -- turn it off for quotes/parens/etc
+   end, ]]
+ })
 --
 --  use({
 --    "vim-test/vim-test",
@@ -176,10 +176,10 @@ return packer.startup(function(use)
 	-- use({ "ray-x/lsp_signature.nvim", opt = false }) 
 
 	-- Add pictograms to completion window suggestion list
-  --[[ use({
+  use({
     "onsails/lspkind-nvim",
     config = require("plugins.lspkind-nvim").init,
-  }) ]]
+  })
 
 --  -- Window/split containing a pretty list for showing diagnostics, references,
 --  -- telescope results, quickfix and location lists to help you solve all the
@@ -219,10 +219,17 @@ return packer.startup(function(use)
   })
 
   -- adds current function/class/etc. name to statusline
+  -- deprecated
   use({
     "SmiteshP/nvim-gps",
     requires = "nvim-treesitter/nvim-treesitter",
   })
+
+  -- replacement for nvim-gps, but doesn't work with solargraph
+  --[[ use({
+    "SmiteshP/nvim-navic",
+    requires = "neovim/nvim-lspconfig"
+  }) ]]
 
 	-- indicate changed lines in gutter, as well as other git goodies
 	use({
@@ -240,8 +247,7 @@ return packer.startup(function(use)
 				current_line_blame_formatter = '<author>, <author_time:%Y-%m-%d> - <summary>',
 				on_attach = function(bufnr)
 					local gs = package.loaded.gitsigns
-					local bmap = require("utils").map_buffer_new
-					bmap('n', '<leader>gb', gs.toggle_current_line_blame)
+					vim.keymap.set('n', '<leader>gb', gs.toggle_current_line_blame)
 				end
 			})
 		end
@@ -270,12 +276,7 @@ return packer.startup(function(use)
   use({
     'akinsho/bufferline.nvim',
     tag = "v2.*",
-    requires = {
-      {
-        'kyazdani42/nvim-web-devicons',
-        'famiu/bufdelete.nvim',
-      }
-    },
+    requires = 'kyazdani42/nvim-web-devicons',
     config = function()
       require("bufferline").setup({
         options = {
@@ -286,20 +287,19 @@ return packer.startup(function(use)
     end
   })
 
---  -- Add documentation to a method/class/etc with a mapping.
---  -- Currently set to `<leader>doc`
---  use({
---    "danymat/neogen",
---    config = function()
---      require('neogen').setup({})
---
---			local remap = require("utils").map_global
---      remap("n", "<leader>doc", "<cmd>lua require('neogen').generate()<CR>")
---    end,
---    requires = "nvim-treesitter/nvim-treesitter",
---    -- Uncomment next line if you want to follow only stable versions
---    -- tag = "*"
---  })
+  -- Add documentation to a method/class/etc with a mapping.
+  -- Currently set to `<leader>doc`
+  use({
+    "danymat/neogen",
+    config = function()
+      require('neogen').setup({})
+
+      vim.keymap.set("n", "<leader>doc", "<cmd>lua require('neogen').generate()<CR>")
+    end,
+    requires = "nvim-treesitter/nvim-treesitter",
+    -- Uncomment next line if you want to follow only stable versions
+    -- tag = "*"
+  })
 
   -- {{ to investigate }}
   -- mrjones2014/dash.nvim - Fuzzy search Dash.app (API docsets)

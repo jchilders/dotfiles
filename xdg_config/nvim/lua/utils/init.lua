@@ -31,19 +31,8 @@ function M.toggle_qf()
 end
 
 -- TODO: Update this to use `vim.keymap.set`
--- See map_global_new below
 function M.map_global(type, key, value, expr)
   vim.api.nvim_set_keymap(type, key, value, { noremap = true, silent = true, expr = expr })
-end
-
-function M.map_global_new(mode, l, r, opts)
-	vim.keymap.set(mode, l, r, opts)
-end
-
-function M.map_buffer_new(mode, l, r, opts)
-	opts = opts or {}
-	opts.buffer = bufnr
-	vim.keymap.set(mode, l, r, opts)
 end
 
 function M.autocmd(event, triggers, operations)

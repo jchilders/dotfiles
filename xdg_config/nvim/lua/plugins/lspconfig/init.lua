@@ -5,6 +5,7 @@ local lspconfig = require('lspconfig')
 local lsp_installer = require("nvim-lsp-installer")
 
 -- {{ lsp_installer }} --
+-- servers are installed to $XDG_DATA_HOME/nvim/lsp_servers
 -- :LspInstallInfo
 -- :LspInstall <lsp server name>
 -- :LspInstallLog
@@ -12,6 +13,7 @@ local lsp_installer = require("nvim-lsp-installer")
 function M.init()
   lsp_installer.setup({
     automatic_installation = true,
+    ensure_installed = { 'solargraph' },
   })
 
   local servers = lsp_installer.get_installed_servers()
