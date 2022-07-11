@@ -75,7 +75,7 @@ _G.packer_plugins = {
     url = "https://github.com/L3MON4D3/LuaSnip"
   },
   ["auto-session"] = {
-    config = { "\27LJ\2\ny\0\0\3\0\4\0\a6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\3\0B\0\2\1K\0\1\0\1\0\3\25auto_restore_enabled\2\14log_level\tinfo\22auto_save_enabled\2\nsetup\17auto-session\frequire\0" },
+    config = { "\27LJ\2\ny\0\0\3\0\4\0\a6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\3\0B\0\2\1K\0\1\0\1\0\3\22auto_save_enabled\2\25auto_restore_enabled\2\14log_level\tinfo\nsetup\17auto-session\frequire\0" },
     loaded = true,
     path = "/Users/jchilders/.local/share/nvim/site/pack/packer/start/auto-session",
     url = "https://github.com/rmagatti/auto-session"
@@ -86,7 +86,7 @@ _G.packer_plugins = {
     url = "https://github.com/famiu/bufdelete.nvim"
   },
   ["bufferline.nvim"] = {
-    config = { "\27LJ\2\ns\0\0\4\0\6\0\t6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\4\0005\3\3\0=\3\5\2B\0\2\1K\0\1\0\foptions\1\0\0\1\0\2\18close_command\rBdelete!\tmode\ttabs\nsetup\15bufferline\frequire\0" },
+    config = { "\27LJ\2\ns\0\0\4\0\6\0\t6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\4\0005\3\3\0=\3\5\2B\0\2\1K\0\1\0\foptions\1\0\0\1\0\2\tmode\ttabs\18close_command\rBdelete!\nsetup\15bufferline\frequire\0" },
     loaded = true,
     path = "/Users/jchilders/.local/share/nvim/site/pack/packer/start/bufferline.nvim",
     url = "https://github.com/akinsho/bufferline.nvim"
@@ -95,6 +95,11 @@ _G.packer_plugins = {
     loaded = true,
     path = "/Users/jchilders/.local/share/nvim/site/pack/packer/start/cmp-buffer",
     url = "https://github.com/hrsh7th/cmp-buffer"
+  },
+  ["cmp-cmdline"] = {
+    loaded = true,
+    path = "/Users/jchilders/.local/share/nvim/site/pack/packer/start/cmp-cmdline",
+    url = "https://github.com/hrsh7th/cmp-cmdline"
   },
   ["cmp-nvim-lsp"] = {
     loaded = true,
@@ -116,8 +121,13 @@ _G.packer_plugins = {
     path = "/Users/jchilders/.local/share/nvim/site/pack/packer/start/cmp_luasnip",
     url = "https://github.com/saadparwaiz1/cmp_luasnip"
   },
+  ["friendly-snippets"] = {
+    loaded = true,
+    path = "/Users/jchilders/.local/share/nvim/site/pack/packer/start/friendly-snippets",
+    url = "https://github.com/rafamadriz/friendly-snippets"
+  },
   ["gitsigns.nvim"] = {
-    config = { "\27LJ\2\n\1\0\1\a\0\t\0\v6\1\0\0009\1\1\0019\1\2\0016\2\3\0009\2\4\0029\2\5\2'\4\6\0'\5\a\0009\6\b\1B\2\4\1K\0\1\0\30toggle_current_line_blame\15<leader>gb\6n\bset\vkeymap\bvim\rgitsigns\vloaded\fpackageŠ\2\1\0\4\0\b\0\v6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\3\0005\3\4\0=\3\5\0023\3\6\0=\3\a\2B\0\2\1K\0\1\0\14on_attach\0\28current_line_blame_opts\1\0\4\18virt_text_pos\beol\14virt_text\2\22ignore_whitespace\1\ndelay\3ô\3\1\0\2!current_line_blame_formatter1<author>, <author_time:%Y-%m-%d> - <summary>\23current_line_blame\1\nsetup\rgitsigns\frequire\0" },
+    config = { "\27LJ\2\n\1\0\1\a\0\t\0\v6\1\0\0009\1\1\0019\1\2\0016\2\3\0009\2\4\0029\2\5\2'\4\6\0'\5\a\0009\6\b\1B\2\4\1K\0\1\0\30toggle_current_line_blame\15<leader>gb\6n\bset\vkeymap\bvim\rgitsigns\vloaded\fpackageŠ\2\1\0\4\0\b\0\v6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\3\0005\3\4\0=\3\5\0023\3\6\0=\3\a\2B\0\2\1K\0\1\0\14on_attach\0\28current_line_blame_opts\1\0\4\ndelay\3ô\3\18virt_text_pos\beol\14virt_text\2\22ignore_whitespace\1\1\0\2\23current_line_blame\1!current_line_blame_formatter1<author>, <author_time:%Y-%m-%d> - <summary>\nsetup\rgitsigns\frequire\0" },
     loaded = true,
     path = "/Users/jchilders/.local/share/nvim/site/pack/packer/start/gitsigns.nvim",
     url = "https://github.com/lewis6991/gitsigns.nvim"
@@ -129,7 +139,7 @@ _G.packer_plugins = {
     url = "https://github.com/ThePrimeagen/harpoon"
   },
   kommentary = {
-    config = { "\27LJ\2\n^\0\0\3\0\3\0\0066\0\0\0'\2\1\0B\0\2\0029\0\2\0B\0\1\1K\0\1\0\25update_commentstring&ts_context_commentstring.internal\frequireó\3\1\0\v\0\17\0&6\0\0\0'\2\1\0B\0\2\0029\0\2\0'\2\3\0005\3\4\0B\0\3\0016\0\5\0006\2\0\0'\3\6\0B\0\3\2\15\0\0\0X\1\b€6\0\0\0'\2\a\0B\0\2\0029\0\b\0005\2\n\0005\3\t\0=\3\v\2B\0\2\0015\0\f\0006\1\r\0\18\3\0\0B\1\2\4H\4\t€6\6\0\0'\b\1\0B\6\2\0029\6\2\6\18\b\5\0005\t\14\0003\n\15\0=\n\16\tB\6\3\1F\4\3\3R\4õK\0\1\0\18hook_function\0\1\0\2\31multi_line_comment_strings\tauto\31single_line_comment_string\tauto\npairs\1\3\0\0\20javascriptreact\20typescriptreact\26context_commentstring\1\0\0\1\0\2\venable\2\19enable_autocmd\1\nsetup\28nvim-treesitter.configs\20nvim-treesitter\npcall\1\0\2\31prefer_multi_line_comments\1\31use_consistent_indentation\2\fdefault\23configure_language\22kommentary.config\frequire\0" },
+    config = { "\27LJ\2\n^\0\0\3\0\3\0\0066\0\0\0'\2\1\0B\0\2\0029\0\2\0B\0\1\1K\0\1\0\25update_commentstring&ts_context_commentstring.internal\frequireó\3\1\0\v\0\17\0&6\0\0\0'\2\1\0B\0\2\0029\0\2\0'\2\3\0005\3\4\0B\0\3\0016\0\5\0006\2\0\0'\3\6\0B\0\3\2\15\0\0\0X\1\b€6\0\0\0'\2\a\0B\0\2\0029\0\b\0005\2\n\0005\3\t\0=\3\v\2B\0\2\0015\0\f\0006\1\r\0\18\3\0\0B\1\2\4H\4\t€6\6\0\0'\b\1\0B\6\2\0029\6\2\6\18\b\5\0005\t\14\0003\n\15\0=\n\16\tB\6\3\1F\4\3\3R\4õ\127K\0\1\0\18hook_function\0\1\0\2\31multi_line_comment_strings\tauto\31single_line_comment_string\tauto\npairs\1\3\0\0\20javascriptreact\20typescriptreact\26context_commentstring\1\0\0\1\0\2\19enable_autocmd\1\venable\2\nsetup\28nvim-treesitter.configs\20nvim-treesitter\npcall\1\0\2\31prefer_multi_line_comments\1\31use_consistent_indentation\2\fdefault\23configure_language\22kommentary.config\frequire\0" },
     loaded = true,
     path = "/Users/jchilders/.local/share/nvim/site/pack/packer/start/kommentary",
     url = "https://github.com/b3nj5m1n/kommentary"
@@ -145,7 +155,7 @@ _G.packer_plugins = {
     url = "https://github.com/nvim-lua/lsp-status.nvim"
   },
   ["lspkind-nvim"] = {
-    config = { "\27LJ\2\n—\3\0\0\4\0\6\0\t6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\3\0005\3\4\0=\3\5\2B\0\2\1K\0\1\0\15symbol_map\1\0\25\16Constructor\bï£\15EnumMember\bï…\rFunction\bï”\vFolder\bïŠ\vMethod\bïš¦\14Reference\bïœ†\tText\bï¾\tFile\bïœ˜\rConstant\bï£¾\nColor\bï£—\vStruct\bï­„\fSnippet\bï‘\nEvent\bïƒ§\fKeyword\bï Š\rOperator\bïš”\tEnum\bï…\18TypeParameter\5\nValue\bï¢Ÿ\tUnit\bï¥¬\rProperty\bï° \vModule\bï’‡\14Interface\bïƒ¨\nClass\bï´¯\rVariable\bï”ª\nField\bï° \1\0\2\vpreset\rcodicons\tmode\16symbol_text\tinit\flspkind\frequire\0" },
+    config = { "\27LJ\2\n—\3\0\0\4\0\6\0\t6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\3\0005\3\4\0=\3\5\2B\0\2\1K\0\1\0\15symbol_map\1\0\25\vFolder\bïŠ\vMethod\bïš¦\14Reference\bïœ†\tText\bï¾\tFile\bïœ˜\rConstant\bï£¾\nColor\bï£—\vStruct\bï­„\fSnippet\bï‘\nEvent\bïƒ§\fKeyword\bï Š\rOperator\bïš”\tEnum\bï…\18TypeParameter\5\nValue\bï¢Ÿ\tUnit\bï¥¬\rProperty\bï° \vModule\bï’‡\14Interface\bïƒ¨\nClass\bï´¯\rVariable\bï”ª\nField\bï° \16Constructor\bï£\15EnumMember\bï…\rFunction\bï”\1\0\2\tmode\16symbol_text\vpreset\rcodicons\tinit\flspkind\frequire\0" },
     loaded = true,
     path = "/Users/jchilders/.local/share/nvim/site/pack/packer/start/lspkind-nvim",
     url = "https://github.com/onsails/lspkind-nvim"
@@ -157,6 +167,7 @@ _G.packer_plugins = {
     url = "https://github.com/danymat/neogen"
   },
   ["nvim-cmp"] = {
+    config = { "\27LJ\2\n¬\1\0\2\5\1\b\0\15-\2\0\0009\2\1\0029\2\2\0029\3\0\0018\2\3\2'\3\3\0009\4\0\1&\2\4\2=\2\0\0015\2\5\0009\3\6\0009\3\a\0038\2\3\2=\2\4\1L\1\2\0\1À\tname\vsource\1\0\4\fluasnip\14[LuaSnip]\rnvim_lsp\n[LSP]\rnvim_lua\n[Lua]\tpath\v[Path]\tmenu\6 \fdefault\fpresets\tkindC\0\1\4\0\4\0\a6\1\0\0'\3\1\0B\1\2\0029\1\2\0019\3\3\0B\1\2\1K\0\1\0\tbody\15lsp_expand\fluasnip\frequireŸ\2\0\1\t\3\n\0--\1\0\0009\1\0\1B\1\1\2\15\0\1\0X\2\4€-\1\0\0009\1\1\1B\1\1\1X\1#€-\1\1\0\15\0\1\0X\2\v€-\1\1\0009\1\2\1)\3ÿÿB\1\2\2\15\0\1\0X\2\5€-\1\1\0009\1\3\1)\3ÿÿB\1\2\1X\1\21€-\1\2\0B\1\1\2\15\0\1\0X\2\15€6\1\4\0009\1\5\0019\1\6\0016\3\4\0009\3\5\0039\3\a\3'\5\b\0+\6\2\0+\a\2\0+\b\2\0B\3\5\2'\4\t\0+\5\2\0B\1\4\1X\1\2€\18\1\0\0B\1\1\1K\0\1\0\0À\2À\0\0\6n\f<s-tab>\27nvim_replace_termcodes\18nvim_feedkeys\bapi\bvim\tjump\rjumpable\21select_prev_item\fvisible÷\3\0\1\n\3\17\0H-\1\0\0009\1\0\1B\1\1\2\15\0\1\0X\2\4€-\1\0\0009\1\1\1B\1\1\1X\1>€-\1\1\0\15\0\1\0X\2\t€-\1\1\0009\1\2\1B\1\1\2\15\0\1\0X\2\4€-\1\1\0009\1\3\1B\1\1\1X\0012€6\1\4\0009\1\5\0019\1\6\1\15\0\1\0X\2\24€6\1\a\0'\3\5\0B\1\2\2\n\1\0\0X\2(€9\2\b\1B\2\1\2\15\0\2\0X\3$€6\2\t\0009\2\n\0029\2\v\0026\4\t\0009\4\n\0049\4\f\4'\6\r\0+\a\2\0+\b\2\0+\t\2\0B\4\5\2'\5\14\0+\6\2\0B\2\4\1X\1\21€-\1\2\0B\1\1\2\15\0\1\0X\2\15€6\1\t\0009\1\n\0019\1\v\0016\3\t\0009\3\n\0039\3\f\3'\5\15\0+\6\2\0+\a\2\0+\b\2\0B\3\5\2'\4\16\0+\5\2\0B\1\4\1X\1\2€\18\1\0\0B\1\1\1K\0\1\0\0À\2À\0\0\6n\n<tab>\5/<cmd>lua require('neogen').jump_next()<CR>\27nvim_replace_termcodes\18nvim_feedkeys\bapi\bvim\rjumpable\frequire\vloaded\vneogen\19packer_plugins\19expand_or_jump\23expand_or_jumpable\21select_next_item\fvisibleg\0\1\3\1\5\1\0156\1\0\0009\1\1\0019\1\2\1B\1\1\2\t\1\0\0X\1\5€-\1\0\0009\1\3\1B\1\1\2\14\0\1\0X\2\3€-\1\0\0009\1\4\1B\1\1\2L\1\2\0\0À\rcomplete\nclose\15pumvisible\afn\bvim\2²\a\1\0\f\0019\0m6\0\0\0009\0\1\0009\0\2\0\14\0\0\0X\0\4€6\0\3\0009\0\4\0'\2\5\0B\0\2\0016\0\6\0'\2\a\0B\0\2\0026\1\6\0'\3\b\0B\1\2\0026\2\6\0'\4\t\0B\2\2\0029\3\n\0005\5\14\0005\6\f\0003\a\v\0=\a\r\6=\6\15\0055\6\17\0003\a\16\0=\a\18\6=\6\19\0055\6\20\0=\6\21\0055\6\25\0009\a\22\0003\t\23\0005\n\24\0B\a\3\2=\a\26\0069\a\22\0003\t\27\0005\n\28\0B\a\3\2=\a\29\0069\a\22\0009\a\30\a)\tüÿB\a\2\2=\a\31\0069\a\22\0009\a\30\a)\t\4\0B\a\2\2=\a \0069\a\22\0003\t!\0B\a\2\2=\a\"\0069\a\22\0009\a#\aB\a\1\2=\a$\0069\a\22\0009\a%\a5\t&\0B\a\2\2=\a'\6=\6\22\0059\6(\0009\6)\6=\6*\0059\6+\0009\6,\0064\b\4\0005\t-\0>\t\1\b5\t.\0>\t\2\b5\t/\0>\t\3\b4\t\3\0005\n0\0>\n\1\tB\6\3\2=\6,\5B\3\2\0019\3\n\0009\0031\3'\0052\0005\0064\0004\a\3\0005\b3\0>\b\1\a=\a,\6B\3\3\0019\3\n\0009\0031\3'\0055\0005\0068\0009\a+\0009\a,\a4\t\3\0005\n6\0>\n\1\t4\n\3\0005\v7\0>\v\1\nB\a\3\2=\a,\6B\3\3\0012\0\0€K\0\1\0\1À\1\0\0\1\0\1\tname\fcmdline\1\0\1\tname\tpath\6:\1\0\0\1\0\1\tname\vbuffer\6/\fcmdline\1\0\1\tname\vbuffer\1\0\1\tname\tpath\1\0\1\tname\fluasnip\1\0\1\tname\rnvim_lsp\fsources\vconfig\14preselect\tItem\18PreselectMode\t<CR>\1\0\1\vselect\2\fconfirm\n<C-e>\nclose\14<C-Space>\0\n<C-f>\n<C-d>\16scroll_docs\n<Tab>\1\4\0\0\6i\6s\6c\0\f<S-Tab>\1\0\0\1\4\0\0\6i\6s\6c\0\fmapping\15completion\1\0\2\16completeopt#menu,menuone,noselect,noinsert\19keyword_length\3\1\fsnippet\vexpand\1\0\0\0\15formatting\1\0\0\vformat\1\0\0\0\nsetup\fluasnip\flspkind\bcmp\frequire\25packadd plenary.nvim\bcmd\bvim\vloaded\17plenary.nvim\19packer_plugins\0" },
     loaded = true,
     path = "/Users/jchilders/.local/share/nvim/site/pack/packer/start/nvim-cmp",
     url = "https://github.com/hrsh7th/nvim-cmp"
@@ -240,38 +251,26 @@ _G.packer_plugins = {
 }
 
 time([[Defining packer_plugins]], false)
--- Config for: vim-matchup
-time([[Config for vim-matchup]], true)
-try_loadstring("\27LJ\2\nš\1\0\0\4\0\t\0\r6\0\0\0009\0\1\0004\1\0\0=\1\2\0006\0\3\0'\2\4\0B\0\2\0029\0\5\0005\2\a\0005\3\6\0=\3\b\2B\0\2\1K\0\1\0\fmatchup\1\0\0\1\0\1\venable\2\nsetup\28nvim-treesitter.configs\frequire!matchup_matchparen_offscreen\6g\bvim\0", "config", "vim-matchup")
-time([[Config for vim-matchup]], false)
--- Config for: nvim-lspconfig
-time([[Config for nvim-lspconfig]], true)
-try_loadstring("\27LJ\2\n>\0\0\3\0\3\0\0066\0\0\0'\2\1\0B\0\2\0029\0\2\0B\0\1\1K\0\1\0\tinit\22plugins.lspconfig\frequire\0", "config", "nvim-lspconfig")
-time([[Config for nvim-lspconfig]], false)
--- Config for: gitsigns.nvim
-time([[Config for gitsigns.nvim]], true)
-try_loadstring("\27LJ\2\n\1\0\1\a\0\t\0\v6\1\0\0009\1\1\0019\1\2\0016\2\3\0009\2\4\0029\2\5\2'\4\6\0'\5\a\0009\6\b\1B\2\4\1K\0\1\0\30toggle_current_line_blame\15<leader>gb\6n\bset\vkeymap\bvim\rgitsigns\vloaded\fpackageŠ\2\1\0\4\0\b\0\v6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\3\0005\3\4\0=\3\5\0023\3\6\0=\3\a\2B\0\2\1K\0\1\0\14on_attach\0\28current_line_blame_opts\1\0\4\18virt_text_pos\beol\14virt_text\2\22ignore_whitespace\1\ndelay\3ô\3\1\0\2!current_line_blame_formatter1<author>, <author_time:%Y-%m-%d> - <summary>\23current_line_blame\1\nsetup\rgitsigns\frequire\0", "config", "gitsigns.nvim")
-time([[Config for gitsigns.nvim]], false)
--- Config for: bufferline.nvim
-time([[Config for bufferline.nvim]], true)
-try_loadstring("\27LJ\2\ns\0\0\4\0\6\0\t6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\4\0005\3\3\0=\3\5\2B\0\2\1K\0\1\0\foptions\1\0\0\1\0\2\18close_command\rBdelete!\tmode\ttabs\nsetup\15bufferline\frequire\0", "config", "bufferline.nvim")
-time([[Config for bufferline.nvim]], false)
--- Config for: auto-session
-time([[Config for auto-session]], true)
-try_loadstring("\27LJ\2\ny\0\0\3\0\4\0\a6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\3\0B\0\2\1K\0\1\0\1\0\3\25auto_restore_enabled\2\14log_level\tinfo\22auto_save_enabled\2\nsetup\17auto-session\frequire\0", "config", "auto-session")
-time([[Config for auto-session]], false)
+-- Config for: lspkind-nvim
+time([[Config for lspkind-nvim]], true)
+try_loadstring("\27LJ\2\n—\3\0\0\4\0\6\0\t6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\3\0005\3\4\0=\3\5\2B\0\2\1K\0\1\0\15symbol_map\1\0\25\vFolder\bïŠ\vMethod\bïš¦\14Reference\bïœ†\tText\bï¾\tFile\bïœ˜\rConstant\bï£¾\nColor\bï£—\vStruct\bï­„\fSnippet\bï‘\nEvent\bïƒ§\fKeyword\bï Š\rOperator\bïš”\tEnum\bï…\18TypeParameter\5\nValue\bï¢Ÿ\tUnit\bï¥¬\rProperty\bï° \vModule\bï’‡\14Interface\bïƒ¨\nClass\bï´¯\rVariable\bï”ª\nField\bï° \16Constructor\bï£\15EnumMember\bï…\rFunction\bï”\1\0\2\tmode\16symbol_text\vpreset\rcodicons\tinit\flspkind\frequire\0", "config", "lspkind-nvim")
+time([[Config for lspkind-nvim]], false)
 -- Config for: windline.nvim
 time([[Config for windline.nvim]], true)
 try_loadstring("\27LJ\2\n:\0\0\3\0\2\0\0046\0\0\0'\2\1\0B\0\2\1K\0\1\0\31plugins.statusline.airline\frequire\0", "config", "windline.nvim")
 time([[Config for windline.nvim]], false)
--- Config for: kommentary
-time([[Config for kommentary]], true)
-try_loadstring("\27LJ\2\n^\0\0\3\0\3\0\0066\0\0\0'\2\1\0B\0\2\0029\0\2\0B\0\1\1K\0\1\0\25update_commentstring&ts_context_commentstring.internal\frequireó\3\1\0\v\0\17\0&6\0\0\0'\2\1\0B\0\2\0029\0\2\0'\2\3\0005\3\4\0B\0\3\0016\0\5\0006\2\0\0'\3\6\0B\0\3\2\15\0\0\0X\1\b€6\0\0\0'\2\a\0B\0\2\0029\0\b\0005\2\n\0005\3\t\0=\3\v\2B\0\2\0015\0\f\0006\1\r\0\18\3\0\0B\1\2\4H\4\t€6\6\0\0'\b\1\0B\6\2\0029\6\2\6\18\b\5\0005\t\14\0003\n\15\0=\n\16\tB\6\3\1F\4\3\3R\4õK\0\1\0\18hook_function\0\1\0\2\31multi_line_comment_strings\tauto\31single_line_comment_string\tauto\npairs\1\3\0\0\20javascriptreact\20typescriptreact\26context_commentstring\1\0\0\1\0\2\venable\2\19enable_autocmd\1\nsetup\28nvim-treesitter.configs\20nvim-treesitter\npcall\1\0\2\31prefer_multi_line_comments\1\31use_consistent_indentation\2\fdefault\23configure_language\22kommentary.config\frequire\0", "config", "kommentary")
-time([[Config for kommentary]], false)
--- Config for: lspkind-nvim
-time([[Config for lspkind-nvim]], true)
-try_loadstring("\27LJ\2\n—\3\0\0\4\0\6\0\t6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\3\0005\3\4\0=\3\5\2B\0\2\1K\0\1\0\15symbol_map\1\0\25\16Constructor\bï£\15EnumMember\bï…\rFunction\bï”\vFolder\bïŠ\vMethod\bïš¦\14Reference\bïœ†\tText\bï¾\tFile\bïœ˜\rConstant\bï£¾\nColor\bï£—\vStruct\bï­„\fSnippet\bï‘\nEvent\bïƒ§\fKeyword\bï Š\rOperator\bïš”\tEnum\bï…\18TypeParameter\5\nValue\bï¢Ÿ\tUnit\bï¥¬\rProperty\bï° \vModule\bï’‡\14Interface\bïƒ¨\nClass\bï´¯\rVariable\bï”ª\nField\bï° \1\0\2\vpreset\rcodicons\tmode\16symbol_text\tinit\flspkind\frequire\0", "config", "lspkind-nvim")
-time([[Config for lspkind-nvim]], false)
+-- Config for: harpoon
+time([[Config for harpoon]], true)
+try_loadstring("\27LJ\2\nz\0\0\4\0\a\0\v6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\4\0005\3\3\0=\3\5\0024\3\0\0=\3\6\2B\0\2\1K\0\1\0\rprojects\20global_settings\1\0\0\1\0\1\21enter_on_sendcmd\2\nsetup\fharpoon\frequire\0", "config", "harpoon")
+time([[Config for harpoon]], false)
+-- Config for: gitsigns.nvim
+time([[Config for gitsigns.nvim]], true)
+try_loadstring("\27LJ\2\n\1\0\1\a\0\t\0\v6\1\0\0009\1\1\0019\1\2\0016\2\3\0009\2\4\0029\2\5\2'\4\6\0'\5\a\0009\6\b\1B\2\4\1K\0\1\0\30toggle_current_line_blame\15<leader>gb\6n\bset\vkeymap\bvim\rgitsigns\vloaded\fpackageŠ\2\1\0\4\0\b\0\v6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\3\0005\3\4\0=\3\5\0023\3\6\0=\3\a\2B\0\2\1K\0\1\0\14on_attach\0\28current_line_blame_opts\1\0\4\ndelay\3ô\3\18virt_text_pos\beol\14virt_text\2\22ignore_whitespace\1\1\0\2\23current_line_blame\1!current_line_blame_formatter1<author>, <author_time:%Y-%m-%d> - <summary>\nsetup\rgitsigns\frequire\0", "config", "gitsigns.nvim")
+time([[Config for gitsigns.nvim]], false)
+-- Config for: nvim-cmp
+time([[Config for nvim-cmp]], true)
+try_loadstring("\27LJ\2\n¬\1\0\2\5\1\b\0\15-\2\0\0009\2\1\0029\2\2\0029\3\0\0018\2\3\2'\3\3\0009\4\0\1&\2\4\2=\2\0\0015\2\5\0009\3\6\0009\3\a\0038\2\3\2=\2\4\1L\1\2\0\1À\tname\vsource\1\0\4\fluasnip\14[LuaSnip]\rnvim_lsp\n[LSP]\rnvim_lua\n[Lua]\tpath\v[Path]\tmenu\6 \fdefault\fpresets\tkindC\0\1\4\0\4\0\a6\1\0\0'\3\1\0B\1\2\0029\1\2\0019\3\3\0B\1\2\1K\0\1\0\tbody\15lsp_expand\fluasnip\frequireŸ\2\0\1\t\3\n\0--\1\0\0009\1\0\1B\1\1\2\15\0\1\0X\2\4€-\1\0\0009\1\1\1B\1\1\1X\1#€-\1\1\0\15\0\1\0X\2\v€-\1\1\0009\1\2\1)\3ÿÿB\1\2\2\15\0\1\0X\2\5€-\1\1\0009\1\3\1)\3ÿÿB\1\2\1X\1\21€-\1\2\0B\1\1\2\15\0\1\0X\2\15€6\1\4\0009\1\5\0019\1\6\0016\3\4\0009\3\5\0039\3\a\3'\5\b\0+\6\2\0+\a\2\0+\b\2\0B\3\5\2'\4\t\0+\5\2\0B\1\4\1X\1\2€\18\1\0\0B\1\1\1K\0\1\0\0À\2À\0\0\6n\f<s-tab>\27nvim_replace_termcodes\18nvim_feedkeys\bapi\bvim\tjump\rjumpable\21select_prev_item\fvisible÷\3\0\1\n\3\17\0H-\1\0\0009\1\0\1B\1\1\2\15\0\1\0X\2\4€-\1\0\0009\1\1\1B\1\1\1X\1>€-\1\1\0\15\0\1\0X\2\t€-\1\1\0009\1\2\1B\1\1\2\15\0\1\0X\2\4€-\1\1\0009\1\3\1B\1\1\1X\0012€6\1\4\0009\1\5\0019\1\6\1\15\0\1\0X\2\24€6\1\a\0'\3\5\0B\1\2\2\n\1\0\0X\2(€9\2\b\1B\2\1\2\15\0\2\0X\3$€6\2\t\0009\2\n\0029\2\v\0026\4\t\0009\4\n\0049\4\f\4'\6\r\0+\a\2\0+\b\2\0+\t\2\0B\4\5\2'\5\14\0+\6\2\0B\2\4\1X\1\21€-\1\2\0B\1\1\2\15\0\1\0X\2\15€6\1\t\0009\1\n\0019\1\v\0016\3\t\0009\3\n\0039\3\f\3'\5\15\0+\6\2\0+\a\2\0+\b\2\0B\3\5\2'\4\16\0+\5\2\0B\1\4\1X\1\2€\18\1\0\0B\1\1\1K\0\1\0\0À\2À\0\0\6n\n<tab>\5/<cmd>lua require('neogen').jump_next()<CR>\27nvim_replace_termcodes\18nvim_feedkeys\bapi\bvim\rjumpable\frequire\vloaded\vneogen\19packer_plugins\19expand_or_jump\23expand_or_jumpable\21select_next_item\fvisibleg\0\1\3\1\5\1\0156\1\0\0009\1\1\0019\1\2\1B\1\1\2\t\1\0\0X\1\5€-\1\0\0009\1\3\1B\1\1\2\14\0\1\0X\2\3€-\1\0\0009\1\4\1B\1\1\2L\1\2\0\0À\rcomplete\nclose\15pumvisible\afn\bvim\2²\a\1\0\f\0019\0m6\0\0\0009\0\1\0009\0\2\0\14\0\0\0X\0\4€6\0\3\0009\0\4\0'\2\5\0B\0\2\0016\0\6\0'\2\a\0B\0\2\0026\1\6\0'\3\b\0B\1\2\0026\2\6\0'\4\t\0B\2\2\0029\3\n\0005\5\14\0005\6\f\0003\a\v\0=\a\r\6=\6\15\0055\6\17\0003\a\16\0=\a\18\6=\6\19\0055\6\20\0=\6\21\0055\6\25\0009\a\22\0003\t\23\0005\n\24\0B\a\3\2=\a\26\0069\a\22\0003\t\27\0005\n\28\0B\a\3\2=\a\29\0069\a\22\0009\a\30\a)\tüÿB\a\2\2=\a\31\0069\a\22\0009\a\30\a)\t\4\0B\a\2\2=\a \0069\a\22\0003\t!\0B\a\2\2=\a\"\0069\a\22\0009\a#\aB\a\1\2=\a$\0069\a\22\0009\a%\a5\t&\0B\a\2\2=\a'\6=\6\22\0059\6(\0009\6)\6=\6*\0059\6+\0009\6,\0064\b\4\0005\t-\0>\t\1\b5\t.\0>\t\2\b5\t/\0>\t\3\b4\t\3\0005\n0\0>\n\1\tB\6\3\2=\6,\5B\3\2\0019\3\n\0009\0031\3'\0052\0005\0064\0004\a\3\0005\b3\0>\b\1\a=\a,\6B\3\3\0019\3\n\0009\0031\3'\0055\0005\0068\0009\a+\0009\a,\a4\t\3\0005\n6\0>\n\1\t4\n\3\0005\v7\0>\v\1\nB\a\3\2=\a,\6B\3\3\0012\0\0€K\0\1\0\1À\1\0\0\1\0\1\tname\fcmdline\1\0\1\tname\tpath\6:\1\0\0\1\0\1\tname\vbuffer\6/\fcmdline\1\0\1\tname\vbuffer\1\0\1\tname\tpath\1\0\1\tname\fluasnip\1\0\1\tname\rnvim_lsp\fsources\vconfig\14preselect\tItem\18PreselectMode\t<CR>\1\0\1\vselect\2\fconfirm\n<C-e>\nclose\14<C-Space>\0\n<C-f>\n<C-d>\16scroll_docs\n<Tab>\1\4\0\0\6i\6s\6c\0\f<S-Tab>\1\0\0\1\4\0\0\6i\6s\6c\0\fmapping\15completion\1\0\2\16completeopt#menu,menuone,noselect,noinsert\19keyword_length\3\1\fsnippet\vexpand\1\0\0\0\15formatting\1\0\0\vformat\1\0\0\0\nsetup\fluasnip\flspkind\bcmp\frequire\25packadd plenary.nvim\bcmd\bvim\vloaded\17plenary.nvim\19packer_plugins\0", "config", "nvim-cmp")
+time([[Config for nvim-cmp]], false)
 -- Config for: neogen
 time([[Config for neogen]], true)
 try_loadstring("\27LJ\2\n›\1\0\0\5\0\t\0\0146\0\0\0'\2\1\0B\0\2\0029\0\2\0004\2\0\0B\0\2\0016\0\3\0009\0\4\0009\0\5\0'\2\6\0'\3\a\0'\4\b\0B\0\4\1K\0\1\0.<cmd>lua require('neogen').generate()<CR>\16<leader>doc\6n\bset\vkeymap\bvim\nsetup\vneogen\frequire\0", "config", "neogen")
@@ -280,10 +279,26 @@ time([[Config for neogen]], false)
 time([[Config for tokyonight.nvim]], true)
 try_loadstring("\27LJ\2\n…\1\0\0\3\0\t\0\r6\0\0\0009\0\1\0'\1\3\0=\1\2\0006\0\0\0009\0\4\0'\1\6\0=\1\5\0006\0\0\0009\0\a\0'\2\b\0B\0\2\1K\0\1\0\27colorscheme tokyonight\bcmd\nnight\21tokyonight_style\6g\tdark\15background\6o\bvim\0", "config", "tokyonight.nvim")
 time([[Config for tokyonight.nvim]], false)
--- Config for: harpoon
-time([[Config for harpoon]], true)
-try_loadstring("\27LJ\2\nz\0\0\4\0\a\0\v6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\4\0005\3\3\0=\3\5\0024\3\0\0=\3\6\2B\0\2\1K\0\1\0\rprojects\20global_settings\1\0\0\1\0\1\21enter_on_sendcmd\2\nsetup\fharpoon\frequire\0", "config", "harpoon")
-time([[Config for harpoon]], false)
+-- Config for: kommentary
+time([[Config for kommentary]], true)
+try_loadstring("\27LJ\2\n^\0\0\3\0\3\0\0066\0\0\0'\2\1\0B\0\2\0029\0\2\0B\0\1\1K\0\1\0\25update_commentstring&ts_context_commentstring.internal\frequireó\3\1\0\v\0\17\0&6\0\0\0'\2\1\0B\0\2\0029\0\2\0'\2\3\0005\3\4\0B\0\3\0016\0\5\0006\2\0\0'\3\6\0B\0\3\2\15\0\0\0X\1\b€6\0\0\0'\2\a\0B\0\2\0029\0\b\0005\2\n\0005\3\t\0=\3\v\2B\0\2\0015\0\f\0006\1\r\0\18\3\0\0B\1\2\4H\4\t€6\6\0\0'\b\1\0B\6\2\0029\6\2\6\18\b\5\0005\t\14\0003\n\15\0=\n\16\tB\6\3\1F\4\3\3R\4õ\127K\0\1\0\18hook_function\0\1\0\2\31multi_line_comment_strings\tauto\31single_line_comment_string\tauto\npairs\1\3\0\0\20javascriptreact\20typescriptreact\26context_commentstring\1\0\0\1\0\2\19enable_autocmd\1\venable\2\nsetup\28nvim-treesitter.configs\20nvim-treesitter\npcall\1\0\2\31prefer_multi_line_comments\1\31use_consistent_indentation\2\fdefault\23configure_language\22kommentary.config\frequire\0", "config", "kommentary")
+time([[Config for kommentary]], false)
+-- Config for: auto-session
+time([[Config for auto-session]], true)
+try_loadstring("\27LJ\2\ny\0\0\3\0\4\0\a6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\3\0B\0\2\1K\0\1\0\1\0\3\22auto_save_enabled\2\25auto_restore_enabled\2\14log_level\tinfo\nsetup\17auto-session\frequire\0", "config", "auto-session")
+time([[Config for auto-session]], false)
+-- Config for: bufferline.nvim
+time([[Config for bufferline.nvim]], true)
+try_loadstring("\27LJ\2\ns\0\0\4\0\6\0\t6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\4\0005\3\3\0=\3\5\2B\0\2\1K\0\1\0\foptions\1\0\0\1\0\2\tmode\ttabs\18close_command\rBdelete!\nsetup\15bufferline\frequire\0", "config", "bufferline.nvim")
+time([[Config for bufferline.nvim]], false)
+-- Config for: vim-matchup
+time([[Config for vim-matchup]], true)
+try_loadstring("\27LJ\2\nš\1\0\0\4\0\t\0\r6\0\0\0009\0\1\0004\1\0\0=\1\2\0006\0\3\0'\2\4\0B\0\2\0029\0\5\0005\2\a\0005\3\6\0=\3\b\2B\0\2\1K\0\1\0\fmatchup\1\0\0\1\0\1\venable\2\nsetup\28nvim-treesitter.configs\frequire!matchup_matchparen_offscreen\6g\bvim\0", "config", "vim-matchup")
+time([[Config for vim-matchup]], false)
+-- Config for: nvim-lspconfig
+time([[Config for nvim-lspconfig]], true)
+try_loadstring("\27LJ\2\n>\0\0\3\0\3\0\0066\0\0\0'\2\1\0B\0\2\0029\0\2\0B\0\1\1K\0\1\0\tinit\22plugins.lspconfig\frequire\0", "config", "nvim-lspconfig")
+time([[Config for nvim-lspconfig]], false)
 if should_profile then save_profiles() end
 
 end)

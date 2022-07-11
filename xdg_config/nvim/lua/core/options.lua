@@ -7,8 +7,6 @@ function M.load()
   opt.backup = false
   opt.swapfile = false
 
-  -- Do not fix files (i.e. "add a newline") that do not have a newline as the final character
-  opt.fixendofline = false
 
   opt.autoindent = true
   opt.autoread = true -- reload files on external change
@@ -16,6 +14,11 @@ function M.load()
   opt.cursorline = true -- highlight current line
   opt.expandtab = true -- insert spaces instead of tabs when indenting
   opt.fileformat = "unix"
+
+  -- Do not fix files (i.e. "add a newline") that do not have a newline as the
+  -- final character
+  opt.fixendofline = false
+
   opt.grepprg = "rg"
   opt.hidden = true
   opt.hlsearch = true
@@ -41,8 +44,7 @@ function M.load()
   opt.wrap = true
 
   -- completion menu settings
-  opt.completeopt = "menu,menuone,noselect,noinsert" -- completion behaviour
-  opt.omnifunc = "v:lua.vim.lsp.omnifunc" -- completion omnifunc
+  opt.completeopt = "menu,menuone,noselect" -- completion behaviour per cmp docs
 
   -- whitespace settings
   opt.list = false

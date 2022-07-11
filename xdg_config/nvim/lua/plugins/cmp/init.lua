@@ -5,6 +5,8 @@ local check_back_space = function()
   return col == 0 or vim.fn.getline("."):sub(col, col):match("%s") ~= nil
 end
 
+-- autocmd BufWritePost * :execute "luafile %" | :execute "PackerSync"
+
 function M.init()
   if not packer_plugins["plenary.nvim"].loaded then
     vim.cmd([[packadd plenary.nvim]])
@@ -12,6 +14,9 @@ function M.init()
   local cmp = require("cmp")
   local lspkind = require("lspkind")
   local luasnip = require("luasnip")
+
+  -- Ignore warning msg "The same file is required" sumneko gives for the below
+  -- requires statement. It is needed for the cmp completion window to pop up.
   require("plugins.cmp.luasnip").init()
 
   cmp.setup({
@@ -22,10 +27,11 @@ function M.init()
 
         -- set a name for each source
         vim_item.menu = ({
-          path = "[Path]",
+          buffer = "[buf]",
           nvim_lsp = "[LSP]",
-          luasnip = "[LuaSnip]",
           nvim_lua = "[Lua]",
+          luasnip = "[LuaSnip]",
+          path = "[Path]",
         })[entry.source.name]
         return vim_item
       end,
@@ -39,9 +45,6 @@ function M.init()
       completeopt = "menu,menuone,noselect,noinsert",
       keyword_length = 1,
     },
-    --[[ experimental = {
-      ghost_text = true,
-    }, ]]
     mapping = {
       ["<S-Tab>"] = cmp.mapping(function(fallback)
         if cmp.visible() then
@@ -104,13 +107,20 @@ function M.init()
       ["<CR>"] = cmp.mapping.confirm({ select = true }),
     },
     -- preselect = cmp.PreselectMode.Item,
-    sources = cmp.config.sources({
+    sources = {
       { name = "nvim_lsp" },
       { name = "luasnip" },
       { name = "path" },
-    }, {
-       { name = "buffer" },
-    }),
+      {
+        name = "buffer",
+        option = {
+          get_bufnrs = function()
+            -- use all open buffers
+            return vim.api.nvim_list_bufs()
+          end,
+        }
+      },
+    },
   })
 
   cmp.setup.cmdline("/", {

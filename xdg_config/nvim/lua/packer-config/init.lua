@@ -71,7 +71,7 @@ return packer.startup(function(use)
 
   -- Use `v.` in normal mode in treesitter-enabled buffer to visually select
   -- progressively broader TS nodes
-  use "RRethy/nvim-treesitter-textsubjects" 
+  use "RRethy/nvim-treesitter-textsubjects"
 
   -- comment code using directions or blocks. example:
   -- gc2j - comment current line and 2 down
@@ -111,15 +111,16 @@ return packer.startup(function(use)
    -- completion
    use({
      "hrsh7th/nvim-cmp",
-     -- config = require("plugins.cmp").init,
+     config = require("plugins.cmp").init,
      requires = {
        { "hrsh7th/cmp-buffer" },
        { "hrsh7th/cmp-nvim-lsp" },
        { "hrsh7th/cmp-nvim-lsp-document-symbol" },
        { "hrsh7th/cmp-path" },
+       { 'hrsh7th/cmp-cmdline' },
        { "saadparwaiz1/cmp_luasnip" },
        { "L3MON4D3/LuaSnip" },
-       -- { "rafamadriz/friendly-snippets" },
+       { "rafamadriz/friendly-snippets" },
      },
    })
 
@@ -193,8 +194,6 @@ return packer.startup(function(use)
 --    requires = "kyazdani42/nvim-web-devicons",
 --  }) -- window for showing LSP detected issues in code
 
-  -- {{ /LSP }}
-
   -- look and feel of neovim
 
   require("core.highlights") -- load before colorscheme cfg
@@ -218,13 +217,14 @@ return packer.startup(function(use)
     end,
   })
 
-  -- adds current function/class/etc. name to statusline
+  -- add current function/class/etc name to statusline
   -- deprecated
   use({
     "SmiteshP/nvim-gps",
     requires = "nvim-treesitter/nvim-treesitter",
   })
 
+  -- add current function/class/etc name to statusline
   -- replacement for nvim-gps, but doesn't work with solargraph
   --[[ use({
     "SmiteshP/nvim-navic",
