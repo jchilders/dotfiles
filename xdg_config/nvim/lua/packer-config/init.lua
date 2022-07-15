@@ -55,6 +55,9 @@ return packer.startup(function(use)
 
   -- harpoon lets you mark a small number of key files on a per-project basis,
   -- and quickly nav to them
+  -- <leader>hl - list harpoons
+  -- <leader>ha - add harpoon
+  -- C-h/j/k/l - go to first/second/third/fourth harpoon
   use({
     "ThePrimeagen/harpoon",
     config = require("plugins.harpoon").init,
@@ -79,13 +82,7 @@ return packer.startup(function(use)
   use({
     "b3nj5m1n/kommentary",
 		requires = "nvim-treesitter/nvim-treesitter",
-    -- all config here is recommented by nvim-ts-context-commentstring docs
     config = function()
-      require("kommentary.config").configure_language("default", {
-        prefer_multi_line_comments = false,
-        use_consistent_indentation = true,
-      })
-
 			if pcall(require, 'nvim-treesitter') then
 				require("nvim-treesitter.configs").setup({
 					context_commentstring = {
@@ -95,9 +92,21 @@ return packer.startup(function(use)
 				})
 			end
 
+      local konfig = require("kommentary.config")
+      vim.keymap.set('i', '<C-k>', "<C-o><Plug>kommentary_line_default")
+
+      konfig.configure_language("default", {
+        use_consistent_indentation = true,
+      })
+
+      konfig.configure_language("lua", {
+        prefer_multi_line_comments = false,
+        prefer_single_line_comments = true,
+      })
+
       local filetypes = { "javascriptreact", "typescriptreact"}
       for _, filetype in pairs(filetypes) do
-        require("kommentary.config").configure_language(filetype, {
+        konfig.configure_language(filetype, {
           single_line_comment_string = "auto",
           multi_line_comment_strings = "auto",
           hook_function = function()
@@ -133,7 +142,7 @@ return packer.startup(function(use)
       -- turn off updating statusline when match is outside of viewport
 			vim.g.matchup_matchparen_offscreen = {}
 
-			require'nvim-treesitter.configs'.setup({
+			require("nvim-treesitter.configs").setup({
 				matchup = {
 					enable = true
 				}
@@ -141,15 +150,30 @@ return packer.startup(function(use)
 		end
 	})
 
---  -- autoclose parens, function defs, etc.
---  -- :h lexima.vim
- use({
-   "cohama/lexima.vim",
-   --[[ config = function()
-     vim.g.lexima_enable_basic_rules = 0 -- turn it off for quotes/parens/etc
-   end, ]]
- })
---
+  -- autoclose function defs, if statements, etc.
+  -- :h lexima.vim
+  use({
+    "cohama/lexima.vim",
+    config = function()
+      vim.g.lexima_enable_basic_rules = 0 -- turn it off for quotes/parens/etc
+    end,
+  })
+
+  -- ysw( - surround word with parens (`w` here is a text object)
+  -- ds" - delete surrounding quotes
+  -- cs"' - change surrounding double quotes with single quotes
+  -- dsq - delete closest surrounding quote
+  -- dss - delete closest surrounding whatever
+  -- :h nvim-surround
+  use({
+    'kylechui/nvim-surround',
+    config = function()
+      require('nvim-surround').setup({
+        -- Configuration here, or leave empty to use defaults
+      })
+    end
+  })
+
 --  use({
 --    "vim-test/vim-test",
 --    cmd = { "TestFile" },

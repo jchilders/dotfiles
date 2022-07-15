@@ -16,7 +16,8 @@ local map_ctrlo = function(key, rhs, map_options, bufnr)
   end
 
   if not bufnr then
-    vim.api.nvim_set_keymap(mode, key, rhs, map_options)
+    -- vim.api.nvim_set_keymap(mode, key, rhs, map_options)
+    vim.keymap.set(mode, key, rhs, map_options)
   else
     vim.api.nvim_buf_set_keymap(0, mode, key, rhs, map_options)
   end
@@ -164,12 +165,8 @@ function M.load()
   -- git
   -- switch branches
   map_ctrlo_tele("gb", "git_branches")
-  -- git diff of current buffer. WIP
-  map_ctrlo("gd", "<cmd>lua require('plugins.toggleterm').toggle_curr_diff()<CR>")
   -- git history of file in current buffer
   map_ctrlo_tele("gh", "git_bcommits")
-  -- open lazygit
-  map_ctrlo("gl", "<cmd>lua require('plugins.toggleterm').toggle_lazygit()<CR>")
   -- edit changed file
   map_ctrlo_tele("gs", "git_status")
 
@@ -187,11 +184,10 @@ function M.load()
   -- LSP
   -- little r -> Search for LSP references to word under cursor
   map_ctrlo_tele("r", "lsp_references")
-  remap("n", "[[", "<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>")
-  remap("n", "]]", "<cmd>lua vim.lsp.diagnostic.goto_next()<CR>")
+  remap("n", "[[", "<cmd>lua vim.diagnostic.goto_prev()<CR>")
+  remap("n", "]]", "<cmd>lua vim.diagnostic.goto_next()<CR>")
   remap("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>")
   remap("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>")
-  -- remap("n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>")
   remap("n", "<space>wl", "<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>")
 
   -- little t -> Search list of symbols (tags) for current document
@@ -226,19 +222,6 @@ function M.load()
 
   -- toggleterm
   -- remap("n", "<leader>ot", "<cmd>lua R('plugins.toggleterm').toggle_left_term()<CR>")
-
-  -- dap NOTE: Lazyloaded
-  -- also NOTE: not working atm
-  --[[ remap(
-    "n",
-    "<leader>dc",
-    <cmd>lua require("plugins.dap.attach"):addPlug(); require'dap'.continue()<CR>
-  )
-  remap(
-    "n",
-    "<leader>db",
-    <cmd>lua require("plugins.dap.attach"):addPlug(); require'dap'.toggle_breakpoint()<CR>
-  ) ]]
 
   -- marker: NOTE: Lazyloaded
   --[[ remap("v", "<leader>1", "<cmd><c-u>HSHighlight 1<CR>")

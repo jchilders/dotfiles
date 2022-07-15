@@ -19,7 +19,7 @@ function M.init()
     },
 
     -- indents via treesitter currently borked. disabling for now. see:
-    -- https://github.com/nvim-treesitter/nvim-treesitter/projects/6#card-62266696
+    -- https://github.com/nvim-treesitter/nvim-treesitter/issues/1136
     indent = {
       enable = true,
     },
