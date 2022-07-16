@@ -21,7 +21,7 @@ function M.init()
     -- indents via treesitter currently borked. disabling for now. see:
     -- https://github.com/nvim-treesitter/nvim-treesitter/issues/1136
     indent = {
-      enable = true,
+      enable = false,
     },
 
     -- windwp/nvim-ts-autotag auto close/rename html tags

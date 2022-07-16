@@ -21,7 +21,7 @@ end
 
 -- if needed, bootstrap packer and exit
 if require('core.bootstrap_packer')() then
-	return
+  return
 end
 
 -- setup conf and lua modules
