@@ -70,7 +70,7 @@ return packer.startup(function(use)
 --  use({ "nvim-treesitter/playground" })
 
   -- smart selection/moving/previewing of TS objects
---  use({ "nvim-treesitter/nvim-treesitter-textobjects" })
+ use({ "nvim-treesitter/nvim-treesitter-textobjects" })
 
   -- Use `v.` in normal mode in treesitter-enabled buffer to visually select
   -- progressively broader TS nodes
@@ -99,6 +99,7 @@ return packer.startup(function(use)
         use_consistent_indentation = true,
       })
 
+      -- Always use single line comments for Lua
       konfig.configure_language("lua", {
         prefer_multi_line_comments = false,
         prefer_single_line_comments = true,
@@ -174,19 +175,6 @@ return packer.startup(function(use)
     end
   })
 
---  use({
---    "vim-test/vim-test",
---    cmd = { "TestFile" },
---    requires = {
---      {
---        "neomake/neomake",
---        cmd = { "Neomake" },
---      },
---      { "tpope/vim-dispatch", cmd = { "Dispatch" } },
---    },
---    wants = { "vim-dispatch", "neomake" },
---  })
---
 	-- {{ LSP }}
 	use({
 		"neovim/nvim-lspconfig",
@@ -200,23 +188,13 @@ return packer.startup(function(use)
 	-- Show function signature as you type
 	-- use({ "ray-x/lsp_signature.nvim", opt = false }) 
 
+  use({ 'kyazdani42/nvim-web-devicons' })
+
 	-- Add pictograms to completion window suggestion list
   use({
     "onsails/lspkind-nvim",
     config = require("plugins.lspkind-nvim").init,
   })
-
---  -- Window/split containing a pretty list for showing diagnostics, references,
---  -- telescope results, quickfix and location lists to help you solve all the
---  -- trouble your code is causing.
---  use({
---    "folke/lsp-trouble.nvim",
---    config = function()
---      require("trouble").setup()
---    end,
---    cmd = { "LspTroubleToggle" },
---    requires = "kyazdani42/nvim-web-devicons",
---  }) -- window for showing LSP detected issues in code
 
   -- look and feel of neovim
 
@@ -269,7 +247,7 @@ return packer.startup(function(use)
 					ignore_whitespace = false,
 				},
 				current_line_blame_formatter = '<author>, <author_time:%Y-%m-%d> - <summary>',
-				on_attach = function(bufnr)
+				on_attach = function(_)
 					local gs = package.loaded.gitsigns
 					vim.keymap.set('n', '<leader>gb', gs.toggle_current_line_blame)
 				end
@@ -294,23 +272,6 @@ return packer.startup(function(use)
     end
   })
 
-  -- Makes vim tab bar show buffers. Trying this out, not sure if I'll keep it
-  -- Seems to overlap (in my usage) with Harpoon, and Harpoon doesn't add
-  -- anything to the UI, which I like better.
-  use({
-    'akinsho/bufferline.nvim',
-    tag = "v2.*",
-    requires = 'kyazdani42/nvim-web-devicons',
-    config = function()
-      require("bufferline").setup({
-        options = {
-          mode = "tabs",
-          close_command = "Bdelete!",
-        }
-      })
-    end
-  })
-
   -- Add documentation to a method/class/etc with a mapping.
   -- Currently set to `<leader>doc`
   use({
@@ -324,8 +285,4 @@ return packer.startup(function(use)
     -- Uncomment next line if you want to follow only stable versions
     -- tag = "*"
   })
-
-  -- {{ to investigate }}
-  -- mrjones2014/dash.nvim - Fuzzy search Dash.app (API docsets)
-  -- tpope/vim-repeat - allows `.` command to work w/ mappings
 end)

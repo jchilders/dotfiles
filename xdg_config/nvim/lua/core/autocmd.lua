@@ -10,6 +10,11 @@ local function autocmds()
     "*",
     [[if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif]]
   )
+
+  vim.api.nvim_create_autocmd({ "BufEnter", "BufRead" }, {
+     pattern = { "*.jbuilder", "*.arb" },
+     command = "set filetype=ruby",
+   })
 end
 
 function M.load()
