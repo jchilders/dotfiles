@@ -74,7 +74,9 @@ brew 'diffsitter'
 tap '1Password/homebrew-tap'
 cask '1password-cli'
 
-cask 'alacritty' # fast(est) terminal emulator
+cask 'docker'
+
+# cask 'alacritty' # fast(est) terminal emulator
 
 # Optionals. Uncomment to install
 # cask 'lulu' # allow/deny apps network access
