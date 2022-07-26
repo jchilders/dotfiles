@@ -75,26 +75,24 @@ function M.lsp_name()
   end
 end
 
--- local ts_utils = M.prequire("nvim-treesitter.ts_utils")
-local ts_utils = M.prequire("vim.treesitter.query")
+-- local ts_utils = M.prequire("vim.treesitter.query")
 
 function M.T()
+  local ts_utils = require("nvim-treesitter.ts_utils")
   print(ts_utils.get_node_at_cursor():type())
 end
 
-function M.P(...)
-  local objects = vim.tbl_map(vim.inspect, { ... })
-  print(unpack(objects))
-end
-
 function M.root_node_text()
+  local ts_utils = require("nvim-treesitter.ts_utils")
   local curr_node = ts_utils.get_node_at_cursor()
   local root_node = ts_utils.get_root_for_node(curr_node)
   local lines = ts_utils.get_node_text(root_node)
+
   return lines
 end
 
 function M.N()
+  local ts_utils = require("nvim-treesitter.ts_utils")
   print(ts_utils.get_node_at_cursor())
 end
 

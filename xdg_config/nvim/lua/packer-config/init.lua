@@ -17,26 +17,27 @@ vim.cmd([[
 -- Use a protected call so we don't error out on first use
 local status_ok, packer = pcall(require, "packer")
 if not status_ok then
-	return
+  return
 end
 
 -- Have packer use a popup window
 packer.init({
-	display = {
-		open_fn = function()
-			return require("packer.util").float({ border = "rounded" })
-		end,
-	},
+  display = {
+    open_fn = function()
+      return require("packer.util").float({ border = "rounded" })
+    end,
+  },
 })
 
 return packer.startup(function(use)
-	use("wbthomason/packer.nvim")
+  use("wbthomason/packer.nvim")
 
   -- {{ Tree-sitter treesitter }} --
-	use({
-		"nvim-treesitter/nvim-treesitter",
-		config = require("plugins.nvim-treesitter").init(),
-	})
+  use({
+    "nvim-treesitter/nvim-treesitter",
+    config = require("plugins.nvim-treesitter").init(),
+  })
+  use('nvim-treesitter/nvim-treesitter-textobjects')
 
   -- telescope
   use({
@@ -61,9 +62,9 @@ return packer.startup(function(use)
   use({
     "ThePrimeagen/harpoon",
     config = require("plugins.harpoon").init,
-		requires = {
+    requires = {
       { "nvim-lua/plenary.nvim" },
-		}
+    }
   })
 
 --  -- :TSPlaygroundToggle
@@ -79,19 +80,11 @@ return packer.startup(function(use)
   -- comment code using directions or blocks. example:
   -- gc2j - comment current line and 2 down
   -- V2jgc - visually select current line & 2 down, then comment
+  -- gcaf - with `af` mapped to treesitter `@function.outer`, comment out current function
   use({
     "b3nj5m1n/kommentary",
-		requires = "nvim-treesitter/nvim-treesitter",
+    requires = "nvim-treesitter/nvim-treesitter",
     config = function()
-			if pcall(require, 'nvim-treesitter') then
-				require("nvim-treesitter.configs").setup({
-					context_commentstring = {
-						enable = true,
-						enable_autocmd = false,
-					},
-				})
-			end
-
       local konfig = require("kommentary.config")
       vim.keymap.set('i', '<C-k>', "<C-o><Plug>kommentary_line_default")
 
@@ -134,22 +127,22 @@ return packer.startup(function(use)
      },
    })
 
-	-- Displays visual indicator of matching parenthesis, bracket, function
-	-- `def`/`end`, etc.
-	use({
-		'andymass/vim-matchup',
+  -- Displays visual indicator of matching parenthesis, bracket, function
+  -- `def`/`end`, etc.
+  use({
+    'andymass/vim-matchup',
     requires = "nvim-treesitter/nvim-treesitter",
-		config = function()
+    config = function()
       -- turn off updating statusline when match is outside of viewport
-			vim.g.matchup_matchparen_offscreen = {}
+      vim.g.matchup_matchparen_offscreen = {}
 
-			require("nvim-treesitter.configs").setup({
-				matchup = {
-					enable = true
-				}
-			})
-		end
-	})
+      -- require("nvim-treesitter.configs").setup({
+      --   matchup = {
+      --     enable = true
+      --   }
+      -- })
+    end
+  })
 
   -- autoclose function defs, if statements, etc.
   -- :h lexima.vim
@@ -175,22 +168,22 @@ return packer.startup(function(use)
     end
   })
 
-	-- {{ LSP }}
-	use({
-		"neovim/nvim-lspconfig",
-		config = function()
-			require("plugins.lspconfig").init()
-		end,
-	})
-	use({ "williamboman/nvim-lsp-installer" })
-	use({ "nvim-lua/lsp-status.nvim" })
+  -- {{ LSP }}
+  use({
+    "neovim/nvim-lspconfig",
+    config = function()
+      require("plugins.lspconfig").init()
+    end,
+  })
+  use({ "williamboman/nvim-lsp-installer" })
+  use({ "nvim-lua/lsp-status.nvim" })
 
-	-- Show function signature as you type
-	-- use({ "ray-x/lsp_signature.nvim", opt = false }) 
+  -- Show function signature as you type
+  -- use({ "ray-x/lsp_signature.nvim", opt = false }) 
 
   use({ 'kyazdani42/nvim-web-devicons' })
 
-	-- Add pictograms to completion window suggestion list
+  -- Add pictograms to completion window suggestion list
   use({
     "onsails/lspkind-nvim",
     config = require("plugins.lspkind-nvim").init,
@@ -233,27 +226,27 @@ return packer.startup(function(use)
     requires = "neovim/nvim-lspconfig"
   }) ]]
 
-	-- indicate changed lines in gutter, as well as other git goodies
-	use({
-		'lewis6991/gitsigns.nvim',
-		requires = 'nvim-lua/plenary.nvim',
-		config = function()
-			require('gitsigns').setup({
-				current_line_blame = false, -- Toggle with `:Gitsigns toggle_current_line_blame`
-				current_line_blame_opts = {
-					virt_text = true,
-					virt_text_pos = 'eol', -- 'eol' | 'overlay' | 'right_align'
-					delay = 500,
-					ignore_whitespace = false,
-				},
-				current_line_blame_formatter = '<author>, <author_time:%Y-%m-%d> - <summary>',
-				on_attach = function(_)
-					local gs = package.loaded.gitsigns
-					vim.keymap.set('n', '<leader>gb', gs.toggle_current_line_blame)
-				end
-			})
-		end
-	})
+  -- indicate changed lines in gutter, as well as other git goodies
+  use({
+    'lewis6991/gitsigns.nvim',
+    requires = 'nvim-lua/plenary.nvim',
+    config = function()
+      require('gitsigns').setup({
+        current_line_blame = false, -- Toggle with `:Gitsigns toggle_current_line_blame`
+        current_line_blame_opts = {
+          virt_text = true,
+          virt_text_pos = 'eol', -- 'eol' | 'overlay' | 'right_align'
+          delay = 500,
+          ignore_whitespace = false,
+        },
+        current_line_blame_formatter = '<author>::<author_time:%Y-%m-%d> - <summary>',
+        on_attach = function(_)
+          local gs = package.loaded.gitsigns
+          vim.keymap.set('n', '<leader>gb', gs.toggle_current_line_blame)
+        end
+      })
+    end
+  })
 
   -- Delete buffers without affecting layout
   -- :Bdelete :Bdelete! :Bd!
@@ -285,4 +278,8 @@ return packer.startup(function(use)
     -- Uncomment next line if you want to follow only stable versions
     -- tag = "*"
   })
+
+  if packer_bootstrap then
+    require('packer').sync()
+  end
 end)

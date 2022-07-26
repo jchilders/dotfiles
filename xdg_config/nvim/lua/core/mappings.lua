@@ -137,9 +137,6 @@ function M.load()
   -- Copy to system clipboard with ctrl-c
   remap("v", "<C-c>", '"+y')
 
-  -- delete into blackhole and paste last yank
-  remap("v", "<leader>p", '"_dP')
-
   -- Quote Toggler: toggle between single/double quotes for string under cursor.
   remap("n", "<leader>tq", "<cmd>lua require('jc.tireswing').toggle_quotes()<CR>")
 
@@ -194,10 +191,6 @@ function M.load()
   map_ctrlo_tele("t", "lsp_document_symbols")
   -- Big T -> Search list of symbols (tags) from entire workspace
   map_ctrlo_tele("T", "lsp_workspace_symbols")
-
-  -- format.nvim
-  remap("n", "<leader>fb", "<cmd>Format<CR>")
-  remap("v", "<leader>fb", "<cmd>Format<CR>")
 
   -- harpoon
   remap("n", "<leader>ha", "<cmd>lua R('harpoon.mark').add_file()<CR>")
