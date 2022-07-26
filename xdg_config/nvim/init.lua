@@ -19,9 +19,9 @@ for _, plugin in pairs(disabled_built_ins) do
   vim.g["loaded_" .. plugin] = 0
 end
 
--- if needed, bootstrap packer and exit
-if require('core.bootstrap_packer')() then
-  return
+local bootstrap = require('core.bootstrap_packer')
+if bootstrap.needed() then
+  bootstrap.bootstrap()
 end
 
 -- setup conf and lua modules
