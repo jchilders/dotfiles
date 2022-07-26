@@ -1,6 +1,8 @@
 local M = {}
 
 local api = vim.api
+local bo = vim.bo
+
 
 -- Send line under the cursor to the tmux pane to the left, then move cursor to
 -- next line
@@ -58,6 +60,52 @@ M.send_keys_left = function(keys)
   end
 end
 
+local function bufnr_for_test_file()
+  local test_file = M.mru_test_file()
+  return vim.fn.bufnr(test_file)
+end
+
+M.mru_test_file = function()
+  -- Using zsh globbing is actually faster than anything else I tried: `find`,
+  -- `exa`, `fd`, `stat`. Tried 'em all. Globbing was the fastest.
+  local test_file = vim.fn.system("print -l (test|spec)/**/*_(test|spec).rb(om) | head -1 | tr -d '\n'")
+  if vim.fn.stridx(test_file, "no matches found") >= 0 then
+    error('No test file found', 2)
+    return
+  end
+
+  return test_file
+end
+
+-- Find and run the most recently modified test
+M.run_mru_test = function(...)
+  local ok, test_file = pcall(M.mru_test_file)
+  if not ok then
+    print("Error: No test file found")
+    return
+  end
+
+  local test_cmd = "rails test " .. test_file
+  local arg = {...}
+  for _, row in ipairs(arg) do
+    test_cmd = test_cmd .. ":" .. row
+  end
+
+  M.send_left(test_cmd)
+end
+
+M.run_mru_test_current = function()
+  local buf = bufnr_for_test_file()
+
+  if buf == -1 then
+    print("No buffer for " .. M.mru_test_file())
+    return
+  end
+
+  local lnum = vim.api.nvim_buf_get_mark(buf, '"')[1]
+  M.run_mru_test(lnum)
+end
+
 function M.visual_selection_range()
   local vis_start = vim.fn.getpos("v")[2]
   local vis_end = vim.fn.getcurpos()[2]
@@ -70,12 +118,14 @@ function M.visual_selection_range()
   return vis_start, vis_end
 end
 
--- Find and run the most recently updated test
-M.run_mru_rails_test = function()
-  local test_file = vim.fn.system("print -l (test|spec)/**/*_(test|spec).rb(om) | head -1")
-  local test_cmd = "rails test " .. test_file
+M.edit_mru_test = function()
+  local ok, test_file = pcall(M.mru_test_file)
+  if not ok then
+    print("Error: No test file found")
+    return
+  end
 
-  M.send_left(test_cmd)
+  vim.cmd('edit ' .. test_file)
 end
 
 return M

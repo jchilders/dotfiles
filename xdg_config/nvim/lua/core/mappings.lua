@@ -120,8 +120,12 @@ function M.load()
     "<cmd>lua require('jc.tmux-utils').send_keys_left({'C-d','Up','Enter'})<CR>"
   )
 
-  -- Save & run the most recently modified test
-  remap("n", "<leader>rt", "<cmd>wa<CR><cmd>lua require('jc.tmux-utils').run_mru_rails_test()<CR>")
+  -- Save & run the most recently modified test, test case for current line only
+  remap("n", "<leader>rt", "<cmd>wa<CR><cmd>lua require('jc.tmux-utils').run_mru_test_current()<CR>")
+  -- Save & run the most recently modified test, entire test file
+  remap("n", "<leader>rT", "<cmd>wa<CR><cmd>lua require('jc.tmux-utils').run_mru_test()<CR>")
+  -- Edit the most recently modified test
+  remap("n", "<leader>et", "<cmd>wa<CR><cmd>lua require('jc.tmux-utils').edit_mru_test()<CR>")
 
   -- Toggle treesitter highlighting
   remap("n", "<leader>tstog", "<cmd>TSBufToggle highlight<CR>")
