@@ -30,7 +30,7 @@ packer.init({
 })
 
 return packer.startup(function(use)
-  use("wbthomason/packer.nvim")
+  use "wbthomason/packer.nvim"
 
   -- {{ Tree-sitter treesitter }} --
   use({
@@ -108,21 +108,21 @@ return packer.startup(function(use)
     end,
   })
 
-   -- completion
-   use({
-     "hrsh7th/nvim-cmp",
-     config = require("plugins.cmp").init,
-     requires = {
-       { "hrsh7th/cmp-buffer" },
-       { "hrsh7th/cmp-nvim-lsp" },
-       { "hrsh7th/cmp-nvim-lsp-document-symbol" },
-       { "hrsh7th/cmp-path" },
-       { 'hrsh7th/cmp-cmdline' },
-       { "saadparwaiz1/cmp_luasnip" },
-       { "L3MON4D3/LuaSnip" },
-       { "rafamadriz/friendly-snippets" },
-     },
-   })
+  -- completion
+  use({
+    "hrsh7th/nvim-cmp",
+    config = require("plugins.cmp").init,
+    requires = {
+      { "hrsh7th/cmp-buffer" },
+      { "hrsh7th/cmp-nvim-lsp" },
+      { "hrsh7th/cmp-nvim-lsp-document-symbol" },
+      { "hrsh7th/cmp-path" },
+      { 'hrsh7th/cmp-cmdline' },
+      { "saadparwaiz1/cmp_luasnip" },
+      { "L3MON4D3/LuaSnip" },
+      { "rafamadriz/friendly-snippets" },
+    },
+  })
 
   -- Displays visual indicator of matching parenthesis, bracket, function
   -- `def`/`end`, etc.
@@ -186,11 +186,25 @@ return packer.startup(function(use)
     config = require("plugins.lspkind-nvim").init,
   })
 
-  -- colorscheme
+  -- colorschemes
+  require("core.highlights") -- load before colorscheme cfg
+
+  use({
+    "folke/tokyonight.nvim",
+    config = function()
+      vim.o.background = "dark" -- or light if you so prefer
+      vim.g.tokyonight_style = "night"
+    end,
+  })
 
   use({
     'shaunsingh/oxocarbon.nvim',
     run = './install.sh',
+  })
+
+  use({
+    'glepnir/zephyr-nvim',
+    requires = { 'nvim-treesitter/nvim-treesitter', opt = true },
   })
 
   -- statusline

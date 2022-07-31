@@ -13,7 +13,7 @@ local lsp_installer = require("nvim-lsp-installer")
 function M.init()
   lsp_installer.setup({
     automatic_installation = true,
-    ensure_installed = { 'solargraph' },
+    ensure_installed = { 'solargraph', 'sorbet' },
   })
 
   local servers = lsp_installer.get_installed_servers()
