@@ -208,6 +208,7 @@ function M.load()
   remap("n", "<C-j>", "<cmd>lua R('harpoon.ui').nav_file(2)<CR>")
   remap("n", "<C-k>", "<cmd>lua R('harpoon.ui').nav_file(3)<CR>")
   remap("n", "<C-l>", "<cmd>lua R('harpoon.ui').nav_file(4)<CR>")
+  remap("n", "<C-;>", "<cmd>lua R('harpoon.ui').nav_file(5)<CR>")
 
   -- terminal
   remap("t", "<esc>", [[<C-\><C-n>]])

@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+
+require 'fileutils'
+
+FileUtils.cd("#{Dir.home}/work/carerev/api_app")
+database = `rails runner 'print ActiveRecord::Base.connection.current_database'`
+print "Archiving #{database}..."
+FileUtils.cd("#{Dir.home}/temp/dbdumps")
+`#{Dir.home}/bin/dumpnzip #{database}`
+puts "done."

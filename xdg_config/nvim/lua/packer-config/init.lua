@@ -39,6 +39,10 @@ return packer.startup(function(use)
   })
   use('nvim-treesitter/nvim-treesitter-textobjects')
 
+  -- Use `v.` in normal mode in treesitter-enabled buffer to visually select
+  -- progressively broader TS nodes
+  use "RRethy/nvim-treesitter-textsubjects"
+
   -- telescope
   use({
     "nvim-telescope/telescope.nvim",
@@ -69,13 +73,6 @@ return packer.startup(function(use)
 
 --  -- :TSPlaygroundToggle
 --  use({ "nvim-treesitter/playground" })
-
-  -- smart selection/moving/previewing of TS objects
- use({ "nvim-treesitter/nvim-treesitter-textobjects" })
-
-  -- Use `v.` in normal mode in treesitter-enabled buffer to visually select
-  -- progressively broader TS nodes
-  use "RRethy/nvim-treesitter-textsubjects"
 
   -- comment code using directions or blocks. example:
   -- gc2j - comment current line and 2 down
@@ -189,19 +186,11 @@ return packer.startup(function(use)
     config = require("plugins.lspkind-nvim").init,
   })
 
-  -- look and feel of neovim
-
-  require("core.highlights") -- load before colorscheme cfg
-
   -- colorscheme
-  use({
-    "folke/tokyonight.nvim",
-    config = function()
-      vim.o.background = "dark" -- or light if you so prefer
-      vim.g.tokyonight_style = "night"
 
-      vim.cmd([[colorscheme tokyonight]])
-    end,
+  use({
+    'shaunsingh/oxocarbon.nvim',
+    run = './install.sh',
   })
 
   -- statusline

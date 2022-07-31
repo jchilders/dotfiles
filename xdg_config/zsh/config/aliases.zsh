@@ -78,12 +78,18 @@ function cdbrew {
 # Change directory to source dir for given RubyGem
 # This has to be a function (instead of a script under bin/) because you can't
 # cd from a script & have it stick. zsh spawns a child process to execute a
-# script, whilc functions happen in the same process they were called from.
+# script, while functions happen in the same process they were called from.
 function cdgem () {
   if [[ $# -eq 0 ]]; then
     echo "Usage: $0 <gem>"
     return 1
   fi
 
-  cd $(gem open $1 -e echo)
+  gem_dir="$(gem open $1 -e echo)"
+  if [ $? -ne 0 ]; then
+    echo "Error finding gem '$1'"
+    return 1
+  fi
+
+  cd $gem_dir
 }

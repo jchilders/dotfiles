@@ -6,7 +6,6 @@
 
 require 'English'
 
-# check if curr dir is git repo
 `git -C . rev-parse 2>/dev/null`
 unless $CHILD_STATUS.success?
   puts 'Not a git repo'

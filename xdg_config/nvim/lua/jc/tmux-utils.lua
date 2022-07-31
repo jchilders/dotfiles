@@ -79,11 +79,7 @@ end
 
 -- Find and run the most recently modified test
 M.run_mru_test = function(...)
-  local ok, test_file = pcall(M.mru_test_file)
-  if not ok then
-    print("Error: No test file found")
-    return
-  end
+  local test_file = M.mru_test_file()
 
   local test_cmd = "rails test " .. test_file
   local arg = {...}

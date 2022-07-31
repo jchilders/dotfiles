@@ -5,3 +5,5 @@ zip_name="${db_name}_$(date +%F).gz"
 
 echo "Dumping $db_name to $zip_name"
 pg_dump $db_name | gzip -c > $zip_name
+mv $zip_name ~/temp/dbdumps/
+ls -al ~/temp/dbdumps/$zip_name

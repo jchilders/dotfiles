@@ -2,11 +2,12 @@ local g, b, opt, go, wo, o = vim.g, vim.b, vim.opt, vim.go, vim.wo, vim.o
 local M = {}
 
 function M.load()
+  vim.cmd("colorscheme oxocarbon")
+
   g.mapleader = ","
 
   opt.backup = false
   opt.swapfile = false
-
 
   opt.autoindent = true
   opt.autoread = true -- reload files on external change
@@ -23,6 +24,7 @@ function M.load()
   opt.hidden = true
   opt.hlsearch = true
   opt.ignorecase = true
+  opt.laststatus = 3 -- 3: always and ONLY the last window
   opt.number = true
   opt.relativenumber = true
   opt.scrolloff = 3
