@@ -36,12 +36,43 @@ homebrew-clean: ## Uninstall homebrew
 
 NEOVIM_CFG_DIR := "$(XDG_CONFIG_HOME)/nvim"
 
-neovim: neovim-plugins ## Install Neovim, configurations, & plugins
+neovim: neovim-build-from-source ## Install Neovim
 
-neovim-plugins: ## Install Neovim plugins
-	sh -c 'curl -fLo $(HOME)/.local/share/nvim/site/autoload/plug.vim --create-dirs \
-	       https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-	nvim --headless -u $(NEOVIM_CFG_DIR)/config/plugins.vim +PlugInstall +UpdateRemotePlugins +qa
+NEOVIM_SRC_DIR := "$$HOME/work/neovim/neovim"
+NEOVIM_CFG_DIR := "$(XDG_CONFIG_HOME)/nvim"
+
+neovim-clone-or-pull:
+		@if [ -d $(NEOVIM_SRC_DIR) ]; then \
+				git -C $(NEOVIM_SRC_DIR) pull; \
+		else; \
+				git clone https://github.com/neovim/neovim.git $(NEOVIM_SRC_DIR); \
+		fi; \
+
+neovim-build-from-source: ## Install from source
+ifeq (, $(shell which cmake))
+		$(shell brew install cmake)
+endif
+ifeq (, $(shell which automake))
+		$(shell brew install automake)
+endif
+ifeq (, $(shell which ninja))
+		$(shell brew install ninja)
+endif
+		$(MAKE) -C $(NEOVIM_SRC_DIR) distclean
+		$(MAKE) -C $(NEOVIM_SRC_DIR)
+		# $(MAKE) -C $(NEOVIM_SRC_DIR) CMAKE_BUILD_TYPE=RelWithDebInfo; \
+		sudo $(MAKE) -C $(NEOVIM_SRC_DIR) CMAKE_INSTALL_PREFIX=/usr/local install
+
+neovim-clean2:
+		$(shell bin/clean_neovim)
+
+neovim-clean:
+		-sudo rm /usr/local/bin/nvim
+		-sudo rm /usr/local/bin/vi
+		-sudo rm -r /usr/local/lib/nvim
+		-sudo rm -r /usr/local/share/nvim
+		-brew unlink neovim
+		rm -rf $$HOME/.local/share/nvim
 
 ##@ Terminal Emulator
 

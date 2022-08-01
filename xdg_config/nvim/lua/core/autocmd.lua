@@ -12,7 +12,7 @@ local function autocmds()
   )
 
   vim.api.nvim_create_autocmd({ "BufEnter", "BufRead" }, {
-     pattern = { "*.jbuilder", "*.arb" },
+     pattern = { "Brewfile", "*.jbuilder", "*.arb", "*.rbi" },
      command = "set filetype=ruby",
    })
 end

@@ -3,14 +3,14 @@
 -- :PackerClean
 -- :PackerCompile
 -- quit/reload
--- nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
+-- nvim --headless -c 'autocmd User PackerCompile quitall' -c 'PackerSync'
 -- ~/bin/clean_nvim
 
 -- Autocommand that reloads neovim whenever you save the plugins.lua file
 vim.cmd([[
   augroup packer_user_config
     autocmd!
-    autocmd BufWritePost plugins.lua source <afile> | PackerSync
+    autocmd BufWritePost init.lua source <afile> | PackerSync
   augroup end
 ]])
 
@@ -37,16 +37,20 @@ return packer.startup(function(use)
     "nvim-treesitter/nvim-treesitter",
     config = require("plugins.nvim-treesitter").init(),
   })
-  use('nvim-treesitter/nvim-treesitter-textobjects')
+  -- use "nvim-treesitter/nvim-treesitter-textobjects"
 
   -- Use `v.` in normal mode in treesitter-enabled buffer to visually select
   -- progressively broader TS nodes
-  use "RRethy/nvim-treesitter-textsubjects"
+  -- use "RRethy/nvim-treesitter-textsubjects"
+
+  -- TSPlayground requires nightly build
+  -- :TSPlaygroundToggle
+  use({ "nvim-treesitter/playground" })
 
   -- telescope
   use({
     "nvim-telescope/telescope.nvim",
---    config = require("plugins.telescope").init,
+    config = require("plugins.telescope").init,
     requires = {
       { "nvim-lua/plenary.nvim" },
       { "nvim-telescope/telescope-project.nvim", opt = true },
@@ -70,9 +74,6 @@ return packer.startup(function(use)
       { "nvim-lua/plenary.nvim" },
     }
   })
-
---  -- :TSPlaygroundToggle
---  use({ "nvim-treesitter/playground" })
 
   -- comment code using directions or blocks. example:
   -- gc2j - comment current line and 2 down
@@ -108,22 +109,6 @@ return packer.startup(function(use)
     end,
   })
 
-  -- completion
-  use({
-    "hrsh7th/nvim-cmp",
-    config = require("plugins.cmp").init,
-    requires = {
-      { "hrsh7th/cmp-buffer" },
-      { "hrsh7th/cmp-nvim-lsp" },
-      { "hrsh7th/cmp-nvim-lsp-document-symbol" },
-      { "hrsh7th/cmp-path" },
-      { 'hrsh7th/cmp-cmdline' },
-      { "saadparwaiz1/cmp_luasnip" },
-      { "L3MON4D3/LuaSnip" },
-      { "rafamadriz/friendly-snippets" },
-    },
-  })
-
   -- Displays visual indicator of matching parenthesis, bracket, function
   -- `def`/`end`, etc.
   use({
@@ -132,12 +117,6 @@ return packer.startup(function(use)
     config = function()
       -- turn off updating statusline when match is outside of viewport
       vim.g.matchup_matchparen_offscreen = {}
-
-      -- require("nvim-treesitter.configs").setup({
-      --   matchup = {
-      --     enable = true
-      --   }
-      -- })
     end
   })
 
@@ -159,26 +138,69 @@ return packer.startup(function(use)
   use({
     'kylechui/nvim-surround',
     config = function()
-      require('nvim-surround').setup({
-        -- Configuration here, or leave empty to use defaults
-      })
+      require('nvim-surround').setup()
+    end
+  })
+
+  -- For splits, show filename in upper right of viewport
+  -- :BuffertagToggle
+  use({
+    "ldelossa/buffertag",
+    config = function()
+      require('buffertag').setup()
     end
   })
 
   -- {{ LSP }}
+
+  -- :Mason
   use({
-    "neovim/nvim-lspconfig",
+    "williamboman/mason.nvim",
     config = function()
-      require("plugins.lspconfig").init()
+      require("mason").setup()
+      require("mason-lspconfig").setup({
+        ensure_installed = { "rubocop", "solargraph", "sorbet", "sumneko_lua" }
+      })
     end,
+    requires = {
+      { "williamboman/mason-lspconfig.nvim" },
+      { "neovim/nvim-lspconfig" },
+    }
   })
-  use({ "williamboman/nvim-lsp-installer" })
-  use({ "nvim-lua/lsp-status.nvim" })
+
+  -- LSP/completion/snippet all in one
+  use({
+    "VonHeikemen/lsp-zero.nvim",
+    requires = {
+      -- LSP Support
+      {"neovim/nvim-lspconfig"},
+      {"williamboman/mason.nvim"},
+      {"williamboman/mason-lspconfig.nvim"},
+
+      -- Autocompletion
+      {"hrsh7th/nvim-cmp"},
+      {"hrsh7th/cmp-buffer"},
+      {"hrsh7th/cmp-path"},
+      {"saadparwaiz1/cmp_luasnip"},
+      {"hrsh7th/cmp-nvim-lsp"},
+      {"hrsh7th/cmp-nvim-lua"},
+
+      -- Snippets
+      {"L3MON4D3/LuaSnip"},
+      {"rafamadriz/friendly-snippets"},
+    },
+    config = function()
+      local lsp = require('lsp-zero')
+
+      lsp.preset('recommended')
+      lsp.setup()
+    end
+  })
 
   -- Show function signature as you type
   -- use({ "ray-x/lsp_signature.nvim", opt = false }) 
 
-  use({ 'kyazdani42/nvim-web-devicons' })
+  use "kyazdani42/nvim-web-devicons"
 
   -- Add pictograms to completion window suggestion list
   use({
@@ -208,19 +230,19 @@ return packer.startup(function(use)
   })
 
   -- statusline
-   use({
-    "windwp/windline.nvim",
-     config = function()
-      require("plugins.statusline.airline")
-    end,
-  })
+  -- use({
+   -- "windwp/windline.nvim",
+   -- config = function()
+   --   require("plugins.statusline.windline")
+   -- end,
+  -- })
 
   -- add current function/class/etc name to statusline
   -- deprecated
-  use({
-    "SmiteshP/nvim-gps",
-    requires = "nvim-treesitter/nvim-treesitter",
-  })
+  -- use({
+  --   "SmiteshP/nvim-gps",
+  --   requires = "nvim-treesitter/nvim-treesitter",
+  -- })
 
   -- add current function/class/etc name to statusline
   -- replacement for nvim-gps, but doesn't work with solargraph
@@ -253,7 +275,7 @@ return packer.startup(function(use)
 
   -- Delete buffers without affecting layout
   -- :Bdelete :Bdelete! :Bd!
-  use('famiu/bufdelete.nvim')
+  use "famiu/bufdelete.nvim"
 
   -- Automatically saves nvim session on exit, or loads the saved session on load
   -- :SaveSession :RestoreSession :DeleteSession
@@ -270,19 +292,19 @@ return packer.startup(function(use)
 
   -- Add documentation to a method/class/etc with a mapping.
   -- Currently set to `<leader>doc`
-  use({
-    "danymat/neogen",
-    config = function()
-      require('neogen').setup({})
+  -- use({
+  --   "danymat/neogen",
+  --   config = function()
+  --     require('neogen').setup({})
 
-      vim.keymap.set("n", "<leader>doc", "<cmd>lua require('neogen').generate()<CR>")
-    end,
-    requires = "nvim-treesitter/nvim-treesitter",
-    -- Uncomment next line if you want to follow only stable versions
-    -- tag = "*"
-  })
+  --     vim.keymap.set("n", "<leader>doc", "<cmd>lua require('neogen').generate()<CR>")
+  --   end,
+  --   requires = "nvim-treesitter/nvim-treesitter",
+  --   -- Uncomment next line if you want to follow only stable versions
+  --   -- tag = "*"
+  -- })
 
-  if packer_bootstrap then
+  if BootstrapPacker then
     require('packer').sync()
   end
 end)

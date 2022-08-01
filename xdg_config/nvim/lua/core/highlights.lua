@@ -9,7 +9,7 @@ cmd("autocmd ColorScheme * highlight LineNr guibg = none")
 cmd("autocmd ColorScheme * highlight SignColumn guibg = none")
 cmd("autocmd ColorScheme * highlight StatusLine ctermbg=Green guibg=#0044cc")
 cmd("autocmd ColorScheme * highlight StatusLineNC ctermbg=White guibg=#1B3A59")
-cmd("autocmd ColorScheme * highlight VertSplit guibg = none")
+cmd("autocmd ColorScheme * highlight VertSplit guibg=none guifg=#990099")
 
 cmd("autocmd ColorScheme * highlight TelescopeBorder         guifg=#3e4451")
 cmd("autocmd ColorScheme * highlight TelescopePromptBorder   guifg=#3e4451")

@@ -2,7 +2,10 @@ local M = {}
 M.__index = M
 
 function M.init()
-  local config = require("nvim-treesitter.configs")
+  local status_ok, config = pcall(require, "nvim-treesitter.configs")
+  if not status_ok then
+    return
+  end
 
   config.setup({
     -- one of "all" or a list of languages
