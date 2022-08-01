@@ -84,7 +84,9 @@ M.run_mru_test = function(...)
   local test_cmd = "rails test " .. test_file
   local arg = {...}
   for _, row in ipairs(arg) do
-    test_cmd = test_cmd .. ":" .. row
+    if row > 0 then
+      test_cmd = test_cmd .. ":" .. row
+    end
   end
 
   M.send_left(test_cmd)
@@ -94,7 +96,7 @@ M.run_mru_test_current = function()
   local buf = bufnr_for_test_file()
 
   if buf == -1 then
-    print("No buffer for " .. M.mru_test_file())
+    M.run_mru_test(0)
     return
   end
 

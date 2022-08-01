@@ -196,10 +196,34 @@ return packer.startup(function(use)
       local lsp = require('lsp-zero')
       lsp.preset('recommended')
 
-      lsp.on_attach(function(server, bufnr)
-        print("Buffer " .. bufnr .. " attached to " .. server.name)
-      end)
-      lsp.setup()
+      lsp.setup_nvim_cmp({
+        sources = {
+          { name = 'path' },
+          { name = 'nvim_lsp', keyword_length = 3 },
+          { name = 'luasnip', keyword_length = 3 },
+          {
+            name = "buffer",
+            sorting = {
+              -- distance-based sorting
+              comparators = {
+                function(...)
+                  local cmp_buffer = require('cmp_buffer')
+                  return cmp_buffer:compare_locality(...)
+                end,
+              }
+            },
+            option = {
+              -- indexing_interval = "Satan",
+              -- get_bufnrs = 666,
+              get_bufnrs = function()
+                return vim.api.nvim_list_bufs()
+              end,
+            }
+          }
+        },
+      })
+
+      lsp.setup() -- this needs to be last
     end
   })
 
