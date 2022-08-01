@@ -22,11 +22,13 @@ end
 
 -- Have packer use a popup window
 packer.init({
-  display = {
-    open_fn = function()
-      return require("packer.util").float({ border = "rounded" })
-    end,
-  },
+  autoremove = true,
+  log = { level = 'info' },
+  -- display = {
+  --   open_fn = function()
+  --     return require("packer.util").float({ border = "rounded" })
+  --   end,
+  -- },
 })
 
 return packer.startup(function(use)
@@ -153,13 +155,14 @@ return packer.startup(function(use)
 
   -- {{ LSP }}
 
+  -- Manage LSPs, linters, DAP servers, formatters, etc.
   -- :Mason
   use({
     "williamboman/mason.nvim",
     config = function()
       require("mason").setup()
       require("mason-lspconfig").setup({
-        ensure_installed = { "rubocop", "solargraph", "sorbet", "sumneko_lua" }
+        ensure_installed = { "rubocop", "solargraph", "sorbet", "stylelua", "sumneko_lua" }
       })
     end,
     requires = {
@@ -191,8 +194,11 @@ return packer.startup(function(use)
     },
     config = function()
       local lsp = require('lsp-zero')
-
       lsp.preset('recommended')
+
+      lsp.on_attach(function(server, bufnr)
+        print("Buffer " .. bufnr .. " attached to " .. server.name)
+      end)
       lsp.setup()
     end
   })
@@ -217,11 +223,6 @@ return packer.startup(function(use)
       vim.o.background = "dark" -- or light if you so prefer
       vim.g.tokyonight_style = "night"
     end,
-  })
-
-  use({
-    'shaunsingh/oxocarbon.nvim',
-    run = './install.sh',
   })
 
   use({

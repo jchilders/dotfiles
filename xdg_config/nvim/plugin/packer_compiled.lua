@@ -122,7 +122,7 @@ _G.packer_plugins = {
     url = "https://github.com/rafamadriz/friendly-snippets"
   },
   ["gitsigns.nvim"] = {
-    config = { "\27LJ\2\n�\1\0\1\a\0\t\0\v6\1\0\0009\1\1\0019\1\2\0016\2\3\0009\2\4\0029\2\5\2'\4\6\0'\5\a\0009\6\b\1B\2\4\1K\0\1\0\30toggle_current_line_blame\15<leader>gb\6n\bset\vkeymap\bvim\rgitsigns\vloaded\fpackage�\2\1\0\4\0\b\0\v6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\3\0005\3\4\0=\3\5\0023\3\6\0=\3\a\2B\0\2\1K\0\1\0\14on_attach\0\28current_line_blame_opts\1\0\4\18virt_text_pos\beol\14virt_text\2\22ignore_whitespace\1\ndelay\3�\3\1\0\2!current_line_blame_formatter1<author>::<author_time:%Y-%m-%d> - <summary>\23current_line_blame\1\nsetup\rgitsigns\frequire\0" },
+    config = { "\27LJ\2\n�\1\0\1\a\0\t\0\v6\1\0\0009\1\1\0019\1\2\0016\2\3\0009\2\4\0029\2\5\2'\4\6\0'\5\a\0009\6\b\1B\2\4\1K\0\1\0\30toggle_current_line_blame\15<leader>gb\6n\bset\vkeymap\bvim\rgitsigns\vloaded\fpackage�\2\1\0\4\0\b\0\v6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\3\0005\3\4\0=\3\5\0023\3\6\0=\3\a\2B\0\2\1K\0\1\0\14on_attach\0\28current_line_blame_opts\1\0\4\18virt_text_pos\beol\22ignore_whitespace\1\14virt_text\2\ndelay\3�\3\1\0\2!current_line_blame_formatter1<author>::<author_time:%Y-%m-%d> - <summary>\23current_line_blame\1\nsetup\rgitsigns\frequire\0" },
     loaded = true,
     path = "/Users/jchilders/.local/share/nvim/site/pack/packer/start/gitsigns.nvim",
     url = "https://github.com/lewis6991/gitsigns.nvim"
@@ -134,7 +134,7 @@ _G.packer_plugins = {
     url = "https://github.com/ThePrimeagen/harpoon"
   },
   kommentary = {
-    config = { "\27LJ\2\n^\0\0\3\0\3\0\0066\0\0\0'\2\1\0B\0\2\0029\0\2\0B\0\1\1K\0\1\0\25update_commentstring&ts_context_commentstring.internal\frequire�\3\1\0\f\0\18\0 6\0\0\0'\2\1\0B\0\2\0026\1\2\0009\1\3\0019\1\4\1'\3\5\0'\4\6\0'\5\a\0B\1\4\0019\1\b\0'\3\t\0005\4\n\0B\1\3\0019\1\b\0'\3\v\0005\4\f\0B\1\3\0015\1\r\0006\2\14\0\18\4\1\0B\2\2\4H\5\6�9\a\b\0\18\t\6\0005\n\15\0003\v\16\0=\v\17\nB\a\3\1F\5\3\3R\5�\127K\0\1\0\18hook_function\0\1\0\2\31multi_line_comment_strings\tauto\31single_line_comment_string\tauto\npairs\1\3\0\0\20javascriptreact\20typescriptreact\1\0\2 prefer_single_line_comments\2\31prefer_multi_line_comments\1\blua\1\0\1\31use_consistent_indentation\2\fdefault\23configure_language'<C-o><Plug>kommentary_line_default\n<C-k>\6i\bset\vkeymap\bvim\22kommentary.config\frequire\0" },
+    config = { "\27LJ\2\n^\0\0\3\0\3\0\0066\0\0\0'\2\1\0B\0\2\0029\0\2\0B\0\1\1K\0\1\0\25update_commentstring&ts_context_commentstring.internal\frequire�\3\1\0\f\0\18\0 6\0\0\0'\2\1\0B\0\2\0026\1\2\0009\1\3\0019\1\4\1'\3\5\0'\4\6\0'\5\a\0B\1\4\0019\1\b\0'\3\t\0005\4\n\0B\1\3\0019\1\b\0'\3\v\0005\4\f\0B\1\3\0015\1\r\0006\2\14\0\18\4\1\0B\2\2\4H\5\6�9\a\b\0\18\t\6\0005\n\15\0003\v\16\0=\v\17\nB\a\3\1F\5\3\3R\5�K\0\1\0\18hook_function\0\1\0\2\31multi_line_comment_strings\tauto\31single_line_comment_string\tauto\npairs\1\3\0\0\20javascriptreact\20typescriptreact\1\0\2 prefer_single_line_comments\2\31prefer_multi_line_comments\1\blua\1\0\1\31use_consistent_indentation\2\fdefault\23configure_language'<C-o><Plug>kommentary_line_default\n<C-k>\6i\bset\vkeymap\bvim\22kommentary.config\frequire\0" },
     loaded = true,
     path = "/Users/jchilders/.local/share/nvim/site/pack/packer/start/kommentary",
     url = "https://github.com/b3nj5m1n/kommentary"
@@ -146,13 +146,13 @@ _G.packer_plugins = {
     url = "https://github.com/cohama/lexima.vim"
   },
   ["lsp-zero.nvim"] = {
-    config = { "\27LJ\2\nU\0\0\4\0\5\0\t6\0\0\0'\2\1\0B\0\2\0029\1\2\0'\3\3\0B\1\2\0019\1\4\0B\1\1\1K\0\1\0\nsetup\16recommended\vpreset\rlsp-zero\frequire\0" },
+    config = { "\27LJ\2\nH\0\2\b\0\4\0\b6\2\0\0'\4\1\0\18\5\1\0'\6\2\0009\a\3\0&\4\a\4B\2\2\1K\0\1\0\tname\18 attached to \fBuffer \nprintl\1\0\4\0\a\0\f6\0\0\0'\2\1\0B\0\2\0029\1\2\0'\3\3\0B\1\2\0019\1\4\0003\3\5\0B\1\2\0019\1\6\0B\1\1\1K\0\1\0\nsetup\0\14on_attach\16recommended\vpreset\rlsp-zero\frequire\0" },
     loaded = true,
     path = "/Users/jchilders/.local/share/nvim/site/pack/packer/start/lsp-zero.nvim",
     url = "https://github.com/VonHeikemen/lsp-zero.nvim"
   },
   ["lspkind-nvim"] = {
-    config = { "\27LJ\2\n�\3\0\0\4\0\6\0\t6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\3\0005\3\4\0=\3\5\2B\0\2\1K\0\1\0\15symbol_map\1\0\25\vMethod\b\vFolder\b\tText\b\14Reference\b\tEnum\b\tFile\b\rConstant\b\nColor\b\vStruct\bפּ\fSnippet\b\nEvent\b\rOperator\b\rFunction\b\nValue\b\tUnit\b塞\rProperty\bﰠ\vModule\b\14Interface\b\nClass\bﴯ\18TypeParameter\5\rVariable\b\fKeyword\b\nField\bﰠ\16Constructor\b\15EnumMember\b\1\0\2\tmode\16symbol_text\vpreset\rcodicons\tinit\flspkind\frequire\0" },
+    config = { "\27LJ\2\n�\3\0\0\4\0\6\0\t6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\3\0005\3\4\0=\3\5\2B\0\2\1K\0\1\0\15symbol_map\1\0\25\tUnit\b塞\rProperty\bﰠ\14Interface\b\vModule\b\rConstant\b\fKeyword\b\vStruct\bפּ\nClass\bﴯ\18TypeParameter\5\rVariable\b\rFunction\b\nField\bﰠ\rOperator\b\16Constructor\b\nEvent\b\15EnumMember\b\vMethod\b\vFolder\b\tText\b\14Reference\b\tFile\b\nColor\b\fSnippet\b\tEnum\b\nValue\b\1\0\2\vpreset\rcodicons\tmode\16symbol_text\tinit\flspkind\frequire\0" },
     loaded = true,
     path = "/Users/jchilders/.local/share/nvim/site/pack/packer/start/lspkind-nvim",
     url = "https://github.com/onsails/lspkind-nvim"
@@ -163,7 +163,7 @@ _G.packer_plugins = {
     url = "https://github.com/williamboman/mason-lspconfig.nvim"
   },
   ["mason.nvim"] = {
-    config = { "\27LJ\2\n�\1\0\0\4\0\a\0\0146\0\0\0'\2\1\0B\0\2\0029\0\2\0B\0\1\0016\0\0\0'\2\3\0B\0\2\0029\0\2\0005\2\5\0005\3\4\0=\3\6\2B\0\2\1K\0\1\0\21ensure_installed\1\0\0\1\5\0\0\frubocop\15solargraph\vsorbet\16sumneko_lua\20mason-lspconfig\nsetup\nmason\frequire\0" },
+    config = { "\27LJ\2\n�\1\0\0\4\0\a\0\0146\0\0\0'\2\1\0B\0\2\0029\0\2\0B\0\1\0016\0\0\0'\2\3\0B\0\2\0029\0\2\0005\2\5\0005\3\4\0=\3\6\2B\0\2\1K\0\1\0\21ensure_installed\1\0\0\1\6\0\0\frubocop\15solargraph\vsorbet\rstylelua\16sumneko_lua\20mason-lspconfig\nsetup\nmason\frequire\0" },
     loaded = true,
     path = "/Users/jchilders/.local/share/nvim/site/pack/packer/start/mason.nvim",
     url = "https://github.com/williamboman/mason.nvim"
@@ -194,11 +194,6 @@ _G.packer_plugins = {
     path = "/Users/jchilders/.local/share/nvim/site/pack/packer/start/nvim-web-devicons",
     url = "https://github.com/kyazdani42/nvim-web-devicons"
   },
-  ["oxocarbon.nvim"] = {
-    loaded = true,
-    path = "/Users/jchilders/.local/share/nvim/site/pack/packer/start/oxocarbon.nvim",
-    url = "https://github.com/shaunsingh/oxocarbon.nvim"
-  },
   ["packer.nvim"] = {
     loaded = true,
     path = "/Users/jchilders/.local/share/nvim/site/pack/packer/start/packer.nvim",
@@ -227,7 +222,7 @@ _G.packer_plugins = {
     url = "https://github.com/nvim-telescope/telescope-project.nvim"
   },
   ["telescope.nvim"] = {
-    config = { "\27LJ\2\n/\0\0\3\0\3\0\0056\0\0\0009\0\1\0'\2\2\0B\0\2\1K\0\1\0\16:normal! zx\bcmd\bvimM\1\1\6\1\5\0\v-\1\0\0009\1\0\1\18\3\1\0009\1\1\0015\4\3\0003\5\2\0=\5\4\4B\1\3\1+\1\2\0002\0\0�L\1\2\0\2�\tpost\1\0\0\0\fenhance\vselect�\n\1\0\n\0008\0e6\0\0\0009\0\1\0'\2\2\0B\0\2\0016\0\0\0009\0\1\0'\2\3\0B\0\2\0016\0\0\0009\0\1\0'\2\4\0B\0\2\0016\0\5\0'\2\6\0B\0\2\0026\1\5\0'\3\a\0B\1\2\0026\2\5\0'\4\b\0B\2\2\0029\3\t\0005\5\15\0005\6\r\0005\a\n\0003\b\v\0=\b\f\a=\a\14\6=\6\16\0055\6\17\0006\a\5\0'\t\18\0B\a\2\0029\a\19\a=\a\20\0065\a\21\0=\a\22\0066\a\5\0'\t\18\0B\a\2\0029\a\23\a=\a\24\0064\a\0\0=\a\25\0065\a\26\0=\a\27\0065\a\28\0=\a\29\0066\a\5\0'\t\30\0B\a\2\0029\a\31\a9\a \a=\a!\0066\a\5\0'\t\30\0B\a\2\0029\a\"\a9\a \a=\a#\0066\a\5\0'\t\30\0B\a\2\0029\a$\a9\a \a=\a%\0066\a\5\0'\t\30\0B\a\2\0029\a&\a=\a&\0065\a*\0005\b(\0009\t'\1=\t)\b=\b+\a=\a,\6=\6-\0055\6/\0005\a.\0=\a0\0065\a1\0004\b\0\0=\b2\a=\a3\6=\0064\5B\3\2\0019\0035\0'\0050\0B\3\2\0019\0035\0'\0053\0B\3\2\0019\0035\0'\0056\0B\3\2\0019\0035\0'\0057\0B\3\2\0012\0\0�K\0\1\0\16file_create\rdotfiles\19load_extension\15extensions\fproject\14base_dirs\1\0\2\17hidden_files\2\14max_depth\3\4\bfzf\1\0\0\1\0\4\25override_file_sorter\2\28override_generic_sorter\2\nfuzzy\2\14case_mode\15smart_case\rdefaults\rmappings\6i\1\0\0\n<esc>\1\0\0\nclose\27buffer_previewer_maker\21qflist_previewer\22vim_buffer_qflist\19grep_previewer\23vim_buffer_vimgrep\19file_previewer\bnew\19vim_buffer_cat\25telescope.previewers\fset_env\1\0\1\14COLORTERM\14truecolor\16borderchars\1\t\0\0\b─\b│\b─\b│\b╭\b╮\b╯\b╰\vborder\19generic_sorter\29get_generic_fuzzy_sorter\25file_ignore_patterns\1\3\0\0\n.git/\17node_modules\16file_sorter\23get_generic_sorter\22telescope.sorters\1\0\n\20layout_strategy\15horizontal\ruse_less\2\19color_devicons\2\21sorting_strategy\15descending\23selection_strategy\nreset\17initial_mode\vinsert\17entry_prefix\a  \20selection_caret\t⪢ \18prompt_prefix\t⦕ \14previewer\1\fpickers\1\0\0\15find_files\1\0\0\20attach_mappings\0\1\0\1\vhidden\2\nsetup\26telescope.actions.set\22telescope.actions\14telescope\frequire&packadd telescope-fzf-native.nvim#packadd telescope-project.nvim\25packadd plenary.nvim\bcmd\bvim\0" },
+    config = { "\27LJ\2\n/\0\0\3\0\3\0\0056\0\0\0009\0\1\0'\2\2\0B\0\2\1K\0\1\0\16:normal! zx\bcmd\bvimM\1\1\6\1\5\0\v-\1\0\0009\1\0\1\18\3\1\0009\1\1\0015\4\3\0003\5\2\0=\5\4\4B\1\3\1+\1\2\0002\0\0�L\1\2\0\2�\tpost\1\0\0\0\fenhance\vselect�\n\1\0\n\0008\0e6\0\0\0009\0\1\0'\2\2\0B\0\2\0016\0\0\0009\0\1\0'\2\3\0B\0\2\0016\0\0\0009\0\1\0'\2\4\0B\0\2\0016\0\5\0'\2\6\0B\0\2\0026\1\5\0'\3\a\0B\1\2\0026\2\5\0'\4\b\0B\2\2\0029\3\t\0005\5\15\0005\6\r\0005\a\n\0003\b\v\0=\b\f\a=\a\14\6=\6\16\0055\6\17\0006\a\5\0'\t\18\0B\a\2\0029\a\19\a=\a\20\0065\a\21\0=\a\22\0066\a\5\0'\t\18\0B\a\2\0029\a\23\a=\a\24\0064\a\0\0=\a\25\0065\a\26\0=\a\27\0065\a\28\0=\a\29\0066\a\5\0'\t\30\0B\a\2\0029\a\31\a9\a \a=\a!\0066\a\5\0'\t\30\0B\a\2\0029\a\"\a9\a \a=\a#\0066\a\5\0'\t\30\0B\a\2\0029\a$\a9\a \a=\a%\0066\a\5\0'\t\30\0B\a\2\0029\a&\a=\a&\0065\a*\0005\b(\0009\t'\1=\t)\b=\b+\a=\a,\6=\6-\0055\6/\0005\a.\0=\a0\0065\a1\0004\b\0\0=\b2\a=\a3\6=\0064\5B\3\2\0019\0035\0'\0050\0B\3\2\0019\0035\0'\0053\0B\3\2\0019\0035\0'\0056\0B\3\2\0019\0035\0'\0057\0B\3\2\0012\0\0�K\0\1\0\16file_create\rdotfiles\19load_extension\15extensions\fproject\14base_dirs\1\0\2\17hidden_files\2\14max_depth\3\4\bfzf\1\0\0\1\0\4\25override_file_sorter\2\28override_generic_sorter\2\nfuzzy\2\14case_mode\15smart_case\rdefaults\rmappings\6i\1\0\0\n<esc>\1\0\0\nclose\27buffer_previewer_maker\21qflist_previewer\22vim_buffer_qflist\19grep_previewer\23vim_buffer_vimgrep\19file_previewer\bnew\19vim_buffer_cat\25telescope.previewers\fset_env\1\0\1\14COLORTERM\14truecolor\16borderchars\1\t\0\0\b─\b│\b─\b│\b╭\b╮\b╯\b╰\vborder\19generic_sorter\29get_generic_fuzzy_sorter\25file_ignore_patterns\1\3\0\0\n.git/\17node_modules\16file_sorter\23get_generic_sorter\22telescope.sorters\1\0\n\18prompt_prefix\t⦕ \21sorting_strategy\15descending\14previewer\1\23selection_strategy\nreset\20layout_strategy\15horizontal\ruse_less\2\19color_devicons\2\17initial_mode\vinsert\17entry_prefix\a  \20selection_caret\t⪢ \fpickers\1\0\0\15find_files\1\0\0\20attach_mappings\0\1\0\1\vhidden\2\nsetup\26telescope.actions.set\22telescope.actions\14telescope\frequire&packadd telescope-fzf-native.nvim#packadd telescope-project.nvim\25packadd plenary.nvim\bcmd\bvim\0" },
     loaded = true,
     path = "/Users/jchilders/.local/share/nvim/site/pack/packer/start/telescope.nvim",
     url = "https://github.com/nvim-telescope/telescope.nvim"
@@ -252,58 +247,58 @@ _G.packer_plugins = {
 }
 
 time([[Defining packer_plugins]], false)
--- Config for: kommentary
-time([[Config for kommentary]], true)
-try_loadstring("\27LJ\2\n^\0\0\3\0\3\0\0066\0\0\0'\2\1\0B\0\2\0029\0\2\0B\0\1\1K\0\1\0\25update_commentstring&ts_context_commentstring.internal\frequire�\3\1\0\f\0\18\0 6\0\0\0'\2\1\0B\0\2\0026\1\2\0009\1\3\0019\1\4\1'\3\5\0'\4\6\0'\5\a\0B\1\4\0019\1\b\0'\3\t\0005\4\n\0B\1\3\0019\1\b\0'\3\v\0005\4\f\0B\1\3\0015\1\r\0006\2\14\0\18\4\1\0B\2\2\4H\5\6�9\a\b\0\18\t\6\0005\n\15\0003\v\16\0=\v\17\nB\a\3\1F\5\3\3R\5�\127K\0\1\0\18hook_function\0\1\0\2\31multi_line_comment_strings\tauto\31single_line_comment_string\tauto\npairs\1\3\0\0\20javascriptreact\20typescriptreact\1\0\2 prefer_single_line_comments\2\31prefer_multi_line_comments\1\blua\1\0\1\31use_consistent_indentation\2\fdefault\23configure_language'<C-o><Plug>kommentary_line_default\n<C-k>\6i\bset\vkeymap\bvim\22kommentary.config\frequire\0", "config", "kommentary")
-time([[Config for kommentary]], false)
--- Config for: telescope.nvim
-time([[Config for telescope.nvim]], true)
-try_loadstring("\27LJ\2\n/\0\0\3\0\3\0\0056\0\0\0009\0\1\0'\2\2\0B\0\2\1K\0\1\0\16:normal! zx\bcmd\bvimM\1\1\6\1\5\0\v-\1\0\0009\1\0\1\18\3\1\0009\1\1\0015\4\3\0003\5\2\0=\5\4\4B\1\3\1+\1\2\0002\0\0�L\1\2\0\2�\tpost\1\0\0\0\fenhance\vselect�\n\1\0\n\0008\0e6\0\0\0009\0\1\0'\2\2\0B\0\2\0016\0\0\0009\0\1\0'\2\3\0B\0\2\0016\0\0\0009\0\1\0'\2\4\0B\0\2\0016\0\5\0'\2\6\0B\0\2\0026\1\5\0'\3\a\0B\1\2\0026\2\5\0'\4\b\0B\2\2\0029\3\t\0005\5\15\0005\6\r\0005\a\n\0003\b\v\0=\b\f\a=\a\14\6=\6\16\0055\6\17\0006\a\5\0'\t\18\0B\a\2\0029\a\19\a=\a\20\0065\a\21\0=\a\22\0066\a\5\0'\t\18\0B\a\2\0029\a\23\a=\a\24\0064\a\0\0=\a\25\0065\a\26\0=\a\27\0065\a\28\0=\a\29\0066\a\5\0'\t\30\0B\a\2\0029\a\31\a9\a \a=\a!\0066\a\5\0'\t\30\0B\a\2\0029\a\"\a9\a \a=\a#\0066\a\5\0'\t\30\0B\a\2\0029\a$\a9\a \a=\a%\0066\a\5\0'\t\30\0B\a\2\0029\a&\a=\a&\0065\a*\0005\b(\0009\t'\1=\t)\b=\b+\a=\a,\6=\6-\0055\6/\0005\a.\0=\a0\0065\a1\0004\b\0\0=\b2\a=\a3\6=\0064\5B\3\2\0019\0035\0'\0050\0B\3\2\0019\0035\0'\0053\0B\3\2\0019\0035\0'\0056\0B\3\2\0019\0035\0'\0057\0B\3\2\0012\0\0�K\0\1\0\16file_create\rdotfiles\19load_extension\15extensions\fproject\14base_dirs\1\0\2\17hidden_files\2\14max_depth\3\4\bfzf\1\0\0\1\0\4\25override_file_sorter\2\28override_generic_sorter\2\nfuzzy\2\14case_mode\15smart_case\rdefaults\rmappings\6i\1\0\0\n<esc>\1\0\0\nclose\27buffer_previewer_maker\21qflist_previewer\22vim_buffer_qflist\19grep_previewer\23vim_buffer_vimgrep\19file_previewer\bnew\19vim_buffer_cat\25telescope.previewers\fset_env\1\0\1\14COLORTERM\14truecolor\16borderchars\1\t\0\0\b─\b│\b─\b│\b╭\b╮\b╯\b╰\vborder\19generic_sorter\29get_generic_fuzzy_sorter\25file_ignore_patterns\1\3\0\0\n.git/\17node_modules\16file_sorter\23get_generic_sorter\22telescope.sorters\1\0\n\20layout_strategy\15horizontal\ruse_less\2\19color_devicons\2\21sorting_strategy\15descending\23selection_strategy\nreset\17initial_mode\vinsert\17entry_prefix\a  \20selection_caret\t⪢ \18prompt_prefix\t⦕ \14previewer\1\fpickers\1\0\0\15find_files\1\0\0\20attach_mappings\0\1\0\1\vhidden\2\nsetup\26telescope.actions.set\22telescope.actions\14telescope\frequire&packadd telescope-fzf-native.nvim#packadd telescope-project.nvim\25packadd plenary.nvim\bcmd\bvim\0", "config", "telescope.nvim")
-time([[Config for telescope.nvim]], false)
--- Config for: lexima.vim
-time([[Config for lexima.vim]], true)
-try_loadstring("\27LJ\2\n;\0\0\2\0\3\0\0056\0\0\0009\0\1\0)\1\0\0=\1\2\0K\0\1\0\30lexima_enable_basic_rules\6g\bvim\0", "config", "lexima.vim")
-time([[Config for lexima.vim]], false)
--- Config for: harpoon
-time([[Config for harpoon]], true)
-try_loadstring("\27LJ\2\nz\0\0\4\0\a\0\v6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\4\0005\3\3\0=\3\5\0024\3\0\0=\3\6\2B\0\2\1K\0\1\0\rprojects\20global_settings\1\0\0\1\0\1\21enter_on_sendcmd\2\nsetup\fharpoon\frequire\0", "config", "harpoon")
-time([[Config for harpoon]], false)
--- Config for: lspkind-nvim
-time([[Config for lspkind-nvim]], true)
-try_loadstring("\27LJ\2\n�\3\0\0\4\0\6\0\t6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\3\0005\3\4\0=\3\5\2B\0\2\1K\0\1\0\15symbol_map\1\0\25\vMethod\b\vFolder\b\tText\b\14Reference\b\tEnum\b\tFile\b\rConstant\b\nColor\b\vStruct\bפּ\fSnippet\b\nEvent\b\rOperator\b\rFunction\b\nValue\b\tUnit\b塞\rProperty\bﰠ\vModule\b\14Interface\b\nClass\bﴯ\18TypeParameter\5\rVariable\b\fKeyword\b\nField\bﰠ\16Constructor\b\15EnumMember\b\1\0\2\tmode\16symbol_text\vpreset\rcodicons\tinit\flspkind\frequire\0", "config", "lspkind-nvim")
-time([[Config for lspkind-nvim]], false)
--- Config for: tokyonight.nvim
-time([[Config for tokyonight.nvim]], true)
-try_loadstring("\27LJ\2\nZ\0\0\2\0\a\0\t6\0\0\0009\0\1\0'\1\3\0=\1\2\0006\0\0\0009\0\4\0'\1\6\0=\1\5\0K\0\1\0\nnight\21tokyonight_style\6g\tdark\15background\6o\bvim\0", "config", "tokyonight.nvim")
-time([[Config for tokyonight.nvim]], false)
--- Config for: lsp-zero.nvim
-time([[Config for lsp-zero.nvim]], true)
-try_loadstring("\27LJ\2\nU\0\0\4\0\5\0\t6\0\0\0'\2\1\0B\0\2\0029\1\2\0'\3\3\0B\1\2\0019\1\4\0B\1\1\1K\0\1\0\nsetup\16recommended\vpreset\rlsp-zero\frequire\0", "config", "lsp-zero.nvim")
-time([[Config for lsp-zero.nvim]], false)
--- Config for: gitsigns.nvim
-time([[Config for gitsigns.nvim]], true)
-try_loadstring("\27LJ\2\n�\1\0\1\a\0\t\0\v6\1\0\0009\1\1\0019\1\2\0016\2\3\0009\2\4\0029\2\5\2'\4\6\0'\5\a\0009\6\b\1B\2\4\1K\0\1\0\30toggle_current_line_blame\15<leader>gb\6n\bset\vkeymap\bvim\rgitsigns\vloaded\fpackage�\2\1\0\4\0\b\0\v6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\3\0005\3\4\0=\3\5\0023\3\6\0=\3\a\2B\0\2\1K\0\1\0\14on_attach\0\28current_line_blame_opts\1\0\4\18virt_text_pos\beol\14virt_text\2\22ignore_whitespace\1\ndelay\3�\3\1\0\2!current_line_blame_formatter1<author>::<author_time:%Y-%m-%d> - <summary>\23current_line_blame\1\nsetup\rgitsigns\frequire\0", "config", "gitsigns.nvim")
-time([[Config for gitsigns.nvim]], false)
--- Config for: nvim-surround
-time([[Config for nvim-surround]], true)
-try_loadstring("\27LJ\2\n;\0\0\3\0\3\0\0066\0\0\0'\2\1\0B\0\2\0029\0\2\0B\0\1\1K\0\1\0\nsetup\18nvim-surround\frequire\0", "config", "nvim-surround")
-time([[Config for nvim-surround]], false)
--- Config for: vim-matchup
-time([[Config for vim-matchup]], true)
-try_loadstring("\27LJ\2\n>\0\0\2\0\3\0\0056\0\0\0009\0\1\0004\1\0\0=\1\2\0K\0\1\0!matchup_matchparen_offscreen\6g\bvim\0", "config", "vim-matchup")
-time([[Config for vim-matchup]], false)
--- Config for: buffertag
-time([[Config for buffertag]], true)
-try_loadstring("\27LJ\2\n7\0\0\3\0\3\0\0066\0\0\0'\2\1\0B\0\2\0029\0\2\0B\0\1\1K\0\1\0\nsetup\14buffertag\frequire\0", "config", "buffertag")
-time([[Config for buffertag]], false)
 -- Config for: mason.nvim
 time([[Config for mason.nvim]], true)
-try_loadstring("\27LJ\2\n�\1\0\0\4\0\a\0\0146\0\0\0'\2\1\0B\0\2\0029\0\2\0B\0\1\0016\0\0\0'\2\3\0B\0\2\0029\0\2\0005\2\5\0005\3\4\0=\3\6\2B\0\2\1K\0\1\0\21ensure_installed\1\0\0\1\5\0\0\frubocop\15solargraph\vsorbet\16sumneko_lua\20mason-lspconfig\nsetup\nmason\frequire\0", "config", "mason.nvim")
+try_loadstring("\27LJ\2\n�\1\0\0\4\0\a\0\0146\0\0\0'\2\1\0B\0\2\0029\0\2\0B\0\1\0016\0\0\0'\2\3\0B\0\2\0029\0\2\0005\2\5\0005\3\4\0=\3\6\2B\0\2\1K\0\1\0\21ensure_installed\1\0\0\1\6\0\0\frubocop\15solargraph\vsorbet\rstylelua\16sumneko_lua\20mason-lspconfig\nsetup\nmason\frequire\0", "config", "mason.nvim")
 time([[Config for mason.nvim]], false)
 -- Config for: auto-session
 time([[Config for auto-session]], true)
 try_loadstring("\27LJ\2\ny\0\0\3\0\4\0\a6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\3\0B\0\2\1K\0\1\0\1\0\3\25auto_restore_enabled\2\14log_level\tinfo\22auto_save_enabled\2\nsetup\17auto-session\frequire\0", "config", "auto-session")
 time([[Config for auto-session]], false)
+-- Config for: nvim-surround
+time([[Config for nvim-surround]], true)
+try_loadstring("\27LJ\2\n;\0\0\3\0\3\0\0066\0\0\0'\2\1\0B\0\2\0029\0\2\0B\0\1\1K\0\1\0\nsetup\18nvim-surround\frequire\0", "config", "nvim-surround")
+time([[Config for nvim-surround]], false)
+-- Config for: buffertag
+time([[Config for buffertag]], true)
+try_loadstring("\27LJ\2\n7\0\0\3\0\3\0\0066\0\0\0'\2\1\0B\0\2\0029\0\2\0B\0\1\1K\0\1\0\nsetup\14buffertag\frequire\0", "config", "buffertag")
+time([[Config for buffertag]], false)
+-- Config for: gitsigns.nvim
+time([[Config for gitsigns.nvim]], true)
+try_loadstring("\27LJ\2\n�\1\0\1\a\0\t\0\v6\1\0\0009\1\1\0019\1\2\0016\2\3\0009\2\4\0029\2\5\2'\4\6\0'\5\a\0009\6\b\1B\2\4\1K\0\1\0\30toggle_current_line_blame\15<leader>gb\6n\bset\vkeymap\bvim\rgitsigns\vloaded\fpackage�\2\1\0\4\0\b\0\v6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\3\0005\3\4\0=\3\5\0023\3\6\0=\3\a\2B\0\2\1K\0\1\0\14on_attach\0\28current_line_blame_opts\1\0\4\18virt_text_pos\beol\22ignore_whitespace\1\14virt_text\2\ndelay\3�\3\1\0\2!current_line_blame_formatter1<author>::<author_time:%Y-%m-%d> - <summary>\23current_line_blame\1\nsetup\rgitsigns\frequire\0", "config", "gitsigns.nvim")
+time([[Config for gitsigns.nvim]], false)
+-- Config for: vim-matchup
+time([[Config for vim-matchup]], true)
+try_loadstring("\27LJ\2\n>\0\0\2\0\3\0\0056\0\0\0009\0\1\0004\1\0\0=\1\2\0K\0\1\0!matchup_matchparen_offscreen\6g\bvim\0", "config", "vim-matchup")
+time([[Config for vim-matchup]], false)
+-- Config for: harpoon
+time([[Config for harpoon]], true)
+try_loadstring("\27LJ\2\nz\0\0\4\0\a\0\v6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\4\0005\3\3\0=\3\5\0024\3\0\0=\3\6\2B\0\2\1K\0\1\0\rprojects\20global_settings\1\0\0\1\0\1\21enter_on_sendcmd\2\nsetup\fharpoon\frequire\0", "config", "harpoon")
+time([[Config for harpoon]], false)
+-- Config for: lexima.vim
+time([[Config for lexima.vim]], true)
+try_loadstring("\27LJ\2\n;\0\0\2\0\3\0\0056\0\0\0009\0\1\0)\1\0\0=\1\2\0K\0\1\0\30lexima_enable_basic_rules\6g\bvim\0", "config", "lexima.vim")
+time([[Config for lexima.vim]], false)
+-- Config for: lspkind-nvim
+time([[Config for lspkind-nvim]], true)
+try_loadstring("\27LJ\2\n�\3\0\0\4\0\6\0\t6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\3\0005\3\4\0=\3\5\2B\0\2\1K\0\1\0\15symbol_map\1\0\25\tUnit\b塞\rProperty\bﰠ\14Interface\b\vModule\b\rConstant\b\fKeyword\b\vStruct\bפּ\nClass\bﴯ\18TypeParameter\5\rVariable\b\rFunction\b\nField\bﰠ\rOperator\b\16Constructor\b\nEvent\b\15EnumMember\b\vMethod\b\vFolder\b\tText\b\14Reference\b\tFile\b\nColor\b\fSnippet\b\tEnum\b\nValue\b\1\0\2\vpreset\rcodicons\tmode\16symbol_text\tinit\flspkind\frequire\0", "config", "lspkind-nvim")
+time([[Config for lspkind-nvim]], false)
+-- Config for: lsp-zero.nvim
+time([[Config for lsp-zero.nvim]], true)
+try_loadstring("\27LJ\2\nH\0\2\b\0\4\0\b6\2\0\0'\4\1\0\18\5\1\0'\6\2\0009\a\3\0&\4\a\4B\2\2\1K\0\1\0\tname\18 attached to \fBuffer \nprintl\1\0\4\0\a\0\f6\0\0\0'\2\1\0B\0\2\0029\1\2\0'\3\3\0B\1\2\0019\1\4\0003\3\5\0B\1\2\0019\1\6\0B\1\1\1K\0\1\0\nsetup\0\14on_attach\16recommended\vpreset\rlsp-zero\frequire\0", "config", "lsp-zero.nvim")
+time([[Config for lsp-zero.nvim]], false)
+-- Config for: kommentary
+time([[Config for kommentary]], true)
+try_loadstring("\27LJ\2\n^\0\0\3\0\3\0\0066\0\0\0'\2\1\0B\0\2\0029\0\2\0B\0\1\1K\0\1\0\25update_commentstring&ts_context_commentstring.internal\frequire�\3\1\0\f\0\18\0 6\0\0\0'\2\1\0B\0\2\0026\1\2\0009\1\3\0019\1\4\1'\3\5\0'\4\6\0'\5\a\0B\1\4\0019\1\b\0'\3\t\0005\4\n\0B\1\3\0019\1\b\0'\3\v\0005\4\f\0B\1\3\0015\1\r\0006\2\14\0\18\4\1\0B\2\2\4H\5\6�9\a\b\0\18\t\6\0005\n\15\0003\v\16\0=\v\17\nB\a\3\1F\5\3\3R\5�K\0\1\0\18hook_function\0\1\0\2\31multi_line_comment_strings\tauto\31single_line_comment_string\tauto\npairs\1\3\0\0\20javascriptreact\20typescriptreact\1\0\2 prefer_single_line_comments\2\31prefer_multi_line_comments\1\blua\1\0\1\31use_consistent_indentation\2\fdefault\23configure_language'<C-o><Plug>kommentary_line_default\n<C-k>\6i\bset\vkeymap\bvim\22kommentary.config\frequire\0", "config", "kommentary")
+time([[Config for kommentary]], false)
+-- Config for: tokyonight.nvim
+time([[Config for tokyonight.nvim]], true)
+try_loadstring("\27LJ\2\nZ\0\0\2\0\a\0\t6\0\0\0009\0\1\0'\1\3\0=\1\2\0006\0\0\0009\0\4\0'\1\6\0=\1\5\0K\0\1\0\nnight\21tokyonight_style\6g\tdark\15background\6o\bvim\0", "config", "tokyonight.nvim")
+time([[Config for tokyonight.nvim]], false)
+-- Config for: telescope.nvim
+time([[Config for telescope.nvim]], true)
+try_loadstring("\27LJ\2\n/\0\0\3\0\3\0\0056\0\0\0009\0\1\0'\2\2\0B\0\2\1K\0\1\0\16:normal! zx\bcmd\bvimM\1\1\6\1\5\0\v-\1\0\0009\1\0\1\18\3\1\0009\1\1\0015\4\3\0003\5\2\0=\5\4\4B\1\3\1+\1\2\0002\0\0�L\1\2\0\2�\tpost\1\0\0\0\fenhance\vselect�\n\1\0\n\0008\0e6\0\0\0009\0\1\0'\2\2\0B\0\2\0016\0\0\0009\0\1\0'\2\3\0B\0\2\0016\0\0\0009\0\1\0'\2\4\0B\0\2\0016\0\5\0'\2\6\0B\0\2\0026\1\5\0'\3\a\0B\1\2\0026\2\5\0'\4\b\0B\2\2\0029\3\t\0005\5\15\0005\6\r\0005\a\n\0003\b\v\0=\b\f\a=\a\14\6=\6\16\0055\6\17\0006\a\5\0'\t\18\0B\a\2\0029\a\19\a=\a\20\0065\a\21\0=\a\22\0066\a\5\0'\t\18\0B\a\2\0029\a\23\a=\a\24\0064\a\0\0=\a\25\0065\a\26\0=\a\27\0065\a\28\0=\a\29\0066\a\5\0'\t\30\0B\a\2\0029\a\31\a9\a \a=\a!\0066\a\5\0'\t\30\0B\a\2\0029\a\"\a9\a \a=\a#\0066\a\5\0'\t\30\0B\a\2\0029\a$\a9\a \a=\a%\0066\a\5\0'\t\30\0B\a\2\0029\a&\a=\a&\0065\a*\0005\b(\0009\t'\1=\t)\b=\b+\a=\a,\6=\6-\0055\6/\0005\a.\0=\a0\0065\a1\0004\b\0\0=\b2\a=\a3\6=\0064\5B\3\2\0019\0035\0'\0050\0B\3\2\0019\0035\0'\0053\0B\3\2\0019\0035\0'\0056\0B\3\2\0019\0035\0'\0057\0B\3\2\0012\0\0�K\0\1\0\16file_create\rdotfiles\19load_extension\15extensions\fproject\14base_dirs\1\0\2\17hidden_files\2\14max_depth\3\4\bfzf\1\0\0\1\0\4\25override_file_sorter\2\28override_generic_sorter\2\nfuzzy\2\14case_mode\15smart_case\rdefaults\rmappings\6i\1\0\0\n<esc>\1\0\0\nclose\27buffer_previewer_maker\21qflist_previewer\22vim_buffer_qflist\19grep_previewer\23vim_buffer_vimgrep\19file_previewer\bnew\19vim_buffer_cat\25telescope.previewers\fset_env\1\0\1\14COLORTERM\14truecolor\16borderchars\1\t\0\0\b─\b│\b─\b│\b╭\b╮\b╯\b╰\vborder\19generic_sorter\29get_generic_fuzzy_sorter\25file_ignore_patterns\1\3\0\0\n.git/\17node_modules\16file_sorter\23get_generic_sorter\22telescope.sorters\1\0\n\18prompt_prefix\t⦕ \21sorting_strategy\15descending\14previewer\1\23selection_strategy\nreset\20layout_strategy\15horizontal\ruse_less\2\19color_devicons\2\17initial_mode\vinsert\17entry_prefix\a  \20selection_caret\t⪢ \fpickers\1\0\0\15find_files\1\0\0\20attach_mappings\0\1\0\1\vhidden\2\nsetup\26telescope.actions.set\22telescope.actions\14telescope\frequire&packadd telescope-fzf-native.nvim#packadd telescope-project.nvim\25packadd plenary.nvim\bcmd\bvim\0", "config", "telescope.nvim")
+time([[Config for telescope.nvim]], false)
 if should_profile then save_profiles() end
 
 end)

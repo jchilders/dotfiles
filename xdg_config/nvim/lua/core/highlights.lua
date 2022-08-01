@@ -17,5 +17,8 @@ cmd("autocmd ColorScheme * highlight TelescopeResultsBorder  guifg=#3e4451")
 cmd("autocmd ColorScheme * highlight TelescopePreviewBorder  guifg=#525865")
 
 cmd("autocmd ColorScheme * highlight NormalFloat guifg=#fff guibg=none ctermbg=none")
+
 cmd("autocmd ColorScheme * highlight FloatBorder guifg=#FF6111 guibg=none ctermbg=none")
-cmd("autocmd ColorScheme * highlight PmenuSel guifg=#c14a4a guibg=#98c379")
+
+-- red on green
+-- cmd("autocmd ColorScheme * highlight PmenuSel guifg=#c14a4a guibg=#98c379")

@@ -12,6 +12,7 @@ function M.load()
   opt.autoindent = true
   opt.autoread = true -- reload files on external change
   opt.clipboard = "unnamedplus" -- clipboard yank
+  opt.cmdheight = 1
   opt.cursorline = true -- highlight current line
   opt.expandtab = true -- insert spaces instead of tabs when indenting
   opt.fileformat = "unix"
