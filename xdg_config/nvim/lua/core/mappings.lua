@@ -100,11 +100,11 @@ function M.load()
 
   remap("n", "<leader>g", "<cmd>lua require('jc.utils').toggle_gutter()<CR>")
 
-  -- Open Scratch file for this project
-  remap("n", "<leader>rs", "<cmd>lua require('jc.scratcher').split_open_scratch_file()<CR>")
-
   -- Lua Inspect
   remap("n", "<leader>li", "<cmd>lua print(require('utils.inspect').inspect(loadstring(\"return \" .. vim.fn.getline('.'))()))<CR>")
+
+  -- Open Scratch file for this project
+  remap("n", "<leader>rs", "<cmd>lua require('jc.scratcher').split_open_scratch_file()<CR>")
 
   -- Send the current line to the left tmux pane
   remap("n", "<leader>sl", "<cmd>lua require('jc.tmux-utils').send_line_left()<CR>")

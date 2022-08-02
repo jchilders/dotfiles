@@ -71,7 +71,25 @@ return packer.startup(function(use)
   -- C-h/j/k/l - go to first/second/third/fourth harpoon
   use({
     "ThePrimeagen/harpoon",
-    config = require("plugins.harpoon").init,
+    config = function()
+      local harpoon = require("harpoon")
+
+      harpoon.setup({
+        global_settings = {
+          enter_on_sendcmd = true,
+        },
+        projects = {
+          -- Yes $HOME works
+          --[[ ["$HOME/work/carerev/api_app"] = {
+            term = {
+              cmds = {
+                "rails console"
+              },
+            },
+          }, ]]
+        },
+      })
+    end,
     requires = {
       { "nvim-lua/plenary.nvim" },
     }
@@ -172,6 +190,8 @@ return packer.startup(function(use)
   })
 
   -- LSP/completion/snippet all in one
+  -- <C-d> - go to next placeholder in snippet
+  -- <C-b> - go to previous placeholder in snippet
   use({
     "VonHeikemen/lsp-zero.nvim",
     requires = {
@@ -213,8 +233,7 @@ return packer.startup(function(use)
               }
             },
             option = {
-              -- indexing_interval = "Satan",
-              -- get_bufnrs = 666,
+              -- get completion suggestions from all buffers, not just current one
               get_bufnrs = function()
                 return vim.api.nvim_list_bufs()
               end,

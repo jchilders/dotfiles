@@ -25,7 +25,7 @@ function M.load()
   opt.hidden = true
   opt.hlsearch = true
   opt.ignorecase = true
-  opt.laststatus = 3 -- 3: always and ONLY the last window
+  opt.laststatus = 0 -- 3: always and ONLY the last window
   opt.number = true
   opt.relativenumber = true
   opt.scrolloff = 3
