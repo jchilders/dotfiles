@@ -1,10 +1,14 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 require 'fileutils'
+require 'English'
 
-FileUtils.cd("#{Dir.home}/work/carerev/api_app")
+cr_home = "#{Dir.home}/work/carerev/api_app"
+FileUtils.cd(cr_home)
 database = `rails runner 'print ActiveRecord::Base.connection.current_database'`
+exit(1) unless $CHILD_STATUS.success?
+
 print "Archiving #{database}..."
-FileUtils.cd("#{Dir.home}/temp/dbdumps")
 `#{Dir.home}/bin/dumpnzip #{database}`
-puts "done."
+puts 'done.'
