@@ -10,6 +10,9 @@ brew uninstall font-fantasque-sans-mono
 brew tap homebrew/cask-fonts
 brew install --cask font-fantasque-sans-mono
 
+brew tap shaunsingh/SFMono-Nerd-Font-Ligaturized
+brew install --cask font-sf-mono-nerd-font-ligaturized
+
 # brew reinstall --cask font-inconsolata
 # brew uninstall font-inconsolata
 # brew reinstall --cask font-powerline-symbols
