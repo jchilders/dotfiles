@@ -33,6 +33,8 @@ packer.init({
 
 return packer.startup(function(use)
   use "wbthomason/packer.nvim"
+  -- use "miversen33/import.nvim"
+  -- require("import")
 
   -- {{ Tree-sitter treesitter }} --
   use({
@@ -135,6 +137,13 @@ return packer.startup(function(use)
     'andymass/vim-matchup',
     requires = "nvim-treesitter/nvim-treesitter",
     config = function()
+      local ts_config = require('nvim-treesitter.configs')
+      ts_config.setup({
+        matchup = {
+          enable = true,
+        }
+      })
+
       -- turn off updating statusline when match is outside of viewport
       vim.g.matchup_matchparen_offscreen = {}
     end
@@ -180,7 +189,7 @@ return packer.startup(function(use)
     config = function()
       require("mason").setup()
       require("mason-lspconfig").setup({
-        ensure_installed = { "rubocop", "solargraph", "sorbet", "stylelua", "sumneko_lua" }
+        ensure_installed = { "solargraph", "sumneko_lua" }
       })
     end,
     requires = {

@@ -45,10 +45,15 @@ function addAbbreviations() {
   # Ruby and Rails helpers
   abbr add rc='rails console'
   abbr add rs='rails server' > /dev/null 2>&1
-  abbr add rdbm='rails db:migrate'
+  abbr add rdbm='rails db:migrate:with_data'
   abbr add rdbms='rails db:migrate:status'
   abbr add rdbmt='rails db:migrate RAILS_ENV=test'
   abbr add rdbmst='rails db:migrate:status RAILS_ENV=test'
+  # rails test branch - run tests, but only those that have changed from development
+  abbr add rtb='rails test $(git diff development... --name-only | rg "_test.rb$")'
+  # carerev web app
+  abbr add webstart='nvm use && API_APP_BASE_URL="http://localhost:10000/api/v1" TOOLS_APP_BASE_URL="http://localhost:10002/tools" npm start'
+
   unset ABBR_FORCE
   unset ABBR_QUIET
 }
@@ -76,16 +81,17 @@ function cdbrew {
 }
 
 # Change directory to source dir for given RubyGem
-# This has to be a function (instead of a script under bin/) because you can't
-# cd from a script & have it stick. zsh spawns a child process to execute a
-# script, while functions happen in the same process they were called from.
+# Shell wisdom: This must be a function (rather than a standlone script)
+# because you can't cd from a script & have it stick. zsh spawns a child
+# process to execute a script, while functions happen in the same process they
+# were called from.
 function cdgem () {
   if [[ $# -eq 0 ]]; then
     echo "Usage: $0 <gem>"
     return 1
   fi
 
-  gem_dir="$(gem open $1 -e echo)"
+  gem_dir="$(bundle exec gem open $1 -e echo)"
   if [ $? -ne 0 ]; then
     echo "Error finding gem '$1'"
     return 1

@@ -1,5 +1,12 @@
+local ok, plenary_reload = pcall(require, "plenary.reload")
+if not ok then
+  reloader = require
+else
+  reloader = plenary_reload.reload_module
+end
+
 RELOAD = function(...)
-  return require("plenary.reload").reload_module(...)
+  return reloader(...)
 end
 
 R = function(name)

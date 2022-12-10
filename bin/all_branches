@@ -8,7 +8,7 @@ require 'English'
 
 `git -C . rev-parse 2>/dev/null`
 unless $CHILD_STATUS.success?
-  puts 'Not a git repo'
+  STDERR.puts 'Not a git repo'
   exit($CHILD_STATUS.exitstatus)
 end
 

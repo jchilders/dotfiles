@@ -9,3 +9,10 @@ bindkey '^[[A'  up-line-or-beginning-search    # Arrow up
 bindkey '^[OA'  up-line-or-beginning-search
 bindkey '^[[B'  down-line-or-beginning-search  # Arrow down
 bindkey '^[OB'  down-line-or-beginning-search
+
+# Lets you rename multiple files w/ regexes, including group capturing
+# man zmv
+# Replace all spaces in filenames with underscores:
+#   zmv '* *' '$f:gs/ /_'
+# Use -n flag for dry-run
+autoload -U zmv

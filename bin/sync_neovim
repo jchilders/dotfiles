@@ -1,0 +1,34 @@
+#!/usr/bin/env ruby
+
+require 'fileutils'
+
+class NeovimSync
+  attr_accessor :pack_cmds
+
+  def initialize
+    @pack_cmds = []
+  end
+
+  def pack_install
+    pack_cmds << 'PackerInstall'
+  end
+
+  def pack_compile
+    pack_cmds << 'PackerCompile'
+  end
+
+  def exec!
+    `nvim #{cmds_s} +q`
+  end
+
+  private
+
+  def cmds_s
+    pack_cmds.map { |cmd| "+#{cmd}" }.join(' ')
+  end
+end
+
+sync = NeovimSync.new
+sync.pack_install
+sync.pack_compile
+sync.exec!
