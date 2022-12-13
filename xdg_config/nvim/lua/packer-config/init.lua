@@ -277,6 +277,8 @@ return packer.startup(function(use)
     end,
   })
 
+  use {'nyoom-engineering/oxocarbon.nvim'}
+
   use({
     'glepnir/zephyr-nvim',
     requires = { 'nvim-treesitter/nvim-treesitter', opt = true },

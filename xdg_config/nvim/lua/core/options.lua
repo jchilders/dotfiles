@@ -2,7 +2,7 @@ local g, b, opt, go, wo, o = vim.g, vim.b, vim.opt, vim.go, vim.wo, vim.o
 local M = {}
 
 function M.load()
-  pcall(vim.cmd, "colorscheme tokyonight")
+  pcall(vim.cmd, "colorscheme oxocarbon")
 
   g.mapleader = ","
 
