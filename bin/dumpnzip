@@ -1,10 +1,24 @@
 #!/usr/bin/env zsh
 
-db_name=$1
-db_dir=$HOME/work/carerev/data/dbdumps
-zip_name="${db_name}_$(date +%F).gz"
+if [[ -z "$1" ]]
+then
+  script_name=$(basename "$(stat "$0")")
+  echo "Usage:\n\t${script_name} [database]"
+  exit 1
+fi
 
-echo "Dumping $db_name to $zip_name"
-pg_dump $db_name | gzip -c > $zip_name
-mv $zip_name $db_dir
-ls -al $db_dir/$zip_name
+database=$1
+
+psql -U $(whoami) $database -c "\l" &>/dev/null
+if [[ $? -ne 0 ]]; then
+  echo "Database $database does not exist"
+  exit 1
+fi
+
+datetime=$(date +%Y-%m-%d-%H-%M-%S)
+dump_dir=$HOME/work/carerev/data/dbdumps
+zip_name="${dump_dir}/${database}_${datetime}.gz"
+
+pg_dump --create --clean --format=tar $database | gzip -c > $zip_name
+print $zip_name
+print "$(stat -f "%z" $zip_name) bytes written"

@@ -2,13 +2,29 @@
 # frozen_string_literal: true
 
 require 'fileutils'
+require 'open3'
 require 'English'
+
+def shell_exec(cmd)
+  Open3.popen3(cmd) do |_stdin, stdout, stderr, wait_thr|
+    begin
+      while Process.waitpid(wait_thr.pid, Process::WNOHANG).nil?
+        stdout.each_line { |line| puts line.strip }
+        stderr.each_line { |line| puts line.strip }
+        sleep(0.5)
+      end
+    rescue Errno::ECHILD # in case process exits very quickly
+    end
+    stdout.each_line { |line| puts line.strip }
+    stderr.each_line { |line| puts line.strip }
+  end
+end
 
 cr_home = "#{Dir.home}/work/carerev/api_app"
 FileUtils.cd(cr_home)
-database = `rails runner 'print ActiveRecord::Base.connection.current_database'`
+result = `rails runner 'print ActiveRecord::Base.connection.current_database'`
 exit(1) unless $CHILD_STATUS.success?
+database = result.split[-1]
 
-print "Archiving #{database}..."
-`#{Dir.home}/bin/dumpnzip #{database}`
-puts 'done.'
+cmd = "#{Dir.home}/bin/dumpnzip #{database}"
+shell_exec(cmd)
