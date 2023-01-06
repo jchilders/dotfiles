@@ -338,7 +338,7 @@ return packer.startup(function(use)
     'rmagatti/auto-session',
     config = function()
       require('auto-session').setup {
-        log_level = 'info',
+        log_level = 'error',
         auto_restore_enabled = true,
         auto_save_enabled = true,
       }

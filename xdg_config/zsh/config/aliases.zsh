@@ -28,8 +28,6 @@ alias tree='exa --tree'
 alias python=$HOMEBREW_PREFIX/bin/python3
 
 # Abbreviations
-# Silence "already exists" warnings from `abbr` when loading new shells
-
 function addAbbreviations() {
   # Exit if abbreviations already defined. (`-s` is "file exists and has size > 0")
   [[ -s $ABBR_USER_ABBREVIATIONS_FILE ]] && return 1
@@ -45,7 +43,7 @@ function addAbbreviations() {
   # Ruby and Rails helpers
   abbr add rc='rails console'
   abbr add rs='rails server' > /dev/null 2>&1
-  abbr add rdbm='rails db:migrate:with_data'
+  abbr add rdbm='rails db:migrate'
   abbr add rdbms='rails db:migrate:status'
   abbr add rdbmt='rails db:migrate RAILS_ENV=test'
   abbr add rdbmst='rails db:migrate:status RAILS_ENV=test'
@@ -98,4 +96,16 @@ function cdgem () {
   fi
 
   cd $gem_dir
+}
+
+# Edit last migration. Let's you quickly do:
+#   > rails g migration add_foo_to_bar
+#   > vilm # opens migration created above
+function vilm {
+  if [ ! -d db/migrate ]; then
+    print "No db/migrate directory"
+    return 1
+  fi
+
+  $EDITOR $(print -l db/migrate/*.rb(oc) | head -1 | tr -d '\n')
 }
