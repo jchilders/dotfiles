@@ -1,3 +1,5 @@
+require 'core.globals'
+
 SHOULD_RELOAD_TELESCOPE = true
 
 local reloader = function()
@@ -49,7 +51,7 @@ end
 function M.find_files(opts)
   opts = opts or {}
 
-  local theme_opts = ivy_theme()
+  local theme_opts = {}
 
   if opts.search_dir ~= nil then
     local path = Path:new(opts.search_dir)
@@ -66,11 +68,13 @@ end
 
 function M.git_status()
   local opts = dropdown_theme()
+  opts.winblend = 10
   builtin.git_status(opts)
 end
 
 function M.git_branches()
   local opts = dropdown_theme()
+  opts.winblend = 10
   builtin.git_branches(opts)
 end
 
@@ -84,48 +88,14 @@ function M.quickfix()
   builtin.quickfix(opts)
 end
 
-function M.search_only_files_of_type()
-  local bufnr = vim.api.nvim_get_current_buf()
-  local bufft = vim.api.nvim_buf_get_option(bufnr, "filetype")
-  local ft = vim.fn.input({ prompt = "search files of type: ", default = bufft })
-  local opts = {
-    find_command = {
-      "rg",
-      "--files",
-      "--sortr=modified",
-      "--type",
-      ft,
-    },
-  }
-  opts = vim.tbl_extend("error", opts, ivy_theme())
-
-  builtin.grep_string(opts)
-end
-
-function M.lsp_references()
-  builtin.lsp_references(ivy_theme())
-end
-
 -- grep string under the cursor
 function M.grep_string()
-  local opts = {
-    shorten_path = true,
-    previewer = false,
-    disable_coordinates = true,
-  }
-  opts = vim.tbl_extend("error", opts, ivy_theme())
-  builtin.grep_string(opts)
+  builtin.grep_string()
 end
 
 -- grep user-entered string
 function M.live_grep()
-  local opts = {
-    shorten_path = true,
-    previewer = false,
-    disable_coordinates = true,
-  }
-  opts = vim.tbl_extend("error", opts, ivy_theme())
-  builtin.live_grep(opts)
+  builtin.live_grep()
 end
 
 function M.search_all_files()
