@@ -16,8 +16,8 @@ cfg: xdg-setup ## Link configuration files
 	ln -s $(cwd)/xdg_config $$HOME/.config
 	ln -sf $(cwd)/bin $$HOME/bin
 
-cfg-clean:
-	rm $$HOME/.config
+cfg-clean: ## Clean (rm) config $XDG_CONFIG_HOME
+	rm $(XDG_CONFIG_HOME)
 	rm $$HOME/bin
 
 ##@ Homebrew
