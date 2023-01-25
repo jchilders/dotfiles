@@ -1,0 +1,26 @@
+#!/usr/bin/env ruby
+
+# ips = ['192.168.1.120',
+# '192.168.1.209',
+# '192.168.1.210',
+# '192.168.1.223',
+# '192.168.1.225',
+# '192.168.1.226',
+# '192.168.1.233',
+# '192.168.1.239',
+# '192.168.1.67',
+# '192.168.1.68']
+
+# hk_ports = [5353, 8123, 51827]
+
+ips = ['127.0.0.1']
+hk_ports = [3000]
+
+ips.each do |ip|
+  puts "-=> Scanning #{ip}..."
+  hk_ports.each do |port|
+    print "   ... port #{port} is "
+    result = system("nc -znv #{ip} #{port} > /dev/null 2>&1")
+    puts result ? "OPEN!" : "closed"
+  end
+end

@@ -10,7 +10,7 @@ cwd := $(shell pwd)
 ##@ Install
 install: macos cfg homebrew homebrew-bundle alacritty -fonts ruby tmux zsh ## Install all the things
 
-clean: fonts-clean ruby-clean cfg-clean tmux-clean neovim-clean zsh-clean homebrew-clean ## Uninstall all the things
+clean: ruby-clean cfg-clean tmux-clean neovim-clean zsh-clean homebrew-clean ## Uninstall all the things
 
 cfg: xdg-setup ## Link configuration files
 	ln -s $(cwd)/xdg_config $$HOME/.config
@@ -182,10 +182,6 @@ fonts: ## Install fonts
 	## Font used with toilet banner generator
 	cp cosmic.flf $$HOMEBREW_CELLAR/toilet/0.3/share/figlet
 	brew bundle install --file Brewfile.fonts
-
-fonts-clean: ## Uninstall fonts
-	rm $$HOME/Library/Fonts/*
-	rm $$HOMEBREW_CELLAR/toilet/0.3/share/figlet/cosmic.flf
 
 ssh-cfg: ## Install ssh related files
 	@[ -d $$HOME/.ssh ] || mkdir $$HOME/.ssh

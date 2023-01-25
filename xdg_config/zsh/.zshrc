@@ -1,5 +1,22 @@
-# Add brew-managed bins to path, etc.
-eval "$(/opt/homebrew/bin/brew shellenv)"
+# init homebrew env vars if we haven't already
+if [[ ! -v HOMEBREW_PREFIX ]] then
+  OS="$(uname)"
+  if [[ "${OS}" == "Darwin" ]] then
+    UNAME_MACHINE="$(/usr/bin/uname -m)"
+    if [[ "${UNAME_MACHINE}" == "arm64" ]] then
+      # On ARM macOS, the homebrew installer script installs to /opt/homebrew
+      HOMEBREW_PREFIX="/opt/homebrew"
+    else
+      # On Intel macOS, the homebrew installer script installs to /usr/local
+      HOMEBREW_PREFIX="/usr/local"
+    fi
+  else
+    HOMEBREW_PREFIX="/home/linuxbrew/.linuxbrew"
+  fi
+
+  # Add brew-managed bins to path, etc.
+  eval "$(${HOMEBREW_PREFIX}/bin/brew shellenv)"
+fi
 
 # these need to happen in the given order
 foreach file (
