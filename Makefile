@@ -8,7 +8,7 @@ XDG_DATA_HOME := $(HOME)/.local/share
 cwd := $(shell pwd)
 
 ##@ Install
-install: macos cfg homebrew homebrew-bundle alacritty -fonts ruby tmux zsh ## Install all the things
+install: macos cfg zsh homebrew homebrew-bundle -fonts ruby tmux ## Install all the things
 
 clean: ruby-clean cfg-clean tmux-clean neovim-clean zsh-clean homebrew-clean ## Uninstall all the things
 
@@ -26,7 +26,7 @@ homebrew: ## Install homebrew
 
 homebrew-bundle: ## Install default homebrew formulae
 	eval "$(/opt/homebrew/bin/brew shellenv)"
-	brew bundle # see Brewfile
+	eval "$(/opt/homebrew/bin/brew bundle)"
 
 homebrew-clean: ## Uninstall homebrew
 	sudo curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall.sh | /bin/bash
@@ -74,21 +74,9 @@ neovim-clean:
 		-brew unlink neovim
 		rm -rf $$HOME/.local/share/nvim
 
-##@ Terminal Emulator
-
-alacritty: ## Install Alacritty terminal emulator
-	brew install --cask alacritty
-	@# Need to unquarantine it for macOS Catalina & above
-	@if xattr -p com.apple.quarantine /Applications/Alacritty.app &> /dev/null ; then \
-	  xattr -d com.apple.quarantine /Applications/Alacritty.app; \
-	fi
-
-alacritty-clean: ## Uninstall Alacritty terminal emulator
-	brew uninstall --cask alacritty
-
 ##@ Languages
 ruby: ruby-cfg rvm ## Install Ruby
-	$$HOME/.rvm/bin/rvm install --no-docs ruby-3
+	$$HOME/.rvm/bin/rvm install ruby-3
 	$$HOME/.rvm/bin/rvm alias create default ruby-3
 
 ruby-clean: -rvm-clean ## Uninstall Ruby
@@ -181,7 +169,8 @@ endif
 fonts: ## Install fonts
 	## Font used with toilet banner generator
 	cp cosmic.flf $$HOMEBREW_CELLAR/toilet/0.3/share/figlet
-	brew bundle install --file Brewfile.fonts
+	brew tap homebrew/cask-fonts
+	brew search '/font-.*-nerd-font/' | awk '{ print $1 }' | xargs brew install --cask
 
 ssh-cfg: ## Install ssh related files
 	@[ -d $$HOME/.ssh ] || mkdir $$HOME/.ssh

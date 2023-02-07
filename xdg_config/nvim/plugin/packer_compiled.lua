@@ -221,10 +221,6 @@ _G.packer_plugins = {
 }
 
 time([[Defining packer_plugins]], false)
--- Config for: nvim-lsp-notify
-time([[Config for nvim-lsp-notify]], true)
-try_loadstring("\27LJ\2\nV\0\0\6\0\5\0\v6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\4\0006\3\0\0'\5\3\0B\3\2\2=\3\3\2B\0\2\1K\0\1\0\1\0\0\vnotify\nsetup\15lsp-notify\frequire\0", "config", "nvim-lsp-notify")
-time([[Config for nvim-lsp-notify]], false)
 -- Config for: nvim-notify
 time([[Config for nvim-notify]], true)
 try_loadstring("\27LJ\2\nU\0\0\3\0\4\0\a6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\3\0B\0\2\1K\0\1\0\1\0\1\22background_colour\f#000000\nsetup\vnotify\frequire\0", "config", "nvim-notify")
@@ -237,6 +233,10 @@ time([[Config for tokyonight.nvim]], false)
 time([[Config for smart-open.nvim]], true)
 try_loadstring("\27LJ\2\nO\0\0\3\0\4\0\a6\0\0\0'\2\1\0B\0\2\0029\0\2\0'\2\3\0B\0\2\1K\0\1\0\15smart_open\19load_extension\14telescope\frequire\0", "config", "smart-open.nvim")
 time([[Config for smart-open.nvim]], false)
+-- Config for: nvim-lsp-notify
+time([[Config for nvim-lsp-notify]], true)
+try_loadstring("\27LJ\2\nV\0\0\6\0\5\0\v6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\4\0006\3\0\0'\5\3\0B\3\2\2=\3\3\2B\0\2\1K\0\1\0\1\0\0\vnotify\nsetup\15lsp-notify\frequire\0", "config", "nvim-lsp-notify")
+time([[Config for nvim-lsp-notify]], false)
 -- Conditional loads
 time([[Conditional loading of telescope-fzf-native.nvim]], true)
   require("packer.load")({"telescope-fzf-native.nvim"}, {}, _G.packer_plugins)

@@ -1,4 +1,3 @@
-brew 'alt' # find alternate (i.e. test) file
 brew 'automake'
 brew 'bat' # cat replacement
 brew 'chafa' # ANSI art renderer
