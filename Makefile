@@ -1,5 +1,6 @@
 .DEFAULT_GOAL:=help
 SHELL:=/bin/zsh
+XDG_CACHE_HOME := $(HOME)/.cache
 XDG_CONFIG_HOME := $(HOME)/.config
 XDG_DATA_HOME := $(HOME)/.local/share
 
@@ -187,6 +188,7 @@ misc-cfg-clean: ripgrep-cfg-clean lazygit-cfg-clean ## Unlink misc configs
 
 xdg-setup: ## Create XDG dirs (XDG_CONFIG_HOME, etc.)
 	@[ -d $(XDG_DATA_HOME) ] || mkdir -p $(XDG_DATA_HOME)
+	@[ -d $(XDG_CACHE_HOME) ] || mkdir -p $(XDG_CACHE_HOME)
 
 ##@ Helpers
 

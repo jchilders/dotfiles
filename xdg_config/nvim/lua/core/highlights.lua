@@ -1,8 +1,5 @@
 local cmd = vim.cmd
 
--- use pcall in case colorscheme isn't installed yet
-pcall(vim.cmd, "colorscheme tokyonight")
-
 -- For Tokyonight this makes the background color black for the active pane and dark grey for the inactive one
 cmd("autocmd ColorScheme * highlight normal ctermbg=NONE guibg=NONE")
 

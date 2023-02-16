@@ -1,37 +1,39 @@
 # Configuration for Alacritty, the GPU enhanced terminal emulator.
 
 window:
-  decorations: transparent
+  # Values for `decorations`:
+  #     - full: Borders and title bar
+  #     - none: Neither borders nor title bar
+  #
+  # Values for `decorations` (macOS only):
+  #     - transparent: Title bar, transparent background and title bar buttons
+  #     - buttonless: Title bar, transparent background and no title bar buttons
+  decorations: full
+
   opacity: 1.0
+
   # Windowed/Maximized/Fullscreen
-  startup_mode: Fullscreen
+  startup_mode: Windowed
   dynamic_title: true
 
 scrolling:
+  # Use tmux
   history: 0
 
 font:
   normal:
-    # https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/FantasqueSansMono
-    family: FantasqueSansMono Nerd Font
+    family: Monofur Nerd Font
     style: Regular
   bold:
-    # https://github.com/ryanoasis/nerd-fonts/blob/master/patched-fonts/FantasqueSansMono/Bold/complete/Fantasque%20Sans%20Mono%20Bold%20Nerd%20Font%20Complete.ttf
-    family: FantasqueSansMono Nerd Font
+    family: Monofur Nerd Font
     style: Bold
   italic:
-    # https://github.com/ryanoasis/nerd-fonts/blob/master/patched-fonts/FantasqueSansMono/Italic/complete/Fantasque%20Sans%20Mono%20Italic%20Nerd%20Font%20Complete.ttf
-    family: FantasqueSansMono Nerd Font
+    family: Monofur Nerd Font
     style: Italic
   bold_italic:
-    # https://github.com/ryanoasis/nerd-fonts/blob/master/patched-fonts/FantasqueSansMono/Bold-Italic/complete/Fantasque%20Sans%20Mono%20Bold%20Italic%20Nerd%20Font%20Complete.ttf
-    family: FantasqueSansMono Nerd Font
+    family: Monofur Nerd Font
     style: Bold Italic
   size: 17.0
-
-  offset:
-   x: 1
-   y: 0
 
 draw_bold_text_with_bright_colors: true
 
@@ -40,22 +42,21 @@ colors:
    background: '#000000'
    foreground: '#c5c8c6'
 
+# `tput bel` to send BEL signal 
 bell:
-  animation: EaseOutExpo
-  duration: 250
-  color: '#ff0000'
+  animation: EaseOut
+  duration: 350
+  color: '#ff00ff'
 
 cursor:
-  # Cursor style
   style:
     # Block/Underline/Beam
     shape: Block
 
     # Never/Off/On/Always
     blinking: Always
-  blink_interval: 250
+  blink_interval: 450
   unfocused_hollow: true
-  #thickness: 0.15
 
 live_config_reload: true
 
@@ -63,3 +64,7 @@ mouse:
   double_click: { threshold: 300 }
   triple_click: { threshold: 300 }
   hide_when_typing: true
+
+key_bindings:
+  - { key: Equals, mods: Command|Shift, action: IncreaseFontSize }
+  - { key: Minus, mods: Command|Shift, action: DecreaseFontSize }

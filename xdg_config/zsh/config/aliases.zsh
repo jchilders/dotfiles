@@ -63,13 +63,13 @@ addAbbreviations
 # script, whilc functions happen in the same process they were called from.
 function cdbrew {
   if [[ $# -eq 0 ]]; then
-      echo "Usage: $0 <formula or cask name>"
-      return 1
+    echo "Usage: $0 <formula or cask name>"
+    return 1
   fi
 
-  fcellar="$(brew --cellar $1)"
-  fver="$(brew info --json $1 | jq -r 'map(.installed)[0][0] | .version')"
-  fdir="$fcellar/$fver"
+  local fcellar="$(brew --cellar $1)"
+  local fver="$(brew info --json $1 | jq -r 'map(.installed)[0][0] | .version')"
+  local fdir="$fcellar/$fver"
   if [[ -d $fdir ]]; then
     cd $fdir
   else
@@ -89,13 +89,50 @@ function cdgem () {
     return 1
   fi
 
-  gem_dir="$(bundle exec gem open $1 -e echo)"
+  local gem_dir="$(bundle exec gem open $1 -e echo)"
   if [ $? -ne 0 ]; then
     echo "Error finding gem '$1'"
     return 1
   fi
 
   cd $gem_dir
+}
+
+function cwd_is_git_repo() {
+  if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
+    return 0
+  else
+    return 1
+  fi
+}
+
+# Set the tmux window name to the git root dir, or just the pwd if we aren't in a
+# git repository
+function tmux_window_name() {
+  local new_name
+  $(cwd_is_git_repo)
+  if [[ $? -eq 0 ]]; then
+    new_name=$(git rev-parse --show-toplevel 2>/dev/null | xargs basename)
+  else
+    new_name=$(pwd | xargs basename)
+  fi
+
+  if [[ -n "$TMUX" ]]; then
+    if [[ -n "$new_name" ]]; then
+      tmux rename-window "$new_name"
+    fi
+  fi
+}
+
+chpwd_functions+=(tmux_window_name)
+
+# Determine whether the tmux status bar should be at the top of the display or
+# the bottom. Need to do this because when using a display with a notch (i.e.
+# the M1 MBP) the window list -- which is normally centered in the tmux status
+# bar -- is hidden by the notch.
+function single_display() {
+  local num_displays=$(system_profiler -json SPDisplaysDataType | jq '.SPDisplaysDataType[0].spdisplays_ndrvs' | jq 'length')
+  [[ $num_displays -eq 1 ]]
 }
 
 # Edit last migration. Let's you quickly do:

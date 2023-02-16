@@ -119,11 +119,11 @@ remap(
 )
 
 -- Save & run the most recently modified test, test case for current line only
-remap("n", "<leader>rt", "<cmd>wa<CR><cmd>lua require('jc.tmux-utils').run_mru_test_current()<CR>")
+-- remap("n", "<leader>rt", "<cmd>wa<CR><cmd>lua require('jc.tmux-utils').run_mru_test_current()<CR>")
 -- Save & run the most recently modified test, entire test file
-remap("n", "<leader>rT", "<cmd>wa<CR><cmd>lua require('jc.tmux-utils').run_mru_test()<CR>")
+-- remap("n", "<leader>rT", "<cmd>wa<CR><cmd>lua require('jc.tmux-utils').run_mru_test()<CR>")
 -- Edit the most recently modified test
-remap("n", "<leader>et", "<cmd>wa<CR><cmd>lua require('jc.tmux-utils').edit_mru_test()<CR>")
+-- remap("n", "<leader>et", "<cmd>wa<CR><cmd>lua require('jc.tmux-utils').edit_mru_test()<CR>")
 
 -- Toggle treesitter highlighting
 -- remap("n", "<leader>tstog", "<cmd>TSBufToggle highlight<CR>")
@@ -198,9 +198,9 @@ end
 vim.keymap.set('n', '<leader>ss', smart_search)
 
 -- rails
-map_ctrlo_tele("rc", "find_files", { search_dir = "app/controllers" })
-map_ctrlo_tele("rm", "find_files", { search_dir = "app/models" })
-map_ctrlo_tele("rv", "find_files", { search_dir = "app/views" })
+-- map_ctrlo_tele("rc", "find_files", { search_dir = "app/controllers" })
+-- map_ctrlo_tele("rm", "find_files", { search_dir = "app/models" })
+-- map_ctrlo_tele("rv", "find_files", { search_dir = "app/views" })
 
 map_ctrlo_tele("q", "quickfix")
 

@@ -19,6 +19,7 @@ brew 'grep' # gnu grep
 brew 'httpie' # cURL replacement. e.g.: `http POST pie.dev/post hello=world`
 brew 'imagemagick'
 brew 'jq' # json processor
+brew 'just' # command runner. `make` replacement.
 brew 'lazygit' # git TUI
 brew 'lua'
 brew 'luarocks' # lua package manager
@@ -69,16 +70,10 @@ brew 'zsh-abbr'
 tap 'uptech/homebrew-oss'
 brew 'uptech/oss/alt'
 
-# Semantics-aware diffs using ASTs from tree-sitter
-tap 'afnanenayet/tap'
-brew 'diffsitter'
-
 tap '1Password/homebrew-tap'
 cask '1password-cli'
 
 cask 'docker'
-
-# cask 'alacritty' # fast(est) terminal emulator
 
 # Optionals. Uncomment to install
 # cask 'lulu' # allow/deny apps network access
