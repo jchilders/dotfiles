@@ -4,8 +4,10 @@ brew 'chafa' # ANSI art renderer
 brew 'choose-rust' # sed replacement. e.g.: `bat things.csv | choose 5`
 brew 'cmake'
 brew 'coreutils' # gnu coreutils
+brew 'datasette' # simple web interface to SQLite databases
 brew 'direnv' # directory-specific env vars
 brew 'dua-cli' # display disk usage, & delete
+brew 'esbuild'
 brew 'exa' # git-aware ls replacement
 brew 'fd' # file finder
 brew 'fzf' # fuzzy finder
@@ -48,6 +50,7 @@ brew 'universal-ctags' # better ctags
 brew 'watchman' # needed by Sorbet LSP
 brew 'watchexec' # auto-restart process when file(s) change
 brew 'wget'
+brew 'yarn'
 
 # yank: copy to clipboard via keyboard navigation (arrow keys, hjkl, etc.)
 #
@@ -74,6 +77,7 @@ tap '1Password/homebrew-tap'
 cask '1password-cli'
 
 cask 'docker'
+brew 'docker'
 
 # Optionals. Uncomment to install
 # cask 'lulu' # allow/deny apps network access

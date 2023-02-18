@@ -47,6 +47,9 @@ vim.keymap.set('n', 'N', 'Nzzzv')
 -- this is from nvim-lua/kickstart.nvim... Something broke when I took it out ut I can't remember what
 vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 
+-- change current word
+vim.keymap.set("n", "ccw", vim.lsp.buf.rename, {})
+
 -- `*` still searches what is under the cursor, but doesn't immediately jump
 -- to the next match. Found this on StackOverflow a long time ago. Diving
 -- into how it works is interesting.

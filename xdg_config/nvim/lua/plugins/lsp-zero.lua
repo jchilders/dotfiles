@@ -2,6 +2,7 @@ return {
   "VonHeikemen/lsp-zero.nvim",
   enabled = true,
   dependencies = {
+    "folke/neodev.nvim",
     -- LSP Support
     "neovim/nvim-lspconfig",
     "williamboman/mason.nvim",
@@ -20,6 +21,9 @@ return {
     "rafamadriz/friendly-snippets",
   },
   config = function()
+    -- neodev fixes the 'undefined global "vim"' message, as well as doing other cool things
+    require("neodev").setup() -- needs to happen before LSP init
+
     local cmp_nvim_lsp_status_ok, cmp_nvim_lsp = pcall(require, "cmp_nvim_lsp")
 
     if not (cmp_nvim_lsp_status_ok) then
@@ -35,7 +39,15 @@ return {
     local mason_lspconfig = require "mason-lspconfig"
     local servers = {
       solargraph = {},
+      lua_ls = {
+	Lua = {
+	  diagnostics = { globals = {"vim"} },
+	  telemetry = { enable = false },
+	  workspace = { checkThirdParty = false },
+	},
+      },
     }
+
     mason_lspconfig.setup {
       ensure_installed = vim.tbl_keys(servers),
     }
