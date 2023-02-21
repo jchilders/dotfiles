@@ -156,8 +156,6 @@ remap("n", "<leader>lc", "<cmd>lclose<CR>")
 remap("n", "<leader>ln", "<cmd>lnext<CR>")
 remap("n", "<leader>lp", "<cmd>lprev<CR>")
 
--- See `:help telescope.builtin`
--- vim.keymap.set('n', '<leader><space>', require('telescope.builtin').buffers, { desc = '[ ] Find existing buffers' })
 vim.keymap.set('n', '<leader>/', function()
   -- You can pass additional configuration to telescope to change theme, layout, etc.
   require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
@@ -178,7 +176,7 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)
 -- ctrl-o
 
 -- ctrl-o telescope mappings
-map_ctrlo_tele("b", "buffers")
+vim.keymap.set("n", "<C-o>b", require("telescope.builtin").buffers, { desc = "[ ] Open from buffer list" })
 
 map_ctrlo_tele("f", "grep_string")
 map_ctrlo_tele("F", "live_grep")
@@ -188,22 +186,18 @@ map_ctrlo_tele("F", "live_grep")
 map_ctrlo_tele("gb", "git_branches")
 -- git history of file in current buffer
 map_ctrlo_tele("gh", "git_bcommits")
--- edit changed file
+-- select file from files with uncommitted changes (i.e. from `git status`)
 map_ctrlo_tele("gs", "git_status")
 
 -- files
 map_ctrlo_tele("o", "find_files")
-map_ctrlo_tele("O", "search_all_files") -- TODO: Make work like rg
+map_ctrlo_tele("O", "find_all_files") -- include hidden/.gitignore/etc.
 
+-- my current favorite
 local smart_search = function()
-  require('telescope').extensions.smart_open.smart_open({cwd_only = true})
+  require("telescope").extensions.smart_open.smart_open({cwd_only = true})
 end
-vim.keymap.set('n', '<leader>ss', smart_search)
-
--- rails
--- map_ctrlo_tele("rc", "find_files", { search_dir = "app/controllers" })
--- map_ctrlo_tele("rm", "find_files", { search_dir = "app/models" })
--- map_ctrlo_tele("rv", "find_files", { search_dir = "app/views" })
+vim.keymap.set("n", "<leader>ss", smart_search)
 
 map_ctrlo_tele("q", "quickfix")
 

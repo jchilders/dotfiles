@@ -48,11 +48,16 @@ if type starship &>/dev/null; then
 fi
 
 # direnv allows for directory-specific environment variables. To use, add
-# .envrc file to directory to load project specific envars. Then:
+# .envrc file to the directory to enable loading of project specific envars.
+# Then:
 # 
 # > direnv allow .
 #
-# To allow your new .envrc file to be loaded for that directory
+# to allow the new .envrc file to be loaded for that directory
 if type direnv &>/dev/null; then
   eval "$(direnv hook zsh)"
+fi
+
+if type rustup &>/dev/null; then
+  . "$HOME/.cargo/env"
 fi

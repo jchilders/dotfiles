@@ -36,18 +36,6 @@ local ivy_theme = function()
   })
 end
 
-function M.buffers()
-  local theme = dropdown_theme()
-  local opts = {
-    shorten_path = false,
-    sort_mru = true,
-    only_cwd = true,
-  }
-  opts = vim.tbl_extend("error", opts, theme)
-
-  builtin.buffers(opts)
-end
-
 function M.find_files(opts)
   opts = opts or {}
 
@@ -98,9 +86,9 @@ function M.live_grep()
   builtin.live_grep()
 end
 
-function M.search_all_files()
+function M.find_all_files()
   builtin.find_files({
-    find_command = { "rg", "--no-ignore", "--files" },
+    find_command = { "fd", "--no-ignore", "--hidden" },
   })
 end
 
