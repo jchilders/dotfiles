@@ -17,11 +17,11 @@ local function sibling_or_parent_sibling(node, up)
   end
 end
 
-local function string_node_for_node(node)
-  if node:type() == "string" then
+local function parent_node_of_type(node, type)
+  if node:type() == type then
     return node
   elseif node:parent() ~= nil then
-    return string_node_for_node(node:parent())
+    return parent_node_of_type(node:parent(), type)
   end
 end
 
@@ -37,7 +37,7 @@ end
 
 -- Toggle between single and double quotes for the string under the cursor
 M.toggle_quotes = function()
-  local parent_string_node = string_node_for_node(ts_utils.get_node_at_cursor())
+  local parent_string_node = parent_node_of_type(ts_utils.get_node_at_cursor(), "string")
   if parent_string_node == nil then
     return
   end
@@ -58,6 +58,17 @@ M.toggle_quotes = function()
 
   vim.api.nvim_buf_set_text(bufnr, start_row, start_col, start_row, start_col + 1, { new_quote })
   vim.api.nvim_buf_set_text(bufnr, end_row, end_col - 1, end_row, end_col, { new_quote })
+end
+
+-- return string
+M.get_current_function = function()
+  local current_function = parent_node_of_type(ts_utils.get_node_at_cursor(), "method")
+  if current_function == nil then
+    return
+  end
+
+  local bufnr = vim.api.nvim_get_current_buf()
+  return query.get_node_text(current_function, bufnr)
 end
 
 return M

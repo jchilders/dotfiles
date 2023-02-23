@@ -1,4 +1,7 @@
 local remap = require("utils").map_global
+local scratcher = require("jc.scratcher")
+local tireswing = require("jc.tireswing")
+local tmux_utils = require("jc.tmux-utils")
 
 TelescopeMapArgs = TelescopeMapArgs or {}
 
@@ -119,14 +122,19 @@ vim.keymap.set("n", "<leader>gq", function()
 remap("n", "<leader>li", "<cmd>lua print(require('utils.inspect').inspect(loadstring(\"return \" .. vim.fn.getline('.'))()))<CR>")
 
 -- Open Scratch file for this project
-local scratcher = require("jc.scratcher")
 vim.keymap.set("n", "<leader>rs", scratcher.split_open_scratch_file)
 
-local tmux_utils = require("jc.tmux-utils")
 -- Send the current line to the left tmux pane
 vim.keymap.set("n", "<leader>sl", tmux_utils.send_line_left)
+
 -- Send the selected text to the left tmux pane
 vim.keymap.set("v", "<leader>sl", tmux_utils.send_selection_left)
+
+-- Send current function to the left tmux pane
+vim.keymap.set("n", "<leader>sfl", function()
+  local function_text = tireswing.get_current_function()
+  tmux_utils.send_left(function_text)
+end)
 
 -- Send the keys `^D`, `UpArrow`, and `Enter` to the left tmux pane
 -- Lets us quickly Restart Rails console/server/psql/lua/whatever, so long as it quits
@@ -161,7 +169,6 @@ vim.keymap.set(
 remap("v", "<C-c>", '"+y')
 
 -- Quote Toggler: toggle between single/double quotes for string under cursor.
-local tireswing = require("jc.tireswing")
 vim.keymap.set("n", "<leader>tq", tireswing.toggle_quotes)
 
 -- quickfix
