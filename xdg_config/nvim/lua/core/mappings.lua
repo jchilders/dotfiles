@@ -90,35 +90,53 @@ vim.keymap.set("n", "ccw", vim.lsp.buf.rename, {})
 --   4. `expand("<cword>")`
 --   5. Hit enter. If the word under your cursor is "foo" then your command line should look like the following: `let @/='foo`
 --   6. Add your closing `'` and hit enter.
+-- tl;dr: * searches term under cursor but doesn't jump forward
 local search_cmd = [[:let @/='<C-R>=expand("<cword>")<CR>'<CR>:set hls<CR>]]
-remap("n", "*", search_cmd)
+vim.keymap.set("n", "*", search_cmd)
 
 -- Hit <CR> to clear highlighted search matches
 remap("n", "<CR>", '{-> v:hlsearch ? "<cmd>nohl\\<CR>" : "\\<CR>"}()', true)
 
-remap("n", "<leader>w", "<cmd>wa<CR>")
-remap("n", "<leader>W", "<cmd>wqa<CR>")
+vim.keymap.set("n", "<leader>w", "<cmd>wa<CR>")
+vim.keymap.set("n", "<leader>W", "<cmd>wqa<CR>")
 
-remap("n", "<leader>g", "<cmd>lua require('jc.utils').toggle_gutter()<CR>")
+vim.keymap.set("n", "<leader>g", require("jc.utils").toggle_gutter)
+
+local gitsigns = require("gitsigns")
+vim.keymap.set("n", "<leader>ga", gitsigns.stage_hunk, { desc = "Stage change" })
+vim.keymap.set("n", "<leader>gA", gitsigns.stage_buffer, { desc = "Stage all changes made to current buffer" })
+vim.keymap.set("n", "<leader>gb", gitsigns.blame_line, { desc = "git blame" })
+vim.keymap.set("n", "<leader>gp", gitsigns.prev_hunk, { desc = "Go to previous unstaged hunk" })
+vim.keymap.set("n", "<leader>gn", gitsigns.next_hunk, { desc = "Go to next unstaged hunk" })
+vim.keymap.set("n", "<leader>gr", gitsigns.reset_hunk, { desc = "Undo changes to current hunk" })
+vim.keymap.set("n", "<leader>gR", gitsigns.reset_buffer, { desc = "Undo all changes made to current buffer" })
+vim.keymap.set("n", "<leader>gd", gitsigns.preview_hunk, { desc = "Preview hunk" })
+vim.keymap.set("n", "<leader>gq", function()
+                                    gitsigns.setqflist("all")
+                                  end, { desc = "Set quickfix list to unstaged changes" })
 
 -- Lua Inspect
 remap("n", "<leader>li", "<cmd>lua print(require('utils.inspect').inspect(loadstring(\"return \" .. vim.fn.getline('.'))()))<CR>")
 
 -- Open Scratch file for this project
-remap("n", "<leader>rs", "<cmd>lua require('jc.scratcher').split_open_scratch_file()<CR>")
+local scratcher = require("jc.scratcher")
+vim.keymap.set("n", "<leader>rs", scratcher.split_open_scratch_file)
 
+local tmux_utils = require("jc.tmux-utils")
 -- Send the current line to the left tmux pane
-remap("n", "<leader>sl", "<cmd>lua require('jc.tmux-utils').send_line_left()<CR>")
+vim.keymap.set("n", "<leader>sl", tmux_utils.send_line_left)
 -- Send the selected text to the left tmux pane
-remap("v", "<leader>sl", "<cmd>lua require('jc.tmux-utils').send_selection_left()<CR>")
+vim.keymap.set("v", "<leader>sl", tmux_utils.send_selection_left)
 
 -- Send the keys `^D`, `UpArrow`, and `Enter` to the left tmux pane
 -- Lets us quickly Restart Rails console/server/psql/lua/whatever, so long as it quits
 -- when it receives a ^D
-remap(
+vim.keymap.set(
   "n",
   "<leader>rr",
-  "<cmd>lua require('jc.tmux-utils').send_keys_left({'C-d','Up','Enter'})<CR>"
+  function()
+    tmux_utils.send_keys_left({"C-d","Up","Enter"})
+  end
 )
 
 -- Save & run the most recently modified test, test case for current line only
@@ -143,7 +161,8 @@ remap(
 remap("v", "<C-c>", '"+y')
 
 -- Quote Toggler: toggle between single/double quotes for string under cursor.
-remap("n", "<leader>tq", "<cmd>lua require('jc.tireswing').toggle_quotes()<CR>")
+local tireswing = require("jc.tireswing")
+vim.keymap.set("n", "<leader>tq", tireswing.toggle_quotes)
 
 -- quickfix
 remap("n", "<leader>qf", "<cmd>lua require('utils').toggle_qf()<CR>")
@@ -157,7 +176,6 @@ remap("n", "<leader>ln", "<cmd>lnext<CR>")
 remap("n", "<leader>lp", "<cmd>lprev<CR>")
 
 vim.keymap.set('n', '<leader>/', function()
-  -- You can pass additional configuration to telescope to change theme, layout, etc.
   require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
     winblend = 10,
     previewer = false,
@@ -167,7 +185,7 @@ end, { desc = '[/] Fuzzily search in current buffer]' })
 vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags, { desc = '[S]earch [H]elp' })
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
 
--- Diagnostic keymaps
+-- LSP Diagnostic keymaps
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float)
@@ -191,7 +209,7 @@ map_ctrlo_tele("gs", "git_status")
 
 -- files
 map_ctrlo_tele("o", "find_files")
-map_ctrlo_tele("O", "find_all_files") -- include hidden/.gitignore/etc.
+map_ctrlo_tele("O", "find_all_files") -- include hidden/.gitignored files/etc.
 
 -- my current favorite
 local smart_search = function()

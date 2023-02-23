@@ -26,6 +26,9 @@ return {
 				use_virtual_text = true,
 				lint_events = { "bufwrite", "cursorhold" },
 			},
+      playground = {
+        enable = true,
+      },
 		})
 	end
 }
