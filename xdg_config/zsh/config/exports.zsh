@@ -36,7 +36,9 @@ fi
 
 # In all my years of Rails development Spring has caused far, far more issues
 # than time it has saved. Disable it, with a vengeance.
-export DISABLE_SPRING=1
+# This is disabled by default in Rails7.. or at least its gem is commented out
+# in the Gemfile enerated by `rails new`
+# export DISABLE_SPRING=1
 
 export FZF_DEFAULT_COMMAND="fd"
 export FZF_DEFAULT_OPTS="--height 30% --border --tiebreak=index --info=inline"

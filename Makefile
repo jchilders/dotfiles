@@ -84,11 +84,9 @@ ruby-clean: -rvm-clean ## Uninstall Ruby
 
 ruby-cfg: ## Link Ruby configuration files
 	ln -sf $(PWD)/ruby/ruby/.irbrc $$HOME
-	ln -sf $(PWD)/ruby/gem/.gemrc $$HOME
 
 ruby-cfg-clean: ## Unlink Ruby configuration files
 	rm $$HOME/.irbrc
-	rm $$HOME/.gemrc
 
 rvm: rvm-receive-keys ## Install Ruby Version Manager
 	@if ! which rvm &> /dev/null ; then \

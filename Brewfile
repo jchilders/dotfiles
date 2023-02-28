@@ -34,6 +34,7 @@ brew 'memcached'
 brew 'overmind' # spawn Procfile under tmux
 brew 'parallel' # gnu parallel
 brew 'pastel' # generate/convert/manipulate colors
+brew 'postgresql@14'
 brew 'procs' # `ps` replacement written in Rust
 brew 'python'
 brew 'redis' # redis is redis

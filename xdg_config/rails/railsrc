@@ -1,0 +1,3 @@
+--database=postgresql
+--css=tailwind
+--template=~/work/jchilders/dotfiles/r7template.rb
