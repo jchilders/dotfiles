@@ -142,14 +142,14 @@ tmux-plugins-clean: ## Uninstall tmux plugins
 	-rm -rf $(tmux_plugins_dir)
 
 ##@ zsh
-zsh: zsh-cfg-env ## Install zsh-related items
+zsh: zsh-cfg ## Install zsh-related items
 
 zsh-clean: zsh-cfg-env-clean ## Uninstall zsh-related items
 
-zsh-cfg-env: ## Link ~/.zshenv
+zsh-cfg: ## Link ~/.zshenv
 	ln -sf $(cwd)/.zshenv $$HOME/.zshenv
 
-zsh-cfg-env-clean: ## Unlink ~/.zshenv
+zsh-cfg-clean: ## Unlink ~/.zshenv
 	rm $$HOME/.zshenv
 
 ##@ Misc
