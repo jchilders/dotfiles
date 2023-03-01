@@ -49,8 +49,6 @@ function addAbbreviations() {
   abbr add rdbmst='rails db:migrate:status RAILS_ENV=test'
   # rails test branch - run tests, but only those that have changed from development
   abbr add rtb='rails test $(git diff development... --name-only | rg "_test.rb$")'
-  # carerev web app
-  abbr add webstart='nvm use && API_APP_BASE_URL="http://localhost:10000/api/v1" TOOLS_APP_BASE_URL="http://localhost:10002/tools" npm start'
 
   unset ABBR_FORCE
   unset ABBR_QUIET
