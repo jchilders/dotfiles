@@ -1,7 +1,6 @@
 local M = {}
 
 local api = vim.api
-local bo = vim.bo
 
 
 -- Send line under the cursor to the tmux pane to the left, then move cursor to
@@ -80,8 +79,12 @@ end
 -- Find and run the most recently modified test
 M.run_mru_test = function(...)
   local test_file = M.mru_test_file()
-
-  local test_cmd = "rails test " .. test_file
+  if test_file == nil then
+    return
+  end
+  
+  local is_spec = string.find(test_file, "_spec")
+  local test_cmd = (is_spec and "rspec " or "rails test ") .. test_file
   local arg = {...}
   for _, row in ipairs(arg) do
     if row > 0 then

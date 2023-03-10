@@ -1,3 +1,5 @@
 --database=postgresql
+--skip-jbuilder
+--skip-test
 --css=tailwind
 --template=~/work/jchilders/dotfiles/r7template.rb

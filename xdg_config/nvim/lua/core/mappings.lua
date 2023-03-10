@@ -138,6 +138,7 @@ end)
 
 -- Send the keys `^D`, `UpArrow`, and `Enter` to the left tmux pane
 -- Lets us quickly Restart Rails console/server/psql/lua/whatever, so long as it quits
+
 -- when it receives a ^D
 vim.keymap.set(
   "n",
@@ -149,8 +150,10 @@ vim.keymap.set(
 
 -- Save & run the most recently modified test, test case for current line only
 -- remap("n", "<leader>rt", "<cmd>wa<CR><cmd>lua require('jc.tmux-utils').run_mru_test_current()<CR>")
--- Save & run the most recently modified test, entire test file
--- remap("n", "<leader>rT", "<cmd>wa<CR><cmd>lua require('jc.tmux-utils').run_mru_test()<CR>")
+
+-- Save & run the most recently modified test in the tmux pane to the left
+vim.keymap.set("n", "<leader>rT", "<cmd>wa<CR><cmd>lua require('jc.tmux-utils').run_mru_test()<CR>")
+
 -- Edit the most recently modified test
 -- remap("n", "<leader>et", "<cmd>wa<CR><cmd>lua require('jc.tmux-utils').edit_mru_test()<CR>")
 
@@ -241,18 +244,14 @@ map_ctrlo_tele("t", "lsp_document_symbols")
 map_ctrlo_tele("T", "lsp_workspace_symbols")
 
 -- harpoon
-remap("n", "<leader>ha", "<cmd>lua R('harpoon.mark').add_file()<CR>")
 -- open list of files marked as harpooned
-remap("n", "<leader>hl", "<cmd>lua R('harpoon.ui').toggle_quick_menu()<CR>")
-
--- Cmd-j opens the first harpooned file,
--- Cmd-k opens the second harpooned file...
--- hjkl = 1234
-remap("n", "<C-h>", "<cmd>lua R('harpoon.ui').nav_file(1)<CR>")
-remap("n", "<C-j>", "<cmd>lua R('harpoon.ui').nav_file(2)<CR>")
-remap("n", "<C-k>", "<cmd>lua R('harpoon.ui').nav_file(3)<CR>")
-remap("n", "<C-l>", "<cmd>lua R('harpoon.ui').nav_file(4)<CR>")
-remap("n", "<C-;>", "<cmd>lua R('harpoon.ui').nav_file(5)<CR>")
+vim.keymap.set("n", "<leader>hl", require('harpoon.ui').toggle_quick_menu)
+-- ctrl-j opens the first harpooned file, ctrl-k opens the second harpooned file...
+remap("n", "<C-h>", "<cmd>lua require('harpoon.ui').nav_file(1)<CR>")
+remap("n", "<C-j>", "<cmd>lua require('harpoon.ui').nav_file(2)<CR>")
+remap("n", "<C-k>", "<cmd>lua require('harpoon.ui').nav_file(3)<CR>")
+remap("n", "<C-l>", "<cmd>lua require('harpoon.ui').nav_file(4)<CR>")
+remap("n", "<C-;>", "<cmd>lua require('harpoon.ui').nav_file(5)<CR>")
 
 -- terminal
 remap("t", "<esc>", [[<C-\><C-n>]])
