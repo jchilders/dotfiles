@@ -8,8 +8,13 @@ vim.api.nvim_create_autocmd({ "BufReadPost" }, {
 })
 
 vim.api.nvim_create_autocmd({ "BufEnter", "BufRead" }, {
-  pattern = { "Brewfile", "*.jbuilder", "*.arb", "*.rbi" },
+  pattern = { "Brewfile", "*.thor", "*.jbuilder", "*.arb", "*.rbi" },
   command = "set filetype=ruby",
+})
+
+vim.api.nvim_create_autocmd({ "BufEnter", "BufRead" }, {
+  pattern = { "*.zsh" },
+  command = "set filetype=bash",
 })
 
 local rails_server_started = function()
@@ -31,6 +36,9 @@ local restart_rails = function()
 end
 
 vim.api.nvim_create_autocmd({ "BufWritePost" }, {
-  pattern = { "*_controller.rb", "app/models/*.rb" },
+  pattern = {
+    "app/*.rb",
+    "config/*.rb"
+  },
   callback = restart_rails,
 })

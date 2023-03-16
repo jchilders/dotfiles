@@ -18,6 +18,11 @@ if [[ ! -v HOMEBREW_PREFIX ]] then
   eval "$(${HOMEBREW_PREFIX}/bin/brew shellenv)"
 fi
 
+# Load machine-specific config: API keys, etc.
+if [[ -f $HOME/.env.local ]]; then
+  source $HOME/.env.local
+fi
+
 # these need to happen in the given order
 foreach file (
   exports.zsh
