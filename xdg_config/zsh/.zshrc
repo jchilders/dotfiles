@@ -42,6 +42,11 @@ if type op &>/dev/null; then
   compdef _op op
 fi
 
+# Sets up GitHub CLI (gh) command to work with 1Password CLI (op)
+if [[ -f $XDG_CONFIG_HOME/op/plugins.sh ]]; then
+  source /Users/jchilders/.config/op/plugins.sh
+fi
+
 # zoxide: smarter cd
 if type zoxide &> /dev/null; then
   eval "$(zoxide init zsh)"

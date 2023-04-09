@@ -1,5 +1,5 @@
-require "core/options"
 require "core/highlights" -- load before colorscheme cfg
+require "core/options"
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
@@ -26,6 +26,8 @@ require("lazy").setup("plugins", {
 
 -- use pcall in case colorscheme hasn't been installed yet
 pcall(vim.cmd, "colorscheme tokyonight")
+
+vim.api.nvim_command('filetype plugin indent off')
 
 require "core/mappings"
 require "core/autocmd"

@@ -74,6 +74,12 @@ brew 'zsh-abbr'
 tap 'uptech/homebrew-oss'
 brew 'uptech/oss/alt'
 
+# To upgrade to a newer nightly version of wezterm (normal brew upgrade will not upgrade it!):
+#
+#   brew upgrade --cask wezterm-nightly --no-quarantine --greedy-latest
+tap 'homebrew/cask-versions'
+cask 'wezterm-nightly'
+
 tap '1Password/homebrew-tap'
 cask '1password-cli'
 

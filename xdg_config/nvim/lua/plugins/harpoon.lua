@@ -5,6 +5,7 @@
 -- C-h/j/k/l - go to first/second/third/fourth harpoon
 return {
   "ThePrimeagen/harpoon",
+  enabled = true,
   config = function()
     require("harpoon").setup({
       global_settings = {

@@ -9,4 +9,5 @@ lazy-lock.json
 node_modules/
 nvim/.netrwhist
 xdg_config/gh/hosts.yml
+xdg_config/op
 .zsh_sessions/

@@ -1,4 +1,4 @@
-local g, b, opt, go, wo, o = vim.g, vim.b, vim.opt, vim.go, vim.wo, vim.o
+local g, opt, go, wo, o = vim.g, vim.opt, vim.go, vim.wo, vim.o
 
 -- pcall(vim.cmd, "colorscheme tokyonight")
 
@@ -10,8 +10,10 @@ opt.swapfile = false
 opt.undofile = true -- save undo history
 
 opt.autoindent = true
+opt.breakindent = true -- break long lines
+opt.smartindent = true
+
 opt.autoread = true -- reload files on external change
-opt.breakindent = true
 opt.clipboard = "unnamedplus" -- clipboard yank
 opt.cmdheight = 1
 opt.cursorline = true -- highlight current line
@@ -62,6 +64,8 @@ opt.wildignore:append({
   "vendor",
   "coverage",
   "build",
+  "tmp",
+  "vendor",
 })
 
 -- fold settings
