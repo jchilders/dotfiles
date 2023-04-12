@@ -195,4 +195,16 @@ function M.clearBlameVirtText() -- important for clearing out the text when our 
   api.nvim_buf_clear_namespace(0, 2, 0, -1)
 end
 
+-- Find the most recently modified test file in the current directory tree.
+function M.mru_test_file()
+  -- Using zsh globbing is actually faster than anything else I tried: `find`,
+  -- `exa`, `fd`, `stat`. Tried 'em all. Globbing was the fastest.
+  local test_file = vim.fn.system("print -l (test|spec)/**/*_(test|spec).rb(om) | head -1 | tr -d '\n'")
+  if vim.fn.stridx(test_file, "no matches found") >= 0 then
+    return nil
+  end
+
+  return test_file
+end
+
 return M
