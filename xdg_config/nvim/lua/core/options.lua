@@ -73,7 +73,7 @@ wo.foldmethod = "expr"
 o.foldtext =
 [[substitute(getline(v:foldstart),'\\t',repeat('\ ',&tabstop),'g').'...'.trim(getline(v:foldend)) . ' (' . (v:foldend - v:foldstart + 1) . ' lines)']]
 wo.foldexpr = "nvim_treesitter#foldexpr()"
-go.foldlevelstart = 99
+wo.foldlevel= 99 -- open all folds
 wo.foldnestmax = 3
 wo.foldminlines = 1
 

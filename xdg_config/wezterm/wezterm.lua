@@ -56,39 +56,32 @@ config.keys = {
     mods = "LEADER",
     action = act.SplitVertical,
   },
+  {
+    key = "[",
+    mods = "LEADER",
+    action = act.ActivateCopyMode,
+  },
   { key = "z",
     mods = "LEADER",
     action = act.TogglePaneZoomState
   },
   {
-    key = "LeftArrow",
+    key = "h",
     mods = "SHIFT|CMD",
     action = act.ActivatePaneDirection("Left"),
   },
   {
-    -- dupe
-    key = "[",
-    mods = "LEADER",
-    action = act.ActivatePaneDirection("Left"),
-  },
-  {
-    key = "RightArrow",
+    key = "l",
     mods = "SHIFT|CMD",
     action = act.ActivatePaneDirection("Right"),
   },
   {
-    -- dupe
-    key = "]",
-    mods = "LEADER",
-    action = act.ActivatePaneDirection("Right"),
-  },
-  {
-    key = "UpArrow",
+    key = "k",
     mods = "SHIFT|CMD",
     action = act.ActivatePaneDirection("Up"),
   },
   {
-    key = "DownArrow",
+    key = "j",
     mods = "SHIFT|CMD",
     action = act.ActivatePaneDirection("Down"),
   },
