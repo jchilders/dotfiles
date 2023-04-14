@@ -6,5 +6,6 @@ source $HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zs
 # like aliases, but they expand in place
 source $HOMEBREW_PREFIX/share/zsh-abbr/zsh-abbr.zsh 
 
-# Ruby version manager
-source $HOME/.rvm/scripts/rvm
+# Ruby Version Manager
+rvm_path="${XDG_DATA_HOME}/rvm"
+[ -f "${rvm_path}"/scripts/rvm ] && source "${rvm_path}"/scripts/rvm

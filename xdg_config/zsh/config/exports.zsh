@@ -13,9 +13,6 @@ then
   export XDG_CACHE_HOME="$HOME/.cache"
 fi
 
-# Add RVM binaries for managing different Ruby versions
-path+=($HOME/.rvm/bin)
-
 # Binaries built by Cargo (Rust)
 path+=($HOME/.cargo/bin)
 

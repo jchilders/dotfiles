@@ -76,9 +76,10 @@ neovim-clean:
 		rm -rf $$HOME/.local/share/nvim
 
 ##@ Languages
+RVM_HOME := $(XDG_DATA_HOME)/rvm
 ruby: ruby-cfg rvm ## Install Ruby
-	$$HOME/.rvm/bin/rvm install ruby-3
-	$$HOME/.rvm/bin/rvm alias create default ruby-3
+	$(RVM_HOME)/bin/rvm install ruby-3
+	$(RVM_HOME)/bin/rvm alias create default ruby-3
 
 ruby-clean: -rvm-clean ## Uninstall Ruby
 
@@ -90,7 +91,9 @@ ruby-cfg-clean: ## Unlink Ruby configuration files
 
 rvm: rvm-receive-keys ## Install Ruby Version Manager
 	@if ! which rvm &> /dev/null ; then \
-	  curl -sSL https://get.rvm.io | bash -s stable --with-default-gems="bundler rails neovim ripper-tags gemsmith" --ignore-dotfiles; \
+	  echo progress-bar >> ~/.curlrc; \
+	  curl -sSL https://get.rvm.io | bash -s stable --with-default-gems="bundler rails neovim ripper-tags solargraph gemsmith" --ignore-dotfiles --path $(RVM_HOME); \
+	  rm ~/.curlrc; \
 	else \
 	  print 'RVM already installed. Doing nothing'; \
 	fi
@@ -101,9 +104,8 @@ rvm-clean: -rvm-delete-keys ## Uninstall Ruby Version Manager
 	  rvm implode --force; \
 	fi
 
-# This is needed by the rvm target: RVM signs their releases with GPG, so we
-# need to import their PKs. Note that this process can be buggy due to the
-# keyservers being slow or inoperational.
+# This is needed intall RVM: since RVM signs their releases we 
+# need to import their public keys in order to verify the signature.
 rvm-receive-keys:
 	@if ! gpg --list-keys 409B6B1796C275462A1703113804BB82D39DC0E3 &> /dev/null; then \
 		gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 ; \
