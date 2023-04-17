@@ -6,6 +6,16 @@ local config = {}
 local default_font_family = "Monofur Nerd Font"
 local default_font_size = 18.0
 
+config.background = {
+  {
+    source = {
+      File = "/Users/jchilders/Library/Mobile Documents/com~apple~CloudDocs/Wallpapers/zen circle.jpg"
+    },
+    hsb = {
+      brightness = 0.025
+    }
+  }
+}
 config.color_scheme = "tokyonight"
 config.colors = {
   background = "black",
@@ -45,51 +55,33 @@ config.font_size = default_font_size
 config.leader = { key = 'a', mods = 'CTRL', timeout_milliseconds = 1000 }
 config.keys = {
   { key = "f", mods = "CTRL|CMD", action = "ToggleFullScreen" },
-  { key = "l", mods = "SHIFT|CMD", action = "ShowTabNavigator" },
+  { key = "o", mods = "SHIFT|CMD", action = "ShowTabNavigator" },
+  { key = "%", mods = "LEADER", action = act.SplitHorizontal, },
+  { key = "-", mods = "LEADER", action = act.SplitVertical, },
+  { key = "[", mods = "LEADER", action = act.ActivateCopyMode, },
+  { key = "z", mods = "LEADER", action = act.TogglePaneZoomState },
+  { key = "h", mods = "SHIFT|CMD", action = act.ActivatePaneDirection("Left"), },
+  { key = "l", mods = "SHIFT|CMD", action = act.ActivatePaneDirection("Right"), },
+  { key = "k", mods = "SHIFT|CMD", action = act.ActivatePaneDirection("Up"), },
+  { key = "j", mods = "SHIFT|CMD", action = act.ActivatePaneDirection("Down"), },
+  { key = "=", mods = "SHIFT|CMD", action = act.IncreaseFontSize, },
   {
-    key = "%",
+    key = "r",
     mods = "LEADER",
-    action = act.SplitHorizontal,
+    action = act.PromptInputLine {
+      description = "Rename tab:",
+      action = wezterm.action_callback(function(window, pane, line)
+        -- line will be `nil` if they hit escape without entering anything
+        -- An empty string if they just hit enter
+        -- Or the actual line of text they wrote
+        if line then
+          window:active_tab():set_title(line)
+        end
+      end),
+    },
   },
-  {
-    key = "-",
-    mods = "LEADER",
-    action = act.SplitVertical,
-  },
-  {
-    key = "[",
-    mods = "LEADER",
-    action = act.ActivateCopyMode,
-  },
-  { key = "z",
-    mods = "LEADER",
-    action = act.TogglePaneZoomState
-  },
-  {
-    key = "h",
-    mods = "SHIFT|CMD",
-    action = act.ActivatePaneDirection("Left"),
-  },
-  {
-    key = "l",
-    mods = "SHIFT|CMD",
-    action = act.ActivatePaneDirection("Right"),
-  },
-  {
-    key = "k",
-    mods = "SHIFT|CMD",
-    action = act.ActivatePaneDirection("Up"),
-  },
-  {
-    key = "j",
-    mods = "SHIFT|CMD",
-    action = act.ActivatePaneDirection("Down"),
-  },
-  {
-    key = "=",
-    mods = "SHIFT|CMD",
-    action = act.IncreaseFontSize,
-  },
+  { key = "N", mods = "SHIFT|CMD", action = act.RotatePanes "Clockwise", },
+  { key = "P", mods = "SHIFT|CMD", action = act.RotatePanes "CounterClockwise", },
 }
 
 -- CTRL-SHIFT-L :: opens wezterm debug overlay. can type lua cmds here
