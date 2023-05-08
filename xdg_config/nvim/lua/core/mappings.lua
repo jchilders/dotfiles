@@ -152,7 +152,8 @@ vim.keymap.set(
 -- remap("n", "<leader>rt", "<cmd>wa<CR><cmd>lua require('jc.tmux-utils').run_mru_test_current()<CR>")
 
 -- Save & run the most recently modified test in the tmux pane to the left
-vim.keymap.set("n", "<leader>rT", "<cmd>wa<CR><cmd>lua require('jc.tmux-utils').run_mru_test()<CR>")
+vim.keymap.set("n", "<leader>rt", "<cmd>wa<CR><cmd>lua require('jc.tmux-utils').run_mru_test()<CR>")
+vim.keymap.set("n", "<leader>rT", "<cmd>wa<CR><cmd>lua require('jc.tmux-utils').run_mru_test_current_line()<CR>")
 
 -- Edit the most recently modified test
 -- remap("n", "<leader>et", "<cmd>wa<CR><cmd>lua require('jc.tmux-utils').edit_mru_test()<CR>")
@@ -175,7 +176,7 @@ remap("v", "<C-c>", '"+y')
 vim.keymap.set("n", "<leader>tq", tireswing.toggle_quotes)
 
 -- quickfix
-remap("n", "<leader>qf", "<cmd>lua require('utils').toggle_qf()<CR>")
+vim.keymap.set("n", "<leader>qf", require('utils').toggle_qf)
 remap("n", "<leader>qn", "<cmd>cnext<CR>")
 remap("n", "<leader>qp", "<cmd>cprev<CR>")
 
@@ -204,7 +205,7 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)
 -- ctrl-o
 
 -- ctrl-o telescope mappings
-vim.keymap.set("n", "<C-o>b", require("telescope.builtin").buffers, { desc = "[ ] Open from buffer list" })
+vim.keymap.set("n", "<C-o>b", require("telescope.builtin").buffers, { desc = "Open from [b]uffer list" })
 
 map_ctrlo_tele("f", "grep_string")
 map_ctrlo_tele("F", "live_grep")
@@ -217,6 +218,8 @@ map_ctrlo_tele("gh", "git_bcommits")
 -- select file from files with uncommitted changes (i.e. from `git status`)
 map_ctrlo_tele("gs", "git_status")
 
+vim.keymap.set("n", "<C-o>h", require("telescope.builtin").command_history, { desc = "Command [h]istory" })
+
 -- files
 map_ctrlo_tele("o", "find_files")
 map_ctrlo_tele("O", "find_all_files") -- include hidden/.gitignored files/etc.
@@ -226,8 +229,6 @@ local smart_search = function()
   require("telescope").extensions.smart_open.smart_open({cwd_only = true})
 end
 vim.keymap.set("n", "<leader>ss", smart_search)
-
-map_ctrlo_tele("q", "quickfix")
 
 -- LSP
 -- little r -> Search for LSP references to word under cursor
@@ -244,6 +245,7 @@ map_ctrlo_tele("t", "lsp_document_symbols")
 map_ctrlo_tele("T", "lsp_workspace_symbols")
 
 -- harpoon
+vim.keymap.set("n", "<leader>ha", require('harpoon.mark').add_file)
 -- open list of files marked as harpooned
 vim.keymap.set("n", "<leader>hl", require('harpoon.ui').toggle_quick_menu)
 -- ctrl-j opens the first harpooned file, ctrl-k opens the second harpooned file...

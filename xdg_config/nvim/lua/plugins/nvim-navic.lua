@@ -3,8 +3,9 @@ return {
   enabled = true,
   config = function()
     require("nvim-navic").setup({
-			depth_limit = 0,
-		})
-	end
+      depth_limit = 2,
+      highlight = true,
+    })
+  end
 }
 

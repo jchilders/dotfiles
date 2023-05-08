@@ -7,8 +7,9 @@ M.get_left_pane = function()
 end
 
 M.send_left = function(text)
+  local esc_text = vim.fn.escape(text, '\\"$`')
   local pane_id = M.get_left_pane()
-  local cmd = "wezterm cli send-text --pane-id " .. pane_id .. " --no-paste \"" .. text .. "\n\""
+  local cmd = "wezterm cli send-text --pane-id " .. pane_id .. " --no-paste \"" .. esc_text .. "\n\""
   vim.fn.system(cmd)
 end
 

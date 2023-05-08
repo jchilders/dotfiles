@@ -14,9 +14,9 @@ return {
     -- Edit test associated with file in current buffer
     { "<leader>et", "<cmd>lua require('ror.navigators.test').visit('normal')<CR>" },
     -- Run current test 
-    { "<leader>rt", "<cmd>lua require('ror.test').run()<CR>" },
+    -- { "<leader>rt", "<cmd>lua require('ror.test').run()<CR>" },
     -- Run current test, line under cursor
-    { "<leader>rt", "<cmd>lua require('ror.test').run('Line')<CR>" },
+    -- { "<leader>rt", "<cmd>lua require('ror.test').run('Line')<CR>" },
 
     { "<C-o>rc", "<cmd>lua require('ror.finders.controller').find()<CR>" },
     { "<C-o>rct", "<cmd>lua require('ror.finders.controller_test').find()<CR>" },

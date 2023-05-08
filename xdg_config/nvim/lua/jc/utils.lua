@@ -197,10 +197,30 @@ end
 
 -- Find the most recently modified test file in the current directory tree.
 function M.mru_test_file()
-  -- Using zsh globbing is actually faster than anything else I tried: `find`,
-  -- `exa`, `fd`, `stat`. Tried 'em all. Globbing was the fastest.
-  local test_file = vim.fn.system("print -l (test|spec)/**/*_(test|spec).rb(om) | head -1 | tr -d '\n'")
+  local ext = vim.fn.expand("%:e") -- get the current file extension
+
+  local glob;
+  if ext == "rb" then
+    glob = "(test|spec)/**/*_(test|spec).rb(om)"
+  elseif ext == "jsx" then
+    glob = "app/javascript/**/*.test.jsx(om)"
+  else
+    vim.notify("Don't know how to handle ." .. ext .. " files", vim.log.levels.WARN, { title = "Muxor" })
+    return nil
+  end
+
+  -- Using zsh glob qualifiers is faster than anything else I tried: `find`,
+  -- `exa`, `fd`, `stat`. Tried 'em all. Globbing was the fastest. This was 
+  -- close, though:
+  --   fd -t file -e rb --search-path spec --search-path test --exec-batch ls -rth | tail -n 1
+
+  -- https://zsh.sourceforge.io/Doc/Release/Expansion.html - 14.8.7
+  -- print file names of files that are 10M or bigger, sorted by size, limit 10:
+  --   print -rC1 **/*(.Y10LM+10OL)
+  -- local test_file = vim.fn.system("print -l (test|spec)/**/*_(test|spec).rb(om) | head -1 | tr -d '\n'")
+  local test_file = vim.fn.system("print -l " .. glob .. "  | head -1 | tr -d '\n'")
   if vim.fn.stridx(test_file, "no matches found") >= 0 then
+    vim.notify("No test found for type ." .. ext, vim.log.levels.WARN, { title = "Muxor" })
     return nil
   end
 

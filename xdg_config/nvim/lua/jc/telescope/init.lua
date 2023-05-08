@@ -1,17 +1,17 @@
 require 'core.globals'
 
-SHOULD_RELOAD_TELESCOPE = true
+-- SHOULD_RELOAD_TELESCOPE = true
 
-local reloader = function()
-  if SHOULD_RELOAD_TELESCOPE then
-    RELOAD("plenary")
-    RELOAD("popup")
-    RELOAD("telescope")
-    RELOAD("jc.telescope.setup")
-    RELOAD("jc.telescope.custom")
-    RELOAD("core.mappings")
-  end
-end
+-- local reloader = function()
+--   if SHOULD_RELOAD_TELESCOPE then
+--     RELOAD("plenary")
+--     RELOAD("popup")
+--     RELOAD("telescope")
+--     RELOAD("jc.telescope.setup")
+--     RELOAD("jc.telescope.custom")
+--     RELOAD("core.mappings")
+--   end
+-- end
 
 local builtin = require("telescope.builtin")
 local themes = require("telescope.themes")
@@ -95,7 +95,7 @@ end
 return setmetatable({}, {
   -- Define a function that gets called when you try to get an array index for this class... er, table.
   __index = function(_, k)
-    reloader()
+    -- reloader()
 
     -- pcall(func, arg1, ...) is equivalent to func(arg1, ...) except that it
     -- will catch any errors that occur in func. If it succeeds, then the first

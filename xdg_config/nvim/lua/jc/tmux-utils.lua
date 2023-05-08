@@ -27,9 +27,7 @@ M.send_selection_left = function()
   local vis_start, vis_end = M.visual_selection_range()
   local content = api.nvim_buf_get_lines(bufnr, vis_start - 1, vis_end, false)
 
-  content = table.concat(content, "\r")
-
-  emu.send_left(content)
+  emu.send_left(table.concat(content, "\r"))
 end
 
 local function bufnr_for_test_file()
@@ -38,26 +36,32 @@ local function bufnr_for_test_file()
 end
 
 -- Find and run the most recently modified test
+-- :au BufWritePost <buffer>  lua require("jc.tmux-utils").run_mru_test()
 M.run_mru_test = function(...)
   local test_file = utils.mru_test_file()
   if test_file == nil then
-    vim.notify("No test file found to run", vim.log.levels.WARN, { title = "Muxor" })
     return
   end
 
-  local is_spec = string.find(test_file, "_spec")
-  local test_cmd = (is_spec and "rspec " or "rails test ") .. test_file
-  local arg = {...}
-  for _, row in ipairs(arg) do
-    if row > 0 then
-      test_cmd = test_cmd .. ":" .. row
+  local ext = vim.fn.expand("%:e") -- get the current file extension
+  local test_cmd;
+  if ext == "rb" then -- Ruby!
+    local is_spec = string.find(test_file, "_spec")
+    test_cmd = (is_spec and "bin/rspec " or "bin/rails test ") .. test_file
+    local arg = {...}
+    for _, row in ipairs(arg) do
+      if row > 0 then
+        test_cmd = test_cmd .. ":" .. row
+      end
     end
+  elseif ext == "jsx" then -- Javascript!
+    test_cmd = "yarn test " .. test_file
   end
 
   emu.send_left(test_cmd)
 end
 
-M.run_mru_test_current = function()
+M.run_mru_test_current_line = function()
   local buf = bufnr_for_test_file()
 
   if buf == -1 then
@@ -82,7 +86,7 @@ function M.visual_selection_range()
 end
 
 M.edit_mru_test = function()
-  local ok, test_file = pcall(M.mru_test_file)
+  local ok, test_file = pcall(utils.mru_test_file)
   if not ok then
     vim.notify("No test file found to run", vim.log.levels.WARN)
     return

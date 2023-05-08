@@ -25,9 +25,8 @@ function M.toggle_qf()
     vim.cmd("cclose")
     return
   end
-  if not vim.tbl_isempty(vim.fn.getqflist()) then
-    vim.cmd("copen")
-  end
+
+  vim.cmd("copen")
 end
 
 -- TODO: Update this to use `vim.keymap.set`

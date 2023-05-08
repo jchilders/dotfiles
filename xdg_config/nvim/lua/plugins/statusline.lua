@@ -3,23 +3,28 @@ return {
   enabled = true,
   dependencies = { "SmiteshP/nvim-navic" },
   config = function()
-    local navic = require("nvim-navic")
-    local name_or_navic = function()
-      if navic.is_available() then
-        return navic.get_location()
-      else
-        return vim.fn.expand('%:t')
-      end
-    end
     require("lualine").setup({
+      options = {
+        icons_enabled = true,
+      },
       sections = {
-        lualine_a = { 'mode' },
-        lualine_b = { },
-        -- lualine_c = { { navic.get_location, cond = navic.is_available } },
-        lualine_c = { name_or_navic },
+        lualine_a = { 'location' },
+        lualine_b = { { 'filename', path = 1, shorting_target = 120 } },
+        lualine_c = { },
+        -- TODO get navic to only show class & method
+        -- https://github.com/SmiteshP/nvim-navic
+        -- lualine_x = { 'navic' },
         lualine_x = { },
         lualine_y = { 'diagnostics' },
-        lualine_z = { 'location' }
+        lualine_z = { { 'mode', fmt = function(str) return str:sub(1,1) end }, },
+      },
+      inactive_sections = {
+        lualine_a = { 'location' },
+        lualine_b = { { 'filename', path = 1, shorting_target = 120 } },
+        lualine_c = { },
+        lualine_x = { },
+        lualine_y = { 'diagnostics' },
+        lualine_z = { }
       },
     })
   end

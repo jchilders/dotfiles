@@ -19,6 +19,7 @@ opt.cmdheight = 1
 opt.cursorline = true -- highlight current line
 opt.expandtab = true -- use spaces instead of tabs when indenting
 opt.fileformat = "unix"
+vim.api.nvim_command('filetype plugin indent on')
 
 -- Do not fix files (i.e. "add a newline") that do not have a newline as the
 -- final character
@@ -83,7 +84,7 @@ opt.formatoptions = opt.formatoptions
 - "t" -- Don't auto format my code. I got linters for that.
 + "c" -- In general, I like it when comments respect textwidth
 + "q" -- Allow formatting comments w/ gq
-- "o" -- O and o, don't continue comments (doesn't work?)
++ "o" -- O and o, don't continue comments (doesn't work?)
 + "r" -- But do continue when pressing enter.
 + "n" -- Indent past the formatlistpat, not underneath it.
 + "j" -- Auto-remove comments if possible.
@@ -99,4 +100,3 @@ opt.shada = {
   "s10",   -- max size of item contents in KiB
   "h",     -- disable effect of hlsearch when loading shada file
 }
-
