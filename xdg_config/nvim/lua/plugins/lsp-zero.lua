@@ -37,6 +37,8 @@ return {
     require("mason").setup()
 
     local mason_lspconfig = require "mason-lspconfig"
+    -- Logs should be in ~.local/state/nvim
+    -- :echo $NVIM_LOG_FILE
     local servers = {
       solargraph = {},
       lua_ls = {

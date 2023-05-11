@@ -144,6 +144,7 @@ vim.keymap.set(
   "n",
   "<leader>rr",
   function()
+    -- Doesn't work w/ wezterm
     tmux_utils.send_keys_left({"C-d","Up","Enter"})
   end
 )
@@ -156,7 +157,7 @@ vim.keymap.set("n", "<leader>rt", "<cmd>wa<CR><cmd>lua require('jc.tmux-utils').
 vim.keymap.set("n", "<leader>rT", "<cmd>wa<CR><cmd>lua require('jc.tmux-utils').run_mru_test_current_line()<CR>")
 
 -- Edit the most recently modified test
--- remap("n", "<leader>et", "<cmd>wa<CR><cmd>lua require('jc.tmux-utils').edit_mru_test()<CR>")
+remap("n", "<leader>et", "<cmd>wa<CR><cmd>lua require('jc.tmux-utils').edit_mru_test()<CR>")
 
 -- Toggle treesitter highlighting
 -- remap("n", "<leader>tstog", "<cmd>TSBufToggle highlight<CR>")
@@ -249,11 +250,11 @@ vim.keymap.set("n", "<leader>ha", require('harpoon.mark').add_file)
 -- open list of files marked as harpooned
 vim.keymap.set("n", "<leader>hl", require('harpoon.ui').toggle_quick_menu)
 -- ctrl-j opens the first harpooned file, ctrl-k opens the second harpooned file...
-remap("n", "<C-h>", "<cmd>lua require('harpoon.ui').nav_file(1)<CR>")
-remap("n", "<C-j>", "<cmd>lua require('harpoon.ui').nav_file(2)<CR>")
-remap("n", "<C-k>", "<cmd>lua require('harpoon.ui').nav_file(3)<CR>")
-remap("n", "<C-l>", "<cmd>lua require('harpoon.ui').nav_file(4)<CR>")
-remap("n", "<C-;>", "<cmd>lua require('harpoon.ui').nav_file(5)<CR>")
+vim.keymap.set("n", "<C-h>", function() require('harpoon.ui').nav_file(1) end)
+vim.keymap.set("n", "<C-j>", function() require('harpoon.ui').nav_file(2) end)
+vim.keymap.set("n", "<C-k>", function() require('harpoon.ui').nav_file(3) end)
+vim.keymap.set("n", "<C-l>", function() require('harpoon.ui').nav_file(4) end)
+vim.keymap.set("n", "<C-;>", function() require('harpoon.ui').nav_file(5) end)
 
 -- terminal
 remap("t", "<esc>", [[<C-\><C-n>]])

@@ -196,12 +196,13 @@ function M.clearBlameVirtText() -- important for clearing out the text when our 
 end
 
 -- Find the most recently modified test file in the current directory tree.
+-- Returns nil if not found.
 function M.mru_test_file()
   local ext = vim.fn.expand("%:e") -- get the current file extension
 
   local glob;
   if ext == "rb" then
-    glob = "(test|spec)/**/*_(test|spec).rb(om)"
+    glob = "(test|spec)/**/*_(test|spec)*.rb(om)"
   elseif ext == "jsx" then
     glob = "app/javascript/**/*.test.jsx(om)"
   else

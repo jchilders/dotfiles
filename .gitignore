@@ -8,6 +8,7 @@ htop/
 node_modules/
 nvim/.netrwhist
 xdg_config/gh/hosts.yml
+xdg_config/zsh/.zcompdump
 .zsh_sessions/
 .luarc.json
 xdg_config/AWSVPNClient

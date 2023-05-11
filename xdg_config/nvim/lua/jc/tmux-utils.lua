@@ -37,7 +37,7 @@ end
 
 -- Find and run the most recently modified test
 -- :au BufWritePost <buffer>  lua require("jc.tmux-utils").run_mru_test()
-M.run_mru_test = function(...)
+M.run_mru_test = function(linenr)
   local test_file = utils.mru_test_file()
   if test_file == nil then
     return
@@ -45,32 +45,39 @@ M.run_mru_test = function(...)
 
   local ext = vim.fn.expand("%:e") -- get the current file extension
   local test_cmd;
+
+  -- TODO abstract this out
   if ext == "rb" then -- Ruby!
     local is_spec = string.find(test_file, "_spec")
-    test_cmd = (is_spec and "bin/rspec " or "bin/rails test ") .. test_file
-    local arg = {...}
-    for _, row in ipairs(arg) do
-      if row > 0 then
-        test_cmd = test_cmd .. ":" .. row
-      end
+    test_cmd = (is_spec and "bin/rspec" or "bin/rails test")
+    test_cmd = test_cmd .. " " .. test_file
+    if linenr ~= nil then
+      test_cmd = test_cmd .. ":" .. linenr
     end
   elseif ext == "jsx" then -- Javascript!
     test_cmd = "yarn test " .. test_file
+  end
+
+  local has_docker, _ = pcall(function()
+    io.open("docker-compose.yml", "r")
+  end)
+  if has_docker then
+    test_cmd = "docker compose run --rm app " .. test_cmd
   end
 
   emu.send_left(test_cmd)
 end
 
 M.run_mru_test_current_line = function()
-  local buf = bufnr_for_test_file()
+  local bufnr = bufnr_for_test_file()
 
-  if buf == -1 then
+  if bufnr == -1 then
     M.run_mru_test(0)
-    return
+    return "no"
   end
 
-  local lnum = vim.api.nvim_buf_get_mark(buf, '"')[1]
-  M.run_mru_test(lnum)
+  local linenr = vim.api.nvim_buf_get_mark(bufnr, '.')[1]
+  return M.run_mru_test(linenr)
 end
 
 function M.visual_selection_range()
