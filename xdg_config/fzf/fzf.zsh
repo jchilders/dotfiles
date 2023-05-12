@@ -13,4 +13,4 @@ fi
 # Sets up ctrl-r ^r/ctrl-t ^t bindings
 # CTRL_R
 # CTRL_T
-source "$HOMEBREW_PREFIX/opt/fzf/shell/key-bindings.zsh"
+# source "$HOMEBREW_PREFIX/opt/fzf/shell/key-bindings.zsh"

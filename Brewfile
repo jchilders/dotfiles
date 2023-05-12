@@ -1,3 +1,4 @@
+brew 'atuin' # store shell history in SQLite
 brew 'automake'
 brew 'bat' # cat replacement
 brew 'chafa' # ANSI art renderer
@@ -6,8 +7,8 @@ brew 'cmake'
 brew 'coreutils' # gnu coreutils
 brew 'datasette' # simple web interface to SQLite databases
 brew 'direnv' # directory-specific env vars
-brew 'dua-cli' # display disk usage, & delete
-brew 'esbuild'
+brew 'dua-cli' # display disk usage, & delete unwanted data
+brew 'esbuild' # JavaScript bundler/minifier
 brew 'exa' # git-aware ls replacement
 brew 'fd' # file finder
 brew 'fzf' # fuzzy finder
