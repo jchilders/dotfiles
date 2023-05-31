@@ -1,4 +1,5 @@
 require "core/highlights" -- load before colorscheme cfg
+require "plugins/colorscheme"
 require "core/options"
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
