@@ -92,7 +92,7 @@ ruby-cfg-clean: ## Unlink Ruby configuration files
 rvm: rvm-receive-keys ## Install Ruby Version Manager
 	@if ! which rvm &> /dev/null ; then \
 	  echo progress-bar >> ~/.curlrc; \
-	  curl -sSL https://get.rvm.io | bash -s stable --with-default-gems="bundler rails neovim ripper-tags solargraph gemsmith" --ignore-dotfiles --path $(RVM_HOME); \
+	  curl -sSL https://get.rvm.io | bash -s stable --with-gems="bundler neovim ripper-tags solargraph gemsmith" --ignore-dotfiles --path $(RVM_HOME); \
 	  rm ~/.curlrc; \
 	else \
 	  print 'RVM already installed. Doing nothing'; \

@@ -109,11 +109,11 @@ local gitsigns = require("gitsigns")
 vim.keymap.set("n", "<leader>ga", gitsigns.stage_hunk, { desc = "Stage change" })
 vim.keymap.set("n", "<leader>gA", gitsigns.stage_buffer, { desc = "Stage all changes made to current buffer" })
 vim.keymap.set("n", "<leader>gb", gitsigns.blame_line, { desc = "git blame" })
+vim.keymap.set("n", "<leader>gd", gitsigns.preview_hunk, { desc = "Preview hunk" })
 vim.keymap.set("n", "<leader>gp", gitsigns.prev_hunk, { desc = "Go to previous unstaged hunk" })
 vim.keymap.set("n", "<leader>gn", gitsigns.next_hunk, { desc = "Go to next unstaged hunk" })
 vim.keymap.set("n", "<leader>gr", gitsigns.reset_hunk, { desc = "Undo changes to current hunk" })
 vim.keymap.set("n", "<leader>gR", gitsigns.reset_buffer, { desc = "Undo all changes made to current buffer" })
-vim.keymap.set("n", "<leader>gd", gitsigns.preview_hunk, { desc = "Preview hunk" })
 vim.keymap.set("n", "<leader>gq", function()
                                     gitsigns.setqflist("all")
                                   end, { desc = "Set quickfix list to unstaged changes" })
@@ -212,11 +212,13 @@ map_ctrlo_tele("f", "grep_string")
 map_ctrlo_tele("F", "live_grep")
 
 -- git
--- switch branches
+-- switch [b]ranches
 map_ctrlo_tele("gb", "git_branches")
--- git history of file in current buffer
+-- list of files that are [c]hanged on our branch (compared to `main`)
+map_ctrlo_tele("gc", "git_changed_files_curr_branch")
+-- git [h]istory of file in current buffer
 map_ctrlo_tele("gh", "git_bcommits")
--- select file from files with uncommitted changes (i.e. from `git status`)
+-- select file from files with uncommitted changes (i.e. from `git [s]tatus`)
 map_ctrlo_tele("gs", "git_status")
 
 vim.keymap.set("n", "<C-o>h", require("telescope.builtin").command_history, { desc = "Command [h]istory" })
@@ -225,7 +227,7 @@ vim.keymap.set("n", "<C-o>h", require("telescope.builtin").command_history, { de
 map_ctrlo_tele("o", "find_files")
 map_ctrlo_tele("O", "find_all_files") -- include hidden/.gitignored files/etc.
 
--- my current favorite
+-- my current favorite!
 local smart_search = function()
   require("telescope").extensions.smart_open.smart_open({cwd_only = true})
 end
@@ -257,9 +259,9 @@ vim.keymap.set("n", "<C-l>", function() require('harpoon.ui').nav_file(4) end)
 vim.keymap.set("n", "<C-;>", function() require('harpoon.ui').nav_file(5) end)
 
 -- terminal
-remap("t", "<esc>", [[<C-\><C-n>]])
-remap("t", "jk", [[<C-\><C-n>]])
-remap("t", "<C-h>", [[<C-\><C-n><C-W>h]])
-remap("t", "<C-j>", [[<C-\><C-n><C-W>j]])
-remap("t", "<C-k>", [[<C-\><C-n><C-W>k]])
-remap("t", "<C-l>", [[<C-\><C-n><C-W>l]])
+-- remap("t", "<esc>", [[<C-\><C-n>]])
+-- remap("t", "jk", [[<C-\><C-n>]])
+-- remap("t", "<C-h>", [[<C-\><C-n><C-W>h]])
+-- remap("t", "<C-j>", [[<C-\><C-n><C-W>j]])
+-- remap("t", "<C-k>", [[<C-\><C-n><C-W>k]])
+-- remap("t", "<C-l>", [[<C-\><C-n><C-W>l]])

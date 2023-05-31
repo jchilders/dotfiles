@@ -46,15 +46,27 @@ M.run_mru_test = function(linenr)
   local ext = vim.fn.expand("%:e") -- get the current file extension
   local test_cmd;
 
-  -- TODO abstract this out
+  -- TODO abstract this out. big if/else == bad
   if ext == "rb" then -- Ruby!
     local is_spec = string.find(test_file, "_spec")
-    test_cmd = (is_spec and "bin/rspec" or "bin/rails test")
+    if is_spec then
+      test_cmd = "bin/rspec"
+
+      -- Adwerx uses a special runner for system specs
+      local is_sys_spec = string.find(test_file, "spec/system/")
+      if is_sys_spec then
+        test_cmd = test_cmd .. "_system"
+      end
+    else
+      test_cmd = "bin/rails test"
+    end
+
     test_cmd = test_cmd .. " " .. test_file
+
     if linenr ~= nil then
       test_cmd = test_cmd .. ":" .. linenr
     end
-  elseif ext == "jsx" then -- Javascript!
+  elseif ext == "jsx" then -- Javascript/React!
     test_cmd = "yarn test " .. test_file
   end
 

@@ -37,6 +37,9 @@
   # undo last commit
   undo = !git reset --hard remotes/origin/$(git rev-parse --abbrev-ref HEAD)
 
+  # files changes on current branch from main
+  df = !git diff --name-only main | xargs -I '{}' grealpath --relative-to=$PWD/$GIT_PREFIX $(git rev-parse --show-toplevel)/'{}'
+
   ; git for-each-ref refs/heads/pr/* --format=\"%(refname)\" | while read ref ; do branch=${ref#refs/heads/} ; git branch -D $branch ; done
 [user]
   name = James Childers

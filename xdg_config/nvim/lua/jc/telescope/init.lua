@@ -24,6 +24,7 @@ local dropdown_theme = function()
   local default_opts = {
     border = true,
     previewer = false,
+    winblend = 10
   }
 
   return themes.get_dropdown(default_opts)
@@ -56,14 +57,18 @@ end
 
 function M.git_status()
   local opts = dropdown_theme()
-  opts.winblend = 10
   builtin.git_status(opts)
 end
 
 function M.git_branches()
   local opts = dropdown_theme()
-  opts.winblend = 10
   builtin.git_branches(opts)
+end
+
+function M.git_changed_files_curr_branch()
+  builtin.git_files({
+    git_command = { "git", "diff", "--name-only", "main"}
+  })
 end
 
 function M.quickfix()
@@ -78,7 +83,9 @@ end
 
 -- grep string under the cursor
 function M.grep_string()
-  builtin.grep_string()
+  builtin.grep_string({
+    word_match = "-w", -- exact word matches
+  })
 end
 
 -- grep user-entered string

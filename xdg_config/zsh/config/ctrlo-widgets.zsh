@@ -64,6 +64,13 @@ function edit_rails_view {
 zle -N edit_rails_view
 bindkey '^orv' edit_rails_view
 
+function git_changed_files_curr_branch {
+  __find_file "git diff --name-only | xargs -I '{}' grealpath --relative-to=. $(git rev-parse --show-toplevel)/'{}'"
+  __eval_found_file "${EDITOR:-nvim}"
+}
+zle -N git_changed_files_curr_branch
+bindkey '^ogc' git_changed_files_curr_branch
+
 # Git stuff. All are prefixed with ^og
 
 function add_from_git_status {
