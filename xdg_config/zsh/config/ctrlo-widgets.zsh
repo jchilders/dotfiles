@@ -65,7 +65,10 @@ zle -N edit_rails_view
 bindkey '^orv' edit_rails_view
 
 function git_changed_files_curr_branch {
-  __find_file "git diff --name-only | xargs -I '{}' grealpath --relative-to=. $(git rev-parse --show-toplevel)/'{}'"
+  # this xargs stuff is needed so it still works when you're in a subdirectory
+  # of the git root
+  # grealpath - realpath from gnu coreutils, has `relative-to` flag
+  __find_file "git diff --name-only main 2>/dev/null | xargs -I '{}' grealpath --relative-to=. $(git rev-parse --show-toplevel)/'{}'"
   __eval_found_file "${EDITOR:-nvim}"
 }
 zle -N git_changed_files_curr_branch

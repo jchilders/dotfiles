@@ -109,11 +109,11 @@ local gitsigns = require("gitsigns")
 vim.keymap.set("n", "<leader>ga", gitsigns.stage_hunk, { desc = "Stage change" })
 vim.keymap.set("n", "<leader>gA", gitsigns.stage_buffer, { desc = "Stage all changes made to current buffer" })
 vim.keymap.set("n", "<leader>gb", gitsigns.blame_line, { desc = "git blame" })
-vim.keymap.set("n", "<leader>gd", gitsigns.preview_hunk, { desc = "Preview hunk" })
 vim.keymap.set("n", "<leader>gp", gitsigns.prev_hunk, { desc = "Go to previous unstaged hunk" })
+vim.keymap.set("n", "<leader>gP", gitsigns.preview_hunk, { desc = "Preview hunk" })
 vim.keymap.set("n", "<leader>gn", gitsigns.next_hunk, { desc = "Go to next unstaged hunk" })
-vim.keymap.set("n", "<leader>gr", gitsigns.reset_hunk, { desc = "Undo changes to current hunk" })
-vim.keymap.set("n", "<leader>gR", gitsigns.reset_buffer, { desc = "Undo all changes made to current buffer" })
+vim.keymap.set("n", "<leader>gu", gitsigns.reset_hunk, { desc = "Undo changes to current hunk" })
+vim.keymap.set("n", "<leader>gU", gitsigns.reset_buffer, { desc = "Undo all changes made to current buffer" })
 vim.keymap.set("n", "<leader>gq", function()
                                     gitsigns.setqflist("all")
                                   end, { desc = "Set quickfix list to unstaged changes" })
@@ -124,13 +124,13 @@ remap("n", "<leader>li", "<cmd>lua print(require('utils.inspect').inspect(loadst
 -- Open Scratch file for this project
 vim.keymap.set("n", "<leader>rs", scratcher.split_open_scratch_file)
 
--- Send the current line to the left tmux pane
+-- Send the current line to the left/wezterm tmux pane
 vim.keymap.set("n", "<leader>sl", tmux_utils.send_line_left)
 
--- Send the selected text to the left tmux pane
+-- Send the selected text to the left/wezterm pane
 vim.keymap.set("v", "<leader>sl", tmux_utils.send_selection_left)
 
--- Send current function to the left tmux pane
+-- Send current function to the left tmux/wezterm pane
 vim.keymap.set("n", "<leader>sfl", function()
   local function_text = tireswing.get_current_function()
   tmux_utils.send_left(function_text)
@@ -216,7 +216,7 @@ map_ctrlo_tele("F", "live_grep")
 map_ctrlo_tele("gb", "git_branches")
 -- list of files that are [c]hanged on our branch (compared to `main`)
 map_ctrlo_tele("gc", "git_changed_files_curr_branch")
--- git [h]istory of file in current buffer
+-- git [h]istory of current buffer
 map_ctrlo_tele("gh", "git_bcommits")
 -- select file from files with uncommitted changes (i.e. from `git [s]tatus`)
 map_ctrlo_tele("gs", "git_status")
@@ -224,14 +224,8 @@ map_ctrlo_tele("gs", "git_status")
 vim.keymap.set("n", "<C-o>h", require("telescope.builtin").command_history, { desc = "Command [h]istory" })
 
 -- files
-map_ctrlo_tele("o", "find_files")
-map_ctrlo_tele("O", "find_all_files") -- include hidden/.gitignored files/etc.
-
--- my current favorite!
-local smart_search = function()
-  require("telescope").extensions.smart_open.smart_open({cwd_only = true})
-end
-vim.keymap.set("n", "<leader>ss", smart_search)
+map_ctrlo_tele("o", "find_files") -- do not include hidden files, files in .gitignore, etc.
+map_ctrlo_tele("O", "find_all_files") -- include hidden files, files in .gitignore, etc.
 
 -- LSP
 -- little r -> Search for LSP references to word under cursor
