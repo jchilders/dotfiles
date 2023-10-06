@@ -41,6 +41,7 @@ brew 'python'
 brew 'redis' # redis is redis
 brew 'rg' # ripgrep
 brew 'rust'
+brew 'sd' # easy search & replace. sed alternative/replacement
 brew 'showkey' # type a key and see it echoed in the terminal
 brew 'solargraph' # Ruby language server (LSP)
 brew 'starship' # prompt

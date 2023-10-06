@@ -16,6 +16,9 @@ fi
 # Binaries built by Cargo (Rust)
 path+=($HOME/.cargo/bin)
 
+# pipx/python binaries
+path+=($HOME/.local/bin)
+
 # My scripts
 path+=($HOME/bin)
 

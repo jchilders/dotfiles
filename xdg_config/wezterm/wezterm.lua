@@ -6,16 +6,6 @@ local config = {}
 local default_font_family = "Monofur Nerd Font"
 local default_font_size = 18.0
 
-config.background = {
-  {
-    source = {
-      File = "/Users/jchilders/Library/Mobile Documents/com~apple~CloudDocs/Wallpapers/zen circle.jpg"
-    },
-    hsb = {
-      brightness = 0.025
-    }
-  }
-}
 config.color_scheme = "tokyonight"
 config.colors = {
   background = "black",

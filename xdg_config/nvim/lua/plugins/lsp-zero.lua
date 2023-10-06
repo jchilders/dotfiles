@@ -40,7 +40,6 @@ return {
     -- Logs should be in ~.local/state/nvim
     -- :echo $NVIM_LOG_FILE
     local servers = {
-      solargraph = {},
       lua_ls = {
 	Lua = {
 	  diagnostics = { globals = {"vim"} },

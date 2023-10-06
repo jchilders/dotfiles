@@ -58,7 +58,7 @@ addAbbreviations
 # Change directory to source dir for given Homebrew formula or cask
 # This has to be a function (instead of a script under bin/) because you can't
 # cd from a script & have it stick. zsh spawns a child process to execute a
-# script, whilc functions happen in the same process they were called from.
+# script, while functions happen in the same process they were called from.
 function cdbrew {
   if [[ $# -eq 0 ]]; then
     echo "Usage: $0 <formula or cask name>"

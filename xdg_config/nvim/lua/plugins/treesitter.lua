@@ -10,9 +10,7 @@ return {
     require("nvim-treesitter.configs").setup({
       ensure_installed = { "bash", "git_rebase", "json", "lua", "ruby", "rust", "sql", "typescript", "vim" },
       highlight = { enable = true },
-      indent = {
-        enable = true,
-      },
+      indent = { enable = true },
       incremental_selection = {
         enable = true,
         keymaps = {
