@@ -6,6 +6,10 @@ source $HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zs
 # like aliases, but they expand in place
 source $HOMEBREW_PREFIX/share/zsh-abbr/zsh-abbr.zsh 
 
-# Ruby Version Manager
-rvm_path="${XDG_DATA_HOME}/rvm"
-[ -f "${rvm_path}"/scripts/rvm ] && source "${rvm_path}"/scripts/rvm
+# asdf is a version manager for Ruby, Node.js, etc.
+# [ -d "${HOMEBREW_PREFIX}/opt/asdf" ] && source "${HOMEBREW_PREFIX}"/opt/asdf/libexec/asdf.sh
+if [ -d $(brew --prefix asdf) ]; then
+  export ASDF_DATA_DIR=$XDG_DATA_HOME/asdf
+  export ASDF_GEM_DEFAULT_PACKAGES_FILE=$XDG_CONFIG_HOME/asdf/.default-gems
+  . $(brew --prefix asdf)/libexec/asdf.sh
+fi

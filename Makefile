@@ -77,9 +77,7 @@ neovim-clean:
 
 ##@ Languages
 RVM_HOME := $(XDG_DATA_HOME)/rvm
-ruby: ruby-cfg rvm ## Install Ruby
-	$(RVM_HOME)/bin/rvm install ruby-3
-	$(RVM_HOME)/bin/rvm alias create default ruby-3
+ruby: ruby-cfg ## Install Ruby
 
 ruby-clean: -rvm-clean ## Uninstall Ruby
 
@@ -88,6 +86,13 @@ ruby-cfg: ## Link Ruby configuration files
 
 ruby-cfg-clean: ## Unlink Ruby configuration files
 	rm $$HOME/.irbrc
+
+asdf-plugins:
+	@if which asdf &> /dev/null ; then \
+		asdf plugin add ruby; \
+		asdf plugin add python; \
+		asdf plugin add nodejs; \
+	fi
 
 rvm: rvm-receive-keys ## Install Ruby Version Manager
 	@if ! which rvm &> /dev/null ; then \

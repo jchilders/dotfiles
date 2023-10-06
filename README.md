@@ -21,7 +21,7 @@ over tab completion. File trees are for the weak.
 
 `make` - List available targets without doing anything
 
-`make install` - Install All The Things. Installs homebrew, rvm, default
+`make install` - Install All The Things. Installs homebrew, default
 homebrew formalae (including tmux), clones & builds neovim from source, and
 links all configuration files (dotfiles). Typically used when bootstraping a
 new development machine.

@@ -1,3 +1,4 @@
+brew 'asdf' # Version manager for Ruby, Node, etc.
 brew 'atuin' # store shell history in SQLite
 brew 'automake'
 brew 'bat' # cat replacement
@@ -8,15 +9,14 @@ brew 'coreutils' # gnu coreutils
 brew 'datasette' # simple web interface to SQLite databases
 brew 'direnv' # directory-specific env vars
 brew 'dua-cli' # display disk usage, & delete unwanted data
-brew 'esbuild' # JavaScript bundler/minifier
 brew 'exa' # git-aware ls replacement
 brew 'fd' # file finder
 brew 'fzf' # fuzzy finder
 brew 'gh' # GitHub CLI
-brew 'git'
+brew 'git' # git, you git
 brew 'git-delta' # git-diff replacement
 brew 'git-lfs' # handle Large Files in git
-brew 'gpg'
+brew 'gpg' # pretty good
 brew 'gping' # ping, but with graphs
 brew 'grep' # gnu grep
 brew 'httpie' # cURL replacement. e.g.: `http POST pie.dev/post hello=world`
@@ -28,7 +28,6 @@ brew 'lua'
 brew 'luarocks' # lua package manager
 brew 'mas' # CLI for Mac App Store
 brew 'neovim'
-brew 'node'
 brew 'nvm'
 brew 'make' # gnu make
 brew 'memcached'
@@ -37,10 +36,8 @@ brew 'parallel' # gnu parallel
 brew 'pastel' # generate/convert/manipulate colors
 brew 'postgresql@14'
 brew 'procs' # `ps` replacement written in Rust
-brew 'python'
 brew 'redis' # redis is redis
 brew 'rg' # ripgrep
-brew 'rust'
 brew 'sd' # easy search & replace. sed alternative/replacement
 brew 'showkey' # type a key and see it echoed in the terminal
 brew 'solargraph' # Ruby language server (LSP)
