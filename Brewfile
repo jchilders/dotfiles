@@ -49,6 +49,7 @@ brew 'toilet' # ascii banners :)
 brew 'universal-ctags' # better ctags
 brew 'watchman' # needed by Sorbet LSP
 brew 'watchexec' # auto-restart process when file(s) change
+brew 'youtube-dl' # download YouTube videos. youtube-dl -h
 brew 'wget'
 brew 'yarn'
 

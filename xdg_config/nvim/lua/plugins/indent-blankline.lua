@@ -1,10 +1,10 @@
 return {
   "lukas-reineke/indent-blankline.nvim",
   enabled = true,
-  config = function()
-    require("indent_blankline").setup {
+  main = "ibl",
+  opts = {
+    indent = {
       char = "┊",
-      show_trailing_blankline_indent = false,
     }
-  end
+  }
 }
