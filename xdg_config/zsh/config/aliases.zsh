@@ -25,7 +25,6 @@ alias diff='delta' # viewer for `git diff` and `diff`
 alias gcb="git branch --show-current | tr -d '\n' | pbcopy; print 'Current branch copied to pasteboard'"
 alias l='exa --all --classify --git --header --icons --long --no-permissions --no-user --color-scale'
 alias tree='exa --tree'
-alias python=$HOMEBREW_PREFIX/bin/python3
 
 # Abbreviations
 function addAbbreviations() {
