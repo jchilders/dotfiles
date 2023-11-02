@@ -2,13 +2,16 @@ local scratcher = {}
 
 local api = vim.api
 local git_utils = require("jc.git_utils")
-local Path = require("plenary.path")
+local plenary_path_ok, plenary_path = pcall(require, "plenary.path")
 
--- @treturn Path path A Plenary Path object for the scratch directory
+-- @return Path path A Plenary Path object for the scratch directory
 local function scratch_path()
-  local sep = Path.path.sep
+  if not plenary_path_ok then
+    return ""
+  end
+  local sep = plenary_path.path.sep
   local path = vim.fn.stdpath("data") .. sep .. "scratch_files"
-  return Path:new(path)
+  return plenary_path:new(path)
 end
 
 local function extension(bufnr)

@@ -1,6 +1,5 @@
 local remap = require("utils").map_global
 local scratcher = require("jc.scratcher")
-local tireswing = require("jc.tireswing")
 local tmux_utils = require("jc.tmux-utils")
 
 TelescopeMapArgs = TelescopeMapArgs or {}
@@ -105,18 +104,20 @@ vim.keymap.set("n", "<leader>W", "<cmd>wqa<CR>")
 
 vim.keymap.set("n", "<leader>g", require("jc.utils").toggle_gutter)
 
-local gitsigns = require("gitsigns")
-vim.keymap.set("n", "<leader>ga", gitsigns.stage_hunk, { desc = "Stage change" })
-vim.keymap.set("n", "<leader>gA", gitsigns.stage_buffer, { desc = "Stage all changes made to current buffer" })
-vim.keymap.set("n", "<leader>gb", gitsigns.blame_line, { desc = "git blame" })
-vim.keymap.set("n", "<leader>gp", gitsigns.prev_hunk, { desc = "Go to previous unstaged hunk" })
-vim.keymap.set("n", "<leader>gP", gitsigns.preview_hunk, { desc = "Preview hunk" })
-vim.keymap.set("n", "<leader>gn", gitsigns.next_hunk, { desc = "Go to next unstaged hunk" })
-vim.keymap.set("n", "<leader>gu", gitsigns.reset_hunk, { desc = "Undo changes to current hunk" })
-vim.keymap.set("n", "<leader>gU", gitsigns.reset_buffer, { desc = "Undo all changes made to current buffer" })
-vim.keymap.set("n", "<leader>gq", function()
-                                    gitsigns.setqflist("all")
-                                  end, { desc = "Set quickfix list to unstaged changes" })
+local gitsigns_ok, gitsigns = pcall(require, "gitsigns")
+if gitsigns_ok then
+  vim.keymap.set("n", "<leader>ga", gitsigns.stage_hunk, { desc = "Stage change" })
+  vim.keymap.set("n", "<leader>gA", gitsigns.stage_buffer, { desc = "Stage all changes made to current buffer" })
+  vim.keymap.set("n", "<leader>gb", gitsigns.blame_line, { desc = "git blame" })
+  vim.keymap.set("n", "<leader>gp", gitsigns.prev_hunk, { desc = "Go to previous unstaged hunk" })
+  vim.keymap.set("n", "<leader>gP", gitsigns.preview_hunk, { desc = "Preview hunk" })
+  vim.keymap.set("n", "<leader>gn", gitsigns.next_hunk, { desc = "Go to next unstaged hunk" })
+  vim.keymap.set("n", "<leader>gu", gitsigns.reset_hunk, { desc = "Undo changes to current hunk" })
+  vim.keymap.set("n", "<leader>gU", gitsigns.reset_buffer, { desc = "Undo all changes made to current buffer" })
+  vim.keymap.set("n", "<leader>gq", function()
+                                      gitsigns.setqflist("all")
+                                    end, { desc = "Set quickfix list to unstaged changes" })
+end
 
 -- Lua Inspect
 remap("n", "<leader>li", "<cmd>lua print(require('utils.inspect').inspect(loadstring(\"return \" .. vim.fn.getline('.'))()))<CR>")
@@ -130,15 +131,24 @@ vim.keymap.set("n", "<leader>sl", tmux_utils.send_line_left)
 -- Send the selected text to the left/wezterm pane
 vim.keymap.set("v", "<leader>sl", tmux_utils.send_selection_left)
 
--- Send current function to the left tmux/wezterm pane
-vim.keymap.set("n", "<leader>sfl", function()
-  local function_text = tireswing.get_current_function()
-  tmux_utils.send_left(function_text)
-end)
+local tireswing_ok, tireswing = pcall(require, "jc.tireswing")
+if tireswing_ok then
+  -- Send current function to the left tmux/wezterm pane
+  vim.keymap.set("n", "<leader>sfl", function()
+    local function_text = tireswing.get_current_function()
+    tmux_utils.send_left(function_text)
+  end)
+  -- Quote Toggler: toggle between single/double quotes for string under cursor.
+  vim.keymap.set("n", "<leader>tq", tireswing.toggle_quotes)
+
+  -- move current treesitter object up
+  -- remap("n", "J", "<cmd>lua require('jc.tireswing').swap_nodes(false)<CR>")
+  -- move current treesitter object down
+  -- remap("n", "K", "<cmd>lua require('jc.tireswing').swap_nodes(true)<CR>")
+end
 
 -- Send the keys `^D`, `UpArrow`, and `Enter` to the left tmux pane
 -- Lets us quickly Restart Rails console/server/psql/lua/whatever, so long as it quits
-
 -- when it receives a ^D
 vim.keymap.set(
   "n",
@@ -165,16 +175,8 @@ remap("n", "<leader>et", "<cmd>wa<CR><cmd>lua require('jc.tmux-utils').edit_mru_
 -- Show tree-sitter highlight group(s) for current cursor position
 -- remap("n", "<leader>tshi", "<cmd>TSHighlightCapturesUnderCursor<CR>")
 
--- move current treesitter object up
--- remap("n", "J", "<cmd>lua require('jc.tireswing').swap_nodes(false)<CR>")
--- move current treesitter object down
--- remap("n", "K", "<cmd>lua require('jc.tireswing').swap_nodes(true)<CR>")
-
 -- Copy to system clipboard with ctrl-c
 remap("v", "<C-c>", '"+y')
-
--- Quote Toggler: toggle between single/double quotes for string under cursor.
-vim.keymap.set("n", "<leader>tq", tireswing.toggle_quotes)
 
 -- quickfix
 vim.keymap.set("n", "<leader>qf", require('utils').toggle_qf)
@@ -187,15 +189,20 @@ remap("n", "<leader>lc", "<cmd>lclose<CR>")
 remap("n", "<leader>ln", "<cmd>lnext<CR>")
 remap("n", "<leader>lp", "<cmd>lprev<CR>")
 
-vim.keymap.set('n', '<leader>/', function()
-  require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
-    winblend = 10,
-    previewer = false,
-  })
-end, { desc = '[/] Fuzzily search in current buffer]' })
+local telescope_builtin_ok, telescope_builtin = pcall(require, "telescope.builtin")
+if telescope_builtin_ok then
+  vim.keymap.set("n", "<C-o>b", telescope_builtin.buffers, { desc = "Open from [b]uffer list" })
+  vim.keymap.set('n', '<leader>/', function()
+    telescope_builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
+      winblend = 10,
+      previewer = false,
+    })
+  end, { desc = '[/] Fuzzily search in current buffer]' })
 
-vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags, { desc = '[S]earch [H]elp' })
-vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
+  vim.keymap.set("n", "<C-o>h", telescope_builtin.command_history, { desc = "Command [h]istory" })
+  vim.keymap.set('n', '<leader>sh', telescope_builtin.help_tags, { desc = '[S]earch [H]elp' })
+  vim.keymap.set('n', '<leader>sd', telescope_builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
+end
 
 -- LSP Diagnostic keymaps
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
@@ -206,7 +213,6 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)
 -- ctrl-o
 
 -- ctrl-o telescope mappings
-vim.keymap.set("n", "<C-o>b", require("telescope.builtin").buffers, { desc = "Open from [b]uffer list" })
 
 map_ctrlo_tele("f", "grep_string")
 map_ctrlo_tele("F", "live_grep")
@@ -221,7 +227,6 @@ map_ctrlo_tele("gh", "git_bcommits")
 -- select file from files with uncommitted changes (i.e. from `git [s]tatus`)
 map_ctrlo_tele("gs", "git_status")
 
-vim.keymap.set("n", "<C-o>h", require("telescope.builtin").command_history, { desc = "Command [h]istory" })
 
 -- files
 map_ctrlo_tele("o", "find_files") -- do not include hidden files, files in .gitignore, etc.
@@ -242,15 +247,18 @@ map_ctrlo_tele("t", "lsp_document_symbols")
 map_ctrlo_tele("T", "lsp_workspace_symbols")
 
 -- harpoon
-vim.keymap.set("n", "<leader>ha", require('harpoon.mark').add_file)
--- open list of files marked as harpooned
-vim.keymap.set("n", "<leader>hl", require('harpoon.ui').toggle_quick_menu)
--- ctrl-j opens the first harpooned file, ctrl-k opens the second harpooned file...
-vim.keymap.set("n", "<C-h>", function() require('harpoon.ui').nav_file(1) end)
-vim.keymap.set("n", "<C-j>", function() require('harpoon.ui').nav_file(2) end)
-vim.keymap.set("n", "<C-k>", function() require('harpoon.ui').nav_file(3) end)
-vim.keymap.set("n", "<C-l>", function() require('harpoon.ui').nav_file(4) end)
-vim.keymap.set("n", "<C-;>", function() require('harpoon.ui').nav_file(5) end)
+local harpoon_ok, _ = pcall(require, 'harpoon')
+if harpoon_ok then
+  vim.keymap.set("n", "<leader>ha", require('harpoon.mark').add_file)
+  -- open list of files marked as harpooned
+  vim.keymap.set("n", "<leader>hl", require('harpoon.ui').toggle_quick_menu)
+  -- ctrl-j opens the first harpooned file, ctrl-k opens the second harpooned file...
+  vim.keymap.set("n", "<C-h>", function() require('harpoon.ui').nav_file(1) end)
+  vim.keymap.set("n", "<C-j>", function() require('harpoon.ui').nav_file(2) end)
+  vim.keymap.set("n", "<C-k>", function() require('harpoon.ui').nav_file(3) end)
+  vim.keymap.set("n", "<C-l>", function() require('harpoon.ui').nav_file(4) end)
+  vim.keymap.set("n", "<C-;>", function() require('harpoon.ui').nav_file(5) end)
+end
 
 -- terminal
 -- remap("t", "<esc>", [[<C-\><C-n>]])

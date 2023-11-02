@@ -13,7 +13,7 @@ return {
       },
       projects = {
 	-- Yes $HOME works
-	--[[ ["$HOME/work/carerev/api_app"] = {
+	--[[ ["$HOME/my_project/"] = {
 	  term = {
 	    cmds = {
 	      "rails console"

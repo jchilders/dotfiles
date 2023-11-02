@@ -1,5 +1,5 @@
+local ts = require("vim.treesitter")
 local ts_utils = require("nvim-treesitter.ts_utils")
-local query = require("vim.treesitter.query")
 
 local M = {}
 
@@ -43,7 +43,7 @@ M.toggle_quotes = function()
   end
 
   local bufnr = vim.api.nvim_get_current_buf()
-  local text = query.get_node_text(parent_string_node, bufnr)
+  local text = ts.get_node_text(parent_string_node, bufnr)
   local quote = string.sub(text, 1, 1)
 
   local new_quote
@@ -68,7 +68,7 @@ M.get_current_function = function()
   end
 
   local bufnr = vim.api.nvim_get_current_buf()
-  return query.get_node_text(current_function, bufnr)
+  return ts.get_node_text(current_function, bufnr)
 end
 
 return M

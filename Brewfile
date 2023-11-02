@@ -53,6 +53,11 @@ brew 'youtube-dl' # download YouTube videos. youtube-dl -h
 brew 'wget'
 brew 'yarn'
 
+# mkcert and nss are used to generate locally trusted development certificates
+# needed for succesfully connecting locally via HTTPS
+brew 'mkcert'
+brew 'nss' # for Firefox
+
 # yank: copy to clipboard via keyboard navigation (arrow keys, hjkl, etc.)
 #
 # get a key or value from `env` & use '=' as a delimiter:

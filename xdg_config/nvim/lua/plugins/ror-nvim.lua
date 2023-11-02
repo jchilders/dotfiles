@@ -1,6 +1,6 @@
 return {
   "weizheheng/ror.nvim",
-  enabled = true,
+  enabled = false,
   config = function()
     require("ror").setup({
       disable_filetype = { "TelescopePrompt" },
