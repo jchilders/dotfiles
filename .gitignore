@@ -1,4 +1,6 @@
 .DS_Store
+.luarc.json
+.zsh_sessions/
 Brewfile.lock.json
 Session.vim
 abbreviations
@@ -7,9 +9,8 @@ default.gems.lock
 htop/
 node_modules/
 nvim/.netrwhist
-xdg_config/gh/hosts.yml
-xdg_config/zsh/.zcompdump
-.zsh_sessions/
-.luarc.json
 xdg_config/AWSVPNClient
 xdg_config/gcloud
+xdg_config/gh/hosts.yml
+xdg_config/lazygit/state.yml
+xdg_config/zsh/.zcompdump

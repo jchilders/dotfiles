@@ -227,7 +227,6 @@ map_ctrlo_tele("gh", "git_bcommits")
 -- select file from files with uncommitted changes (i.e. from `git [s]tatus`)
 map_ctrlo_tele("gs", "git_status")
 
-
 -- files
 map_ctrlo_tele("o", "find_files") -- do not include hidden files, files in .gitignore, etc.
 map_ctrlo_tele("O", "find_all_files") -- include hidden files, files in .gitignore, etc.

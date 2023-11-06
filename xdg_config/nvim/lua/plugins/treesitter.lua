@@ -1,3 +1,6 @@
+-- Things to do when troublshooting treesitter issues:
+--   `:TSUpdate`
+--   Disable indentation
 return {
   "nvim-treesitter/nvim-treesitter",
   enabled = true,
@@ -9,7 +12,7 @@ return {
   config = function()
     require("nvim-treesitter.configs").setup({
       ensure_installed = { "bash", "git_rebase", "json", "lua", "ruby", "rust", "sql", "typescript", "vim" },
-      indent = { enable = true },
+      indent = { enable = false },
       incremental_selection = {
         enable = true,
         keymaps = {

@@ -15,13 +15,21 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.runtimepath:prepend(lazypath)
 
-require("lazy").setup("plugins", {
-  change_detection = {
-    enabled = true,
-    notify = false,
-  },
-  checker = {
-    enabled = false,
+require("lazy").setup({
+  spec = {
+    {
+      -- lazyflex lets you enable/disable plugins based on patterns
+      "abeldekat/lazyflex.nvim",
+      version = "*",
+      cond = true, -- false to disable lazyflex
+      import = "lazyflex.hook",
+      opts = {
+        -- Disable plugins matching "tele" and "harp" patterns
+        -- enable_match = false,
+        -- kw = { "tele", "harp" }
+      },
+    },
+    { import = "plugins" }, -- dir to load plugin definitions from
   }
 })
 

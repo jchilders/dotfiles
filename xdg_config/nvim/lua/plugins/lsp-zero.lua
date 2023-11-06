@@ -36,9 +36,9 @@ return {
     })
     require("mason").setup()
 
+    -- LSP logs are usually in ~.local/state/nvim/lsp.log
+    -- :lua =vim.lsp.get_log_path()
     local mason_lspconfig = require "mason-lspconfig"
-    -- Logs should be in ~.local/state/nvim
-    -- :echo $NVIM_LOG_FILE
     local servers = {
       lua_ls = {
 	Lua = {
@@ -48,7 +48,6 @@ return {
 	},
       },
     }
-
     mason_lspconfig.setup {
       ensure_installed = vim.tbl_keys(servers),
     }
@@ -66,12 +65,11 @@ return {
     })
 
     local lsp = require("lsp-zero")
-
-    lsp.preset("recommended")
     lsp.on_attach(function(client, bufnr)
       require("nvim-navic").attach(client, bufnr)
     end)
 
+    lsp.preset("recommended")
     lsp.setup_nvim_cmp({
       sources = {
 	{ name = "path" },
