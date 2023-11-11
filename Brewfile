@@ -9,7 +9,7 @@ brew 'coreutils' # gnu coreutils
 brew 'datasette' # simple web interface to SQLite databases
 brew 'direnv' # directory-specific env vars
 brew 'dua-cli' # display disk usage, & delete unwanted data
-brew 'exa' # git-aware ls replacement
+brew 'eza' # git-aware ls replacement
 brew 'fd' # file finder
 brew 'fzf' # fuzzy finder
 brew 'gh' # GitHub CLI
