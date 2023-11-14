@@ -23,7 +23,7 @@ alias ...='cd ../..'
 alias cpwd="pwd | tr -d '\n' | pbcopy; print 'Current directory copied to pasteboard'"
 alias diff='delta' # viewer for `git diff` and `diff`
 alias gcb="git branch --show-current | tr -d '\n' | pbcopy; print 'Current branch copied to pasteboard'"
-alias l='eza --all --long --git --icons --total-size --no-permissions --no-user --time-style relative'
+alias l='eza --all --long --git --icons --no-user --time-style relative'
 alias tree='eza --tree'
 
 # Abbreviations

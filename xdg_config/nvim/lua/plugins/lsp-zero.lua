@@ -65,8 +65,9 @@ return {
     })
 
     local lsp = require("lsp-zero")
-    lsp.on_attach(function(client, bufnr)
-      require("nvim-navic").attach(client, bufnr)
+    lsp.on_attach(function(_, _)
+      local outline = require("outline")
+      outline.open_outline({ focus_outline = false })
     end)
 
     lsp.preset("recommended")

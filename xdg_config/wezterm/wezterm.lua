@@ -5,77 +5,80 @@ local config = {}
 
 local default_font_family = "Monofur Nerd Font"
 local default_font_size = 18.0
-
--- Foreground color for tab & status text
 local tab_text_color = '#f0f0f0'
-local tab_bg = '#700070'
 
-config.color_scheme = "tokyonight"
+config.font = wezterm.font(default_font_family)
+config.font_size = default_font_size
 config.colors = {
   background = "black",
   compose_cursor = "orange",
-  tab_bar = {
-    active_tab = {
-      fg_color = tab_text_color,
-      bg_color = tab_bg,
-      intensity = "Bold",
-    }
+}
+
+config.show_new_tab_button_in_tab_bar = false
+
+wezterm.on("format-tab-title", function(tab, _, _, _, _, _)
+  -- Return the explicitly set title, if one has been set
+  if tab.tab_title and #tab.tab_title > 0 then
+    return tab.tab_title
+  end
+
+  local cwd_uri = tab.active_pane.current_working_dir
+  local basename = string.gsub(cwd_uri, '(.*[/\\])(.*)', '%2')
+  local zoomed = tab.active_pane.is_zoomed and "*" or ""
+  local tab_title = basename .. zoomed
+
+  local curr_tab_text_color = tab.is_active and tab_text_color or "#808080"
+  -- local active_tab_attr = tab.is_active and "Bold" or "Normal"
+
+  return {
+    { Foreground = { AnsiColor = "Navy" } },
+    { Text = (tab.tab_index + 1) .. " " },
+    { Foreground = { Color = curr_tab_text_color } },
+    { Text = tab_title },
   }
-}
+end)
 
-config.cursor_blink_rate = 800
-config.cursor_blink_ease_in = "Linear"
-
+-- Defaults for the tab bar
 config.window_frame = {
-  -- The font used in the tab bar.
-  font = wezterm.font { family = default_font_family, weight = "Bold" },
-
-  -- The size of the font in the tab bar.
+  font = wezterm.font { family = default_font_family },
   font_size = default_font_size,
-
-  -- The overall background color of the tab bar when
-  -- the window is focused
-  active_titlebar_bg = "#200020",
+  active_titlebar_bg = "#300030",
 }
 
+-- Dim inactive panes
 config.inactive_pane_hsb = {
   saturation = 0.8,
   brightness = 0.3,
 }
 
-config.font = wezterm.font(default_font_family, { weight = 'Bold' })
-config.font_size = default_font_size
-
+-- Mappings
 config.leader = { key = 'a', mods = 'CTRL', timeout_milliseconds = 1000 }
 config.keys = {
-  { key = "f", mods = "CTRL|CMD",  action = "ToggleFullScreen" },
-  { key = "o", mods = "SHIFT|CMD", action = "ShowTabNavigator" },
-  { key = "%", mods = "LEADER",    action = act.SplitHorizontal, },
-  { key = "-", mods = "LEADER",    action = act.SplitVertical, },
-  { key = "[", mods = "LEADER",    action = act.ActivateCopyMode, },
   { key = "z", mods = "LEADER",    action = act.TogglePaneZoomState },
-  { key = "h", mods = "SHIFT|CMD", action = act.ActivatePaneDirection("Left"), },
-  { key = "l", mods = "SHIFT|CMD", action = act.ActivatePaneDirection("Right"), },
-  { key = "k", mods = "SHIFT|CMD", action = act.ActivatePaneDirection("Up"), },
-  { key = "j", mods = "SHIFT|CMD", action = act.ActivatePaneDirection("Down"), },
-  { key = "=", mods = "SHIFT|CMD", action = act.IncreaseFontSize, },
+  { key = "F", mods = "CMD",  action = "ToggleFullScreen" },
+  { key = "H", mods = "CMD", action = act.ActivatePaneDirection("Left"), },
+  { key = "L", mods = "CMD", action = act.ActivatePaneDirection("Right"), },
+  { key = "K", mods = "CMD", action = act.ActivatePaneDirection("Up"), },
+  { key = "J", mods = "CMD", action = act.ActivatePaneDirection("Down"), },
   {
     key = "r",
     mods = "LEADER",
     action = act.PromptInputLine {
       description = "Rename tab:",
       action = wezterm.action_callback(function(window, _, line)
-        -- line will be `nil` if they hit escape without entering anything
-        -- An empty string if they just hit enter
-        -- Or the actual line of text they wrote
         if line then
           window:active_tab():set_title(line)
         end
       end),
     },
   },
-  { key = "N", mods = "SHIFT|CMD", action = act.RotatePanes "Clockwise", },
-  { key = "P", mods = "SHIFT|CMD", action = act.RotatePanes "CounterClockwise", },
+  { key = "N", mods = "CMD", action = act.RotatePanes "Clockwise", },
+  { key = "O", mods = "CMD", action = "ShowTabNavigator" },
+  { key = "P", mods = "CMD", action = act.RotatePanes "CounterClockwise", },
+  { key = "%", mods = "LEADER",    action = act.SplitHorizontal, },
+  { key = "+", mods = "CMD", action = act.IncreaseFontSize, },
+  { key = "-", mods = "LEADER",    action = act.SplitVertical, },
+  { key = "[", mods = "LEADER",    action = act.ActivateCopyMode, },
 }
 
 -- CTRL-SHIFT-L :: opens wezterm debug overlay. can type lua cmds here
@@ -102,12 +105,11 @@ local function current_branch(pane)
     '--show-current'
   })
   local git_branch = success and string.format(" %s", string.gsub(stdout, "^(.+)\n$", "%1")) or " ❓"
+
   return git_branch
 end
 
 local SOLID_LEFT_ARROW = utf8.char(0xe0b2)
-
--- Background colors for right status text
 local colors = {
   '#3c1361',
   '#52307c',
@@ -126,21 +128,6 @@ wezterm.on('update-status', function(window, pane)
   table.insert(cells, { Text = " " .. current_branch(pane) .. " " })
 
   window:set_right_status(wezterm.format(cells))
-end)
-
-wezterm.on("format-tab-title", function(tab, _, _, _, _, _)
-  local function _basename(tab2)
-    local pane = tab2.active_pane
-    local uri = pane.current_working_dir
-    local basename = string.gsub(uri, '(.*[/\\])(.*)', '%2')
-    return basename
-  end
-
-  local tab_title = string.format("%s", _basename(tab))
-
-  return {
-    { Text = tab_title }
-  }
 end)
 
 return config
