@@ -1,8 +1,9 @@
+-- LSP logs are usually in ~.local/state/nvim/lsp.log
+-- :lua =vim.lsp.get_log_path()
 return {
   "VonHeikemen/lsp-zero.nvim",
   enabled = true,
   dependencies = {
-    "folke/neodev.nvim",
     -- LSP Support
     "neovim/nvim-lspconfig",
     "williamboman/mason.nvim",
@@ -21,57 +22,61 @@ return {
     "rafamadriz/friendly-snippets",
   },
   config = function()
-    -- neodev fixes the 'undefined global "vim"' message, as well as doing other cool things
-    require("neodev").setup() -- needs to happen before LSP init
-
-    local cmp_nvim_lsp_status_ok, cmp_nvim_lsp = pcall(require, "cmp_nvim_lsp")
-
-    if not (cmp_nvim_lsp_status_ok) then
-      print("cmp_nvim_lsp not installed")
-      return
-    end
-
     require("mason.settings").set({
       ui = { border = "rounded" }
     })
     require("mason").setup()
 
-    -- LSP logs are usually in ~.local/state/nvim/lsp.log
-    -- :lua =vim.lsp.get_log_path()
-    local mason_lspconfig = require "mason-lspconfig"
-    local servers = {
+    local mason_lspconfig = require("mason-lspconfig")
+    mason_lspconfig.setup({
+      ensure_installed = {
+        "bashls",
+        "dockerls",
+        "grammarly",
+        "jsonls",
+        "lemminx",
+        "ltex",
+        "lua_ls",
+        "rubocop",
+        "ruby_ls",
+        "rust_analyzer",
+        "sqlls",
+        "tailwindcss",
+        "taplo",
+        "tsserver",
+      },
+      automatic_installation = true,
+    })
+
+    local handlers = {
       lua_ls = {
-	Lua = {
-	  diagnostics = { globals = {"vim"} },
-	  telemetry = { enable = false },
-	  workspace = { checkThirdParty = false },
-	},
+        Lua = {
+          diagnostics = { globals = {"vim"} },
+          telemetry = { enable = false },
+          runtime = { version = 'LuaJIT' },
+          workspace = {
+            checkThirdParty = false,
+            library = { vim.env.VIMRUNTIME }
+          },
+        },
       },
     }
-    mason_lspconfig.setup {
-      ensure_installed = vim.tbl_keys(servers),
-    }
-
     mason_lspconfig.setup_handlers({
       function(server_name)
-	local normal_capabilities = vim.lsp.protocol.make_client_capabilities()
-	local capabilities = cmp_nvim_lsp.default_capabilities(normal_capabilities)
+        local normal_capabilities = vim.lsp.protocol.make_client_capabilities()
+        local def_capabilities = require("cmp_nvim_lsp").default_capabilities(normal_capabilities)
 
-	require("lspconfig")[server_name].setup {
-	  capabilities = capabilities,
-	  settings = servers[server_name]
-	}
+        require("lspconfig")[server_name].setup {
+          capabilities = def_capabilities,
+          settings = handlers[server_name]
+        }
       end,
     })
 
-    local lsp = require("lsp-zero")
-    lsp.on_attach(function(_, _)
-      local outline = require("outline")
-      outline.open_outline({ focus_outline = false })
-    end)
 
-    lsp.preset("recommended")
-    lsp.setup_nvim_cmp({
+    local lsp_zero = require("lsp-zero")
+    lsp_zero.preset("recommended")
+    lsp_zero.setup_nvim_cmp({
       sources = {
 	{ name = "path" },
 	{ name = "nvim_lsp", keyword_length = 3 },
@@ -97,6 +102,6 @@ return {
       },
     })
 
-    lsp.setup() -- this needs to be last
+    lsp_zero.setup() -- this needs to be last
   end
 }

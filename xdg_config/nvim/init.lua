@@ -15,26 +15,21 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.runtimepath:prepend(lazypath)
 
-require("lazy").setup({
-  spec = {
-    {
-      -- lazyflex lets you enable/disable plugins based on patterns
-      "abeldekat/lazyflex.nvim",
-      version = "*",
-      cond = true, -- false to disable lazyflex
-      import = "lazyflex.hook",
-      opts = {
-        -- Disable plugins matching "tele" and "harp" patterns
-        -- enable_match = false,
-        -- kw = { "tele", "harp" }
-      },
-    },
-    { import = "plugins" }, -- dir to load plugin definitions from
-  }
+require("lazy").setup(  { import = "plugins" }, {
+  install = {
+    colorscheme = { "tokyonight" },
+  },
+  change_detection = {
+    notify = false
+  },
+  checker = {
+    enabled = true,
+    notify = false,
+  },
 })
 
 -- use pcall in case colorscheme hasn't been installed yet
-pcall(vim.cmd, "colorscheme tokyonight")
+pcall(vim.cmd.colorscheme, "tokyonight")
 
 require "core/mappings"
 require "core/autocmd"

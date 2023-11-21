@@ -1,10 +1,7 @@
 local M = {}
 
-local api = vim.api
-local utils = require "jc.utils"
-
--- local emu = require "jc.tmux"
-local emu = require "jc.wezterm"
+local utils = require("jc.utils")
+local emu = require("jc.wezterm")
 
 -- Send line under the cursor to the pane to the left, then move cursor to
 -- next line
@@ -15,17 +12,17 @@ M.send_line_left = function()
   emu.send_left(curr_line)
 
   -- move cursor to next line, if there is one
-  local row, col = unpack(api.nvim_win_get_cursor(0))
-  if row < api.nvim_buf_line_count(0) then
-    api.nvim_win_set_cursor(0, { row + 1, col })
+  local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+  if row < vim.api.nvim_buf_line_count(0) then
+    vim.api.nvim_win_set_cursor(0, { row + 1, col })
   end
 end
 
 -- Send currently selected text to the pane to the left
 M.send_selection_left = function()
-  local bufnr = api.nvim_get_current_buf()
+  local bufnr = vim.api.nvim_get_current_buf()
   local vis_start, vis_end = M.visual_selection_range()
-  local content = api.nvim_buf_get_lines(bufnr, vis_start - 1, vis_end, false)
+  local content = vim.api.nvim_buf_get_lines(bufnr, vis_start - 1, vis_end, false)
 
   emu.send_left(table.concat(content, "\r"))
 end
@@ -51,12 +48,6 @@ M.run_mru_test = function(linenr)
     local is_spec = string.find(test_file, "_spec")
     if is_spec then
       test_cmd = "bin/rspec"
-
-      -- Adwerx uses a special runner for system specs
-      local is_sys_spec = string.find(test_file, "spec/system/")
-      if is_sys_spec then
-        test_cmd = test_cmd .. "_system"
-      end
     else
       test_cmd = "bin/rails test"
     end
@@ -70,10 +61,8 @@ M.run_mru_test = function(linenr)
     test_cmd = "yarn test " .. test_file
   end
 
-  local has_docker, _ = pcall(function()
-    io.open("docker-compose.yml", "r")
-  end)
-  if has_docker then
+  local has_docker = vim.fn.filereadable("docker-compose.yml")
+  if has_docker ~= 0 then
     test_cmd = "docker compose run --rm app " .. test_cmd
   end
 

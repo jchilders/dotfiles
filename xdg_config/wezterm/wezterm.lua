@@ -47,8 +47,8 @@ config.window_frame = {
 
 -- Dim inactive panes
 config.inactive_pane_hsb = {
-  saturation = 0.8,
-  brightness = 0.3,
+  saturation = 0.9,
+  brightness = 0.5,
 }
 
 -- Mappings
@@ -82,10 +82,10 @@ config.keys = {
 }
 
 -- CTRL-SHIFT-L :: opens wezterm debug overlay. can type lua cmds here
-
+--
 -- get info on panes for current tab
 -- https://wezfurlong.org/wezterm/config/lua/MuxTab/panes_with_info.html
-
+--
 -- wezterm.action.ActivatePaneDirection 'Left'
 -- wezterm.action.ActivatePaneByIndex(1)
 

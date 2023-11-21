@@ -17,28 +17,28 @@ vim.api.nvim_create_autocmd({ "BufEnter", "BufRead" }, {
   command = "set filetype=bash",
 })
 
-local rails_server_started = function()
-  local project_root = git_utils.git_root()
-  local pid_file = project_root .. "/tmp/pids/server.pid"
-  local f=io.open(pid_file,"r")
-  if f~=nil then io.close(f) return true else return false end
-end
-
-local restart_rails = function()
-  if rails_server_started() ~= true then
-    return
-  end
-
-  vim.notify("Restarting Rails server")
-  local project_root = git_utils.git_root()
-  local restart_file = project_root .. "/tmp/restart.txt"
-  io.popen("touch " .. restart_file)
-end
-
-vim.api.nvim_create_autocmd({ "BufWritePost" }, {
-  pattern = {
-    "app/*.rb",
-    "config/*.rb"
-  },
-  callback = restart_rails,
-})
+-- local rails_server_started = function()
+--   local project_root = git_utils.git_root()
+--   local pid_file = project_root .. "/tmp/pids/server.pid"
+--   local f=io.open(pid_file,"r")
+--   if f~=nil then io.close(f) return true else return false end
+-- end
+--
+-- local restart_rails = function()
+--   if rails_server_started() ~= true then
+--     return
+--   end
+--
+--   vim.notify("Restarting Rails server")
+--   local project_root = git_utils.git_root()
+--   local restart_file = project_root .. "/tmp/restart.txt"
+--   io.popen("touch " .. restart_file)
+-- end
+--
+-- vim.api.nvim_create_autocmd({ "BufWritePost" }, {
+--   pattern = {
+--     "app/*.rb",
+--     "config/*.rb"
+--   },
+--   callback = restart_rails,
+-- })

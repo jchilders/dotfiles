@@ -159,9 +159,6 @@ vim.keymap.set(
   end
 )
 
--- Save & run the most recently modified test, test case for current line only
--- remap("n", "<leader>rt", "<cmd>wa<CR><cmd>lua require('jc.tmux-utils').run_mru_test_current()<CR>")
-
 -- Save & run the most recently modified test in the tmux pane to the left
 vim.keymap.set("n", "<leader>rt", "<cmd>wa<CR><cmd>lua require('jc.tmux-utils').run_mru_test()<CR>")
 vim.keymap.set("n", "<leader>rT", "<cmd>wa<CR><cmd>lua require('jc.tmux-utils').run_mru_test_current_line()<CR>")
@@ -234,6 +231,11 @@ map_ctrlo_tele("O", "find_all_files") -- include hidden files, files in .gitigno
 -- LSP
 -- little r -> Search for LSP references to word under cursor
 map_ctrlo_tele("r", "lsp_references")
+
+map_ctrlo_tele("rc", "find_files", { search_dir = "app/controllers" })
+map_ctrlo_tele("rm", "find_files", { search_dir = "app/models" })
+map_ctrlo_tele("rv", "find_files", { search_dir = "app/views" })
+
 remap("n", "[[", "<cmd>lua vim.diagnostic.goto_prev()<CR>")
 remap("n", "]]", "<cmd>lua vim.diagnostic.goto_next()<CR>")
 remap("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>")

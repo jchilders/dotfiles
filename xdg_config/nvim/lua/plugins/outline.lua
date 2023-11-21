@@ -2,7 +2,7 @@
 -- https://github.com/hedyhli/outline.nvim
 return {
   "hedyhli/outline.nvim",
-  enabled = true,
+  enabled = false,
   config = function()
     -- vim.keymap.set("n", "<leader>tt", "<cmd>Outline<CR>", { desc = "Toggle Outline" })
     vim.keymap.set("n",
