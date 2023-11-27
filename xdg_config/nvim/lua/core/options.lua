@@ -1,7 +1,5 @@
 local g, opt, go, wo, o = vim.g, vim.opt, vim.go, vim.wo, vim.o
 
--- pcall(vim.cmd, "colorscheme tokyonight")
-
 g.mapleader = " "
 g.maplocalleader = " "
 
@@ -15,7 +13,8 @@ opt.smartindent = true
 
 opt.autoread = true -- reload files on external change
 opt.clipboard = "unnamedplus" -- clipboard yank
-opt.cmdheight = 1
+-- opt.cmdheight = 1
+opt.cmdheight = 0
 opt.cursorline = true -- highlight current line
 opt.expandtab = true -- use spaces instead of tabs when indenting
 opt.fileformat = "unix"

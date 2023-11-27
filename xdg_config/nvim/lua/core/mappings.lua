@@ -1,6 +1,6 @@
 local remap = require("utils").map_global
 local scratcher = require("jc.scratcher")
-local tmux_utils = require("jc.tmux-utils")
+local emu_utils = require("jc.tmux-utils")
 
 TelescopeMapArgs = TelescopeMapArgs or {}
 
@@ -125,18 +125,19 @@ remap("n", "<leader>li", "<cmd>lua print(require('utils.inspect').inspect(loadst
 -- Open Scratch file for this project
 vim.keymap.set("n", "<leader>rs", scratcher.split_open_scratch_file)
 
--- Send the current line to the left/wezterm tmux pane
-vim.keymap.set("n", "<leader>sl", tmux_utils.send_line_left)
-
--- Send the selected text to the left/wezterm pane
-vim.keymap.set("v", "<leader>sl", tmux_utils.send_selection_left)
+-- Send the current line to the left terminal pane
+vim.keymap.set("n", "<leader>sl", emu_utils.send_line_left)
+-- Send the visually selected text to the left terminal pane
+vim.keymap.set("v", "<leader>sl", emu_utils.send_selection_left)
+-- Send ('a'gain) the last visually selected area to the left terminal pane
+vim.keymap.set("n", "<leader>sa", emu_utils.send_selection_left)
 
 local tireswing_ok, tireswing = pcall(require, "jc.tireswing")
 if tireswing_ok then
   -- Send current function to the left tmux/wezterm pane
   vim.keymap.set("n", "<leader>sfl", function()
     local function_text = tireswing.get_current_function()
-    tmux_utils.send_left(function_text)
+    emu_utils.send_left(function_text)
   end)
   -- Quote Toggler: toggle between single/double quotes for string under cursor.
   vim.keymap.set("n", "<leader>tq", tireswing.toggle_quotes)
@@ -155,7 +156,7 @@ vim.keymap.set(
   "<leader>rr",
   function()
     -- Doesn't work w/ wezterm
-    tmux_utils.send_keys_left({"C-d","Up","Enter"})
+    emu_utils.send_keys_left({"C-d","Up","Enter"})
   end
 )
 
