@@ -22,6 +22,11 @@ path+=($HOME/.local/bin)
 # My scripts
 path+=($HOME/bin)
 
+if [[ -z $HOME/miniconda3/bin ]]
+then
+  path+=($HOME/miniconda3/bin)
+fi
+
 # fpath is where zsh looks for command completion scripts
 if type brew &>/dev/null; then
   fpath+=($(brew --prefix)/share/zsh/site-functions)
@@ -33,12 +38,6 @@ if [[ -n $SSH_CONNECTION ]]; then
 else
   export EDITOR='nvim'
 fi
-
-# In all my years of Rails development Spring has caused far, far more issues
-# than time it has saved. Disable it, with a vengeance.
-# This is disabled by default in Rails7.. or at least its gem is commented out
-# in the Gemfile enerated by `rails new`
-# export DISABLE_SPRING=1
 
 export FZF_DEFAULT_COMMAND="fd"
 export FZF_DEFAULT_OPTS="--height 30% --border --tiebreak=index --info=inline"

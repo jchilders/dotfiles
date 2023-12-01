@@ -2,7 +2,7 @@
 -- :lua =vim.lsp.get_log_path()
 return {
   "VonHeikemen/lsp-zero.nvim",
-  enabled = true,
+  enabled = false,
   dependencies = {
     -- LSP Support
     "neovim/nvim-lspconfig",

@@ -127,6 +127,7 @@ vim.keymap.set("n", "<leader>rs", scratcher.split_open_scratch_file)
 
 -- Send the current line to the left terminal pane
 vim.keymap.set("n", "<leader>sl", emu_utils.send_line_left)
+vim.keymap.set("n", "<leader>sc", emu_utils.cat)
 -- Send the visually selected text to the left terminal pane
 vim.keymap.set("v", "<leader>sl", emu_utils.send_selection_left)
 -- Send ('a'gain) the last visually selected area to the left terminal pane

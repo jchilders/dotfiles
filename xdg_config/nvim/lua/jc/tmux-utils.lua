@@ -1,7 +1,60 @@
+local uv = vim.loop
+
 local emu = require("jc.wezterm")
 local utils = require("jc.utils")
 
 local M = {}
+
+-- in process
+function M.cat()
+  local stdin = uv.new_pipe()
+  local stdout = uv.new_pipe()
+  local stderr = uv.new_pipe()
+
+  vim.notify("stdin" .. ": " .. vim.inspect(stdin))
+  vim.notify("stdout" .. ": " .. vim.inspect(stdout))
+  vim.notify("stderr" .. ": " .. vim.inspect(stderr))
+
+  -- local cmd = "wezterm cli get-pane-direction left"
+  local cmd = "cat"
+  local handle, pid = uv.spawn(cmd, {
+    stdio = {stdin, stdout, stderr}
+  }, function(code, signal) -- on exit
+    vim.notify("exit code" .. ": " .. vim.inspect(code))
+    vim.notify("exit signal" .. ": " .. vim.inspect(signal))
+  end)
+
+  vim.notify("process opened" .. ": " .. vim.inspect(pid))
+
+  uv.read_start(stdout, function(err, data)
+    assert(not err, err)
+    if data then
+      vim.notify("stdout chunk" .. ": " .. vim.inspect(data))
+    else
+      vim.notify("stdout end" .. ": " .. vim.inspect(stdout))
+    end
+  end)
+
+  uv.read_start(stderr, function(err, data)
+    assert(not err, err)
+    if data then
+      vim.notify("stderr chunk" .. ": " .. vim.inspect(data))
+    else
+      vim.notify("stderr end" .. ": " .. vim.inspect(stderr))
+    end
+  end)
+
+  uv.write(stdin, "Hello World")
+
+  uv.shutdown(stdin, function()
+    vim.notify("stdin shutdown" .. ": " .. vim.inspect(stdin))
+    if handle then
+      uv.close(handle, function()
+        vim.notify("process closed" .. ": " .. vim.inspect(pid))
+      end)
+    end
+  end)
+end
 
 -- Send line under the cursor to the pane to the left, then move cursor to
 -- next line
