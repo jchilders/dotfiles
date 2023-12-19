@@ -5,22 +5,13 @@
 -- C-h/j/k/l - go to first/second/third/fourth harpoon
 return {
   "ThePrimeagen/harpoon",
+  branch = "harpoon2",
   enabled = true,
+  dependencies = {
+    "nvim-lua/plenary.nvim",
+  },
   config = function()
-    require("harpoon").setup({
-      global_settings = {
-	enter_on_sendcmd = true,
-      },
-      projects = {
-	-- Yes $HOME works
-	--[[ ["$HOME/my_project/"] = {
-	  term = {
-	    cmds = {
-	      "rails console"
-	    },
-	  },
-	}, ]]
-      },
+    require("harpoon"):setup({
     })
   end
 }

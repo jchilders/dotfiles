@@ -1,6 +1,6 @@
 local remap = require("utils").map_global
 local scratcher = require("jc.scratcher")
-local emu_utils = require("jc.tmux-utils")
+local emu_utils = require("jc.emu-utils")
 
 TelescopeMapArgs = TelescopeMapArgs or {}
 
@@ -119,18 +119,23 @@ if gitsigns_ok then
                                     end, { desc = "Set quickfix list to unstaged changes" })
 end
 
--- Lua Inspect
-remap("n", "<leader>li", "<cmd>lua print(require('utils.inspect').inspect(loadstring(\"return \" .. vim.fn.getline('.'))()))<CR>")
-
 -- Open Scratch file for this project
 vim.keymap.set("n", "<leader>rs", scratcher.split_open_scratch_file)
 
--- Send the current line to the left terminal pane
+-- Lua Inspect current line
+remap("n", "<leader>li", "<cmd>lua print(require('utils.inspect').inspect(loadstring(\"return \" .. vim.fn.getline('.'))()))<CR>")
+
+-- Send the current line to the pane to the left
 vim.keymap.set("n", "<leader>sl", emu_utils.send_line_left)
-vim.keymap.set("n", "<leader>sc", emu_utils.cat)
+-- Send the current line to the pane to the right
+vim.keymap.set("n", "<leader>sr", emu_utils.send_line_right)
+
 -- Send the visually selected text to the left terminal pane
 vim.keymap.set("v", "<leader>sl", emu_utils.send_selection_left)
+-- Send the visually selected text to the right terminal pane
+vim.keymap.set("v", "<leader>sr", emu_utils.send_selection_right)
 -- Send ('a'gain) the last visually selected area to the left terminal pane
+-- TODO: get this working for all directions
 vim.keymap.set("n", "<leader>sa", emu_utils.send_selection_left)
 
 local tireswing_ok, tireswing = pcall(require, "jc.tireswing")
@@ -162,11 +167,11 @@ vim.keymap.set(
 )
 
 -- Save & run the most recently modified test in the tmux pane to the left
-vim.keymap.set("n", "<leader>rt", "<cmd>wa<CR><cmd>lua require('jc.tmux-utils').run_mru_test()<CR>")
-vim.keymap.set("n", "<leader>rT", "<cmd>wa<CR><cmd>lua require('jc.tmux-utils').run_mru_test_current_line()<CR>")
+vim.keymap.set("n", "<leader>rt", "<cmd>wa<CR><cmd>lua require('jc.emu-utils').run_mru_test()<CR>")
+vim.keymap.set("n", "<leader>rT", "<cmd>wa<CR><cmd>lua require('jc.emu-utils').run_mru_test_current_line()<CR>")
 
 -- Edit the most recently modified test
-remap("n", "<leader>et", "<cmd>wa<CR><cmd>lua require('jc.tmux-utils').edit_mru_test()<CR>")
+remap("n", "<leader>et", "<cmd>wa<CR><cmd>lua require('jc.emu-utils').edit_mru_test()<CR>")
 
 -- Toggle treesitter highlighting
 -- remap("n", "<leader>tstog", "<cmd>TSBufToggle highlight<CR>")
@@ -250,17 +255,19 @@ map_ctrlo_tele("t", "lsp_document_symbols")
 map_ctrlo_tele("T", "lsp_workspace_symbols")
 
 -- harpoon
-local harpoon_ok, _ = pcall(require, 'harpoon')
+local harpoon_ok, harpoon = pcall(require, "harpoon")
 if harpoon_ok then
-  vim.keymap.set("n", "<leader>ha", require('harpoon.mark').add_file)
+  vim.keymap.set("n", "<leader>ha", function() harpoon:list():append() end)
   -- open list of files marked as harpooned
-  vim.keymap.set("n", "<leader>hl", require('harpoon.ui').toggle_quick_menu)
+  vim.keymap.set("n", "<leader>hl", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
   -- ctrl-j opens the first harpooned file, ctrl-k opens the second harpooned file...
-  vim.keymap.set("n", "<C-h>", function() require('harpoon.ui').nav_file(1) end)
-  vim.keymap.set("n", "<C-j>", function() require('harpoon.ui').nav_file(2) end)
-  vim.keymap.set("n", "<C-k>", function() require('harpoon.ui').nav_file(3) end)
-  vim.keymap.set("n", "<C-l>", function() require('harpoon.ui').nav_file(4) end)
-  vim.keymap.set("n", "<C-;>", function() require('harpoon.ui').nav_file(5) end)
+  vim.keymap.set("n", "<C-h>", function() harpoon:list():select(1) end)
+  vim.keymap.set("n", "<C-j>", function() harpoon:list():select(2) end)
+  vim.keymap.set("n", "<C-k>", function() harpoon:list():select(3) end)
+  vim.keymap.set("n", "<C-l>", function() harpoon:list():select(4) end)
+  vim.keymap.set("n", "<C-;>", function() harpoon:list():select(5) end)
+else
+  vim.notify("Problem when loading Harpoon:\n" .. result, vim.log.levels.WARN, { title = "mappings.lua" })
 end
 
 -- terminal

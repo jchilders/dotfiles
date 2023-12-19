@@ -5,64 +5,17 @@ local utils = require("jc.utils")
 
 local M = {}
 
--- in process
-function M.cat()
-  local stdin = uv.new_pipe()
-  local stdout = uv.new_pipe()
-  local stderr = uv.new_pipe()
-
-  vim.notify("stdin" .. ": " .. vim.inspect(stdin))
-  vim.notify("stdout" .. ": " .. vim.inspect(stdout))
-  vim.notify("stderr" .. ": " .. vim.inspect(stderr))
-
-  -- local cmd = "wezterm cli get-pane-direction left"
-  local cmd = "cat"
-  local handle, pid = uv.spawn(cmd, {
-    stdio = {stdin, stdout, stderr}
-  }, function(code, signal) -- on exit
-    vim.notify("exit code" .. ": " .. vim.inspect(code))
-    vim.notify("exit signal" .. ": " .. vim.inspect(signal))
-  end)
-
-  vim.notify("process opened" .. ": " .. vim.inspect(pid))
-
-  uv.read_start(stdout, function(err, data)
-    assert(not err, err)
-    if data then
-      vim.notify("stdout chunk" .. ": " .. vim.inspect(data))
-    else
-      vim.notify("stdout end" .. ": " .. vim.inspect(stdout))
-    end
-  end)
-
-  uv.read_start(stderr, function(err, data)
-    assert(not err, err)
-    if data then
-      vim.notify("stderr chunk" .. ": " .. vim.inspect(data))
-    else
-      vim.notify("stderr end" .. ": " .. vim.inspect(stderr))
-    end
-  end)
-
-  uv.write(stdin, "Hello World")
-
-  uv.shutdown(stdin, function()
-    vim.notify("stdin shutdown" .. ": " .. vim.inspect(stdin))
-    if handle then
-      uv.close(handle, function()
-        vim.notify("process closed" .. ": " .. vim.inspect(pid))
-      end)
-    end
-  end)
-end
-
--- Send line under the cursor to the pane to the left, then move cursor to
--- next line
---
--- TODO: Investigate maybe using nvim_replace_termcodes or something similar
-function M.send_line_left()
+-- Send line under the cursor to the pane in the given direction, then move the
+-- cursor to the next line
+function M.send_line(direction)
   local curr_line = vim.fn.trim(vim.fn.getline("."))
-  emu.send_left(curr_line)
+  if direction == "left" then
+    emu.send_left(curr_line)
+  elseif direction == "right" then
+    emu.send_right(curr_line)
+  else
+    error("Invalid direction. Allowed values are 'left' or 'right'")
+  end
 
   -- move cursor to next line, if there is one
   local row, col = unpack(vim.api.nvim_win_get_cursor(0))
@@ -71,17 +24,42 @@ function M.send_line_left()
   end
 end
 
--- Send currently selected text to the pane to the left
-function M.send_selection_left()
+function M.send_line_left()
+  M.send_line("left")
+end
+
+function M.send_line_right()
+  M.send_line("right")
+end
+
+-- Send the currently visually selected lines to the pane in the given
+-- direction
+function M.send_selection(direction)
   local vis_start, vis_end = M.visual_selection_range()
 
   if vis_start == nil or vis_end == nil then
     return
   end
 
-  -- TODO make this work with blocks instead of just lines
   local content = vim.api.nvim_buf_get_lines(vis_start[1], vis_start[2] - 1, vis_end[2], false)
-  emu.send_left(table.concat(content, "\r"))
+
+  if direction == "left" then
+    emu.send_left(table.concat(content, "\r"))
+  elseif direction == "right" then
+    emu.send_right(table.concat(content, "\r"))
+  else
+    error("Invalid direction. Allowed values are 'left' or 'right'")
+  end
+end
+
+-- Send currently selected text to the pane to the left
+function M.send_selection_left()
+  M.send_selection("left")
+end
+
+-- Send currently selected text to the pane to the right
+function M.send_selection_right()
+  M.send_selection("right")
 end
 
 -- Get the range for the current visual selection, or the previous if nothing is currently selected.

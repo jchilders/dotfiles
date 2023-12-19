@@ -28,7 +28,7 @@ alias tree='eza --tree'
 
 # Abbreviations
 function addAbbreviations() {
-  # Exit if abbreviations already defined. (`-s` is "file exists and has size > 0")
+  # exit if abbreviations have already been already defined
   [[ -s $ABBR_USER_ABBREVIATIONS_FILE ]] && return 1
 
   export ABBR_QUIET=1
@@ -105,32 +105,32 @@ function cwd_is_git_repo() {
 
 # Set the tmux window name to the git root dir, or just the pwd if we aren't in a
 # git repository
-function tmux_window_name() {
-  local new_name
-  $(cwd_is_git_repo)
-  if [[ $? -eq 0 ]]; then
-    new_name=$(git rev-parse --show-toplevel 2>/dev/null | xargs basename)
-  else
-    new_name=$(pwd | xargs basename)
-  fi
-
-  if [[ -n "$TMUX" ]]; then
-    if [[ -n "$new_name" ]]; then
-      tmux rename-window "$new_name"
-    fi
-  fi
-}
-
-chpwd_functions+=(tmux_window_name)
+# function tmux_window_name() {
+#   local new_name
+#   $(cwd_is_git_repo)
+#   if [[ $? -eq 0 ]]; then
+#     new_name=$(git rev-parse --show-toplevel 2>/dev/null | xargs basename)
+#   else
+#     new_name=$(pwd | xargs basename)
+#   fi
+#
+#   if [[ -n "$TMUX" ]]; then
+#     if [[ -n "$new_name" ]]; then
+#       tmux rename-window "$new_name"
+#     fi
+#   fi
+# }
+#
+# chpwd_functions+=(tmux_window_name)
 
 # Determine whether the tmux status bar should be at the top of the display or
 # the bottom. Need to do this because when using a display with a notch (i.e.
 # the M1 MBP) the window list -- which is normally centered in the tmux status
 # bar -- is hidden by the notch.
-function single_display() {
-  local num_displays=$(system_profiler -json SPDisplaysDataType | jq '.SPDisplaysDataType[0].spdisplays_ndrvs' | jq 'length')
-  [[ $num_displays -eq 1 ]]
-}
+# function single_display() {
+#   local num_displays=$(system_profiler -json SPDisplaysDataType | jq '.SPDisplaysDataType[0].spdisplays_ndrvs' | jq 'length')
+#   [[ $num_displays -eq 1 ]]
+# }
 
 # Edit last migration. Let's you quickly do:
 #   > rails g migration add_foo_to_bar

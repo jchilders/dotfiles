@@ -76,77 +76,23 @@ neovim-clean:
 		rm -rf $$HOME/.local/share/nvim
 
 ##@ Languages
-RVM_HOME := $(XDG_DATA_HOME)/rvm
+asdf-plugins: ## Install plugins needed for asdf to install the given languages
+	@if which asdf &> /dev/null ; then \
+		asdf plugin add nodejs; \
+		asdf plugin add python; \
+		asdf plugin add ruby; \
+		asdf plugin add rust; \
+	fi
+
 ruby: ruby-cfg ## Install Ruby
 
-ruby-clean: -rvm-clean ## Uninstall Ruby
+ruby-clean: ## Uninstall Ruby
 
 ruby-cfg: ## Link Ruby configuration files
 	ln -sf $(PWD)/ruby/ruby/.irbrc $$HOME
 
 ruby-cfg-clean: ## Unlink Ruby configuration files
 	rm $$HOME/.irbrc
-
-asdf-plugins:
-	@if which asdf &> /dev/null ; then \
-		asdf plugin add ruby; \
-		asdf plugin add python; \
-		asdf plugin add nodejs; \
-	fi
-
-rvm: rvm-receive-keys ## Install Ruby Version Manager
-	@if ! which rvm &> /dev/null ; then \
-	  echo progress-bar >> ~/.curlrc; \
-	  curl -sSL https://get.rvm.io | bash -s stable --with-gems="bundler neovim ripper-tags solargraph gemsmith" --ignore-dotfiles --path $(RVM_HOME); \
-	  rm ~/.curlrc; \
-	else \
-	  print 'RVM already installed. Doing nothing'; \
-	fi
-
-rvm-clean: -rvm-delete-keys ## Uninstall Ruby Version Manager
-	[ -f $$HOME/.rvmrc ] && rm $$HOME/.rvmrc
-	@if which rvm &> /dev/null ; then \
-	  rvm implode --force; \
-	fi
-
-# This is needed intall RVM: since RVM signs their releases we 
-# need to import their public keys in order to verify the signature.
-rvm-receive-keys:
-	@if ! gpg --list-keys 409B6B1796C275462A1703113804BB82D39DC0E3 &> /dev/null; then \
-		gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 ; \
-	fi
-	@if ! gpg --list-keys 7D2BAF1CF37B13E2069D6956105BD0E739499BDB &> /dev/null; then \
-		gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys 7D2BAF1CF37B13E2069D6956105BD0E739499BDB; \
-	fi
-
-rvm-delete-keys:
-	gpg --batch --delete-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
-
-python: -python-packages ## Install Python
-
-# The pynvim package is needed by the vim-ultest plugin
-python-packages: ## Install Python packages
-	-python3 -m pip install --user --upgrade pynvim
-	-python3 -m pip install --user --upgrade black # py code formatter
-
-##@ tmux
-
-tmux_plugins_dir := $(XDG_DATA_HOME)/tmux/tpm
-
-tmux: tmux-plugins ## Link tmux configuration files & install plugins
-
-tmux-clean: tmux-plugins-clean ## Unlink tmux configuration files & uninstall plugins
-
-tmux-plugins: ## Install tmux plugin manager and plugins
-	if [ ! -d $(tmux_plugins_dir) ] ; then \
-	  git clone https://github.com/tmux-plugins/tpm $(tmux_plugins_dir); \
-	fi
-	tmux start-server \; source-file $$XDG_CONFIG_HOME/tmux/tmux.conf 
-
-	$(tmux_plugins_dir)/bin/install_plugins
-
-tmux-plugins-clean: ## Uninstall tmux plugins
-	-rm -rf $(tmux_plugins_dir)
 
 ##@ zsh
 zsh: zsh-cfg ## Install zsh-related items

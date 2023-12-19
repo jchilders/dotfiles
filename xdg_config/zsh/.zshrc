@@ -68,10 +68,6 @@ if type direnv &>/dev/null; then
   eval "$(direnv hook zsh)"
 fi
 
-if type rustup &>/dev/null; then
-  . "$HOME/.cargo/env"
-fi
-
 # store shell history in sqlite
 if type atuin &>/dev/null; then
   eval "$(atuin init zsh)"

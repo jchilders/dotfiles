@@ -39,6 +39,9 @@ else
   export EDITOR='nvim'
 fi
 
+# Speed up new shells
+ABBR_AUTOLOAD=0
+
 export FZF_DEFAULT_COMMAND="fd"
 export FZF_DEFAULT_OPTS="--height 30% --border --tiebreak=index --info=inline"
 
