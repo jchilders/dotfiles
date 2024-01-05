@@ -11,6 +11,7 @@ node_modules/
 nvim/.netrwhist
 xdg_config/AWSVPNClient
 xdg_config/gcloud
+xdg_config/github-copilot/
 xdg_config/gh/hosts.yml
 xdg_config/lazygit/state.yml
 xdg_config/zsh/.zcompdump

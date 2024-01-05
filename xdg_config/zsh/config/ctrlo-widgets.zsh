@@ -1,12 +1,21 @@
 # Custom zsh widgets
 
 function __find_file {
-  IFS=$'\n' export found_file=("$(eval $1 | fzf --ansi --multi --preview='bat -f {-1}')")
+  IFS=$'\n' export found_file=("$(eval $1 | fzf --ansi --multi --preview='
+  if file --mime-type -b {} | grep -qF image/; then
+    chafa --size=555x${FZF_PREVIEW_LINES} {}
+  else
+    bat --color always --style numbers --line-range :200 {}
+  fi')")
 }
 
 function __eval_found_file {
   if [ -n "$found_file" ]; then
-    local cmd="$1 '$found_file'"
+    if file --mime-type -b "$found_file" | grep -qF image/; then
+      local cmd="chafa '$found_file'"
+    else
+      local cmd="$1 '$found_file'"
+    fi
     print -s $cmd  # Add to history
     eval "$cmd"
   fi

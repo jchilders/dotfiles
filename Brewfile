@@ -2,7 +2,7 @@ brew 'asdf' # Version manager for Ruby, Node, etc.
 brew 'atuin' # store shell history in SQLite
 brew 'automake'
 brew 'bat' # cat replacement
-brew 'chafa' # ANSI art renderer
+brew 'chafa' # ANSI art renderer & terminal graphics viewer
 brew 'choose-rust' # sed replacement. e.g.: `bat things.csv | choose 5`
 brew 'cmake'
 brew 'coreutils' # gnu coreutils

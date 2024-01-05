@@ -9,9 +9,9 @@ XDG_DATA_HOME := $(HOME)/.local/share
 cwd := $(shell pwd)
 
 ##@ Install
-install: macos cfg zsh homebrew homebrew-bundle -fonts ruby tmux ## Install all the things
+install: macos cfg zsh homebrew homebrew-bundle -fonts bat ## Install all the things
 
-clean: ruby-clean cfg-clean tmux-clean neovim-clean zsh-clean homebrew-clean ## Uninstall all the things
+clean: ruby-clean cfg-clean neovim-clean zsh-clean homebrew-clean ## Uninstall all the things
 
 cfg: xdg-setup ## Link configuration files
 	ln -s $(cwd)/xdg_config $$HOME/.config
@@ -117,6 +117,12 @@ endif
 	./macos
 	killall Dock
 endif
+
+bat: ## Get TokyoNight theme for bat
+	mkdir -p "$$(bat --config-dir)/themes"
+	# Replace _night in the lines below with _day, _moon, or _storm if needed.
+	curl -H "Accept: application/xml" -O https://raw.githubusercontent.com/folke/tokyonight.nvim/main/extras/sublime/tokyonight_night.tmTheme --output-dir "$$(bat --config-dir)/themes"
+	bat cache --build
 
 fonts: ## Install fonts
 	## Font used with toilet banner generator
