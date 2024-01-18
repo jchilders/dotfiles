@@ -41,7 +41,6 @@ function addAbbreviations() {
 
   # Ruby and Rails helpers
   abbr add rc='rails console'
-  abbr add rs='rails server' > /dev/null 2>&1
   abbr add rdbm='rails db:migrate'
   abbr add rdbms='rails db:migrate:status'
   abbr add rdbmt='rails db:migrate RAILS_ENV=test'
@@ -100,6 +99,22 @@ function cwd_is_git_repo() {
     return 0
   else
     return 1
+  fi
+}
+
+# Start Rails with foreman if Procfile.dev exists, otherwise just use rails
+function rs {
+  local port=${1:-3000}
+  local pid=$(lsof -i tcp:$port -t)
+  if [[ -n $pid ]]; then
+    echo "Port $port is already in use by process $pid"
+    return 1
+  fi
+
+  if [[ -e Procfile.dev ]]; then
+    foreman start -f Procfile.dev
+  else
+    rails server -p $port
   fi
 }
 
