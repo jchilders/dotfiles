@@ -23,15 +23,15 @@ end
 
 function M.send_text(text, direction)
   direction = direction or "left"
-  local success, result = pcall(M.get_pane_id, direction)
+  local success, pane_id = pcall(M.get_pane_id, direction)
 
   if not success then
-    vim.notify(result, vim.log.levels.ERROR, { title = "Send Text (" .. direction .. ")" })
+    vim.notify("No " .. direction .. " pane", vim.log.levels.ERROR, { title = "Send Text" })
     return
   end
 
   local esc_text = vim.fn.escape(text, '\\"$`	')
-  local cmd = "wezterm cli send-text --pane-id " .. result .. " --no-paste -- \"" .. esc_text .. "\n\""
+  local cmd = "wezterm cli send-text --pane-id " .. pane_id .. " --no-paste -- \"" .. esc_text .. "\n\""
   local result = vim.fn.system(cmd)
 
   if vim.v.shell_error ~= 0 then
@@ -45,6 +45,14 @@ end
 
 function M.send_right(text)
   M.send_text(text, "right")
+end
+
+function M.send_up(text)
+  M.send_text(text, "up")
+end
+
+function M.send_down(text)
+  M.send_text(text, "down")
 end
 
 return M

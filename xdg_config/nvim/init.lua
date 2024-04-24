@@ -28,7 +28,6 @@ require("lazy").setup(  { import = "plugins" }, {
   },
 })
 
--- use pcall in case colorscheme hasn't been installed yet
 pcall(vim.cmd.colorscheme, "tokyonight")
 
 require "core/mappings"

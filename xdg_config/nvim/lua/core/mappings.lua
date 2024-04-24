@@ -126,17 +126,25 @@ vim.keymap.set("n", "<leader>rs", scratcher.split_open_scratch_file)
 remap("n", "<leader>li", "<cmd>lua print(require('utils.inspect').inspect(loadstring(\"return \" .. vim.fn.getline('.'))()))<CR>")
 
 -- Send the current line to the pane to the left
-vim.keymap.set("n", "<leader>sl", emu_utils.send_line_left)
+vim.keymap.set("n", "<leader>sh", emu_utils.send_line_left)
 -- Send the current line to the pane to the right
-vim.keymap.set("n", "<leader>sr", emu_utils.send_line_right)
+vim.keymap.set("n", "<leader>sl", emu_utils.send_line_right)
+-- Send the current line to the pane above the current pane
+vim.keymap.set("n", "<leader>sk", emu_utils.send_line_up)
+-- Send the current line to the pane below the current pane
+vim.keymap.set("n", "<leader>sj", emu_utils.send_line_down)
 
 -- Send the visually selected text to the left terminal pane
-vim.keymap.set("v", "<leader>sl", emu_utils.send_selection_left)
+vim.keymap.set("v", "<leader>sh", emu_utils.send_selection_left)
 -- Send the visually selected text to the right terminal pane
-vim.keymap.set("v", "<leader>sr", emu_utils.send_selection_right)
+vim.keymap.set("v", "<leader>sl", emu_utils.send_selection_right)
+-- Send the visually selected text to the pane above the current pane
+vim.keymap.set("v", "<leader>sk", emu_utils.send_selection_up)
+-- Send the visually selected text to the pane below the current pane
+vim.keymap.set("v", "<leader>sj", emu_utils.send_selection_down)
 -- Send ('a'gain) the last visually selected area to the left terminal pane
 -- TODO: get this working for all directions
-vim.keymap.set("n", "<leader>sa", emu_utils.send_selection_left)
+-- vim.keymap.set("n", "<leader>sa", emu_utils.send_selection_left)
 
 local tireswing_ok, tireswing = pcall(require, "jc.tireswing")
 if tireswing_ok then
@@ -204,7 +212,7 @@ if telescope_builtin_ok then
   end, { desc = '[/] Fuzzily search in current buffer]' })
 
   vim.keymap.set("n", "<C-o>h", telescope_builtin.command_history, { desc = "Command [h]istory" })
-  vim.keymap.set('n', '<leader>sh', telescope_builtin.help_tags, { desc = '[S]earch [H]elp' })
+  vim.keymap.set('n', '<leader>tsh', telescope_builtin.help_tags, { desc = '[S]earch [H]elp' })
   vim.keymap.set('n', '<leader>sd', telescope_builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
 end
 

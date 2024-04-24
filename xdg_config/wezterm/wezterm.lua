@@ -16,14 +16,15 @@ config.colors = {
 
 config.show_new_tab_button_in_tab_bar = false
 
-wezterm.on("format-tab-title", function(tab, _, _, _, _, _)
+wezterm.on("format-tab-title", function(tab, _tabs, _panes, _config, _hover, _max_width)
   -- Return the explicitly set title, if one has been set
   if tab.tab_title and #tab.tab_title > 0 then
     return tab.tab_title
   end
 
-  local cwd_uri = tab.active_pane.current_working_dir
-  local basename = string.gsub(cwd_uri, '(.*[/\\])(.*)', '%2')
+  local cwd_url = tab.active_pane.current_working_dir
+  cwd_url = cwd_url.path or ""
+  local basename = string.gsub(cwd_url, '(.*[/\\])(.*)', '%2')
   local zoomed = tab.active_pane.is_zoomed and "*" or ""
   local tab_title = basename .. zoomed
 
@@ -52,14 +53,14 @@ config.inactive_pane_hsb = {
 }
 
 -- Mappings
-config.leader = { key = 'a', mods = 'CTRL', timeout_milliseconds = 1000 }
+config.leader = { key = 'a', mods = 'CTRL', timeout_milliseconds = 1500 }
 config.keys = {
   { key = "z", mods = "LEADER",    action = act.TogglePaneZoomState },
-  { key = "F", mods = "CMD",  action = "ToggleFullScreen" },
-  { key = "H", mods = "CMD", action = act.ActivatePaneDirection("Left"), },
-  { key = "L", mods = "CMD", action = act.ActivatePaneDirection("Right"), },
-  { key = "K", mods = "CMD", action = act.ActivatePaneDirection("Up"), },
-  { key = "J", mods = "CMD", action = act.ActivatePaneDirection("Down"), },
+  { key = "F", mods = "SHIFT|CMD",  action = "ToggleFullScreen" },
+  { key = "H", mods = "SHIFT|CMD", action = act.ActivatePaneDirection("Left"), },
+  { key = "L", mods = "SHIFT|CMD", action = act.ActivatePaneDirection("Right"), },
+  { key = "K", mods = "SHIFT|CMD", action = act.ActivatePaneDirection("Up"), },
+  { key = "J", mods = "SHIFT|CMD", action = act.ActivatePaneDirection("Down"), },
   {
     key = "r",
     mods = "LEADER",
@@ -72,17 +73,18 @@ config.keys = {
       end),
     },
   },
-  { key = "N", mods = "CMD", action = act.RotatePanes "Clockwise", },
-  { key = "O", mods = "CMD", action = "ShowTabNavigator" },
-  { key = "P", mods = "CMD", action = act.RotatePanes "CounterClockwise", },
-  { key = "%", mods = "LEADER",    action = act.SplitHorizontal, },
-  { key = "+", mods = "CMD", action = act.IncreaseFontSize, },
-  { key = "-", mods = "LEADER",    action = act.SplitVertical, },
-  { key = "[", mods = "LEADER",    action = act.ActivateCopyMode, },
+  { key = "N", mods = "SHIFT|CMD", action = act.RotatePanes "Clockwise", },
+  { key = "O", mods = "SHIFT|CMD", action = "ShowTabNavigator" },
+  { key = "P", mods = "SHIFT|CMD", action = act.RotatePanes "CounterClockwise", },
+  { key = "%", mods = "LEADER", action = act.SplitHorizontal, },
+  { key = "-", mods = "LEADER", action = act.SplitVertical, },
+  { key = "+", mods = "SHIFT|CMD", action = act.IncreaseFontSize, },
+  { key = "-", mods = "SHIFT|CMD", action = act.DecreaseFontSize, },
+  { key = "[", mods = "LEADER", action = act.ActivateCopyMode, },
+  -- SHIFT-CMD-C :: opens wezterm debug overlay. used to test cfg changes
+  { key = 'C', mods = 'SHIFT|CMD', action = wezterm.action.ShowDebugOverlay },
 }
 
--- CTRL-SHIFT-L :: opens wezterm debug overlay. can type lua cmds here
---
 -- get info on panes for current tab
 -- https://wezfurlong.org/wezterm/config/lua/MuxTab/panes_with_info.html
 --
@@ -91,22 +93,16 @@ config.keys = {
 
 -- wezterm.gui.screens() -- get list of screens
 
-local function current_branch(pane)
-  local cwd_uri = pane:get_current_working_dir()
-  if cwd_uri == nil then
-    return " ⊘"
+local function current_branch(_)
+  local handle = io.popen('git rev-parse --abbrev-ref HEAD')
+  if handle == nil then
+    return "nill❓"
   end
-  local cwd = cwd_uri.gsub(cwd_uri, '^file://(.*)', '%1')
-  local success, stdout, _ = wezterm.run_child_process({
-    'git',
-    '-C',
-    cwd,
-    'branch',
-    '--show-current'
-  })
-  local git_branch = success and string.format(" %s", string.gsub(stdout, "^(.+)\n$", "%1")) or " ❓"
 
-  return git_branch
+  local result = handle:read("*a")
+  handle:close()
+
+  return string.gsub(result, "^%s*(.-)%s*$", "%1")
 end
 
 local SOLID_LEFT_ARROW = utf8.char(0xe0b2)

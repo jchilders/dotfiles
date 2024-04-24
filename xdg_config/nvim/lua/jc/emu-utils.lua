@@ -8,13 +8,17 @@ local M = {}
 -- Send line under the cursor to the pane in the given direction, then move the
 -- cursor to the next line
 function M.send_line(direction)
-  local curr_line = vim.fn.trim(vim.fn.getline("."))
+  local curr_line = vim.fn.getline(".")
   if direction == "left" then
     emu.send_left(curr_line)
   elseif direction == "right" then
     emu.send_right(curr_line)
+  elseif direction == "up" then
+    emu.send_up(curr_line)
+  elseif direction == "down" then
+    emu.send_down(curr_line)
   else
-    error("Invalid direction. Allowed values are 'left' or 'right'")
+    error("Invalid direction. Allowed values are 'left', 'right', 'up', or 'down'")
   end
 
   -- move cursor to next line, if there is one
@@ -30,6 +34,14 @@ end
 
 function M.send_line_right()
   M.send_line("right")
+end
+
+function M.send_line_up()
+  M.send_line("up")
+end
+
+function M.send_line_down()
+  M.send_line("down")
 end
 
 -- Send the currently visually selected lines to the pane in the given
@@ -60,6 +72,16 @@ end
 -- Send currently selected text to the pane to the right
 function M.send_selection_right()
   M.send_selection("right")
+end
+
+-- Send currently selected text to the pane above the current pane
+function M.send_selection_up()
+  M.send_selection("up")
+end
+
+-- Send currently selected text to the pane below the current pane
+function M.send_selection_down()
+  M.send_selection("down")
 end
 
 -- Get the range for the current visual selection, or the previous if nothing is currently selected.

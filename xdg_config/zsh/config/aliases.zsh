@@ -38,6 +38,7 @@ function addAbbreviations() {
   abbr add dcom='docker-compose'
   abbr add gd='git diff'
   abbr add gst='git status -sb'
+  abbr add imgcat='wezterm imgcat'
 
   # Ruby and Rails helpers
   abbr add rc='rails console'
