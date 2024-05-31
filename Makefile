@@ -84,9 +84,14 @@ asdf-plugins: ## Install plugins needed for asdf to install the given languages
 		asdf plugin add rust; \
 	fi
 
-ruby: ruby-cfg ## Install Ruby
+ruby: asdf-plugins ruby-cfg ## Install Ruby
+	@if which asdf &> /dev/null ; then \
+		asdf install ruby latest; \
+	fi
+
 
 ruby-clean: ## Uninstall Ruby
+	asdf uninstall ruby latest; \
 
 ruby-cfg: ## Link Ruby configuration files
 	ln -sf $(PWD)/ruby/ruby/.irbrc $$HOME
@@ -127,8 +132,7 @@ bat: ## Get TokyoNight theme for bat
 fonts: ## Install fonts
 	## Font used with toilet banner generator
 	cp cosmic.flf $$HOMEBREW_CELLAR/toilet/0.3/share/figlet
-	brew tap homebrew/cask-fonts
-	brew search '/font-.*-nerd-font/' | awk '{ print $1 }' | xargs brew install --cask
+	brew install font-blex-mono-nerd-font
 
 ssh-cfg: ## Install ssh related files
 	@[ -d $$HOME/.ssh ] || mkdir $$HOME/.ssh

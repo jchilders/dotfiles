@@ -3,8 +3,8 @@ local act = wezterm.action
 
 local config = {}
 
-local default_font_family = "Monofur Nerd Font"
-local default_font_size = 20.0
+local default_font_family = "BlexMono Nerd Font"
+local default_font_size = 18.0
 local tab_text_color = '#f0f0f0'
 
 config.font = wezterm.font(default_font_family)

@@ -12,5 +12,7 @@ if [ -d $(brew --prefix asdf) ]; then
   export ASDF_GEM_DEFAULT_PACKAGES_FILE=$XDG_CONFIG_HOME/asdf/.default-gems
   . $(brew --prefix asdf)/libexec/asdf.sh
 
-  [ $(asdf list rust) ] && source "$(asdf where rust)/env"
+  if type rust &>/dev/null; then
+    [ $(asdf list rust) ] && source "$(asdf where rust)/env"
+  fi
 fi

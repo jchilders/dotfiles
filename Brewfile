@@ -28,6 +28,8 @@ brew 'lua'
 brew 'luarocks' # lua package manager
 brew 'mas' # CLI for Mac App Store
 brew 'neovim'
+brew 'node' # node.js
+brew 'npm' # node package manager
 brew 'nvm'
 brew 'make' # gnu make
 brew 'memcached'
