@@ -41,7 +41,8 @@ function addAbbreviations() {
   abbr add imgcat='wezterm imgcat'
 
   # Ruby and Rails helpers
-  abbr add rc='rails console'
+  # abbr add rc='rails console'
+  abbr add rc='docker exec -it $(docker ps --filter "ancestor=dentaltrac10-rails-web" --filter "status=running" --format "{{.ID}}") bundle exec rails console'
   abbr add rdbm='rails db:migrate'
   abbr add rdbms='rails db:migrate:status'
   abbr add rdbmt='rails db:migrate RAILS_ENV=test'

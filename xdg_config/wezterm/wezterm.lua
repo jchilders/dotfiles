@@ -7,13 +7,13 @@ local default_font_family = "BlexMono Nerd Font"
 local default_font_size = 18.0
 local tab_text_color = '#f0f0f0'
 
-config.font = wezterm.font(default_font_family)
-config.font_size = default_font_size
 config.colors = {
   background = "black",
   compose_cursor = "orange",
 }
-
+config.font = wezterm.font(default_font_family)
+config.font_size = default_font_size
+config.scrollback_lines = 3500
 config.show_new_tab_button_in_tab_bar = false
 
 wezterm.on("format-tab-title", function(tab, _tabs, _panes, _config, _hover, _max_width)

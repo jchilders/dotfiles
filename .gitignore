@@ -14,5 +14,6 @@ xdg_config/gcloud
 xdg_config/github-copilot/
 xdg_config/gh/hosts.yml
 xdg_config/lazygit/state.yml
+xdg_config/op
 xdg_config/zsh/.zcompdump
 xdg_config/zsh-abbr/

@@ -265,7 +265,7 @@ map_ctrlo_tele("T", "lsp_workspace_symbols")
 -- harpoon
 local harpoon_ok, harpoon = pcall(require, "harpoon")
 if harpoon_ok then
-  vim.keymap.set("n", "<leader>ha", function() harpoon:list():append() end)
+  vim.keymap.set("n", "<leader>ha", function() harpoon:list():add() end)
   -- open list of files marked as harpooned
   vim.keymap.set("n", "<leader>hl", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
   -- ctrl-j opens the first harpooned file, ctrl-k opens the second harpooned file...

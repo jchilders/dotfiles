@@ -17,6 +17,11 @@ vim.api.nvim_create_autocmd({ "BufEnter", "BufRead" }, {
   command = "set filetype=bash",
 })
 
+vim.api.nvim_create_autocmd({ "BufEnter", "BufRead" }, {
+  pattern = { "*.dt", "Dockerfile*" },
+  command = "set filetype=dockerfile",
+})
+
 -- local rails_server_started = function()
 --   local project_root = git_utils.git_root()
 --   local pid_file = project_root .. "/tmp/pids/server.pid"
