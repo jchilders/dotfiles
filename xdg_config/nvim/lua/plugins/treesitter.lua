@@ -11,7 +11,7 @@ return {
   },
   config = function()
     require("nvim-treesitter.configs").setup({
-      ensure_installed = { "bash", "git_rebase", "json", "lua", "ruby", "rust", "sql", "typescript", "vim" },
+      ensure_installed = { "bash", "git_rebase", "json", "lua", "luadoc", "markdown", "ruby", "rust", "sql", "typescript", "vim", "vimdoc" },
       indent = { enable = false },
       incremental_selection = {
         enable = true,

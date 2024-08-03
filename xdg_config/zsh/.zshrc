@@ -57,60 +57,10 @@ if type starship &>/dev/null; then
   eval "$(starship init zsh)"
 fi
 
-# direnv allows for directory-specific environment variables. To use, add
-# .envrc file to the directory to enable loading of project specific envars.
-# Then:
-# 
-# > direnv allow .
-#
-# to allow the new .envrc file to be loaded for that directory
-if type direnv &>/dev/null; then
-  eval "$(direnv hook zsh)"
-fi
-
 # fzf fuzzy finder shell integration <ctrl-r> <ctrl-t> <opt-c>
 if type fzf &>/dev/null; then
   eval "$(fzf --zsh)"
 fi
-
-atuin-setup() {
-  if ! type atuin &>/dev/null; then return 1; fi
-  bindkey '^E' _atuin_search_widget
-
-  export ATUIN_NOBIND="true"
-  eval "$(atuin init zsh)"
-  fzf-atuin-history-widget() {
-    local selected num
-    setopt localoptions noglobsubst noposixbuiltins pipefail no_aliases 2>/dev/null
-
-    # local atuin_opts="--cmd-only --limit ${ATUIN_LIMIT:-5000}"
-    local atuin_opts="--cmd-only --cwd ."
-    local fzf_opts=(
-      --height=${FZF_TMUX_HEIGHT:-80%}
-      --tac
-      "-n2..,.."
-      --tiebreak=index
-      "--query=${LBUFFER}"
-      "+m"
-      "--bind=ctrl-d:reload(atuin search $atuin_opts -c $PWD),ctrl-r:reload(atuin search $atuin_opts)"
-    )
-
-    selected=$(
-      eval "atuin search ${atuin_opts}" |
-        fzf "${fzf_opts[@]}"
-    )
-    local ret=$?
-    if [ -n "$selected" ]; then
-      # the += lets it insert at current pos instead of replacing
-      LBUFFER+="${selected}"
-    fi
-    zle reset-prompt
-    return $ret
-  }
-  zle -N fzf-atuin-history-widget
-  bindkey '^R' fzf-atuin-history-widget
-}
-atuin-setup
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
@@ -127,3 +77,4 @@ atuin-setup
 # unset __conda_setup
 # <<< conda initialize <<<
 
+source "${XDG_CONFIG_HOME:-$HOME/.config}/asdf-direnv/zshrc"

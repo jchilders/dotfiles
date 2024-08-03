@@ -7,7 +7,6 @@ brew 'choose-rust' # sed replacement. e.g.: `bat things.csv | choose 5`
 brew 'cmake'
 brew 'coreutils' # gnu coreutils
 brew 'datasette' # simple web interface to SQLite databases
-brew 'direnv' # directory-specific env vars
 brew 'dua-cli' # display disk usage, & delete unwanted data
 brew 'eza' # git-aware ls replacement
 brew 'fd' # file finder

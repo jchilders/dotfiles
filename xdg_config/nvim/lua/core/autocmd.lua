@@ -13,6 +13,11 @@ vim.api.nvim_create_autocmd({ "BufEnter", "BufRead" }, {
 })
 
 vim.api.nvim_create_autocmd({ "BufEnter", "BufRead" }, {
+  pattern = { "Gemfile.lock" },
+  command = "set filetype=yaml", -- not really but kinda
+})
+
+vim.api.nvim_create_autocmd({ "BufEnter", "BufRead" }, {
   pattern = { "*.zsh" },
   command = "set filetype=bash",
 })

@@ -14,7 +14,7 @@ return {
         -- TODO get navic to only show class & method
         -- https://github.com/SmiteshP/nvim-navic
         lualine_c = { 'navic' },
-        lualine_x = { },
+        lualine_x = { 'encoding', 'filetype' },
         lualine_y = { 'diagnostics' },
         lualine_z = { { 'mode', fmt = function(str) return str:sub(1,1) end }, },
       },
