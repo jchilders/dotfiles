@@ -33,8 +33,7 @@ opt.number = true
 opt.relativenumber = true
 opt.scrolloff = 3
 opt.showmode = false -- let status bar handle it
--- sessionoptions for mksession command
-opt.sessionoptions = "blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal"
+opt.sessionoptions="blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions"
 opt.showtabline = 1 -- 0: Never, 1: Only if there are 2 or more, 2: Always
 opt.shiftwidth = 2
 opt.sidescroll = 5

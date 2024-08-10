@@ -136,7 +136,13 @@ function M.run_mru_test(linenr)
   if ext == "rb" then -- Ruby!
     local is_spec = string.find(test_file, "_spec")
     if is_spec then
-      test_cmd = "bin/rspec"
+      -- check if the rspec command exists in the bin directory
+      local has_rspec = vim.fn.filereadable("bin/rspec")
+      if has_rspec == 1 then
+        test_cmd = "bin/rspec"
+      else
+        test_cmd = "rspec"
+      end
     else
       test_cmd = "bin/rails test"
     end
