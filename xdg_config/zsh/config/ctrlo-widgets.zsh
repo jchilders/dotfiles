@@ -1,5 +1,9 @@
 # Custom zsh widgets
 
+# Use fzf to find a file and open it in the editor. This function has the (necessary) side effect of setting the `found_file` variable, which is needed by other functions.
+# It expects the first (and only) argument to be a command that will output a list of files. The command is evaluated and piped into fzf.
+# Example usage:
+#  __find_file "fd --type=file"
 function __find_file {
   IFS=$'\n' export found_file=("$(eval $1 | fzf --ansi --multi --preview='
   if file --mime-type -b {} | grep -qF image/; then

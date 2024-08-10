@@ -3,4 +3,4 @@
 
 require_relative 'status_lines'
 
-puts StatusLines.new.sort.each(&:to_s)
+puts StatusLines.new.sort.map(&:path)

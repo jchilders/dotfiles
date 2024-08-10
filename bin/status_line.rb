@@ -14,6 +14,7 @@
 class StatusLine
   include Comparable
 
+  # the git docs refer the "short-format status" field as `xy`. It indicates the status of the file in the index and the working tree.
   attr_reader :type, :xy
 
   def initialize(str)

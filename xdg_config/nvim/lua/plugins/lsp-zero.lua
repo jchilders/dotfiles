@@ -1,3 +1,4 @@
+-- https://github.com/VonHeikemen/lsp-zero.nvim
 -- LSP logs are usually in ~.local/state/nvim/lsp.log
 -- :lua =vim.lsp.get_log_path()
 return {
