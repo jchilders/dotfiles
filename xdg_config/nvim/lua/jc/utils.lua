@@ -37,10 +37,14 @@ function M.toggle_gutter()
     vim.wo.relativenumber = false
     vim.wo.number = false
     vim.wo.signcolumn = "no"
+    -- Disable indent-blankline: virutal text showing indent guides
+    require("ibl").update { enabled = false }
   else
     vim.wo.relativenumber = true
     vim.wo.number = true
     vim.wo.signcolumn = "yes"
+    -- Enable indent-blankline: virutal text showing indent guides
+    require("ibl").update { enabled = true }
   end
 end
 
