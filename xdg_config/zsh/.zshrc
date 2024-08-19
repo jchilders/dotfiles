@@ -62,6 +62,9 @@ if type fzf &>/dev/null; then
   eval "$(fzf --zsh)"
 fi
 
+if [ -d "${XDG_CONFIG_HOME:-$HOME/.config}/asdf-direnv" ]; then
+  source "${XDG_CONFIG_HOME:-$HOME/.config}/asdf-direnv/zshrc"
+fi
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
 # __conda_setup="$('/Users/jchilders/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
@@ -77,4 +80,3 @@ fi
 # unset __conda_setup
 # <<< conda initialize <<<
 
-source "${XDG_CONFIG_HOME:-$HOME/.config}/asdf-direnv/zshrc"
