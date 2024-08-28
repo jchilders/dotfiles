@@ -1,10 +1,8 @@
-local git_utils = require("jc.git_utils")
-
 -- When opening a file, restore cursor position (`g'"`) to where it was when
 -- that file was last edited
 vim.api.nvim_create_autocmd({ "BufReadPost" }, {
-   pattern = { "*" },
-   command = [[if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif]]
+  pattern = { "*" },
+  command = [[if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif]]
 })
 
 vim.api.nvim_create_autocmd({ "BufEnter", "BufRead" }, {
@@ -27,28 +25,48 @@ vim.api.nvim_create_autocmd({ "BufEnter", "BufRead" }, {
   command = "set filetype=dockerfile",
 })
 
--- local rails_server_started = function()
---   local project_root = git_utils.git_root()
---   local pid_file = project_root .. "/tmp/pids/server.pid"
---   local f=io.open(pid_file,"r")
---   if f~=nil then io.close(f) return true else return false end
--- end
---
--- local restart_rails = function()
---   if rails_server_started() ~= true then
---     return
---   end
---
---   vim.notify("Restarting Rails server")
---   local project_root = git_utils.git_root()
---   local restart_file = project_root .. "/tmp/restart.txt"
---   io.popen("touch " .. restart_file)
--- end
---
--- vim.api.nvim_create_autocmd({ "BufWritePost" }, {
---   pattern = {
---     "app/*.rb",
---     "config/*.rb"
---   },
---   callback = restart_rails,
--- })
+-- Insert binding.pry or binding.p above or below the current line, depending on the direction
+-- direction is 'above' or 'below'
+local function insert_binding(direction)
+  -- Check if the current buffer is a Ruby file
+  if vim.bo.filetype ~= 'ruby' then
+    print("This function only works in Ruby files.")
+    return
+  end
+
+  -- Determine the text to insert based on Gemfile content
+  local insert_text = 'binding.b'
+
+  -- Get the git root directory
+  local git_root = vim.fn.system('git rev-parse --show-toplevel'):gsub('\n', '')
+
+  -- Check if Gemfile exists in the git root
+  local gemfile_path = git_root .. '/Gemfile'
+  if vim.fn.filereadable(gemfile_path) == 1 then
+    -- Read the Gemfile content
+    local gemfile_content = vim.fn.readfile(gemfile_path)
+
+    -- Check if 'gem pry' line exists
+    for _, line in ipairs(gemfile_content) do
+      if line:match("gem%s+['\"]pry['\"]") then
+        insert_text = 'binding.pry'
+        break
+      end
+    end
+  end
+
+  local insert_cmd = direction == 'above' and 'O' or 'o'
+
+  vim.cmd('normal! ' .. insert_cmd .. insert_text)
+end
+
+-- Map the functions to key combinations, only in Ruby files
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "ruby",
+  callback = function()
+    -- Insert below with <leader>db
+    vim.api.nvim_buf_set_keymap(0, 'n', '<leader>db', '', {noremap = true, callback = function() insert_binding('below') end })
+    -- Insert above with <leader>dB
+    vim.api.nvim_buf_set_keymap(0, 'n', '<leader>dB', '', {noremap = true, callback = function() insert_binding('above') end })
+  end
+})

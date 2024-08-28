@@ -1,5 +1,6 @@
 vim.api.nvim_create_augroup("shebang_filetype", { clear = true })
 
+-- Set `filetype` based on shebang `#!`
 vim.api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {
   group = "shebang_filetype",
   pattern = "*",
@@ -20,3 +21,4 @@ vim.api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {
     end
   end,
 })
+

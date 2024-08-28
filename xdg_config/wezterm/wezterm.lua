@@ -81,7 +81,8 @@ config.keys = {
   { key = "+", mods = "SHIFT|CMD", action = act.IncreaseFontSize, },
   { key = "-", mods = "SHIFT|CMD", action = act.DecreaseFontSize, },
   { key = "[", mods = "LEADER", action = act.ActivateCopyMode, },
-  -- SHIFT-CMD-C :: opens wezterm debug overlay. used to test cfg changes
+
+  -- SHIFT-CMD-C :: opens Wezterm's debug overlay; used to debug config changes
   { key = 'C', mods = 'SHIFT|CMD', action = wezterm.action.ShowDebugOverlay },
 }
 

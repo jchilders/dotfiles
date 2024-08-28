@@ -28,7 +28,7 @@ then
 fi
 
 # fpath is where zsh looks for command completion scripts
-if type brew &>/dev/null; then
+if command -v brew &>/dev/null; then
   fpath+=($(brew --prefix)/share/zsh/site-functions)
 fi
 
@@ -44,9 +44,7 @@ ABBR_AUTOLOAD=0
 
 export FZF_DEFAULT_COMMAND="fd"
 export FZF_DEFAULT_OPTS="--height 30% --border --tiebreak=index --info=inline"
-
 export NVM_DIR="$XDG_DATA_HOME/nvm"
-
 export RIPGREP_CONFIG_PATH=$XDG_CONFIG_HOME/ripgrep/.ripgreprc
 
 # colon-separated list of directories to exclude from zoxide dir switcher
