@@ -35,7 +35,7 @@ brew 'memcached'
 brew 'overmind' # spawn Procfile under tmux
 brew 'parallel' # gnu parallel
 brew 'pastel' # generate/convert/manipulate colors
-brew 'postgresql@14'
+# brew 'postgresql@14'
 brew 'procs' # `ps` replacement written in Rust
 brew 'redis' # redis is redis
 brew 'rg' # ripgrep
@@ -80,17 +80,13 @@ brew 'zsh-abbr'
 tap 'uptech/homebrew-oss'
 brew 'uptech/oss/alt'
 
-# To upgrade to a newer nightly version of wezterm (normal brew upgrade will not upgrade it!):
-#
-#   brew upgrade --cask wezterm-nightly --no-quarantine --greedy-latest
-tap 'homebrew/cask-versions'
+cask '1password-cli'
+cask 'docker'
 cask 'wezterm-nightly'
 
-tap '1Password/homebrew-tap'
-cask '1password-cli'
-
-cask 'docker'
-brew 'docker'
+# share your keystrokes when creating screencasts, presenting, or collaborating with others
+# ^⌥⌘K to toggle on/off
+cask 'keycastr'
 
 # Optionals. Uncomment to install
 # cask 'lulu' # allow/deny apps network access

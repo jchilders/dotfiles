@@ -31,10 +31,8 @@ return {
       ensure_installed = {
         "bashls",
         "dockerls",
-        "grammarly",
         "jsonls",
         "lemminx",
-        "ltex",
         "lua_ls",
         "rubocop",
         "rust_analyzer",
@@ -42,7 +40,6 @@ return {
         "sqlls",
         "tailwindcss",
         "taplo",
-        "tsserver",
       },
       handlers = {
         lsp_zero.default_setup,

@@ -13,8 +13,8 @@ chgd_files = StatusLines.new
 
 cmd = %w[rails test] + chgd_files
 
-Open3.popen2e(*cmd) do |_stdin, stdout_stderr, _thread|
-  stdout_stderr.each do |line|
+Open3.popen2e(*cmd) do |_stdin, stdout_stderr, _wait_thr|
+  while (line = stdout_stderr.gets)
     print line
   end
 end
