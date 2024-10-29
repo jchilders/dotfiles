@@ -278,6 +278,14 @@ else
   vim.notify("Problem when loading Harpoon:\n" .. result, vim.log.levels.WARN, { title = "mappings.lua" })
 end
 
+-- Open the browser, switch to the localhost tab, and reload
+vim.keymap.set("n", "<leader>ol", function()
+  local output = vim.fn.system("zsh -ic open_localhost_and_switch_tabs")
+  if vim.v.shell_error ~= 0 then
+    vim.notify(output, vim.log.levels.ERROR)
+  end
+end)
+
 -- terminal
 -- remap("t", "<esc>", [[<C-\><C-n>]])
 -- remap("t", "jk", [[<C-\><C-n>]])

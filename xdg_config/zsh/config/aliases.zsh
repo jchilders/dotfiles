@@ -120,6 +120,44 @@ function rs {
   fi
 }
 
+# On macOS, open Safari and switch to the correct tab
+function open_localhost_and_switch_tabs() {
+  local url=$1
+  # Default to http://localhost if not set
+  if [[ -z $url ]]; then
+    url="http://localhost"
+  fi
+  local port=${PORT:-3000}
+  
+  # Append port to URL if it doesn't already contain one
+  if [[ $url != *":"* ]]; then
+    url="${url}:${port}"
+  fi
+
+  # Get list of Safari windows and tabs
+  osascript -e '
+    tell application "Safari"
+      set windowList to every window
+      repeat with theWindow in windowList
+        set tabList to every tab of theWindow
+        repeat with theTab in tabList
+          if URL of theTab contains "'"$url"'" then
+            set current tab of theWindow to theTab
+            tell theTab to do JavaScript "window.location.reload()"
+            activate
+            return
+          end if
+        end repeat
+      end repeat
+      
+      # If we get here, URL wasn''t found - open in new tab
+      make new document
+      set URL of document 1 to "'"$url"'"
+      activate
+    end tell
+  '
+}
+
 # Set the tmux window name to the git root dir, or just the pwd if we aren't in a
 # git repository
 # function tmux_window_name() {
