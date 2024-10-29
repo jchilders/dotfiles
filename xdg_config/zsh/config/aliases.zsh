@@ -113,8 +113,8 @@ function rs {
     return 1
   fi
 
-  if [[ -e Procfile.dev ]]; then
-    foreman start -f Procfile.dev
+  if [[ -e bin/dev ]]; then
+    bin/dev
   else
     rails server -p $port
   fi

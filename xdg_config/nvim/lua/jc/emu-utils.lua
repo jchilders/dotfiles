@@ -117,8 +117,24 @@ function M.visual_selection_range(tabnr)
   return vis_start, vis_end
 end
 
+-- Get the buffer number for the most recently modified test file
+-- If the file is not open, open it
 local bufnr_for_test_file = function()
-  return vim.fn.bufnr(utils.mru_test_file())
+  local test_file = utils.mru_test_file()
+  if test_file == nil then
+    vim.notify("No test file found", vim.log.levels.WARN)
+    return -1
+  end
+
+  local bufnr = vim.fn.bufnr(test_file)
+  if bufnr == -1 then
+    vim.cmd('edit ' .. test_file)
+    bufnr = vim.fn.bufnr(test_file)
+  end
+
+  vim.notify(string.format("test_file: %s, bufnr: %s", test_file, bufnr))
+
+  return vim.fn.bufnr(test_file)
 end
 
 -- Find and run the most recently modified test
@@ -152,7 +168,7 @@ function M.run_mru_test(linenr)
     if linenr ~= nil then
       test_cmd = test_cmd .. ":" .. linenr
     end
-  elseif ext == "jsx" then -- Javascript/React!
+  elseif ext == "jsx" then -- JS/React
     test_cmd = "yarn test " .. test_file
   end
 
@@ -166,12 +182,18 @@ end
 
 function M.run_mru_test_current_line()
   local bufnr = bufnr_for_test_file()
+  vim.notify(string.format("bufnr: %s", bufnr))
 
   if bufnr == -1 then
-    M.run_mru_test(0)
+    -- M.run_mru_test(0)
+    print "No buffer for test file"
     return "no"
   end
 
+  -- local winnr = vim.fn.bufwinnr(bufnr)
+  -- get window ID
+  -- local win_id = vim.fn.win_getid(winnr)
+  -- local linenr = vim.api.nvim_win_get_cursor(win_id)[1]
   local linenr = vim.api.nvim_buf_get_mark(bufnr, '.')[1]
   return M.run_mru_test(linenr)
 end
@@ -194,6 +216,32 @@ function M.send_keys_left(keys)
     local text_to_send = string.format('tmux send-keys -t left "%s"', esc_text)
     vim.fn.system(text_to_send)
   end
+end
+
+-- Get the current line number of the most recently modified file
+function M.get_mru_file_line_number()
+  local mru_file = utils.mru_test_file()
+  if mru_file == nil then
+    vim.notify("No recently modified test file found", vim.log.levels.WARN)
+    return nil
+  end
+
+  local bufnr = vim.fn.bufnr(mru_file)
+  if bufnr == -1 then
+    -- File is not open, so let's open it
+    vim.cmd('edit ' .. vim.fn.fnameescape(mru_file))
+    bufnr = vim.fn.bufnr(mru_file)
+  end
+
+  local winnr = vim.fn.bufwinnr(bufnr)
+  if winnr == -1 then
+    -- Buffer exists but is not visible, so let's make it visible
+    vim.cmd('sbuffer ' .. bufnr)
+    winnr = vim.fn.bufwinnr(bufnr)
+  end
+
+  local linenr = vim.api.nvim_win_get_cursor(winnr)[1]
+  return linenr
 end
 
 return M

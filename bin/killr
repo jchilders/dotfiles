@@ -3,7 +3,7 @@
 # kill rails
 
 pid_file = 'tmp/pids/server.pid'
-if !File.exists?(pid_file)
+unless File.exist?(pid_file)
   puts "#{pid_file} not found"
   exit 1
 end

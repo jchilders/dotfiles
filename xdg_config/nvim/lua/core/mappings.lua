@@ -285,3 +285,12 @@ end
 -- remap("t", "<C-j>", [[<C-\><C-n><C-W>j]])
 -- remap("t", "<C-k>", [[<C-\><C-n><C-W>k]])
 -- remap("t", "<C-l>", [[<C-\><C-n><C-W>l]])
+
+-- for debugging window/buffer issues
+vim.keymap.set("n", "<leader>cbi", function()
+  print("buf id: " .. vim.api.nvim_get_current_buf() .. ", win id: " .. vim.api.nvim_get_current_win())
+end)
+
+vim.keymap.set("n", "<leader>cbn", function()
+  print(string.format("Current buffer number: %d, Current window number: %d", vim.fn.bufnr('%'), vim.api.nvim_win_get_number(0)))
+end)

@@ -32,19 +32,24 @@ function M.set_mappings(keymaps)
   end
 end
 
+-- This toggles the displaying of the non-text text that can appear in the window: git status indicators in the gutter, relnums, LSP warnings, and so forth. It is intended to quickly allow for a clean view of the file being edited, without all the helpers.
 function M.toggle_gutter()
   if vim.wo.relativenumber == true then
+    vim.wo.signcolumn = "no"
     vim.wo.relativenumber = false
     vim.wo.number = false
-    vim.wo.signcolumn = "no"
     -- Disable indent-blankline: virutal text showing indent guides
     require("ibl").update { enabled = false }
+    -- Disable LSP diagnostics
+    vim.diagnostic.enable(false)
   else
+    vim.wo.signcolumn = "yes"
     vim.wo.relativenumber = true
     vim.wo.number = true
-    vim.wo.signcolumn = "yes"
     -- Enable indent-blankline: virutal text showing indent guides
     require("ibl").update { enabled = true }
+    -- Enable LSP diagnostics
+    vim.diagnostic.enable(true)
   end
 end
 
@@ -62,7 +67,7 @@ end
 -- buffer is attached to
 function M.lsp_name()
   local bufnr = api.nvim_get_current_buf()
-  local clients = vim.lsp.get_active_clients({ bufnr = bufnr })
+  local clients = vim.lsp.get_clients({ bufnr = bufnr })
   if #clients == 0 then
     return "(no client)"
   else
@@ -192,7 +197,9 @@ function M.blameVirtText()
       text = "Not Committed Yet"
     end
   end
-  api.nvim_buf_set_virtual_text(0, 2, line[1] - 1, { { text, "GitLens" } }, {}) -- set virtual text for namespace 2 with the content from git and assign it to the higlight group 'GitLens'
+
+  -- set virtual text for namespace 2 with the content from git and assign it to the higlight group 'GitLens'
+  api.buf_set_virtual_text(0, 2, line[1] - 1, { { text, "GitLens" } }, {})
 end
 
 function M.clearBlameVirtText() -- important for clearing out the text when our cursor moves
@@ -206,23 +213,20 @@ function M.mru_test_file()
 
   local glob;
   if ext == "rb" then
-    glob = "(test|spec)/**/*_(test|spec)*.rb(om)"
+    glob = "(test|spec)/**/*_(test|spec)*.rb"
   elseif ext == "jsx" then
-    glob = "app/javascript/**/*.test.jsx(om)"
+    glob = "app/javascript/**/*.test.jsx"
   else
     vim.notify("Don't know how to handle ." .. ext .. " files", vim.log.levels.WARN, { title = "Muxor" })
     return nil
   end
 
-  -- Using zsh glob qualifiers is faster than anything else I tried: `find`,
-  -- `exa`, `fd`, `stat`. Tried 'em all. Globbing was the fastest. This was 
-  -- close, though:
+  -- Now we need to actually find the file. Getting the most recently modified file for a directory tree turned out to be an interesting exercise. I landed on using zsh glob qualifiers because that, somewhat surprisingly, turned out to be faster than anything else: `find`, `exa`, `fd`, `stat`. Tried 'em all, and globbing was the fastest. This was close, though:
   --   fd -t file -e rb --search-path spec --search-path test --exec-batch ls -rth | tail -n 1
 
   -- https://zsh.sourceforge.io/Doc/Release/Expansion.html - 14.8.7
-  -- print file names of files that are 10M or bigger, sorted by size, limit 10:
-  --   print -rC1 **/*(.Y10LM+10OL)
-  -- local test_file = vim.fn.system("print -l (test|spec)/**/*_(test|spec).rb(om) | head -1 | tr -d '\n'")
+  -- `(om)` tells zsh to sort the glob matches by last modified date
+  glob = glob .. "(om)"
   local test_file = vim.fn.system("print -l " .. glob .. "  | head -1 | tr -d '\n'")
   if vim.fn.stridx(test_file, "no matches found") >= 0 then
     vim.notify("No test found for type ." .. ext, vim.log.levels.WARN, { title = "Muxor" })
