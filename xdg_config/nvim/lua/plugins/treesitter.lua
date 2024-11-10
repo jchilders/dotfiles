@@ -1,12 +1,10 @@
 -- Things to do when troublshooting treesitter issues:
 --   `:TSUpdate`
---   Disable indentation
 return {
   "nvim-treesitter/nvim-treesitter",
   enabled = true,
   dependencies = {
     "p00f/nvim-ts-rainbow",
-    "nvim-treesitter/nvim-treesitter-context",
     "nvim-treesitter/playground",
   },
   config = function()
