@@ -17,6 +17,8 @@
   rebase = true
 [push]
   default = current
+  # This will cause `git push --force` to fail if remote has changes you don't have
+  useForceIfIncludes = true
 [rerere]
   enabled = true
 [rebase]
