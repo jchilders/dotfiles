@@ -1,12 +1,12 @@
 # What?
 
-Configurations for neovim, zsh, tmux, and macOS, with a focus on neovim.
+Configurations for neovim, zsh, wezterm, and macOS, with a focus on neovim.
 
 ## What You Get
 - Neovim nightly
 - LSP & tree-sitter integration
 - FZF & Telescope integration 
-- tmux
+- sane wezterm config
 
 Common tasks should require a minimum of keystrokes. Fuzzy finding is preferred
 over tab completion. File trees are for the weak.
