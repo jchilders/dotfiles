@@ -148,7 +148,7 @@ vim.keymap.set("v", "<leader>sj", emu_utils.send_selection_down)
 
 local tireswing_ok, tireswing = pcall(require, "jc.tireswing")
 if tireswing_ok then
-  -- Send current function to the left tmux/wezterm pane
+  -- Send current function to the left terminal pane
   vim.keymap.set("n", "<leader>sfl", function()
     local function_text = tireswing.get_current_function()
     emu_utils.send_left(function_text)
@@ -162,7 +162,7 @@ if tireswing_ok then
   -- remap("n", "K", "<cmd>lua require('jc.tireswing').swap_nodes(true)<CR>")
 end
 
--- Send the keys `^D`, `UpArrow`, and `Enter` to the left tmux pane
+-- Send the keys `^D`, `UpArrow`, and `Enter` to the left terminal pane
 -- Lets us quickly Restart Rails console/server/psql/lua/whatever, so long as it quits
 -- when it receives a ^D
 vim.keymap.set(
@@ -174,7 +174,7 @@ vim.keymap.set(
   end
 )
 
--- Save & run the most recently modified test in the tmux pane to the left
+-- Save & run the most recently modified test in the terminal pane to the left
 vim.keymap.set("n", "<leader>rt", "<cmd>wa<CR><cmd>lua require('jc.emu-utils').run_mru_test()<CR>")
 vim.keymap.set("n", "<leader>rT", "<cmd>wa<CR><cmd>lua require('jc.emu-utils').run_mru_test_current_line()<CR>")
 

@@ -206,8 +206,8 @@ function M.clearBlameVirtText() -- important for clearing out the text when our 
   api.nvim_buf_clear_namespace(0, 2, 0, -1)
 end
 
--- Find the most recently modified test file in the current directory tree.
--- Returns nil if not found.
+-- Find the most recently modified test file in the current directory tree for the file being edited. Example: if the file being edited is a .rb file then it will look for a minitest file in the `test` directory.
+-- Returns nil if nothing found.
 function M.mru_test_file()
   local ext = vim.fn.expand("%:e") -- get the current file extension
 
@@ -226,8 +226,8 @@ function M.mru_test_file()
 
   -- https://zsh.sourceforge.io/Doc/Release/Expansion.html - 14.8.7
   -- `(om)` tells zsh to sort the glob matches by last modified date
-  glob = glob .. "(om)"
-  local test_file = vim.fn.system("print -l " .. glob .. "  | head -1 | tr -d '\n'")
+  glob = glob .. "(om[1])"
+  local test_file = vim.fn.system("print -l " .. glob .. "  | tr -d '\n'")
   if vim.fn.stridx(test_file, "no matches found") >= 0 then
     vim.notify("No test found for type ." .. ext, vim.log.levels.WARN, { title = "Muxor" })
     return nil

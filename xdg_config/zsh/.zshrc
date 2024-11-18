@@ -52,7 +52,7 @@ if type zoxide &> /dev/null; then
   eval "$(zoxide init zsh)"
 fi
 
-# prompt
+# prompt. See $XDG_CONFIG_HOME/starship.toml for configuration.
 if type starship &>/dev/null; then
   eval "$(starship init zsh)"
 fi
@@ -79,4 +79,3 @@ fi
 # fi
 # unset __conda_setup
 # <<< conda initialize <<<
-
