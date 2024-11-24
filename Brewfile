@@ -12,7 +12,7 @@ brew 'eza' # git-aware ls replacement
 brew 'fd' # file finder
 brew 'fzf' # fuzzy finder
 brew 'gh' # GitHub CLI
-brew 'git' # git, you git
+brew 'git' # git, you stupid git
 brew 'git-delta' # git-diff replacement
 brew 'git-lfs' # handle Large Files in git
 brew 'gpg' # pretty good

@@ -89,7 +89,6 @@ ruby: asdf-plugins ruby-cfg ## Install Ruby
 		asdf install ruby latest; \
 	fi
 
-
 ruby-clean: ## Uninstall Ruby
 	asdf uninstall ruby latest; \
 

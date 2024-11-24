@@ -30,6 +30,7 @@ require("lazy").setup(  { import = "plugins" }, {
 
 pcall(vim.cmd.colorscheme, "tokyonight")
 
+require "core/filetype"
 require "core/mappings"
 require "core/autocmd"
 

@@ -26,17 +26,24 @@ alias gcb="git branch --show-current | tr -d '\n' | pbcopy; print 'Current branc
 alias l='eza --all --long --git --icons --no-user --time-style relative'
 alias tree='eza --tree'
 
-# Abbreviations
-function addAbbreviations() {
-  # exit if abbreviations have already been already defined
-  [[ -s $ABBR_USER_ABBREVIATIONS_FILE ]] && return 1
+command -v bat >/dev/null 2>&1 && alias cat='bat' # use bat as cat
+command -v gping >/dev/null 2>&1 && alias pinig='gping' # like ping but with a graph
 
+# Load abbreviations. Similar to aliases, but expand in place. To reload
+# abbreviations run this function with the `--force` flag.
+function loadAbbreviations() {
+  # exit if abbreviations have already been already defined & the --force
+  # parameter wasn't given
+  [[ -s $ABBR_USER_ABBREVIATIONS_FILE && "$1" != "--force" ]] && return 1
+
+  echo "Adding abbreviations"
   export ABBR_QUIET=1
   export ABBR_FORCE=1
   abbr add be='bundle exec'
   abbr add bi='bundle install'
   abbr add dcom='docker-compose'
   abbr add gd='git diff'
+  abbr add gl='git l'
   abbr add gst='git status -sb'
   abbr add imgcat='wezterm imgcat'
 
@@ -53,7 +60,7 @@ function addAbbreviations() {
   unset ABBR_FORCE
   unset ABBR_QUIET
 }
-addAbbreviations
+loadAbbreviations
 
 # Change directory to source dir for given Homebrew formula or cask
 # This has to be a function (instead of a script under bin/) because you can't

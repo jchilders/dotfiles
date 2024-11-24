@@ -22,3 +22,13 @@ vim.api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {
   end,
 })
 
+-- Set `filetype` for git config files
+vim.api.nvim_create_autocmd(
+  {"BufNewFile", "BufRead"},
+  {
+    pattern = {"git/config", ".git/config", "*/.git/config", ".gitconfig", "gitconfig"},
+    callback = function()
+      vim.bo.filetype = "gitconfig"
+    end
+  }
+)

@@ -1,5 +1,5 @@
 [core]
-  whitespace = fix,-indent-with-non-tab,trailing-space,cr-at-eol
+  whitespace = fix,indent-with-non-tab,trailing-space,cr-at-eol
   excludesfile = ~/.gitignore
   editor = $EDITOR
   pager = delta
@@ -17,7 +17,8 @@
   rebase = true
 [push]
   default = current
-  # This will cause `git push --force` to fail if remote has changes you don't have
+  # useForceIfIncludes will cause `git push --force` to fail if the remote has
+  # changes that don't exist locally
   useForceIfIncludes = true
 [rerere]
   enabled = true
@@ -25,8 +26,8 @@
   autoStash = true
 
 [alias]
-  l = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n'' %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all
-  ll = log --pretty=format:'%Cred%h%Creset%C(yellow)%d%Creset %s %Cgreen(%cr)%C(bold blue)<%an>%Creset' --decorate --numstat
+  l = log --pretty=format:'%C(yellow)%h%Creset %s%C(auto)%d%Creset'
+  ll = log --pretty=format:'%Cblue%h%Cgreen %s%C(yellow)%d%Creset' --decorate --numstat
   st = status -sb
   cb = ! git rev-parse --abbrev-ref HEAD | tr -d '\n' | pbcopy
   co = checkout
