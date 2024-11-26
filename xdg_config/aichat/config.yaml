@@ -1,0 +1,5 @@
+# see https://github.com/sigoden/aichat/blob/main/config.example.yaml
+
+model: claude
+clients:
+- type: claude

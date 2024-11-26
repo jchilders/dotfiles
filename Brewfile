@@ -1,3 +1,4 @@
+brew 'aichat' # all-in-one LLM CLI tool featuring Shell Assistant, REPL, RAG, AI Tools & Agents
 brew 'asdf' # Version manager for Ruby, Node, etc.
 brew 'atuin' # store shell history in SQLite
 brew 'automake'

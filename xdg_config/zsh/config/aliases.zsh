@@ -29,8 +29,14 @@ alias tree='eza --tree'
 command -v bat >/dev/null 2>&1 && alias cat='bat' # use bat as cat
 command -v gping >/dev/null 2>&1 && alias pinig='gping' # like ping but with a graph
 
-# Load abbreviations. Similar to aliases, but expand in place. To reload
-# abbreviations run this function with the `--force` flag.
+if (( $+commands[op] )) && (( $+commands[aichat] )); then
+  # Use 1password to read credentials for aichat
+  alias aichat="op run --env-file=\"$XDG_CONFIG_HOME/aichat/.env\" --no-masking -- aichat"
+fi
+
+# Load abbreviations. Abbreviations are similar to aliases, but expand in place
+# (like fish). To reload abbreviations run this function with the `--force`
+# flag.
 function loadAbbreviations() {
   # exit if abbreviations have already been already defined & the --force
   # parameter wasn't given
