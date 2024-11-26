@@ -1,5 +1,6 @@
 ZCACHE_HOME=$XDG_CACHE_HOME/zsh
-HISTFILE=$ZCACHE_HOME/.zsh_history
+HISTFILE="${XDG_DATA_HOME:-$HOME/.local/share}/zsh/history"
+
 ZCOMPDUMP=$ZCACHE_HOME/zcompdump
 zstyle ':completion::complete:*' cache-path "${ZCACHE_HOME}/zcompcache"
 autoload -U compinit
@@ -39,7 +40,7 @@ setopt PUSHD_TO_HOME # Have pushd with no arguments act like `pushd $HOME`.
 # setopt MENU_COMPLETE # Instead of listing possibilities, select the first match immediately.
 
 # History
-typeset -g HISTSIZE=10000000 # The maximum number of events stored in the internal history list.
+typeset -g HISTSIZE=1000000 # The maximum number of events stored in the internal history list.
 typeset -g SAVEHIST=$HISTSIZE # The maximum number of history events to save in the history file.
 setopt BANG_HIST # Treat the '!' character specially during expansion.
 setopt EXTENDED_HISTORY # Save each command's epoch timestamps and the duration in seconds.

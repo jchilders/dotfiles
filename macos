@@ -26,6 +26,10 @@ defaults write com.apple.LaunchServices LSQuarantine -bool false
 # Enable automatic termination of inactive apps
 defaults write NSGlobalDomain NSDisableAutomaticTermination -bool true
 
+# Disable dictionary lookup on deep trackpad press
+defaults write com.apple.AppleMultitouchTrackpad ForceSuppressed -bool true
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad ForceSuppressed -bool true
+
 ###############################################################################
 # Trackpad, mouse, keyboard, Bluetooth accessories, and input                 #
 ###############################################################################

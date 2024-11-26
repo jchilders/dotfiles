@@ -16,17 +16,29 @@ config.font_size = default_font_size
 config.scrollback_lines = 3500
 config.show_new_tab_button_in_tab_bar = false
 
-wezterm.on("format-tab-title", function(tab, _tabs, _panes, _config, _hover, _max_width)
-  -- Return the explicitly set title, if one has been set
-  if tab.tab_title and #tab.tab_title > 0 then
-    return tab.tab_title
+wezterm.on("format-tab-title", function(tab, _, _, _, _, _)
+  -- If a tab title is already set, use that
+  local new_title = tab.tab_title
+  -- wezterm.log_info("new_title: ", new_title)
+  if not new_title or #new_title == 0 then
+    new_title = tab.active_pane.title
+  else
+    return new_title
   end
 
-  local cwd_url = tab.active_pane.current_working_dir
-  cwd_url = cwd_url.path or ""
-  local basename = string.gsub(cwd_url, '(.*[/\\])(.*)', '%2')
+  local pane = tab.active_pane
+  local cwd_url = pane.current_working_dir
+  if (cwd_url ~= nil) then
+    local path = cwd_url.path
+    -- wezterm.log_info("1 path: ", cwd_url.path)
+    local basename = string.gsub(path, '.*/([^/]+/)$', '%1')
+    -- wezterm.log_info("1.1 basename: ", basename)
+    new_title = basename
+  end
+  -- wezterm.log_info("2 new_title: ", new_title)
+
   local zoomed = tab.active_pane.is_zoomed and "*" or ""
-  local tab_title = basename .. zoomed
+  new_title = zoomed .. new_title
 
   local curr_tab_text_color = tab.is_active and tab_text_color or "#808080"
   -- local active_tab_attr = tab.is_active and "Bold" or "Normal"
@@ -35,7 +47,7 @@ wezterm.on("format-tab-title", function(tab, _tabs, _panes, _config, _hover, _ma
     { Foreground = { AnsiColor = "Navy" } },
     { Text = (tab.tab_index + 1) .. " " },
     { Foreground = { Color = curr_tab_text_color } },
-    { Text = tab_title },
+    { Text = new_title },
   }
 end)
 
@@ -81,9 +93,6 @@ config.keys = {
   { key = "+", mods = "SHIFT|CMD", action = act.IncreaseFontSize, },
   { key = "-", mods = "SHIFT|CMD", action = act.DecreaseFontSize, },
   { key = "[", mods = "LEADER", action = act.ActivateCopyMode, },
-
-  -- SHIFT-CMD-C :: opens Wezterm's debug overlay; used to debug config changes
-  { key = 'C', mods = 'SHIFT|CMD', action = wezterm.action.ShowDebugOverlay },
 }
 
 -- get info on panes for current tab
