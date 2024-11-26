@@ -1,16 +1,36 @@
 # Custom zsh widgets
 
-# Use fzf to find a file and open it in the editor. This function has the (necessary) side effect of setting the `found_file` variable, which is needed by other functions.
-# It expects the first (and only) argument to be a command that will output a list of files. The command is evaluated and piped into fzf.
+# Use fzf to find a file and open it in the editor. This function has the side
+# effect of setting the `found_file` variable, which is used by other
+# functions. It expects the first (and only) argument to be a command that will
+# output a list of files. The command is evaluated and piped into fzf.
+#
 # Example usage:
 #  __find_file "fd --type=file"
-function __find_file {
-  IFS=$'\n' export found_file=("$(eval $1 | fzf --ansi --multi --preview='
-  if file --mime-type -b {} | grep -qF image/; then
-    chafa --size=555x${FZF_PREVIEW_LINES} {}
-  else
-    bat --color always --style numbers --line-range :200 {}
-  fi')")
+function __find_file() {
+  local -a files
+  local cmd=${1:?usage: __find_file "command"}
+  local preview_cmd='
+    if [[ $(file --mime-type -b {}) =~ ^image/ ]]; then
+      chafa --size=555x${FZF_PREVIEW_LINES} {}
+    else 
+      bat --color always --style numbers --line-range :200 {}
+    fi'
+
+  files=("${(@f)$(eval $cmd 2>/dev/null)}") || {
+    print -u2 "Failed to execute cmd: $cmd"
+    return 1
+  }
+
+  found_file=$(print -l $files | fzf --ansi --multi --preview="$preview_cmd") || {
+    print -u2 "fzf selection failed"
+    return 1
+  }
+
+  [[ -n $found_file ]] || {
+    print -u2 "No file selected"
+    return 1
+  }
 }
 
 function __eval_found_file {
