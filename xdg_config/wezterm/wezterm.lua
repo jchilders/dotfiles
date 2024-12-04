@@ -16,6 +16,8 @@ config.font_size = default_font_size
 config.scrollback_lines = 3500
 config.show_new_tab_button_in_tab_bar = false
 
+-- Set the tab title to the current directory, unless it has already had its
+-- title set via e.g. <leader>r
 wezterm.on("format-tab-title", function(tab, _, _, _, _, _)
   -- If a tab title is already set, use that
   local new_title = tab.tab_title
@@ -34,6 +36,12 @@ wezterm.on("format-tab-title", function(tab, _, _, _, _, _)
     local basename = string.gsub(path, '.*/([^/]+/)$', '%1')
     -- wezterm.log_info("1.1 basename: ", basename)
     new_title = basename
+
+    -- if path contains "temp" then prefix with TEMP
+    -- doing this b/c I frequently clone the same repo into ~/temp, but forget which one I'm in at the moment.
+    if string.find(cwd_url.path, "temp") then
+      new_title = "(TEMP) " .. new_title
+    end
   end
   -- wezterm.log_info("2 new_title: ", new_title)
 

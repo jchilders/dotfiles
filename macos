@@ -1,6 +1,4 @@
-#!/usr/bin/env bash
-
-# ~/.macos — https://mths.be/macos
+#!/usr/bin/env zsh
 
 # Close any open System Preferences panes, to prevent them from overriding
 # settings we’re about to change
@@ -11,6 +9,33 @@ sudo -v
 
 # Keep-alive: update existing `sudo` time stamp until `.macos` has finished
 while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+
+###############################################################################
+# Dock, Dashboard, and hot corners                                            #
+###############################################################################
+
+# Automatically hide and show the Dock
+defaults write com.apple.dock autohide -bool true
+
+printf "%s\n" "Dock - Remove the auto-hiding delay."
+defaults write com.apple.Dock autohide-delay -float 0
+
+# Don’t show recent applications in Dock
+defaults write com.apple.Dock show-recents -bool false
+
+# Turn on magnification
+defaults write com.apple.dock magnification -bool true
+defaults write com.apple.dock tilesize -int 40
+
+# Hot Corners
+# top left: Mission Control 
+defaults write com.apple.dock wvous-tl-corner -int 2
+# top right: Notification Center
+defaults write com.apple.dock wvous-tr-corner -int 12
+# bottom left: Show Desktop
+defaults write com.apple.dock wvous-bl-corner -int 4
+# bottom right: Start screen saver
+defaults write com.apple.dock wvous-br-corner -int 5
 
 ###############################################################################
 # General UI/UX                                                               #
@@ -103,34 +128,6 @@ defaults write com.apple.finder FXInfoPanesExpanded -dict \
 	OpenWith -bool true \
 	Privileges -bool true
 
-
-###############################################################################
-# Dock, Dashboard, and hot corners                                            #
-###############################################################################
-
-# Automatically hide and show the Dock
-defaults write com.apple.dock autohide -bool true
-
-printf "%s\n" "Dock - Remove the auto-hiding delay."
-defaults write com.apple.Dock autohide-delay -float 0
-
-# Don’t show recent applications in Dock
-defaults write com.apple.Dock show-recents -bool false
-
-# Turn on magnification
-defaults write com.apple.dock magnification -bool true
-defaults write com.apple.dock tilesize -int 40
-
-# Hot Corners
-# top left: Mission Control 
-defaults write com.apple.dock wvous-tl-corner -int 2
-# top right: Notification Center
-defaults write com.apple.dock wvous-tr-corner -int 12
-# bottom left: Show Desktop
-defaults write com.apple.dock wvous-bl-corner -int 4
-# bottom right: Start screen saver
-defaults write com.apple.dock wvous-br-corner -int 5
-
 ###############################################################################
 # Safari & WebKit                                                             #
 ###############################################################################
@@ -190,17 +187,17 @@ defaults write com.apple.commerce AutoUpdateRestartRequired -bool true
 ###############################################################################
 # Misc                                                                        #
 ###############################################################################
-printf "%s\n" "TextEdit - Use plain text mode for new documents."
+# TextEdit - Use plain text mode for new documents
 defaults write com.apple.TextEdit RichText -int 0
 
-printf "%s\n" "Disk Utility - Enable debug menu."
+# Disk Utility - Enable debug menu
 defaults write com.apple.DiskUtility DUDebugMenuEnabled -bool true
 defaults write com.apple.DiskUtility advanced-image-options -bool true
 
-printf "%s\n" "App Store - Enable the WebKit Developer Tools in the Mac App Store."
+# App Store - Enable the WebKit Developer Tools in the Mac App Store
 defaults write com.apple.appstore WebKitDeveloperExtras -bool true
 
-printf "%s\n" "App Store - Enable Debug Menu in the Mac App Store."
+# App Store - Enable Debug Menu in the Mac App Store
 defaults write com.apple.appstore ShowDebugMenu -bool true
 
 ###############################################################################
@@ -212,3 +209,15 @@ defaults write com.google.Chrome AppleEnableSwipeNavigateWithScrolls -bool true
 
 defaults write com.google.Chrome AppleEnableMouseSwipeNavigateWithScrolls -bool true
 defaults write com.google.Chrome.canary AppleEnableMouseSwipeNavigateWithScrolls -bool true
+
+
+###############################################################################
+# VSCode
+###############################################################################
+
+# These settings are recommended when using the (neo)vim plugin in VSCode
+defaults write com.microsoft.VSCode ApplePressAndHoldEnabled -bool false              # For VS Code
+defaults write com.microsoft.VSCodeInsiders ApplePressAndHoldEnabled -bool false      # For VS Code Insider
+defaults write com.vscodium ApplePressAndHoldEnabled -bool false                      # For VS Codium
+defaults write com.microsoft.VSCodeExploration ApplePressAndHoldEnabled -bool false   # For VS Codium Exploration users
+defaults delete -g ApplePressAndHoldEnabled
