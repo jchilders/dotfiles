@@ -82,7 +82,7 @@ opt.formatoptions = opt.formatoptions
 - "t" -- Don't auto format my code. I got linters for that.
 + "c" -- Auto-wrap comments using textwidth
 + "q" -- Allow formatting comments w/ gq
-+ "o" -- Don't insert the comment leader when using 'o' or 'O' in Normal mode
+- "o" -- Don't insert the comment leader when using 'o' or 'O' in Normal mode
 + "r" -- But do continue when pressing enter.
 + "n" -- Indent past the formatlistpat, not underneath it.
 + "j" -- Auto-remove comments if possible.
