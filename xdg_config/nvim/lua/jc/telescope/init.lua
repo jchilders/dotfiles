@@ -40,7 +40,10 @@ end
 function M.find_files(opts)
   opts = opts or {}
 
-  local theme_opts = {}
+  local theme_opts = {
+    -- disabling b/c of bug in previewer for TypeScript files. tree-sitter? idfk
+    previewer = false,
+  }
 
   if opts.search_dir ~= nil then
     local path = Path:new(opts.search_dir)

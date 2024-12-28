@@ -19,6 +19,9 @@ theme = "GitHub Dark"
 
 # Keybindings
 
+
+keybind = ctrl+a>ctrl+a=text:\x01
+
 keybind = global:ctrl+grave_accent=toggle_quick_terminal
 quick-terminal-animation-duration = 0.1
 
@@ -30,8 +33,10 @@ keybind = ctrl+a>z=toggle_split_zoom
 keybind = ctrl+a>shift+5=new_split:right
 keybind = ctrl+a>minus=new_split:down
 
-
 keybind = ctrl+a>h=goto_split:left
 keybind = ctrl+a>l=goto_split:right
 keybind = ctrl+a>k=goto_split:top
 keybind = ctrl+a>j=goto_split:bottom
+
+# keybind = shift+ctrl+plus=increase_font_size
+# keybind = shift+ctrl+minus=decrease_font_size

@@ -3,7 +3,7 @@
 -- https://github.com/zbirenbaum/copilot.lua
 return {
   "zbirenbaum/copilot.lua",
-  enabled = true,
+  enabled = false,
   dependencies = {
     "zbirenbaum/copilot-cmp",
   },
