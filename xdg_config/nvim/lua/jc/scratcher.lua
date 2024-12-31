@@ -20,6 +20,8 @@ local extension = function(bufnr)
   if ft ~= nil then
     if ft == "ruby" then
       ext = "rb"
+    elseif ft == "typescript" then
+      ext = "ts"
     else
       ext = ft
     end

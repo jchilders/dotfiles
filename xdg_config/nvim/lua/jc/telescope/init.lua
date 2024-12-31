@@ -1,49 +1,13 @@
 require 'core.globals'
 
--- SHOULD_RELOAD_TELESCOPE = true
-
--- local reloader = function()
---   if SHOULD_RELOAD_TELESCOPE then
---     RELOAD("plenary")
---     RELOAD("popup")
---     RELOAD("telescope")
---     RELOAD("jc.telescope.setup")
---     RELOAD("jc.telescope.custom")
---     RELOAD("core.mappings")
---   end
--- end
-
 local builtin = require("telescope.builtin")
 local themes = require("telescope.themes")
 local Path = require("plenary.path")
 
 local M = {}
 
--- Simple dropdown with a border and no preview. Good for simple lists.
-local dropdown_theme = function()
-  local default_opts = {
-    border = true,
-    previewer = false,
-    winblend = 10
-  }
-
-  return themes.get_dropdown(default_opts)
-end
-
--- ivy theme = TS win is at bottom of screen, vertcally split
-local ivy_theme = function()
-  return themes.get_ivy({
-    hidden = false,
-  })
-end
-
 function M.find_files(opts)
   opts = opts or {}
-
-  local theme_opts = {
-    -- disabling b/c of bug in previewer for TypeScript files. tree-sitter? idfk
-    previewer = false,
-  }
 
   if opts.search_dir ~= nil then
     local path = Path:new(opts.search_dir)
@@ -51,37 +15,25 @@ function M.find_files(opts)
       print("Directory " .. opts.search_dir .. " does not exist.")
       return
     else
-      theme_opts.search_dirs = { opts.search_dir }
+      opts.search_dirs = { opts.search_dir }
     end
   end
 
-  builtin.find_files(theme_opts)
+  builtin.find_files(opts)
 end
 
 function M.git_status()
-  local opts = dropdown_theme()
-  builtin.git_status(opts)
+  builtin.git_status()
 end
 
 function M.git_branches()
-  local opts = dropdown_theme()
-  builtin.git_branches(opts)
+  builtin.git_branches()
 end
 
 function M.git_changed_files_curr_branch()
   builtin.git_files({
     git_command = { "git", "diff", "--name-only", "main"}
   })
-end
-
-function M.quickfix()
-  local opts = {
-    previewer = false,
-  }
-
-  local theme = ivy_theme()
-  opts = vim.tbl_deep_extend("force", opts, theme)
-  builtin.quickfix(opts)
 end
 
 -- grep string under the cursor
