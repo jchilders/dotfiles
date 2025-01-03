@@ -1,6 +1,7 @@
 local remap = require("utils").map_global
 local scratcher = require("jc.scratcher")
 local emu_utils = require("jc.emu-utils")
+local chuck_tester = require("jc.chuck_tester")
 
 TelescopeMapArgs = TelescopeMapArgs or {}
 
@@ -162,24 +163,12 @@ if tireswing_ok then
   -- remap("n", "K", "<cmd>lua require('jc.tireswing').swap_nodes(true)<CR>")
 end
 
--- Send the keys `^D`, `UpArrow`, and `Enter` to the left terminal pane
--- Lets us quickly Restart Rails console/server/psql/lua/whatever, so long as it quits
--- when it receives a ^D
-vim.keymap.set(
-  "n",
-  "<leader>rr",
-  function()
-    -- Doesn't work w/ wezterm
-    emu_utils.send_keys_left({"C-d","Up","Enter"})
-  end
-)
-
 -- Save & run the most recently modified test in the terminal pane to the left
-vim.keymap.set("n", "<leader>rt", "<cmd>wa<CR><cmd>lua require('jc.emu-utils').run_mru_test()<CR>")
-vim.keymap.set("n", "<leader>rT", "<cmd>wa<CR><cmd>lua require('jc.emu-utils').run_mru_test_current_line()<CR>")
+vim.keymap.set("n", "<leader>rt", "<cmd>wa<CR><cmd>lua require('jc.chuck_tester').run_mru_test()<CR>")
+vim.keymap.set("n", "<leader>rT", "<cmd>wa<CR><cmd>lua require('jc.chuck_tester').run_mru_test_current_line()<CR>")
 
 -- Edit the most recently modified test
-remap("n", "<leader>et", "<cmd>wa<CR><cmd>lua require('jc.emu-utils').edit_mru_test()<CR>")
+remap("n", "<leader>et", "<cmd>wa<CR><cmd>lua require('jc.chuck_tester').edit_mru_test()<CR>")
 
 -- Toggle treesitter highlighting
 -- remap("n", "<leader>tstog", "<cmd>TSBufToggle highlight<CR>")
