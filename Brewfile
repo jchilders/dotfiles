@@ -13,6 +13,7 @@ brew 'eza' # git-aware ls replacement
 brew 'fd' # file finder
 brew 'fzf' # fuzzy finder
 brew 'gh' # GitHub CLI
+brew 'ghostty' # terminal emulator w/ native integration
 brew 'git' # git, you stupid git
 brew 'git-delta' # git-diff replacement
 brew 'git-lfs' # handle Large Files in git
@@ -41,6 +42,7 @@ brew 'procs' # `ps` replacement written in Rust
 brew 'redis' # redis is redis
 brew 'rg' # ripgrep
 brew 'sd' # easy search & replace. sed alternative/replacement
+brew 'sl'
 brew 'showkey' # type a key and see it echoed in the terminal
 brew 'solargraph' # Ruby language server (LSP)
 brew 'starship' # prompt
@@ -51,9 +53,9 @@ brew 'toilet' # ascii banners :)
 brew 'universal-ctags' # better ctags
 brew 'watchman' # needed by Sorbet LSP
 brew 'watchexec' # auto-restart process when file(s) change
-brew 'youtube-dl' # download YouTube videos. youtube-dl -h
 brew 'wget'
 brew 'yarn'
+brew 'yt-dlp' # audio/video downloader
 
 # mkcert and nss are used to generate locally trusted development certificates
 # needed for succesfully connecting locally via HTTPS
