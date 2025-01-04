@@ -1,6 +1,4 @@
-local uv = vim.loop
 local emu = require("jc.wezterm")
-local utils = require("jc.utils")
 
 local M = {}
 
@@ -8,6 +6,9 @@ local M = {}
 local TestConfig = {}
 TestConfig.__index = TestConfig
 
+-- Each instance has:
+-- glob_pattern: a glob pattern to match test files
+-- base_cmd: the (shell) command to run the tests
 function TestConfig.new(glob_pattern, base_cmd)
   local self = setmetatable({}, TestConfig)
   self.glob_pattern = glob_pattern
@@ -24,7 +25,7 @@ function TestConfig:get_test_cmd(test_file)
 end
 
 -- Default implementation uses line numbers
-function TestConfig:get_single_test_cmd(test_file, linenr, test_name)
+function TestConfig:get_single_test_cmd(test_file, linenr, _)
   local cmd = self:get_test_cmd(test_file)
   if linenr then
     cmd = cmd .. ":" .. linenr
@@ -90,7 +91,7 @@ function TSTestConfig.new()
 end
 
 -- Override to use --testNamePattern instead of line numbers
-function TSTestConfig:get_single_test_cmd(test_file, linenr, test_name)
+function TSTestConfig:get_single_test_cmd(test_file, _, test_name)
   local base_cmd = self:get_test_cmd(test_file)
   if test_name then
     -- Escape any special characters in the test name
@@ -110,7 +111,6 @@ function TSTestConfig:find_nearest_test(bufnr)
   if parser then
     local lang_tree = parser:parse()
     local root = lang_tree[1]:root()
-    
     local query = vim.treesitter.query.parse("typescript", [[
       (call_expression
         function: (identifier) @func_name
@@ -133,7 +133,7 @@ function TSTestConfig:find_nearest_test(bufnr)
       local current_function_end = nil
 
       -- Find the closest test block to our cursor
-      for id, node, metadata in query:iter_captures(root, bufnr) do
+      for id, node, _ in query:iter_captures(root, bufnr) do
         if query.captures[id] == "func_name" then
           current_function_start = node:start()
         elseif query.captures[id] == "test_name" then
@@ -172,7 +172,7 @@ local test_configs = {
 local function mru_test_file()
   local ext = vim.fn.expand("%:e") -- get the current file extension
   local config = test_configs[ext]
-  
+
   if not config then
     vim.notify("Don't know how to handle ." .. ext .. " files", vim.log.levels.WARN, { title = "chuck_tester" })
     return nil
@@ -184,12 +184,10 @@ local function mru_test_file()
   -- Add zsh glob qualifier to sort by most recently modified
   glob = glob .. "(om[1])"
   local test_file = vim.fn.system("print -l " .. glob .. "  | tr -d '\n'")
-  
+
   if vim.fn.stridx(test_file, "no matches found") >= 0 then
     vim.notify("No test found for type ." .. ext .. "\n" .. glob, vim.log.levels.WARN, { title = "chuck_tester" })
     return nil
-  else
-    vim.notify("Running " .. test_file, vim.log.levels.INFO, { title = "chuck_tester" })
   end
 
   return test_file
@@ -221,12 +219,20 @@ function M.run_mru_test(linenr, test_name)
 
   local ext = vim.fn.expand("%:e")
   local config = test_configs[ext]
-  
+
   if not config then
     return
   end
 
   local test_cmd = config:get_single_test_cmd(test_file, linenr, test_name)
+
+  local log_msg = "Running test " .. test_file
+  if test_name then
+    log_msg = log_msg .. "\n  " .. test_name
+  elseif linenr then
+    log_msg = log_msg .. ":" .. linenr
+  end
+  vim.notify(log_msg, vim.log.levels.INFO, { title = "chuck_tester" })
 
   -- Check for docker environment
   local has_docker = vim.fn.filereadable("docker-compose.yml")
@@ -248,18 +254,12 @@ function M.run_mru_test_current_line()
 
   local ext = vim.fn.expand("%:e")
   local config = test_configs[ext]
-  
+
   if not config then
     return
   end
 
   local test_name, linenr = config:find_nearest_test(bufnr)
-  
-  if test_name then
-    vim.notify("Running test: " .. test_name, vim.log.levels.INFO, { title = "chuck_tester" })
-  else
-    vim.notify("Running test at line " .. linenr, vim.log.levels.INFO, { title = "chuck_tester" })
-  end
 
   return M.run_mru_test(linenr, test_name)
 end
