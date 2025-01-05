@@ -1,7 +1,23 @@
+# Table of Contents
+- [What?](#what)
+- [Installation](#installation)
+- [Basics](#basics)
+- [wezterm](#wezterm)
+- [ctrl-o](#ctrl-o)
+  - [File Mappings](#ctrl-o-file-mappings)
+  - [zsh Specific Mappings](#zsh-specific-ctrl-o-mappings)
+  - [Neovim Specific Mappings](#neovim-specific-ctrl-o-mappings)
+- [Neovim](#other-noteworthy-neovim-mappings)
+- [zsh](#zsh)
+  - [Mappings](#mappings)
+  - [Aliases](#aliases)
+- [Ruby/Rails](#rubyrails)
+
 # What?
 
-My dotfiles. I am a developer. This configuration will allow you to do common
-things with very few keystrokes.
+My dotfiles. I am a developer. This configuration will allow you to do common things with very few keystrokes.
+
+"UNIX is an IDE."
 
 # Installation
 
@@ -52,6 +68,7 @@ The leader key for wezterm mappings is `ctrl-a`.
 | <kbd>cmd-w</kbd> | Close tab |
 | <kbd>shift-cmd-[</kbd> | Previous tab |
 | <kbd>shift-cmd-]</kbd> | Next tab |
+| <kbd>shift-cmd-f</kbd> | Toggle full screen |
 | <kbd>cmd-&lt;num&gt;</kbd> | Goto tab &lt;num&gt; |
 | <kbd>^ar</kbd> | Rename tab |
 | <kbd>^a%</kbd> | Horizontally split window (left/right)|
