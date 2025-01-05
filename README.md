@@ -80,8 +80,6 @@ This gives you an idea of my (opinionated) setup: a horizontal split, where the 
 
 ## wezterm
 
-The leader key for wezterm mappings is `ctrl-a`.
-
 | mapping | description |
 | :-----: | :---------- |
 | <kbd>cmd-t</kbd> | New tab |
@@ -89,6 +87,7 @@ The leader key for wezterm mappings is `ctrl-a`.
 | <kbd>shift-cmd-[</kbd> | Previous tab |
 | <kbd>shift-cmd-]</kbd> | Next tab |
 | <kbd>shift-cmd-f</kbd> | Toggle full screen |
+| <kbd>shift-cmd-n</kbd> | Rotate panes |
 | <kbd>cmd-&lt;num&gt;</kbd> | Goto tab &lt;num&gt; |
 | <kbd>^ar</kbd> | Rename tab |
 | <kbd>^a%</kbd> | Horizontally split window (left/right)|
@@ -200,9 +199,9 @@ These are available in both zsh and neovim.
 
 | mapping | description |
 | :-----: | :---------- |
-| <kbd>^orc</kbd> | Find & edit & edit Rails controller & edit |
-| <kbd>^orm</kbd> | Find & edit & edit Rails model & edit |
-| <kbd>^orv</kbd> | Find & edit & edit Rails view & edit |
+| <kbd>^orc</kbd> | Find & edit Rails controller |
+| <kbd>^orm</kbd> | Find & edit Rails model |
+| <kbd>^orv</kbd> | Find & edit Rails view |
 
 ### ruby/rails neovim 
 
@@ -224,11 +223,11 @@ These are available in zsh.
 | <kbd>bi</kbd> | `bundle install` |
 | <kbd>cdgem &lt;gem&gt;</kbd> | cd to the directory for the given gem |
 | <kbd>rc</kbd> | `bin/rails console`, or `bin/console` if in a Gem directory |
+| <kbd>rs</kbd> | `rails server` |
 | <kbd>rdbm</kbd> | `rake db:migrate` |
 | <kbd>rdbms</kbd> | `rake db:migrate:status` |
 | <kbd>rdbmt</kbd> | `rake db:migrate RAILS_ENV=test` |
 | <kbd>rdbmst</kbd> | `rake db:migrate:status RAILS_ENV=test` |
-| <kbd>rs</kbd> | `rails server` |
 
 ## Directory Navigation
 

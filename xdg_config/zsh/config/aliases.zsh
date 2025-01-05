@@ -55,8 +55,7 @@ function loadAbbreviations() {
   abbr add tsc='npx tsc --noEmit --jsx react'
 
   # Ruby and Rails helpers
-  # abbr add rc='rails console'
-  abbr add rc='docker exec -it $(docker ps --filter "ancestor=dentaltrac10-rails-web" --filter "status=running" --format "{{.ID}}") bundle exec rails console'
+  abbr add rc='rails console'
   abbr add rdbm='rails db:migrate'
   abbr add rdbms='rails db:migrate:status'
   abbr add rdbmt='rails db:migrate RAILS_ENV=test'
