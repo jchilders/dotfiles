@@ -14,8 +14,8 @@ install: macos cfg zsh homebrew homebrew-bundle -fonts bat ## Install all the th
 clean: ruby-clean cfg-clean neovim-clean zsh-clean homebrew-clean ## Uninstall all the things
 
 cfg: xdg-setup ## Link configuration files
-	ln -s $(cwd)/xdg_config $$HOME/.config
-	ln -sf $(cwd)/bin $$HOME/bin
+	@[ -e $(XDG_CONFIG_HOME) ] || ln -s $(cwd)/xdg_config $$HOME/.config
+	@[ -e $$HOME/bin ] || ln -sf $(cwd)/bin $$HOME/bin
 
 cfg-clean: ## Clean (rm) config $XDG_CONFIG_HOME
 	rm $(XDG_CONFIG_HOME)
@@ -111,7 +111,7 @@ zsh-cfg-clean: ## Unlink ~/.zshenv
 
 ##@ Misc
 
-XCODE_INSTALLED := $(shell xcode-select -p 1>/dev/null; echo $$?)
+XCODE_INSTALLED := $(shell uname -s | grep Darwin >/dev/null && xcode-select -p 1>/dev/null; echo $$?)
 macos: ## Set macOS defaults and install XCode command line developer tools
 ifeq ($(shell uname -s), Darwin)
 ifeq ($(XCODE_INSTALLED), 1)

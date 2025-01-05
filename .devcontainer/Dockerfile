@@ -3,7 +3,12 @@ FROM mcr.microsoft.com/devcontainers/base:ubuntu as asdf-install
 # Avoid warnings by switching to noninteractive
 ARG DEBIAN_FRONTEND=noninteractive
 
-USER vscode
+# Create the dotfiles user
+RUN useradd -m -s /bin/bash dotfiles \
+    && echo "dotfiles ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/dotfiles \
+    && chmod 0440 /etc/sudoers.d/dotfiles
+
+USER dotfiles
 
 RUN git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.14.1 \
     && echo 'source "$HOME/.asdf/asdf.sh"' >> ~/.zshrc \
@@ -12,17 +17,17 @@ RUN git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.14.1 \
     && echo 'autoload -Uz compinit && compinit' >> ~/.zshrc
 
 # Set environment variables
-ENV XDG_CACHE_HOME=/home/vscode/.cache \
-    XDG_CONFIG_HOME=/home/vscode/.config \
-    XDG_DATA_HOME=/home/vscode/.local/share
+ENV XDG_CACHE_HOME=/home/dotfiles/.cache \
+    XDG_CONFIG_HOME=/home/dotfiles/.config \
+    XDG_DATA_HOME=/home/dotfiles/.local/share
 
 # Create XDG directories
 RUN mkdir -p ${XDG_DATA_HOME} \
     && mkdir -p ${XDG_CACHE_HOME} \
     && mkdir -p ${XDG_CONFIG_HOME} \
-    && chown -R vscode:vscode /home/vscode/.local \
-    && chown -R vscode:vscode ${XDG_CONFIG_HOME} \
-    && chown -R vscode:vscode ${XDG_CACHE_HOME}
+    && chown -R dotfiles:dotfiles /home/dotfiles/.local \
+    && chown -R dotfiles:dotfiles ${XDG_CONFIG_HOME} \
+    && chown -R dotfiles:dotfiles ${XDG_CACHE_HOME}
 
 # Install basic dependencies and development tools
 RUN sudo apt-get update && sudo apt-get install -y \
@@ -45,6 +50,7 @@ RUN sudo apt-get update && sudo apt-get install -y \
     libyaml-dev \
     unzip \
     fzf \
+    pkg-config \
     && sudo ln -s $(which batcat) /usr/local/bin/bat \
     && sudo rm -rf /var/lib/apt/lists/*
 
@@ -57,21 +63,21 @@ RUN sudo mkdir -p /etc/apt/keyrings \
   && sudo apt install -y eza
 
 # Setup directories
-RUN mkdir -p /home/vscode/.ssh \
-    && chmod 700 /home/vscode/.ssh \
+RUN mkdir -p /home/dotfiles/.ssh \
+    && chmod 700 /home/dotfiles/.ssh \
     && mkdir ${XDG_CACHE_HOME}/zsh \
     && touch ${XDG_CACHE_HOME}/zsh/.zsh_history
 
 # Copy zshenv file
-COPY .zshenv /home/vscode/.zshenv
-RUN sudo chown vscode:vscode /home/vscode/.zshenv
+COPY .zshenv /home/dotfiles/.zshenv
+RUN sudo chown dotfiles:dotfiles /home/dotfiles/.zshenv
 
 # Since we use .zshenv instead of .rshrc, delete the .zshrc that comes from the base image
-RUN rm /home/vscode/.zshrc
+RUN rm /home/dotfiles/.zshrc
 
 # Copy XDG config files
 COPY xdg_config/ ${XDG_CONFIG_HOME}/
-RUN sudo chown -R vscode:vscode ${XDG_CONFIG_HOME}
+RUN sudo chown -R dotfiles:dotfiles ${XDG_CONFIG_HOME}
 
 # Install starship prompt
 RUN curl -sS https://starship.rs/install.sh --yes | sh

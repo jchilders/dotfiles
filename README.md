@@ -21,6 +21,8 @@ My dotfiles. I am a developer. This configuration will allow you to do common th
 
 # Installation
 
+## Local Installation
+
 ```
 > git clone git@github.com:jchilders/dotfiles.git
 > cd dotfiles
@@ -43,9 +45,27 @@ Q: lol why are you using Make?
 
 A: Because I'd never written a Makefile before, and honestly it works pretty well.
 
+## Using a devcontainer
+
+```
+devcontainer build --workspace-folder . --image-name jc_dotfiles:latest
+docker ps -a
+devcontainer up --workspace-folder .
+devcontainer exec --workspace-folder . /bin/zsh
+```
+
+To stop/rebuild/restart the devcontainer:
+
+```
+docker ps -a
+docker rm jc_dotfiles
+devcontainer build --workspace-folder . --image-name jc_dotfiles:latest
+devcontainer up --workspace-folder .
+```
+
 # Basics
 
-After running the install script above do the following.
+After installation do the following.
 
 1. Open wezterm
 1. Press `<ctrl-a>%` to open up a split pane
