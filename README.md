@@ -157,7 +157,7 @@ Additional mappings (widgets) available to zsh:
 
 ## Ruby/Rails
 
-### zsh/neovim
+### ruby/rails zsh/neovim
 
 These are available in both zsh and neovim.
 
@@ -167,16 +167,18 @@ These are available in both zsh and neovim.
 | <kbd>^orm</kbd> | Find & edit & edit Rails model & edit |
 | <kbd>^orv</kbd> | Find & edit & edit Rails view & edit |
 
-### neovim 
+### ruby/rails neovim 
 
 These are available in neovim.
 
+| mapping | description |
+| :-----: | :---------- |
 | <kbd>&lt;Leader&gt;bp</kbd> | Insert `binding.pry` below current line |
 | <kbd>&lt;Leader&gt;bP</kbd> | Insert `binding.pry` above current line |
 | <kbd>&lt;Leader&gt;rp</kbd> | Insert `puts` below current line |
 | <kbd>&lt;Leader&gt;rP</kbd> | Insert `puts` above current line |
 
-### zsh
+### ruby/rails zsh
 
 These are available in zsh.
 

@@ -42,7 +42,7 @@ brew 'procs' # `ps` replacement written in Rust
 brew 'redis' # redis is redis
 brew 'rg' # ripgrep
 brew 'sd' # easy search & replace. sed alternative/replacement
-brew 'sl'
+brew 'sl' # 🚂
 brew 'showkey' # type a key and see it echoed in the terminal
 brew 'solargraph' # Ruby language server (LSP)
 brew 'starship' # prompt
