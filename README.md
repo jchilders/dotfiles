@@ -185,6 +185,7 @@ These are available in zsh.
 | alias | description |
 | :---: | :---------- |
 | <kbd>bi</kbd> | `bundle install` |
+| <kbd>cdgem &lt;gem&gt;</kbd> | cd to the directory for the given gem |
 | <kbd>rc</kbd> | `bin/rails console`, or `bin/console` if in a Gem directory |
 | <kbd>rdbm</kbd> | `rake db:migrate` |
 | <kbd>rdbms</kbd> | `rake db:migrate:status` |

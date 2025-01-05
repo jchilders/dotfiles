@@ -95,20 +95,52 @@ function cdbrew {
 # because you can't cd from a script & have it stick. zsh spawns a child
 # process to execute a script, while functions happen in the same process they
 # were called from.
-function cdgem () {
-  if [[ $# -eq 0 ]]; then
-    echo "Usage: $0 <gem>"
-    return 1
-  fi
+cdgem() {
+    if [ $# -eq 0 ]; then
+        echo "Usage: $0 GEM_NAME"
+        return 1
+    fi
 
-  local gem_dir="$(bundle exec gem open $1 -e echo)"
-  if [ $? -ne 0 ]; then
-    echo "Error finding gem '$1'"
+    local gem_name="$1"
+    local gem_path=""
+    
+    # First try to find gem in Gemfile if it exists
+    if [ -f "Gemfile" ]; then
+        # Get the path from bundler
+        gem_path=$(bundle show "$gem_name" 2>/dev/null)
+        if [ $? -eq 0 ]; then
+            cd "$gem_path"
+            return 0
+        fi
+    fi
+    
+    # If not found in Gemfile or no Gemfile exists, try system gems
+    gem_path=$(gem which "$gem_name" 2>/dev/null)
+    if [ $? -eq 0 ]; then
+        # gem which returns the path to a file within the gem
+        # we need to get the gem's root directory
+        gem_path=$(dirname $(dirname "$gem_path"))
+        cd "$gem_path"
+        return 0
+    fi
+    
+    echo "Could not find gem: $gem_name"
     return 1
-  fi
-
-  cd $gem_dir
 }
+# function cdgem () {
+#   if [[ $# -eq 0 ]]; then
+#     echo "Usage: $0 <gem>"
+#     return 1
+#   fi
+#
+#   local gem_dir="$(bundle exec gem open $1 -e echo)"
+#   if [ $? -ne 0 ]; then
+#     echo "Error finding gem '$1'"
+#     return 1
+#   fi
+#
+#   cd $gem_dir
+# }
 
 function cwd_is_git_repo() {
   if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
