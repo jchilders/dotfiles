@@ -15,6 +15,15 @@ config.font = wezterm.font(default_font_family)
 config.font_size = default_font_size
 config.scrollback_lines = 3500
 config.show_new_tab_button_in_tab_bar = false
+config.window_decorations = "NONE"
+config.native_macos_fullscreen_mode = true
+
+-- Create horizontal split on startup
+wezterm.on("gui-startup", function(cmd)
+  local tab, pane, window = wezterm.mux.spawn_window(cmd or {})
+  pane:split({ direction = "Right" })
+  window:gui_window():maximize()
+end)
 
 -- Set the tab title to the current directory, unless it has already had its
 -- title set via e.g. <leader>r
