@@ -1,7 +1,6 @@
 local remap = require("utils").map_global
 local scratcher = require("jc.scratcher")
 local emu_utils = require("jc.emu-utils")
-local chuck_tester = require("jc.chuck_tester")
 
 TelescopeMapArgs = TelescopeMapArgs or {}
 

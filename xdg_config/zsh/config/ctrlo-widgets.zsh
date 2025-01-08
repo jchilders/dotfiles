@@ -18,19 +18,10 @@ function __find_file() {
     fi'
 
   files=("${(@f)$(eval $cmd 2>/dev/null)}") || {
-    print -u2 "Failed to execute cmd: $cmd"
-    return 1
+    echo | fzf --header "No files found " --exit-0
   }
 
-  found_file=$(print -l $files | fzf --ansi --multi --preview="$preview_cmd") || {
-    print -u2 "fzf selection failed"
-    return 1
-  }
-
-  [[ -n $found_file ]] || {
-    print -u2 "No file selected"
-    return 1
-  }
+  found_file=$(print -l $files | fzf --ansi --multi --preview="$preview_cmd")
 }
 
 function __eval_found_file {

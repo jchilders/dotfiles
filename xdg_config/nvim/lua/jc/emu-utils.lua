@@ -1,7 +1,6 @@
 local uv = vim.loop
 
 local emu = require("jc.wezterm")
-local utils = require("jc.utils")
 
 local M = {}
 

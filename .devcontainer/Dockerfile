@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/devcontainers/base:ubuntu as asdf-install
+FROM mcr.microsoft.com/devcontainers/base:ubuntu
 
 # Avoid warnings by switching to noninteractive
 ARG DEBIAN_FRONTEND=noninteractive
@@ -10,11 +10,12 @@ RUN useradd -m -s /bin/bash dotfiles \
 
 USER dotfiles
 
-RUN git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.14.1 \
-    && echo 'source "$HOME/.asdf/asdf.sh"' >> ~/.zshrc \
-    && mkdir -p ~/.config/zsh/completions \
-    && echo 'fpath=(${ASDF_DIR}/completions $fpath)' >> ~/.zshrc \
-    && echo 'autoload -Uz compinit && compinit' >> ~/.zshrc
+# RUN git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.14.1 \
+#     && echo 'source "$HOME/.asdf/asdf.sh"' >> ~/.zshenv \
+#     && echo 'source "$HOME/.asdf/asdf.sh"' >> ~/.zshrc \
+#     && mkdir -p ~/.config/zsh/completions \
+#     && echo 'fpath=(${ASDF_DIR}/completions $fpath)' >> ~/.zshrc \
+#     && echo 'autoload -Uz compinit && compinit' >> ~/.zshrc
 
 # Set environment variables
 ENV XDG_CACHE_HOME=/home/dotfiles/.cache \
@@ -54,6 +55,15 @@ RUN sudo apt-get update && sudo apt-get install -y \
     && sudo ln -s $(which batcat) /usr/local/bin/bat \
     && sudo rm -rf /var/lib/apt/lists/*
 
+SHELL ["/bin/bash", "-lc"]
+RUN git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.14.1 && \
+    echo ". $HOME/.asdf/asdf.sh" >> /root/.bashrc && \
+    echo ". $HOME/.asdf/asdf.sh" >> /root/.zshrc
+
+RUN asdf plugin add ruby
+
+
+
 # Install eza (ls replacement)
 RUN sudo mkdir -p /etc/apt/keyrings \
   && wget -qO- https://raw.githubusercontent.com/eza-community/eza/main/deb.asc | sudo gpg --dearmor -o /etc/apt/keyrings/gierens.gpg \
@@ -73,28 +83,26 @@ COPY .zshenv /home/dotfiles/.zshenv
 RUN sudo chown dotfiles:dotfiles /home/dotfiles/.zshenv
 
 # Since we use .zshenv instead of .rshrc, delete the .zshrc that comes from the base image
-RUN rm /home/dotfiles/.zshrc
+# RUN rm /home/dotfiles/.zshrc
 
 # Copy XDG config files
 COPY xdg_config/ ${XDG_CONFIG_HOME}/
 RUN sudo chown -R dotfiles:dotfiles ${XDG_CONFIG_HOME}
 
 # Install starship prompt
-RUN curl -sS https://starship.rs/install.sh --yes | sh
-# Switch to the asdf-install image so that we can run asdf commands
-FROM asdf-install AS dotfiles-install
+RUN curl -sS https://starship.rs/install.sh | sh -s -- -y >/dev/null
 
-# Ensure we use zsh for all RUN commands.
-# `-lic` is used to use the interactive login shell, which ensures that zsh config files are loaded before subsequent RUN commands are executed.
-SHELL ["/bin/zsh", "-lic"]
-
-# RUN asdf plugin add ruby \
+# RUN source ~/.asdf/asdf.sh \
+#     && asdf plugin add ruby \
 #     && asdf install ruby latest \
 #     && asdf global ruby latest
 
-FROM dotfiles-install
+# RUN source ~/.asdf/asdf.sh \
+#     && asdf plugin add zoxide https://github.com/nyrst/asdf-zoxide.git \
+    # && asdf install zoxide latest
 
-# RUN gem install bundler
+# Switch to the asdf-install image so that we can run asdf commands
+# FROM asdf-install AS dotfiles-install
 
 # On Linux, the `fd` binary is called `fdfind`. Create a symlink to `fd` for easier usage.
 RUN [[ $(uname) == "Linux" ]] && sudo ln -s $(which fdfind) /usr/local/bin/fd

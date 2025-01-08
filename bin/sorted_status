@@ -1,6 +1,13 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
+# Get a list of files from git status sorted by path.
+# Returns 1 if there are no changes
+
 require_relative 'status_lines'
 
-puts StatusLines.new.sort.map(&:path)
+lines = StatusLines.new.sort.map(&:path).compact
+
+exit 1 if lines.empty?
+
+puts lines
