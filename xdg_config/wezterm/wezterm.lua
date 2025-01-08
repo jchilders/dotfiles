@@ -74,7 +74,15 @@ config.inactive_pane_hsb = {
 
 -- Mappings
 config.leader = { key = 'a', mods = 'CTRL', timeout_milliseconds = 1500 }
+-- Custom action to create a new tab and split it horizontally
+local function new_tab_with_horizontal_split(window, pane)
+  window:perform_action(act.SpawnTab "CurrentPaneDomain", pane)
+  window:perform_action(act.SplitHorizontal { domain = "CurrentPaneDomain" }, pane)
+end
+
 config.keys = {
+  -- New tab with horizontal split
+  { key = "t", mods = "CMD", action = wezterm.action_callback(new_tab_with_horizontal_split) },
   { key = "z", mods = "LEADER",    action = act.TogglePaneZoomState },
   { key = "F", mods = "SHIFT|CMD",  action = "ToggleFullScreen" },
   { key = "H", mods = "SHIFT|CMD", action = act.ActivatePaneDirection("Left"), },
