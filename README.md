@@ -1,23 +1,22 @@
-# Table of Contents
-- [What?](#what)
-- [Installation](#installation)
-- [Using](#Using)
-- [wezterm](#wezterm)
-- [ctrl-o](#ctrl-o)
-  - [File Mappings](#ctrl-o-file-mappings)
-  - [zsh Specific Mappings](#zsh-specific-ctrl-o-mappings)
-  - [Neovim Specific Mappings](#neovim-specific-ctrl-o-mappings)
-- [Neovim](#other-noteworthy-neovim-mappings)
-- [zsh](#zsh)
-  - [Mappings](#mappings)
-  - [Aliases](#aliases)
-- [Ruby/Rails](#rubyrails)
-
 # What?
 
-My dotfiles. I am a developer. This configuration will allow you to do common things with very few keystrokes.
+My dotfiles. I am a developer who works primarily on macOS/Darwin. This configuration will allow you to do common things with very few keystrokes. After trying various combinations over the years I settled on zsh/neovim/wezterm and have customized them to work with each other.
 
 "UNIX is an IDE."
+
+![term_screenshot_left_active](https://github.com/user-attachments/assets/82f6231c-dbbb-4577-aec1-50dcee05b549)
+
+Left pane active. The results are from executing the alias `l`, which uses eza under the hood. The third column shows when the file/directory was last modified in the git repo.
+
+Notes:
+
+- Tabs by default are labeled with the git root directory, updating when you change directories
+- Inactive panes are dimmed
+- Changing panes is done with <kbd>Shift ⌘ &lt;direction&gt;</kbd>, where `<direction>` is a vim-style movement key, i.e.: hjkl. So after pressing <kbd>Shift ⌘ L</kbd> to switch to the pane to the right we get this:
+
+![term_screenshot_right_active](https://github.com/user-attachments/assets/220c36f2-4eb3-4f66-8676-b5e05cdd18fc)
+
+Right pane active. Here Neovim is loaded with a Typescript file. An error on line 35 is being reported by the LSP.
 
 # Installation
 
@@ -43,20 +42,30 @@ Q: lol why are you using Make?
 
 A: Because it works pretty well out of the box.
 
-# Using
+# ctrl-o
 
-After installation do the following.
+`ctrl-o` acts as an action key prefix for opening files/doing things with them, similar to `cmd-p` in VSCode. Its primary purpose is to open files in $EDITOR (hence the `o` prefix). The full list of `ctrl-o` commands are given below, but these are a few of the most frequently used:
 
-1. Open wezterm
-1. Press `<ctrl-a>%` to open up a split pane
-1. Run `nvim`
+| mapping | description |
+| :-----: | :---------- |
+| <kbd>^oo</kbd> | Open file. Respects `.gitignore` |
+| <kbd>^ogs</kbd> | Open uncommited changed file ("git status") |
+| <kbd>^ob</kbd> | Open buffer (neovim only) |
+
+# Working with REPLs/shells
+
+Text in neovim can be sent to the REPL or shell you're currently working in. This allows for testing out either single lines, or entire blocks. Try this:
+
+1. Open `nvim` in the right pane. 
+  - Hit <kbd>cmd t</kbd> to open a new tab if you need to
 1. Insert the following into neovim: `echo hello`
 1. Hit `esc` to exit insert mode
-1. Press `<space>sh`. This sends the current line to the pane to the left
+1. Press <kbd>&lt;space&gt;sh</kbd>. This will the current line to the pane to the left and execute it. 
+- Multiple lines can similarly be sent by visually selecting them and hitting <kbd>&lt;space&gt;sh</kbd>.
 
-If everything works correctly then "echo hello" should be executed in the left pane.
+This is incredibly powerful if you are workng with a repl or a shell.
 
-This gives you an idea of my (opinionated) setup: a horizontal split, where the left is a console or repl, and the right is neovim. I edit code in the right pane, and various mappings are used to quickly interact with the left, either to execute code in a repl/shell, or to run tests.
+# Mappings
 
 ## wezterm
 
@@ -68,17 +77,17 @@ This gives you an idea of my (opinionated) setup: a horizontal split, where the 
 | <kbd>shift-cmd-]</kbd> | Next tab |
 | <kbd>shift-cmd-f</kbd> | Toggle full screen |
 | <kbd>shift-cmd-n</kbd> | Rotate panes |
+| <kbd>shift-cmd-&lt;dir&gt;</kbd> | Go to pane in &lt;dir&gt; (hjkl) |
 | <kbd>cmd-&lt;num&gt;</kbd> | Goto tab &lt;num&gt; |
 | <kbd>^ar</kbd> | Rename tab |
-| <kbd>^a%</kbd> | Horizontally split window (left/right)|
+| <kbd>^a%</kbd> | Horizontally split pane (left/right)|
 | <kbd>^a-</kbd> | Vertically split pane (top/bottom) |
 | <kbd>^az</kbd> | Zoom pane. Press again to undo. |
-| <kbd>shift-cmd-&lt;dir&gt;</kbd> | Go to pane in &lt;dir&gt; (hjkl) |
 | <kbd>^a[</kbd> | Enter copy mode. Use hjkl to nav, then v to select, then y to copy selected text to clipboard |
 
 ## ctrl-o
 
-`ctrl-o` acts as a action prefix similar to `shift-cmd-p` in VS Code. It is available in both zsh and neovim. It's original purpose is to open files (hence the `o` prefix).
+As mentioned above, `ctrl-o` acts as an action prefix similar to `cmd-p`/`shift-cmd-p` in VSCode. It's original purpose is to open files (hence the `o` prefix).
 
 ## ctrl-o file mappings
 
@@ -86,21 +95,19 @@ These work in both zsh and nvim.
 
 | mapping | description |
 | :-----: | :---------- |
-| <kbd>^oo</kbd> | Find & edit file in $EDITOR. Respects `.gitignore` |
-| <kbd>^oO</kbd> | Find & edit *any* file in $EDITOR. Ignores `.gitignore` |
-| <kbd>^ogb</kbd> | Switch branch |
+| <kbd>^oo</kbd> | Open file. Respects `.gitignore` |
+| <kbd>^oO</kbd> | Open *any* file. Ignores `.gitignore` |
 
-## zsh specific ctrl-o mappings
-
-These are all around git funtionality, primarily around reviewing changes and adding files to the commit (or reverting changes).
+## ctrl-o git mappings
 
 | mapping | description |
 | :-----: | :---------- |
-| <kbd>^ogd</kbd> | Find uncommited changed file & show diff (`git diff`) |
-| <kbd>^oga</kbd> | Find uncommited changed file & add to staging area (`git add`) |
-| <kbd>^ogs</kbd> | Find uncommited changed file & edit (`git status`) |
+| <kbd>^ogb</kbd> | Switch git branch |
+| <kbd>^ogs</kbd> | Open file ("git status") |
+| <kbd>^ogd</kbd> | Show file diff (zsh only) |
+| <kbd>^oga</kbd> | Add file to git staging area (zsh only) |
 
-Doing `^ogd` followed by `^oga` allows you to diff/add files very quickly. `^oga` will prompt you with what you want to do. Say you just did `^gd` (git diff) for `README.md`. Pressing `^oga` now will give you:
+The last two allow you to diff/add files extremely quickly. Say you just did `^gd` (git diff) for `README.md`. Pressing `^oga` after doing so will prompt you:
 
 ```
 Add README.md to the git staging area? [Y/n/d/c]
@@ -108,7 +115,7 @@ Add README.md to the git staging area? [Y/n/d/c]
 
 `Y` will add it, `n` will abort, `d` will let you do a diff, and `c` will check it out, overwriting your changes. So if you do a `^ogd` and realize you want to abandon the changes made to that file, just do `^oga` then `c` and voila.
 
-The diff/add mappings are built to allow for quickly doing diff/add operations with git and have some intelligence built into them. I encourage you to try this until your muscle memory gets familiar with it. This flow works particularly well when there are several files that need to be reviewed and added to the commit (or reverted).
+The mappings are built to allow for quickly doing diff/add operations. You are encouraged to try this until your muscle memory gets familiar with it. This flow works particularly well when there are multiple files that need to be reviewed and added to the commit (or reverted).
 
 ## Neovim specific ctrl-o mappings
 
@@ -116,8 +123,6 @@ The diff/add mappings are built to allow for quickly doing diff/add operations w
 | :-----: | :---------- |
 | <kbd>^ob</kbd> | Switch buffer by filename |
 | <kbd>^or</kbd> | go to symbol (method name, etc.) for current buffer |
-
-The last one here isn't that useful; use `gd` (goto definition) instead. Leaving it for historical purposes.
 
 ### Other Noteworthy Neovim Mappings
 
@@ -140,7 +145,7 @@ The leader key is currently `<space>`.
 | <kbd>&lt;Leader&gt;rt</kbd> | Run most recently modified test in left pane |
 | <kbd>&lt;Leader&gt;rT</kbd> | Run most recently modified test, current line/test case in left pane |
 
-I use the latter two very frequently.
+I use these two very frequently.
 
 ### Sending to panes
 
@@ -155,7 +160,7 @@ The purpose of this mapping is to allow you to edit code and quickly test lines 
 # zsh
 
 ## Mappings
-Additional mappings (widgets) available to zsh:
+Additional zsh mappings:
 
 | mapping | description |
 | :-----: | :---------- |

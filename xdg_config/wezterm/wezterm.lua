@@ -21,8 +21,8 @@ local config = {
 
   -- Dim inactive panes
   inactive_pane_hsb = {
-    saturation = 0.6,
-    brightness = 0.4,
+    saturation = 0.5,
+    brightness = 0.3,
   },
 
   leader = { key = 'a', mods = 'CTRL', timeout_milliseconds = 1500 },
@@ -47,8 +47,8 @@ wezterm.on("gui-startup", function(cmd)
   window:gui_window():maximize()
 end)
 
--- Format the tab title to just be the current directory, unless it has already
--- had its title set via e.g. <leader>r
+-- Set the tab's title to be the current directory, unless the title has
+-- already been set via e.g. <leader>r
 wezterm.on("format-tab-title", function(tab, _, _, _, _, _)
   -- If a tab title is already set, use that
   local new_title = tab.tab_title
