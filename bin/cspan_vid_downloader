@@ -1,0 +1,151 @@
+#!/bin/zsh
+
+set -e  # Exit on error
+
+if [[ $# -ne 1 ]]; then
+    echo "Usage: $0 <c-span-url>"
+    exit 1
+fi
+
+# Check if URL is from c-span.org
+if [[ ! $1 =~ "c-span.org" ]]; then
+    echo "Error: URL must be from c-span.org"
+    exit 1
+fi
+
+# Function to save error responses
+save_error() {
+    local content="$1"
+    local timestamp=$(date +%Y%m%d_%H%M%S)
+    local content_type=$(echo "$content" | head -n1 | grep -i 'content-type' || echo "unknown")
+    local extension="txt"
+    
+    if [[ $content_type =~ "html" ]]; then
+        extension="html"
+    elif [[ $content_type =~ "json" ]]; then
+        extension="json"
+    fi
+    
+    local error_file="$HOME/Desktop/cspan_err_${timestamp}.${extension}"
+    echo "$content" > "$error_file"
+    echo "Error response saved to: $error_file"
+}
+
+# Check for yt-dlp
+echo "Checking yt-dlp version..."
+if ! command -v yt-dlp &> /dev/null; then
+    echo "yt-dlp is not installed. Please install it first:"
+    echo "brew install yt-dlp   # for macOS"
+    echo "pip install yt-dlp    # for Python users"
+    exit 1
+fi
+
+# Function to get the standardized video URL
+get_video_url() {
+    local clip_url="$1"
+    local clip_id
+    
+    echo "Extracting clip ID..."
+    # Extract clip ID from the URL
+    clip_id=$(echo "$clip_url" | grep -o '[0-9]*$')
+    if [[ -z "$clip_id" ]]; then
+        echo "Failed to extract clip ID" >&2
+        return 1
+    fi
+    echo "Found clip ID: $clip_id"
+    
+    local json_file=$(mktemp)
+    
+    # Try to get the clip info directly from the API
+    echo "Fetching clip info from API..."
+    local api_url="https://www.c-span.org/api/composite/clip/${clip_id}"
+    echo "API URL: $api_url"
+    
+    if ! curl -s -m 10 --connect-timeout 5 \
+            -H "Accept: application/json" \
+            -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36" \
+            -H "Referer: https://www.c-span.org/" \
+            "$api_url" > "$json_file"; then
+        echo "Failed to fetch from API" >&2
+        cp "$json_file" "$HOME/Desktop/cspan_api_${clip_id}.json"
+        rm -f "$json_file"
+        return 1
+    fi
+    
+    # Save API response for debugging
+    cp "$json_file" "$HOME/Desktop/cspan_api_${clip_id}.json"
+    
+    # Try to extract video URL from API response
+    local video_url=$(jq -r '.video.clipUrl // .video.mp4Url // .video.files[0].url // empty' "$json_file")
+    rm -f "$json_file"
+    
+    if [[ -n "$video_url" ]]; then
+        echo "Found video URL in API response"
+        printf "%s" "$video_url"
+        return 0
+    fi
+    
+    # If API fails, try the modern clip URL format
+    local clip_url="https://www.c-span.org/clips/?clip=${clip_id}"
+    echo "Trying modern clip URL: $clip_url"
+    local headers_file=$(mktemp)
+    local webpage_file=$(mktemp)
+    
+    if curl -s -m 10 -L --connect-timeout 5 \
+            -D "$headers_file" \
+            -o "$webpage_file" \
+            -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36" \
+            "$clip_url"; then
+        
+        # Save debug information
+        cp "$headers_file" "$HOME/Desktop/cspan_headers_${clip_id}.txt"
+        cp "$webpage_file" "$HOME/Desktop/cspan_page_${clip_id}.html"
+        
+        # Look for video URL in the page
+        local page_video_url=$(grep -o 'https://[^"]*\.mp4[^"]*' "$webpage_file" | head -n1)
+        if [[ -n "$page_video_url" ]]; then
+            echo "Found video URL in page"
+            printf "%s" "$page_video_url"
+            rm -f "$headers_file" "$webpage_file"
+            return 0
+        fi
+    fi
+    
+    # Clean up temp files
+    rm -f "$headers_file" "$webpage_file"
+    
+    echo "Failed to find valid video URL" >&2
+    return 1
+}
+
+# Get the proper video URL
+echo "Converting clip URL to video URL..."
+VIDEO_URL=$(get_video_url "$1")
+if [[ $? -ne 0 || -z "$VIDEO_URL" ]]; then
+    echo "Error: Could not determine video URL"
+    exit 1
+fi
+
+echo "Using video URL: $VIDEO_URL"
+
+# Download with yt-dlp
+echo "Starting download..."
+yt-dlp \
+    --verbose \
+    --format "best" \
+    --user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36" \
+    --add-header "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8" \
+    --add-header "Accept-Language: en-US,en;q=0.5" \
+    --add-header "Referer: https://www.c-span.org/" \
+    --no-check-certificates \
+    --output "%(title)s-%(id)s.%(ext)s" \
+    "$VIDEO_URL"
+
+if [[ $? -ne 0 ]]; then
+    echo "Error: Download failed"
+    # Save the full yt-dlp debug output
+    yt-dlp --verbose "$VIDEO_URL" 2>&1 | save_error
+    exit 1
+fi
+
+echo "Download completed successfully"
