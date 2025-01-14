@@ -13,6 +13,17 @@ then
   export XDG_CACHE_HOME="$HOME/.cache"
 fi
 
+if [[ -z $XDG_STATE_HOME ]]
+then
+  export XDG_STATE_HOME="$HOME/.local/state"
+fi
+
+export ZDOTDIR="${XDG_CONFIG_HOME:-$HOME/.config}/zsh"
+mkdir -p "${ZDOTDIR}"
+
+export HISTFILE="${XDG_STATE_HOME:-$HOME/.local/state}/zsh/history"
+mkdir -p "${XDG_STATE_HOME:-$HOME/.local/state}/zsh"
+
 # Binaries built by Cargo (Rust)
 path+=($HOME/.cargo/bin)
 

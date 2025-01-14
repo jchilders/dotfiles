@@ -1,7 +1,7 @@
 # Table of Contents
 - [What?](#what)
 - [Installation](#installation)
-- [Basics](#basics)
+- [Using](#Using)
 - [wezterm](#wezterm)
 - [ctrl-o](#ctrl-o)
   - [File Mappings](#ctrl-o-file-mappings)
@@ -20,8 +20,6 @@ My dotfiles. I am a developer. This configuration will allow you to do common th
 "UNIX is an IDE."
 
 # Installation
-
-## Local Installation
 
 ```
 > git clone git@github.com:jchilders/dotfiles.git
@@ -43,27 +41,9 @@ To undo the above:
 
 Q: lol why are you using Make?
 
-A: Because I'd never written a Makefile before, and honestly it works pretty well.
+A: Because it works pretty well out of the box.
 
-## Using a devcontainer
-
-```
-devcontainer build --workspace-folder . --image-name jc_dotfiles:latest
-docker ps -a
-devcontainer up --workspace-folder .
-devcontainer exec --workspace-folder . /bin/zsh
-```
-
-To stop/rebuild/restart the devcontainer:
-
-```
-docker ps -a
-docker rm jc_dotfiles
-devcontainer build --workspace-folder . --image-name jc_dotfiles:latest
-devcontainer up --workspace-folder .
-```
-
-# Basics
+# Using
 
 After installation do the following.
 
@@ -244,3 +224,24 @@ Use `z` (zoxide). For example:
 ➜ pwd
 /Users/jchilders/work/myproj # tada
 ```
+
+## Using a devcontainer
+
+In progress.
+
+```
+devcontainer build --workspace-folder . --image-name jc_dotfiles:latest
+docker ps -a
+devcontainer up --workspace-folder .
+devcontainer exec --workspace-folder . /bin/zsh
+```
+
+To stop/rebuild/restart the devcontainer:
+
+```
+docker ps -a
+docker rm jc_dotfiles
+devcontainer build --workspace-folder . --image-name jc_dotfiles:latest
+devcontainer up --workspace-folder .
+```
+

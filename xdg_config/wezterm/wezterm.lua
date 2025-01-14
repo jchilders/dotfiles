@@ -1,32 +1,54 @@
 local wezterm = require("wezterm")
 local act = wezterm.action
 
-local config = {}
-
-local default_font_family = "BlexMono Nerd Font"
-local default_font_size = 18.0
+local default_font_size = 20.0
+local default_font = {
+  -- family = "BlexMono Nerd Font",
+  family = "Source Code Pro for Powerline",
+  weight = 'Regular'
+}
 local tab_text_color = '#f0f0f0'
 
-config.colors = {
-  background = "black",
-  compose_cursor = "orange",
-}
-config.font = wezterm.font(default_font_family)
-config.font_size = default_font_size
-config.scrollback_lines = 3500
-config.show_new_tab_button_in_tab_bar = false
-config.window_decorations = "NONE"
-config.native_macos_fullscreen_mode = true
+local config = {
+  colors = {
+    background = "black",
+    compose_cursor = "orange",
+  },
+  font_size = default_font_size,
+  font = wezterm.font(default_font),
+  -- cell_width = 0.9,
+  default_cursor_style = "BlinkingBlock",
 
--- Create horizontal split on startup
+  -- Dim inactive panes
+  inactive_pane_hsb = {
+    saturation = 0.6,
+    brightness = 0.4,
+  },
+
+  leader = { key = 'a', mods = 'CTRL', timeout_milliseconds = 1500 },
+
+  max_fps = 120,
+  native_macos_fullscreen_mode = false,
+  scrollback_lines = 3500,
+  show_new_tab_button_in_tab_bar = false,
+
+  -- Defaults for the tab bar
+  window_frame = {
+    -- font = wezterm.font(default_font),
+    font_size = default_font_size,
+    active_titlebar_bg = "#300030",
+  },
+}
+
+-- Split on startup
 wezterm.on("gui-startup", function(cmd)
-  local tab, pane, window = wezterm.mux.spawn_window(cmd or {})
+  local _, pane, window = wezterm.mux.spawn_window(cmd or {})
   pane:split({ direction = "Right" })
   window:gui_window():maximize()
 end)
 
--- Set the tab title to the current directory, unless it has already had its
--- title set via e.g. <leader>r
+-- Format the tab title to just be the current directory, unless it has already
+-- had its title set via e.g. <leader>r
 wezterm.on("format-tab-title", function(tab, _, _, _, _, _)
   -- If a tab title is already set, use that
   local new_title = tab.tab_title
@@ -42,12 +64,13 @@ wezterm.on("format-tab-title", function(tab, _, _, _, _, _)
   if (cwd_url ~= nil) then
     local path = cwd_url.path
     -- wezterm.log_info("1 path: ", cwd_url.path)
-    local basename = string.gsub(path, '.*/([^/]+/)$', '%1')
+    local basename = string.gsub(path, '.*/([^/]+.)$', '%1')
     -- wezterm.log_info("1.1 basename: ", basename)
-    new_title = basename
+    new_title = basename .. "/"
 
-    -- if path contains "temp" then prefix with TEMP
-    -- doing this b/c I frequently clone the same repo into ~/temp, but forget which one I'm in at the moment.
+    -- if path contains "temp" then prefix the tab name with "TEMP"
+    -- Doing this b/c I frequently clone the same repo into ~/temp, but forget which
+    -- I'm working in
     if string.find(cwd_url.path, "temp") then
       new_title = "(TEMP) " .. new_title
     end
@@ -58,7 +81,6 @@ wezterm.on("format-tab-title", function(tab, _, _, _, _, _)
   new_title = zoomed .. new_title
 
   local curr_tab_text_color = tab.is_active and tab_text_color or "#808080"
-  -- local active_tab_attr = tab.is_active and "Bold" or "Normal"
 
   return {
     { Foreground = { AnsiColor = "Navy" } },
@@ -68,32 +90,17 @@ wezterm.on("format-tab-title", function(tab, _, _, _, _, _)
   }
 end)
 
--- Defaults for the tab bar
-config.window_frame = {
-  font = wezterm.font { family = default_font_family },
-  font_size = default_font_size,
-  active_titlebar_bg = "#300030",
-}
-
--- Dim inactive panes
-config.inactive_pane_hsb = {
-  saturation = 0.9,
-  brightness = 0.5,
-}
-
 -- Create a new tab and split it horizontally
 local function new_tab_with_horizontal_split(window, pane)
   window:perform_action(act.SpawnTab "CurrentPaneDomain", pane)
   window:perform_action(act.SplitHorizontal { domain = "CurrentPaneDomain" }, pane)
 end
 
-config.leader = { key = 'a', mods = 'CTRL', timeout_milliseconds = 1500 }
-
 config.keys = {
   -- New tab with horizontal split
   { key = "t", mods = "CMD", action = wezterm.action_callback(new_tab_with_horizontal_split) },
   { key = "z", mods = "LEADER",    action = act.TogglePaneZoomState },
-  { key = "F", mods = "SHIFT|CMD",  action = "ToggleFullScreen" },
+  { key = "F", mods = "SHIFT|CMD", action = "ToggleFullScreen" },
   { key = "H", mods = "SHIFT|CMD", action = act.ActivatePaneDirection("Left"), },
   { key = "L", mods = "SHIFT|CMD", action = act.ActivatePaneDirection("Right"), },
   { key = "K", mods = "SHIFT|CMD", action = act.ActivatePaneDirection("Up"), },

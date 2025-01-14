@@ -36,6 +36,20 @@ foreach file (
 }
 unset file
 
+# Oh My Zsh
+# Skip only aliases defined in the directories.zsh lib file
+zstyle ':omz:lib:directories' aliases no
+
+export ZSH="$XDG_STATE_HOME/ohmyzsh"
+ZSH_THEME="robbyrussell"
+plugins=(
+  dotenv
+  git
+  zoxide
+)
+
+source $ZSH/oh-my-zsh.sh
+
 # 1password completions
 if type op &>/dev/null; then
   eval "$(op completion zsh)"
@@ -45,11 +59,6 @@ fi
 # Sets up GitHub CLI (gh) command to work with 1Password CLI (`op`)
 if [[ -f $XDG_CONFIG_HOME/op/plugins.sh ]]; then
   source $XDG_CONFIG_HOME/op/plugins.sh
-fi
-
-# zoxide: smarter cd
-if type zoxide &> /dev/null; then
-  eval "$(zoxide init zsh)"
 fi
 
 # prompt. See $XDG_CONFIG_HOME/starship.toml for configuration.

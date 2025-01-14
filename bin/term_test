@@ -60,5 +60,5 @@ U+F057      \xef\x81\x97       Times Circle
 U+F05a      \xef\x81\x9a       Info Circle
 "
 
-echo "Done. If you are using tmux make sure you run this script both inside and outside of it."
+echo "Done."
 

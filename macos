@@ -90,6 +90,9 @@ sudo pmset -c sleep 0
 defaults write com.apple.screensaver askForPassword -int 1
 defaults write com.apple.screensaver askForPasswordDelay -int 0
 
+# Where Shift-Cmd-3 and Shift-Cmd-4 save screenshots to
+defaults write com.apple.screencapture location ~/Desktop
+
 ###############################################################################
 # Finder                                                                      #
 ###############################################################################
@@ -221,3 +224,10 @@ defaults write com.microsoft.VSCodeInsiders ApplePressAndHoldEnabled -bool false
 defaults write com.vscodium ApplePressAndHoldEnabled -bool false                      # For VS Codium
 defaults write com.microsoft.VSCodeExploration ApplePressAndHoldEnabled -bool false   # For VS Codium Exploration users
 defaults delete -g ApplePressAndHoldEnabled
+
+###############################################################################
+# Music
+###############################################################################
+
+# Turn off notifications when the song changes
+defaults write com.apple.Music userWantsPlaybackNotifications -bool false

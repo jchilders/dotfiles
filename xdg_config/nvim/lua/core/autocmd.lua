@@ -25,8 +25,8 @@ vim.api.nvim_create_autocmd({ "BufEnter", "BufRead" }, {
   command = "set filetype=dockerfile",
 })
 
--- Insert binding.pry or binding.p above or below the current line, depending on the direction
--- direction is 'above' or 'below'
+-- Insert `binding.pry` or `binding.p` above or below the current line, depending on the `direction`,
+-- where `direction` is one of 'above' or 'below'
 local function insert_binding(direction)
   -- Check if the current buffer is a Ruby file
   if vim.bo.filetype ~= 'ruby' then

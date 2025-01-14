@@ -13,10 +13,10 @@ brew 'eza' # git-aware ls replacement
 brew 'fd' # file finder
 brew 'fzf' # fuzzy finder
 brew 'gh' # GitHub CLI
-brew 'ghostty' # terminal emulator w/ native integration
 brew 'git' # git, you stupid git
 brew 'git-delta' # git-diff replacement
 brew 'git-lfs' # handle Large Files in git
+brew 'glow' # markdown reader
 brew 'gpg' # pretty good
 brew 'gping' # ping, but with graphs
 brew 'grep' # gnu grep
@@ -34,10 +34,8 @@ brew 'npm' # node package manager
 brew 'nvm'
 brew 'make' # gnu make
 brew 'memcached'
-brew 'overmind' # spawn Procfile under tmux
 brew 'parallel' # gnu parallel
 brew 'pastel' # generate/convert/manipulate colors
-# brew 'postgresql@14'
 brew 'procs' # `ps` replacement written in Rust
 brew 'redis' # redis is redis
 brew 'rg' # ripgrep
@@ -48,10 +46,9 @@ brew 'solargraph' # Ruby language server (LSP)
 brew 'starship' # prompt
 brew 'tealdeer' # Rust impl of `tldr`: man page supplement. brief desc, then examples
 brew 'tig' # git history viewer
-brew 'tmux'
 brew 'toilet' # ascii banners :)
-brew 'universal-ctags' # better ctags
-brew 'watchman' # needed by Sorbet LSP
+brew 'uv' # extremely fast Python package installer
+brew 'watchman' # watches files/dirs, does things
 brew 'watchexec' # auto-restart process when file(s) change
 brew 'wget'
 brew 'yarn'
@@ -62,9 +59,10 @@ brew 'yt-dlp' # audio/video downloader
 brew 'mkcert'
 brew 'nss' # for Firefox
 
-# yank: copy to clipboard via keyboard navigation (arrow keys, hjkl, etc.)
+# yank: TUI for copying values (to clipboard) via keyboard navigation (arrow
+# keys, hjkl, etc.)
 #
-# get a key or value from `env` & use '=' as a delimiter:
+# Ex: get a key or value from `env` & use '=' as a delimiter:
 # env | yank -d =
 #
 # select a process and kill it:
@@ -73,7 +71,6 @@ brew 'yank'
 
 brew 'zsh-autosuggestions'
 brew 'zsh-syntax-highlighting' # syntax highlighting while typing
-brew 'zoxide' # smarter cd command
 
 # fish-like abbreviations for zsh: aliases that expand when you hit enter
 tap 'olets/tap'
