@@ -102,7 +102,8 @@ remap("n", "<CR>", '{-> v:hlsearch ? "<cmd>nohl\\<CR>" : "\\<CR>"}()', true)
 vim.keymap.set("n", "<leader>w", "<cmd>wa<CR>")
 vim.keymap.set("n", "<leader>W", "<cmd>wqa<CR>")
 
-vim.keymap.set("n", "<leader>g", require("jc.utils").toggle_gutter)
+-- Zen-mode. Hides gutter, indentation indicators, and LSP messages
+vim.keymap.set("n", "<leader>z", require("jc.utils").toggle_zenish)
 
 local gitsigns_ok, gitsigns = pcall(require, "gitsigns")
 if gitsigns_ok then
@@ -129,9 +130,9 @@ remap("n", "<leader>li", "<cmd>lua print(require('utils.inspect').inspect(loadst
 vim.keymap.set("n", "<leader>sh", emu_utils.send_line_left)
 -- Send the current line to the pane to the right
 vim.keymap.set("n", "<leader>sl", emu_utils.send_line_right)
--- Send the current line to the pane above the current pane
+-- Send the current line to the pane above the current one
 vim.keymap.set("n", "<leader>sk", emu_utils.send_line_up)
--- Send the current line to the pane below the current pane
+-- Send the current line to the pane below the current one
 vim.keymap.set("n", "<leader>sj", emu_utils.send_line_down)
 
 -- Send the visually selected text to the left terminal pane
@@ -290,3 +291,21 @@ end)
 vim.keymap.set("n", "<leader>cbn", function()
   print(string.format("Current buffer number: %d, Current window number: %d", vim.fn.bufnr('%'), vim.api.nvim_win_get_number(0)))
 end)
+
+vim.api.nvim_set_keymap('n', '<leader>mp', [[<cmd>lua ControlMusic("playpause")<CR>]], { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>mn', [[<cmd>lua ControlMusic("next")<CR>]], { noremap = true, silent = true })
+
+-- Control Music app
+function ControlMusic(action)
+  local script = ""
+  if action == "playpause" then
+    script = "tell application \"Music\" to playpause"
+  elseif action == "next" then
+    script = "tell application \"Music\" to next track"
+  else
+    print("Invalid action: " .. action)
+    return
+  end
+  local handle = io.popen("osascript -e '" .. script .. "'")
+  if handle then handle:close() end
+end

@@ -16,7 +16,7 @@ local config = {
   },
   font_size = default_font_size,
   font = wezterm.font(default_font),
-  -- cell_width = 0.9,
+  cell_width = 0.9,
   default_cursor_style = "BlinkingBlock",
 
   -- Dim inactive panes

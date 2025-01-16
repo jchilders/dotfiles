@@ -18,6 +18,8 @@ Notes:
 
 Right pane active. Here Neovim is loaded with a Typescript file. An error on line 35 is being reported by the LSP.
 
+This setup is fairly Zen: work is done primarily in the right pane, which means that the code I'm working on is generally centered on the screen.
+
 # Installation
 
 ```
@@ -40,7 +42,7 @@ To undo the above:
 
 Q: lol why are you using Make?
 
-A: Because it works pretty well out of the box.
+A: Because it works pretty well out of the box and is consistent. I tried nix, and my experience was similar to [this](https://www.dgt.is/blog/2025-01-10-nix-death-by-a-thousand-cuts/): too many moving parts.
 
 # ctrl-o
 
@@ -65,9 +67,20 @@ Text in neovim can be sent to the REPL or shell you're currently working in. Thi
 
 This is incredibly powerful if you are workng with a repl or a shell.
 
+# Neovim
+
+The <kbd>&lt;leader&gt;</kbd> key is <kbd>&lt;space&gt;</kbd>.
+
+## Look & feel
+
+
+## Zen-ish Mode
+
+Press <kbd>&lt;leader&gt;z</kbd> to hide the gutter (current and relative line numbers, git indicators, etc.), indentation helpers, and any inline LSP warnings or errors appearing inline.
+
 # Mappings
 
-## wezterm
+## Tabs & Panes
 
 | mapping | description |
 | :-----: | :---------- |
@@ -87,7 +100,9 @@ This is incredibly powerful if you are workng with a repl or a shell.
 
 ## ctrl-o
 
-As mentioned above, `ctrl-o` acts as an action prefix similar to `cmd-p`/`shift-cmd-p` in VSCode. It's original purpose is to open files (hence the `o` prefix).
+As mentioned above, `ctrl-o` acts as an action prefix similar to
+`cmd-p`/`shift-cmd-p` in VSCode. It's original purpose is to open files (hence
+the `o` prefix).
 
 ## ctrl-o file mappings
 
@@ -107,15 +122,22 @@ These work in both zsh and nvim.
 | <kbd>^ogd</kbd> | Show file diff (zsh only) |
 | <kbd>^oga</kbd> | Add file to git staging area (zsh only) |
 
-The last two allow you to diff/add files extremely quickly. Say you just did `^gd` (git diff) for `README.md`. Pressing `^oga` after doing so will prompt you:
+The last two allow you to diff/add files extremely quickly. Say you just did
+`^gd` (git diff) for `README.md`. Pressing `^oga` after doing so will prompt
+you:
 
 ```
 Add README.md to the git staging area? [Y/n/d/c]
 ```
 
-`Y` will add it, `n` will abort, `d` will let you do a diff, and `c` will check it out, overwriting your changes. So if you do a `^ogd` and realize you want to abandon the changes made to that file, just do `^oga` then `c` and voila.
+`Y` will add it, `n` will abort, `d` will let you do a diff, and `c` will check
+it out, overwriting your changes. So if you do a `^ogd` and realize you want to
+abandon the changes made to that file, just do `^oga` then `c` and voila.
 
-The mappings are built to allow for quickly doing diff/add operations. You are encouraged to try this until your muscle memory gets familiar with it. This flow works particularly well when there are multiple files that need to be reviewed and added to the commit (or reverted).
+The mappings are built to allow for quickly doing diff/add operations. You are
+encouraged to try this until your muscle memory gets familiar with it. This
+flow works particularly well when there are multiple files that need to be
+reviewed and added to the commit (or reverted).
 
 ## Neovim specific ctrl-o mappings
 
@@ -132,7 +154,7 @@ The leader key is currently `<space>`.
 | :-----: | :---------- |
 | <kbd>Enter</kbd> | Clear highlighted search |
 | <kbd>&lt;Leader&gt;&lt;Leader&gt;</kbd> | Switch between next/previous buffers |
-| <kbd>&lt;Leader&gt;g</kbd> | Toggle gutter |
+| <kbd>&lt;Leader&gt;z</kbd> | Toggle Zen-ish mode |
 | <kbd>&lt;Leader&gt;]]</kbd> | Go to next error/warning |
 | <kbd>&lt;Leader&gt;[[</kbd> | Go to previous error/warning |
 | <kbd>gc<motion>lt;motion<motion>gt;</kbd> | Comment/uncomment <motion>lt;motion<motion>gt; |
@@ -155,7 +177,7 @@ In my workflow I have wezterm open with two panes (left/right). The left pane is
 | :-----: | :---------- |
 | <kbd>&lt;Leader&gt;s[dir]</kbd> | Send current line/visual selection to the `dir` pane (hjkl) |
 
-The purpose of this mapping is to allow you to edit code and quickly test lines or blocks in a repl. Simply select the code you want to execute using neovim's visual selection, then hit `<Leader>sh` to send it to the pane to the left.
+This lets you quickly test lines (or blocks) in an adjacent repl. Hitting `<Leader>sh` sends the current line to the pane to the left (`h` direction). This works with visual blocks as well.
 
 # zsh
 
@@ -216,23 +238,16 @@ These are available in zsh.
 
 ## Directory Navigation
 
-Use `z` (zoxide). For example:
+After using `cd` once you should be ablet to use `z` (zoxide) thereafter. `z` lets you `cd` to directories given just a partial path. Example:
 
 ```
-➜ cd ~/work/myrailsproj
-➜ pwd
-/Users/jchilders/work/myproj
+➜ cd ~/work/proj1
 ➜ cd
-➜ pwd
-/Users/jchilders
-➜ z myp
-➜ pwd
-/Users/jchilders/work/myproj # tada
+➜ z proj1 # takes you to ~/work/proj1
 ```
-
 ## Using a devcontainer
 
-In progress.
+Work in progress.
 
 ```
 devcontainer build --workspace-folder . --image-name jc_dotfiles:latest

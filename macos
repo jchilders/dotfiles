@@ -97,8 +97,11 @@ defaults write com.apple.screencapture location ~/Desktop
 # Finder                                                                      #
 ###############################################################################
 
-# Finder: show all filename extensions
-defaults write NSGlobalDomain AppleShowAllExtensions -bool false
+# Show all filename extensions
+defaults write NSGlobalDomain AppleShowAllExtensions -bool true
+
+# Show all files, including hidden ones
+defaults write com.apple.finder AppleShowAllFiles -bool true
 
 # When performing a search, search the current folder by default
 defaults write com.apple.finder FXDefaultSearchScope -string "SCcf"

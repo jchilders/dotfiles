@@ -33,7 +33,7 @@ function M.set_mappings(keymaps)
 end
 
 -- This toggles the displaying of the non-text text that can appear in the window: git status indicators in the gutter, relnums, LSP warnings, and so forth. It is intended to quickly allow for a clean view of the file being edited, without all the helpers.
-function M.toggle_gutter()
+function M.toggle_zenish()
   if vim.wo.relativenumber == true then
     vim.wo.signcolumn = "no"
     vim.wo.relativenumber = false
