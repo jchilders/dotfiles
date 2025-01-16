@@ -78,6 +78,8 @@ The <kbd>&lt;leader&gt;</kbd> key is <kbd>&lt;space&gt;</kbd>.
 
 Press <kbd>&lt;leader&gt;z</kbd> to hide the gutter (current and relative line numbers, git indicators, etc.), indentation helpers, and any inline LSP warnings or errors appearing inline.
 
+[Toggling zenish mode with Leader z](https://github.com/user-attachments/assets/7146e4a3-7287-436e-b94a-a90d34dacc0a)
+
 # Mappings
 
 ## Tabs & Panes
