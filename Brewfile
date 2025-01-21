@@ -1,4 +1,3 @@
-brew 'aichat' # all-in-one LLM CLI tool featuring Shell Assistant, REPL, RAG, AI Tools & Agents
 brew 'asdf' # Version manager for Ruby, Node, etc.
 brew 'atuin' # store shell history in SQLite
 brew 'automake'
@@ -23,12 +22,12 @@ brew 'grep' # gnu grep
 brew 'httpie' # cURL replacement. e.g.: `http POST pie.dev/post hello=world`
 brew 'imagemagick'
 brew 'jq' # json processor
-brew 'just' # command runner. `make` replacement.
+# brew 'just' # command runner. `make` replacement.
 brew 'lazygit' # git TUI
 brew 'lua'
 brew 'luarocks' # lua package manager
 brew 'mas' # CLI for Mac App Store
-brew 'neovim'
+# brew 'neovim'
 brew 'node' # node.js
 brew 'npm' # node package manager
 brew 'nvm'
@@ -36,14 +35,13 @@ brew 'make' # gnu make
 brew 'memcached'
 brew 'parallel' # gnu parallel
 brew 'pastel' # generate/convert/manipulate colors
-brew 'procs' # `ps` replacement written in Rust
 brew 'redis' # redis is redis
 brew 'rg' # ripgrep
 brew 'sd' # easy search & replace. sed alternative/replacement
 brew 'sl' # 🚂
 brew 'showkey' # type a key and see it echoed in the terminal
 brew 'solargraph' # Ruby language server (LSP)
-brew 'starship' # prompt
+brew 'starship' # robust shell prompt
 brew 'tealdeer' # Rust impl of `tldr`: man page supplement. brief desc, then examples
 brew 'tig' # git history viewer
 brew 'toilet' # ascii banners :)

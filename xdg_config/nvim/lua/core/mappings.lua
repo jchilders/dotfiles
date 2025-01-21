@@ -147,6 +147,16 @@ vim.keymap.set("v", "<leader>sj", emu_utils.send_selection_down)
 -- TODO: get this working for all directions
 -- vim.keymap.set("n", "<leader>sa", emu_utils.send_selection_left)
 
+-- Insert debug print statement below current line
+vim.keymap.set("n", "<leader>pp", function()
+  require("jc.utils").insert_print_statement(false)
+end)
+
+-- Insert debug print statement above current line
+vim.keymap.set("n", "<leader>pP", function()
+  require("jc.utils").insert_print_statement(true)
+end)
+
 local tireswing_ok, tireswing = pcall(require, "jc.tireswing")
 if tireswing_ok then
   -- Send current function to the left terminal pane
@@ -166,6 +176,8 @@ end
 -- Save & run the most recently modified test in the terminal pane to the left
 vim.keymap.set("n", "<leader>rt", "<cmd>wa<CR><cmd>lua require('jc.chuck_tester').run_mru_test()<CR>")
 vim.keymap.set("n", "<leader>rT", "<cmd>wa<CR><cmd>lua require('jc.chuck_tester').run_mru_test_current_line()<CR>")
+
+
 
 -- Edit the most recently modified test
 remap("n", "<leader>et", "<cmd>wa<CR><cmd>lua require('jc.chuck_tester').edit_mru_test()<CR>")

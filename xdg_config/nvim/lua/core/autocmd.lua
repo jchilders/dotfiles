@@ -25,6 +25,49 @@ vim.api.nvim_create_autocmd({ "BufEnter", "BufRead" }, {
   command = "set filetype=dockerfile",
 })
 
+local function show_lsp_info()
+-- Get LSP clients attached to the current buffer
+local clients = vim.lsp.get_clients({ bufnr = vim.api.nvim_get_current_buf() })
+if #clients == 0 then
+  vim.notify("No LSP client attached to this buffer.", vim.log.levels.INFO)
+  return
+end
+
+-- Prepare the information to display
+local lines = { "LSP Clients Attached:" }
+for _, client in ipairs(clients) do
+  table.insert(lines, string.format(" - Name: %s", client.name))
+  table.insert(lines, string.format("   ID: %d", client.id))
+  table.insert(lines, "   Capabilities:")
+  for cap, value in pairs(client.server_capabilities) do
+    table.insert(lines, string.format("     %s: %s", cap, tostring(value)))
+  end
+end
+
+-- Calculate window dimensions
+local win_width = math.floor(vim.o.columns * 0.8)
+local win_height = math.floor(vim.o.lines * 0.75)
+local col = math.floor((vim.o.columns - win_width) / 2)
+local row = math.floor((vim.o.lines - win_height) / 2)
+
+-- Create a floating window
+local buf = vim.api.nvim_create_buf(false, true) -- Create a scratch buffer
+vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines) -- Set content
+vim.api.nvim_open_win(buf, true, {
+  relative = "editor",
+  width = win_width,
+  height = win_height,
+  col = col,
+  row = row,
+  style = "minimal",
+  border = "rounded",
+})
+
+-- Close the window on key press
+vim.api.nvim_buf_set_keymap(buf, "n", "q", "<Cmd>bd!<CR>", { noremap = true, silent = true })
+end-- Create a user command to call the function
+vim.api.nvim_create_user_command("LspInfo", show_lsp_info, {})
+
 -- Insert `binding.pry` or `binding.p` above or below the current line, depending on the `direction`,
 -- where `direction` is one of 'above' or 'below'
 local function insert_binding(direction)

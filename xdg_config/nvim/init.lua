@@ -15,18 +15,20 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.runtimepath:prepend(lazypath)
 
-require("lazy").setup(  { import = "plugins" }, {
-  install = {
-    colorscheme = { "tokyonight" },
-  },
-  change_detection = {
-    notify = false
-  },
-  checker = {
-    enabled = true,
-    notify = false,
-  },
-})
+require("lazy").setup(
+  { import = "plugins" },
+  {
+    install = {
+      colorscheme = { "tokyonight" },
+    },
+    change_detection = {
+      notify = false
+    },
+    checker = {
+      enabled = true,
+      notify = false,
+    },
+  })
 
 pcall(vim.cmd.colorscheme, "tokyonight")
 
@@ -43,5 +45,9 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   group = highlight_group,
   pattern = '*',
 })
+
+-- see lsp/ directory
+vim.lsp.enable('lua-language-server')
+-- vim.lsp.enable('solargraph')
 
 -- vim: ts=2 sts=2 sw=2 et

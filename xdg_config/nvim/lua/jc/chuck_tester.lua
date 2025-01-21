@@ -101,7 +101,7 @@ function TSTestConfig:get_single_test_cmd(test_file, _, test_name)
   return base_cmd
 end
 
--- Override to use treesitter to find test names
+-- Fine the nearest test to the cursor, e.g. the closest "it" statement
 function TSTestConfig:find_nearest_test(bufnr)
   local test_name = nil
   local linenr = vim.api.nvim_buf_get_mark(bufnr, '.')[1]
@@ -212,7 +212,12 @@ local bufnr_for_test_file = function()
 end
 
 function M.run_mru_test(linenr, test_name)
-  local test_file = mru_test_file()
+  -- Check if current buffer is a test file. Use that if so.
+  local current_file = vim.fn.expand("%:p")
+  local is_test_file = string.match(current_file, "%.test%.")
+
+  -- Otherwise use the most recently updated test file
+  local test_file = is_test_file and current_file or mru_test_file()
   if test_file == nil then
     return
   end
@@ -226,7 +231,7 @@ function M.run_mru_test(linenr, test_name)
 
   local test_cmd = config:get_single_test_cmd(test_file, linenr, test_name)
 
-  local log_msg = "Running test " .. test_file
+  local log_msg = "Running test " .. vim.fn.fnamemodify(test_file, ":t")
   if test_name then
     log_msg = log_msg .. "\n  " .. test_name
   elseif linenr then

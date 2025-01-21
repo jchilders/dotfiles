@@ -20,8 +20,7 @@ opt.expandtab = true -- use spaces instead of tabs when indenting
 opt.fileformat = "unix"
 vim.api.nvim_command('filetype plugin indent on')
 
--- Do not fix files (i.e. "add a newline") that do not have a newline as the
--- final character
+-- Do not fix files (i.e. "add a newline") that do not have a newline as the final character Do not fix files (i.e. "add a newline") that do not have a newline as the final character Do not fix files (i.e. "add a newline") that do not have a newline as the final character
 opt.fixendofline = false
 
 opt.grepprg = "rg"
@@ -80,15 +79,15 @@ wo.foldminlines = 1
 
 -- teej
 opt.formatoptions = opt.formatoptions
-- "a" -- Auto formatting is BAD.
-- "t" -- Don't auto format my code. I got linters for that.
-+ "c" -- Auto-wrap comments using textwidth
-+ "q" -- Allow formatting comments w/ gq
-- "o" -- Don't insert the comment leader when using 'o' or 'O' in Normal mode
-+ "r" -- But do continue when pressing enter.
-+ "n" -- Indent past the formatlistpat, not underneath it.
-+ "j" -- Auto-remove comments if possible.
-- "2" -- I'm not in gradeschool anymore
+- "a" -- Disable auto-formatting.
+- "t" -- Don't auto-wrap text.
++ "c" -- Auto-wrap comments at 'textwidth'.
++ "q" -- Enable formatting of comments with 'gq'.
+- "o" -- Prevent comment leader insertion with 'o' or 'O'.
++ "r" -- Continue comments when pressing Enter.
++ "n" -- Align to 'formatlistpat', not under it.
++ "j" -- Remove comment leader when possible.
+- "2" -- Disable auto-numbering when entering numbered lists
 
 -- shada file is used to save vim state
 -- :h shada for general info

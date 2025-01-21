@@ -11,7 +11,7 @@ ZDOTDIR := $(XDG_CONFIG_HOME)/zsh
 cwd := $(shell pwd)
 
 ##@ Install
-install: macos cfg zsh homebrew homebrew-bundle -fonts bat ## Install all the things
+install: macos cfg zsh homebrew-bundle neovim -fonts bat ## Install all the things
 
 clean: ruby-clean cfg-clean neovim-clean zsh-clean homebrew-clean ## Uninstall all the things
 
@@ -35,58 +35,37 @@ homebrew-clean: ## Uninstall homebrew
 	sudo curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall.sh | /bin/bash
 	rm -r /usr/local/var/homebrew
 
-##@ Oh My Zsh
-ohmyzsh: ## Install Oh My Zsh
-	 ZSH=$$XDG_STATE_HOME/ohmyzsh sh -c "$$(http -b GET https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" --unattended --keep-zshrc
-
-ohmyzsh-clean: ## Uninstall Oh My Zsh
-	@if [ -d "$(XDG_STATE_HOME)/ohmyzsh" ]; then \
-		rm -rf $(XDG_STATE_HOME)/ohmyzsh; \
-	else \
-		echo "Oh My Zsh not found in $(XDG_STATE_HOME)"; \
-	fi
-
 ##@ Neovim
 
-NEOVIM_CFG_DIR := "$(XDG_CONFIG_HOME)/nvim"
-
-neovim: neovim-build-from-source ## Install Neovim
+neovim: neovim-clone-or-pull neovim-build-from-source ## Install Neovim
 
 NEOVIM_SRC_DIR := "$$HOME/work/neovim/neovim"
 NEOVIM_CFG_DIR := "$(XDG_CONFIG_HOME)/nvim"
 
-neovim-clone-or-pull:
+neovim-clone-or-pull: ## Clone neovim, or pull the latest
+		@mkdir -p $$(dirname $(NEOVIM_SRC_DIR))
 		@if [ -d $(NEOVIM_SRC_DIR) ]; then \
 				git -C $(NEOVIM_SRC_DIR) pull; \
-		else; \
+		else \
 				git clone https://github.com/neovim/neovim.git $(NEOVIM_SRC_DIR); \
 		fi; \
 
-neovim-build-from-source: ## Install from source
-ifeq (, $(shell which cmake))
-		$(shell brew install cmake)
-endif
-ifeq (, $(shell which automake))
-		$(shell brew install automake)
-endif
-ifeq (, $(shell which ninja))
-		$(shell brew install ninja)
-endif
-		$(MAKE) -C $(NEOVIM_SRC_DIR) distclean
-		$(MAKE) -C $(NEOVIM_SRC_DIR)
-		# $(MAKE) -C $(NEOVIM_SRC_DIR) CMAKE_BUILD_TYPE=RelWithDebInfo; \
+neovim-build-from-source: ## Install neovim from source
+		@for pkg in cmake automake ninja; do \
+				if ! which $$pkg >/dev/null; then \
+						brew install $$pkg; \
+				fi; \
+		done; \
+		$(MAKE) -C $(NEOVIM_SRC_DIR) CMAKE_BUILD_TYPE=RelWithDebInfo; \
 		sudo $(MAKE) -C $(NEOVIM_SRC_DIR) CMAKE_INSTALL_PREFIX=/usr/local install
 
-neovim-clean2:
-		$(shell bin/clean_neovim)
-
-neovim-clean:
+neovim-clean: ## Uninstall neovim
 		-sudo rm /usr/local/bin/nvim
 		-sudo rm /usr/local/bin/vi
 		-sudo rm -r /usr/local/lib/nvim
 		-sudo rm -r /usr/local/share/nvim
 		-brew unlink neovim
-		rm -rf $$HOME/.local/share/nvim
+		bin/clean_neovim
 
 ##@ Languages
 asdf-plugins: ## Install plugins needed for asdf to install the given languages
@@ -112,12 +91,22 @@ ruby-cfg-clean: ## Unlink Ruby configuration files
 	rm $$HOME/.irbrc
 
 ##@ zsh
-zsh: zsh-cfg ## Install zsh-related items
+zsh: zsh-cfg ohmyzsh ## Install zsh-related items
 
 zsh-clean: zsh-cfg-env-clean ## Uninstall zsh-related items
 
 zsh-cfg: ## Link ~/.zshenv
 	ln -sf $(cwd)/.zshenv $$HOME/.zshenv
+
+ohmyzsh: ## Install Oh My Zsh
+	 ZSH=$$XDG_STATE_HOME/ohmyzsh sh -c "$$(http -b GET https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" --unattended --keep-zshrc
+
+ohmyzsh-clean: ## Uninstall Oh My Zsh
+	@if [ -d "$(XDG_STATE_HOME)/ohmyzsh" ]; then \
+		rm -rf $(XDG_STATE_HOME)/ohmyzsh; \
+	else \
+		echo "Oh My Zsh not found in $(XDG_STATE_HOME)"; \
+	fi
 
 zsh-cfg-clean: ## Unlink ~/.zshenv
 	rm $$HOME/.zshenv

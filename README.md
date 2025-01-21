@@ -1,24 +1,34 @@
 # What?
 
-My dotfiles. I am a developer who works primarily on macOS/Darwin. This configuration will allow you to do common things with very few keystrokes. After trying various combinations over the years I settled on zsh/neovim/wezterm and have customized them to work with each other.
+My dotfiles. I am a developer who works primarily on macOS/Darwin. This
+configuration will allow you to do common things with very few keystrokes.
+After trying various combinations over the years I settled on
+zsh/neovim/wezterm and have customized them to work with each other.
 
 "UNIX is an IDE."
 
 ![term_screenshot_left_active](https://github.com/user-attachments/assets/82f6231c-dbbb-4577-aec1-50dcee05b549)
 
-Left pane active. The results are from executing the alias `l`, which uses eza under the hood. The third column shows when the file/directory was last modified in the git repo.
+Left pane active. The results are from executing the alias `l`, which uses eza
+under the hood. The third column shows when the file/directory was last
+modified in the git repo.
 
 Notes:
 
-- Tabs by default are labeled with the git root directory, updating when you change directories
+- Tabs by default are labeled with the git root directory, updating when you
+  change directories
 - Inactive panes are dimmed
-- Changing panes is done with <kbd>Shift ⌘ &lt;direction&gt;</kbd>, where `<direction>` is a vim-style movement key, i.e.: hjkl. So after pressing <kbd>Shift ⌘ L</kbd> to switch to the pane to the right we get this:
+- Changing panes is done with <kbd>Shift ⌘ &lt;direction&gt;</kbd>, where
+  `<direction>` is a vim-style movement key, i.e.: hjkl. So after pressing
+  <kbd>Shift ⌘ L</kbd> to switch to the pane to the right we get this:
 
 ![term_screenshot_right_active](https://github.com/user-attachments/assets/220c36f2-4eb3-4f66-8676-b5e05cdd18fc)
 
-Right pane active. Here Neovim is loaded with a Typescript file. An error on line 35 is being reported by the LSP.
+Right pane active. Here Neovim is loaded with a Typescript file. An error on
+line 35 is being reported by the LSP.
 
-This setup is fairly Zen: work is done primarily in the right pane, which means that the code I'm working on is generally centered on the screen.
+This setup is fairly Zen: work is done primarily in the right pane, which means
+that the code I'm working on is generally centered on the screen.
 
 # Installation
 
@@ -42,11 +52,17 @@ To undo the above:
 
 Q: lol why are you using Make?
 
-A: Because it works pretty well out of the box and is consistent. I tried nix, and my experience was similar to [this](https://www.dgt.is/blog/2025-01-10-nix-death-by-a-thousand-cuts/): too many moving parts.
+A: Because it works pretty well out of the box and is consistent. I tried nix,
+and my experience was similar to
+[this](https://www.dgt.is/blog/2025-01-10-nix-death-by-a-thousand-cuts/): too
+many moving parts.
 
 # ctrl-o
 
-`ctrl-o` acts as an action key prefix for opening files/doing things with them, similar to `cmd-p` in VSCode. Its primary purpose is to open files in $EDITOR (hence the `o` prefix). The full list of `ctrl-o` commands are given below, but these are a few of the most frequently used:
+`ctrl-o` acts as an action key prefix for opening files/doing things with them,
+similar to `cmd-p` in VSCode. Its primary purpose is to open files in $EDITOR
+(hence the `o` prefix). The full list of `ctrl-o` commands are given below, but
+these are a few of the most frequently used:
 
 | mapping | description |
 | :-----: | :---------- |
@@ -56,16 +72,18 @@ A: Because it works pretty well out of the box and is consistent. I tried nix, a
 
 # Working with REPLs/shells
 
-Text in neovim can be sent to the REPL or shell you're currently working in. This allows for testing out either single lines, or entire blocks. Try this:
+Text in neovim can be sent to an adjacent pane for execution in the REPL or
+shell you're currently working in. This allows for testing out either single
+lines, or entire blocks. Try this:
 
 1. Open `nvim` in the right pane. 
   - Hit <kbd>cmd t</kbd> to open a new tab if you need to
 1. Insert the following into neovim: `echo hello`
 1. Hit `esc` to exit insert mode
-1. Press <kbd>&lt;space&gt;sh</kbd>. This will the current line to the pane to the left and execute it. 
-- Multiple lines can similarly be sent by visually selecting them and hitting <kbd>&lt;space&gt;sh</kbd>.
-
-This is incredibly powerful if you are workng with a repl or a shell.
+1. Press <kbd>&lt;space&gt;sh</kbd>. This will the current line to the pane to
+   the left and execute it. 
+- Multiple lines can similarly be sent by visually selecting them and hitting
+  <kbd>&lt;space&gt;sh</kbd>.
 
 # Neovim
 
@@ -76,7 +94,9 @@ The <kbd>&lt;leader&gt;</kbd> key is <kbd>&lt;space&gt;</kbd>.
 
 ## Zen-ish Mode
 
-Press <kbd>&lt;leader&gt;z</kbd> to hide the gutter (current and relative line numbers, git indicators, etc.), indentation helpers, and any inline LSP warnings or errors appearing inline.
+Press <kbd>&lt;leader&gt;z</kbd> to hide the gutter (current and relative line
+numbers, git indicators, etc.), indentation helpers, and any inline LSP
+warnings or errors appearing inline.
 
 [Toggling zenish mode with Leader z](https://github.com/user-attachments/assets/7146e4a3-7287-436e-b94a-a90d34dacc0a)
 
@@ -97,8 +117,9 @@ Press <kbd>&lt;leader&gt;z</kbd> to hide the gutter (current and relative line n
 | <kbd>^ar</kbd> | Rename tab |
 | <kbd>^a%</kbd> | Horizontally split pane (left/right)|
 | <kbd>^a-</kbd> | Vertically split pane (top/bottom) |
-| <kbd>^az</kbd> | Zoom pane. Press again to undo. |
-| <kbd>^a[</kbd> | Enter copy mode. Use hjkl to nav, then v to select, then y to copy selected text to clipboard |
+| <kbd>^az</kbd> | Zoom/unzoom pane. |
+| <kbd>^a[</kbd> | Enter copy mode. Use hjkl to nav, then v to select, then y
+to copy selected text to clipboard |
 
 ## ctrl-o
 
@@ -159,10 +180,8 @@ The leader key is currently `<space>`.
 | <kbd>&lt;Leader&gt;z</kbd> | Toggle Zen-ish mode |
 | <kbd>&lt;Leader&gt;]]</kbd> | Go to next error/warning |
 | <kbd>&lt;Leader&gt;[[</kbd> | Go to previous error/warning |
-| <kbd>gc<motion>lt;motion<motion>gt;</kbd> | Comment/uncomment <motion>lt;motion<motion>gt; |
-| <kbd>gcc</kbd> | Comment/uncomment current line |
 
-### Misc mappings
+### Running Tests
 
 | mapping | description |
 | :-----: | :---------- |
@@ -173,13 +192,17 @@ I use these two very frequently.
 
 ### Sending to panes
 
-In my workflow I have wezterm open with two panes (left/right). The left pane is for a terminal or repl, the right pane is neovim. Keep this in mind for the below.
+In my workflow I have wezterm open with two panes (left/right). The left pane
+is for a terminal or repl, the right pane is neovim. Keep this in mind for the
+below.
 
 | mapping | description |
 | :-----: | :---------- |
 | <kbd>&lt;Leader&gt;s[dir]</kbd> | Send current line/visual selection to the `dir` pane (hjkl) |
 
-This lets you quickly test lines (or blocks) in an adjacent repl. Hitting `<Leader>sh` sends the current line to the pane to the left (`h` direction). This works with visual blocks as well.
+This lets you quickly test lines (or blocks) in an adjacent repl. Hitting
+`<Leader>sh` sends the current line to the pane to the left (`h` direction).
+This works with visual blocks as well.
 
 # zsh
 
@@ -240,7 +263,8 @@ These are available in zsh.
 
 ## Directory Navigation
 
-After using `cd` once you should be ablet to use `z` (zoxide) thereafter. `z` lets you `cd` to directories given just a partial path. Example:
+After using `cd` once you should be ablet to use `z` (zoxide) thereafter. `z`
+lets you `cd` to directories given just a partial path. Example:
 
 ```
 ➜ cd ~/work/proj1

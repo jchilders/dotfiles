@@ -1,0 +1,43 @@
+#!/usr/bin/env zsh
+
+# Function to add enabled = false to a plugin file if it doesn't already have an enabled setting
+add_enabled_false() {
+  local file=$1
+  if ! grep -q "enabled = " "$file"; then
+    # Find the first return { line and add enabled = false after it
+    sed -i '' '/return {/a\
+  enabled = false,' "$file"
+  else
+    # Replace existing enabled = true/false with false
+    sed -i '' 's/enabled = .*/enabled = false,/' "$file"
+  fi
+}
+
+# Function to enable a plugin
+enable_plugin() {
+  local file=$1
+  sed -i '' 's/enabled = false,/enabled = true,/' "$file"
+}
+
+# First disable all plugins
+echo "Disabling all plugins..."
+for plugin_file in ${XDG_CONFIG_HOME:-$HOME/.config}/nvim/lua/plugins/*.lua; do
+  add_enabled_false "$plugin_file"
+done
+
+# Now go through each plugin and ask if it should be enabled
+echo "\nEnabling plugins interactively..."
+for plugin_file in ${XDG_CONFIG_HOME:-$HOME/.config}/nvim/lua/plugins/*.lua; do
+  plugin_name=$(basename "$plugin_file" .lua)
+  echo -n "Enable $plugin_name? [Y/n] "
+  read -r response
+  
+  if [[ -z "$response" ]] || [[ "$response" =~ ^[Yy] ]]; then
+    enable_plugin "$plugin_file"
+    echo "Enabled $plugin_name"
+  else
+    echo "Keeping $plugin_name disabled"
+  fi
+done
+
+echo "\nDone! Restart neovim to apply changes."

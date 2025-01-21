@@ -3,8 +3,8 @@
 -- :lua =vim.lsp.get_log_path()
 return {
   'VonHeikemen/lsp-zero.nvim',
-  branch = 'v3.x',
-  enabled = true,
+  -- branch = 'v3.x',
+  enabled = false, -- don't need on neovim 11.x+?
   dependencies = {
     {'williamboman/mason.nvim'},
     {'williamboman/mason-lspconfig.nvim'},
@@ -60,6 +60,7 @@ return {
         },
       },
     }
+
     mason_lspconfig.setup_handlers({
       function(server_name)
         local normal_capabilities = vim.lsp.protocol.make_client_capabilities()
