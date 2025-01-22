@@ -1,8 +1,7 @@
-brew 'asdf' # Version manager for Ruby, Node, etc.
 brew 'atuin' # store shell history in SQLite
 brew 'automake'
 brew 'bat' # cat replacement
-brew 'chafa' # ANSI art renderer & terminal graphics viewer
+brew 'chafa' # image and ASCII art viewer
 brew 'choose-rust' # sed replacement. e.g.: `bat things.csv | choose 5`
 brew 'cmake'
 brew 'coreutils' # gnu coreutils
@@ -22,19 +21,13 @@ brew 'grep' # gnu grep
 brew 'httpie' # cURL replacement. e.g.: `http POST pie.dev/post hello=world`
 brew 'imagemagick'
 brew 'jq' # json processor
-# brew 'just' # command runner. `make` replacement.
 brew 'lazygit' # git TUI
-brew 'lua'
-brew 'luarocks' # lua package manager
 brew 'mas' # CLI for Mac App Store
-# brew 'neovim'
-brew 'node' # node.js
+brew 'mise' # Version manager for Ruby, Node, etc.
 brew 'npm' # node package manager
-brew 'nvm'
 brew 'make' # gnu make
 brew 'memcached'
 brew 'parallel' # gnu parallel
-brew 'pastel' # generate/convert/manipulate colors
 brew 'redis' # redis is redis
 brew 'rg' # ripgrep
 brew 'sd' # easy search & replace. sed alternative/replacement
@@ -49,7 +42,6 @@ brew 'uv' # extremely fast Python package installer
 brew 'watchman' # watches files/dirs, does things
 brew 'watchexec' # auto-restart process when file(s) change
 brew 'wget'
-brew 'yarn'
 brew 'yt-dlp' # audio/video downloader
 
 # mkcert and nss are used to generate locally trusted development certificates

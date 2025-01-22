@@ -1,0 +1,9 @@
+[tools]
+nodejs = "latest"
+lua = "latest"
+python = "latest"
+ruby = "latest"
+rust = "latest"
+
+# plugin for mise itself for shell completion of mise commands
+usage = "latest"

@@ -13,7 +13,7 @@ cwd := $(shell pwd)
 ##@ Install
 install: macos cfg zsh homebrew-bundle neovim -fonts bat ## Install all the things
 
-clean: ruby-clean cfg-clean neovim-clean zsh-clean homebrew-clean ## Uninstall all the things
+clean: cfg-clean neovim-clean zsh-clean homebrew-clean ## Uninstall all the things
 
 cfg: xdg-setup ## Link configuration files
 	@[ -e $(XDG_CONFIG_HOME) ] || ln -s $(cwd)/xdg_config $$HOME/.config
@@ -68,27 +68,8 @@ neovim-clean: ## Uninstall neovim
 		bin/clean_neovim
 
 ##@ Languages
-asdf-plugins: ## Install plugins needed for asdf to install the given languages
-	@if which asdf &> /dev/null ; then \
-		asdf plugin add nodejs; \
-		asdf plugin add python; \
-		asdf plugin add ruby; \
-		asdf plugin add rust; \
-	fi
-
-ruby: asdf-plugins ruby-cfg ## Install Ruby
-	@if which asdf &> /dev/null ; then \
-		asdf install ruby latest; \
-	fi
-
-ruby-clean: ## Uninstall Ruby
-	asdf uninstall ruby latest; \
-
-ruby-cfg: ## Link Ruby configuration files
-	ln -sf $(PWD)/ruby/ruby/.irbrc $$HOME
-
-ruby-cfg-clean: ## Unlink Ruby configuration files
-	rm $$HOME/.irbrc
+mise: homebrew-bundle ## Install all languages configured for mise to handle
+	mise install
 
 ##@ zsh
 zsh: zsh-cfg ohmyzsh ## Install zsh-related items
@@ -131,10 +112,11 @@ bat: ## Get TokyoNight theme for bat
 	bat cache --build
 
 fonts: ## Install fonts
-	## Font used with toilet banner generator
-	cp cosmic.flf $$HOMEBREW_CELLAR/toilet/0.3/share/figlet
+	brew install font-space-mono-nerd-font
 	brew install font-blex-mono-nerd-font
 	brew install font-source-code-pro-for-powerline
+	## Font used with toilet banner generator
+	cp cosmic.flf $$HOMEBREW_CELLAR/toilet/0.3/share/figlet
 
 ssh-cfg: ## Install ssh related files
 	@[ -d $$HOME/.ssh ] || mkdir $$HOME/.ssh
@@ -149,9 +131,10 @@ misc-cfg: ripgrep-cfg lazygit-cfg ## Miscellany
 
 misc-cfg-clean: ripgrep-cfg-clean lazygit-cfg-clean ## Unlink misc configs
 
-xdg-setup: ## Create XDG dirs (XDG_CONFIG_HOME, etc.)
-	@[ -d $(XDG_DATA_HOME) ] || mkdir -p $(XDG_DATA_HOME)
+xdg-setup: ## Create standard XDG Base Directory Specification directories
+	@[ -d $(XDG_CONFIG_HOME) ] || mkdir -p $(XDG_CONFIG_HOME)
 	@[ -d $(XDG_CACHE_HOME) ] || mkdir -p $(XDG_CACHE_HOME)
+	@[ -d $(XDG_DATA_HOME) ] || mkdir -p $(XDG_DATA_HOME)
 	@[ -d $(XDG_STATE_HOME) ] || mkdir -p $(XDG_STATE_HOME)
 
 ##@ Helpers

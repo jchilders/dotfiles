@@ -27,7 +27,7 @@ alias l='eza --all --long --git --icons --no-user --time-style relative'
 alias tree='eza --tree'
 
 command -v bat >/dev/null 2>&1 && alias cat='bat' # use bat as cat
-command -v gping >/dev/null 2>&1 && alias pinig='gping' # like ping but with a graph
+command -v gping >/dev/null 2>&1 && alias ping='gping' # like ping but with a graph
 
 if (( $+commands[op] )) && (( $+commands[aichat] )); then
   # Use 1password to read credentials for aichat

@@ -45,6 +45,7 @@ ZSH_THEME="robbyrussell"
 plugins=(
   dotenv
   git
+  mise
   zoxide
 )
 

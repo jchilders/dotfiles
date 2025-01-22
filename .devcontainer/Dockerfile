@@ -10,13 +10,6 @@ RUN useradd -m -s /bin/bash dotfiles \
 
 USER dotfiles
 
-# RUN git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.14.1 \
-#     && echo 'source "$HOME/.asdf/asdf.sh"' >> ~/.zshenv \
-#     && echo 'source "$HOME/.asdf/asdf.sh"' >> ~/.zshrc \
-#     && mkdir -p ~/.config/zsh/completions \
-#     && echo 'fpath=(${ASDF_DIR}/completions $fpath)' >> ~/.zshrc \
-#     && echo 'autoload -Uz compinit && compinit' >> ~/.zshrc
-
 # Set environment variables
 ENV XDG_CACHE_HOME=/home/dotfiles/.cache \
     XDG_CONFIG_HOME=/home/dotfiles/.config \
@@ -55,15 +48,6 @@ RUN sudo apt-get update && sudo apt-get install -y \
     && sudo ln -s $(which batcat) /usr/local/bin/bat \
     && sudo rm -rf /var/lib/apt/lists/*
 
-SHELL ["/bin/bash", "-lc"]
-RUN git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.14.1 && \
-    echo ". $HOME/.asdf/asdf.sh" >> /root/.bashrc && \
-    echo ". $HOME/.asdf/asdf.sh" >> /root/.zshrc
-
-RUN asdf plugin add ruby
-
-
-
 # Install eza (ls replacement)
 RUN sudo mkdir -p /etc/apt/keyrings \
   && wget -qO- https://raw.githubusercontent.com/eza-community/eza/main/deb.asc | sudo gpg --dearmor -o /etc/apt/keyrings/gierens.gpg \
@@ -91,18 +75,6 @@ RUN sudo chown -R dotfiles:dotfiles ${XDG_CONFIG_HOME}
 
 # Install starship prompt
 RUN curl -sS https://starship.rs/install.sh | sh -s -- -y >/dev/null
-
-# RUN source ~/.asdf/asdf.sh \
-#     && asdf plugin add ruby \
-#     && asdf install ruby latest \
-#     && asdf global ruby latest
-
-# RUN source ~/.asdf/asdf.sh \
-#     && asdf plugin add zoxide https://github.com/nyrst/asdf-zoxide.git \
-    # && asdf install zoxide latest
-
-# Switch to the asdf-install image so that we can run asdf commands
-# FROM asdf-install AS dotfiles-install
 
 # On Linux, the `fd` binary is called `fdfind`. Create a symlink to `fd` for easier usage.
 RUN [[ $(uname) == "Linux" ]] && sudo ln -s $(which fdfind) /usr/local/bin/fd

@@ -3,8 +3,9 @@ local act = wezterm.action
 
 local default_font_size = 20.0
 local default_font = {
-  -- family = "BlexMono Nerd Font",
+  -- family = "Inconsolata Nerd Font",
   family = "Source Code Pro for Powerline",
+  -- family = "SpaceMono Nerd Font",
   weight = 'Regular'
 }
 local tab_text_color = '#f0f0f0'
