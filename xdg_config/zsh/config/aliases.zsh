@@ -50,7 +50,7 @@ function loadAbbreviations() {
   abbr add dcom='docker-compose'
   abbr add gd='git diff'
   abbr add gl='git l'
-  abbr add gst='git status -sb'
+  abbr add gs='git status -sb'
   abbr add imgcat='wezterm imgcat'
 
   # Ruby and Rails helpers

@@ -46,8 +46,4 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   pattern = '*',
 })
 
--- see lsp/ directory
-vim.lsp.enable('lua-language-server')
--- vim.lsp.enable('solargraph')
-
 -- vim: ts=2 sts=2 sw=2 et

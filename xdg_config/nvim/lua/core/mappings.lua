@@ -102,7 +102,7 @@ remap("n", "<CR>", '{-> v:hlsearch ? "<cmd>nohl\\<CR>" : "\\<CR>"}()', true)
 vim.keymap.set("n", "<leader>w", "<cmd>wa<CR>")
 vim.keymap.set("n", "<leader>W", "<cmd>wqa<CR>")
 
--- Zen-mode. Hides gutter, indentation indicators, and LSP messages
+-- Zenish-mode. Hides gutter, indentation indicators, and LSP messages. Keeps statusline.
 vim.keymap.set("n", "<leader>z", require("jc.utils").toggle_zenish)
 
 local gitsigns_ok, gitsigns = pcall(require, "gitsigns")
@@ -173,11 +173,9 @@ if tireswing_ok then
   -- remap("n", "K", "<cmd>lua require('jc.tireswing').swap_nodes(true)<CR>")
 end
 
--- Save & run the most recently modified test in the terminal pane to the left
+-- Save & run the current, or most recently modified, test in the terminal pane to the left
 vim.keymap.set("n", "<leader>rt", "<cmd>wa<CR><cmd>lua require('jc.chuck_tester').run_mru_test()<CR>")
 vim.keymap.set("n", "<leader>rT", "<cmd>wa<CR><cmd>lua require('jc.chuck_tester').run_mru_test_current_line()<CR>")
-
-
 
 -- Edit the most recently modified test
 remap("n", "<leader>et", "<cmd>wa<CR><cmd>lua require('jc.chuck_tester').edit_mru_test()<CR>")
@@ -204,7 +202,6 @@ remap("n", "<leader>lp", "<cmd>lprev<CR>")
 
 local telescope_builtin_ok, telescope_builtin = pcall(require, "telescope.builtin")
 if telescope_builtin_ok then
-  vim.keymap.set("n", "<C-o>b", telescope_builtin.buffers, { desc = "Open from [b]uffer list" })
   vim.keymap.set('n', '<leader>/', function()
     telescope_builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
       winblend = 10,
@@ -218,39 +215,27 @@ if telescope_builtin_ok then
 end
 
 -- LSP Diagnostic keymaps
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
-vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float)
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)
+-- vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
+-- vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
+-- vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float)
+-- vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)
 
 -- ctrl-o
 
--- ctrl-o telescope mappings
-
+-- opening files
+map_ctrlo_tele("o", "find_files")     -- do not include hidden files, files in .gitignore, etc.
+map_ctrlo_tele("O", "find_all_files") -- include hidden files, files in .gitignore, etc.
+map_ctrlo_tele("b", "buffers")        -- open from [b]uffer list
 map_ctrlo_tele("f", "grep_string")
 map_ctrlo_tele("F", "live_grep")
 
--- git
--- switch [b]ranches
-map_ctrlo_tele("gb", "git_branches")
--- list of files that are [c]hanged on our branch (compared to `main`)
-map_ctrlo_tele("gc", "git_changed_files_curr_branch")
--- git [h]istory of current buffer
-map_ctrlo_tele("gh", "git_bcommits")
--- select file from files with uncommitted changes (i.e. from `git [s]tatus`)
-map_ctrlo_tele("gs", "git_status")
-
--- files
-map_ctrlo_tele("o", "find_files") -- do not include hidden files, files in .gitignore, etc.
-map_ctrlo_tele("O", "find_all_files") -- include hidden files, files in .gitignore, etc.
+-- [g]it
+map_ctrlo_tele("gb", "git_branches")  -- switch [b]ranches
+map_ctrlo_tele("gs", "git_status")    -- uncommitted changes ([s]tatus)
 
 -- LSP
 -- little r -> Search for LSP references to word under cursor
 map_ctrlo_tele("r", "lsp_references")
-
-map_ctrlo_tele("rc", "find_files", { search_dir = "app/controllers" })
-map_ctrlo_tele("rm", "find_files", { search_dir = "app/models" })
-map_ctrlo_tele("rv", "find_files", { search_dir = "app/views" })
 
 remap("n", "[[", "<cmd>lua vim.diagnostic.goto_prev()<CR>")
 remap("n", "]]", "<cmd>lua vim.diagnostic.goto_next()<CR>")
@@ -269,15 +254,19 @@ if harpoon_ok then
   vim.keymap.set("n", "<leader>ha", function() harpoon:list():add() end)
   -- open list of files marked as harpooned
   vim.keymap.set("n", "<leader>hl", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
-  -- ctrl-j opens the first harpooned file, ctrl-k opens the second harpooned file...
+  -- ctrl-h opens the first harpooned file, ctrl-j opens the second harpooned file...
   vim.keymap.set("n", "<C-h>", function() harpoon:list():select(1) end)
   vim.keymap.set("n", "<C-j>", function() harpoon:list():select(2) end)
   vim.keymap.set("n", "<C-k>", function() harpoon:list():select(3) end)
   vim.keymap.set("n", "<C-l>", function() harpoon:list():select(4) end)
   vim.keymap.set("n", "<C-;>", function() harpoon:list():select(5) end)
 else
-  vim.notify("Problem when loading Harpoon:\n" .. result, vim.log.levels.WARN, { title = "mappings.lua" })
+  vim.notify("Problem when loading Harpoon", vim.log.levels.WARN, { title = "mappings.lua" })
 end
+
+map_ctrlo_tele("rc", "find_files", { search_dir = "app/controllers" })
+map_ctrlo_tele("rm", "find_files", { search_dir = "app/models" })
+map_ctrlo_tele("rv", "find_files", { search_dir = "app/views" })
 
 -- Open the browser, switch to the localhost tab, and reload
 vim.keymap.set("n", "<leader>ol", function()
@@ -286,14 +275,6 @@ vim.keymap.set("n", "<leader>ol", function()
     vim.notify(output, vim.log.levels.ERROR)
   end
 end)
-
--- terminal
--- remap("t", "<esc>", [[<C-\><C-n>]])
--- remap("t", "jk", [[<C-\><C-n>]])
--- remap("t", "<C-h>", [[<C-\><C-n><C-W>h]])
--- remap("t", "<C-j>", [[<C-\><C-n><C-W>j]])
--- remap("t", "<C-k>", [[<C-\><C-n><C-W>k]])
--- remap("t", "<C-l>", [[<C-\><C-n><C-W>l]])
 
 -- for debugging window/buffer issues
 vim.keymap.set("n", "<leader>cbi", function()

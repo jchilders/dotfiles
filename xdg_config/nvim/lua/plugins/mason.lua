@@ -1,7 +1,7 @@
 -- Helps install LSPs.
 return {
   "williamboman/mason.nvim",
-  enabled = false,
+  enabled = true,
   dependencies = {
     { 'williamboman/mason-lspconfig.nvim' },
   },
@@ -14,19 +14,20 @@ return {
     local mason_lspconfig = require("mason-lspconfig")
     mason_lspconfig.setup({
       ensure_installed = {
+        "lua_ls",
         "bashls",
         "dockerls",
         "jsonls",
         "lemminx",
-        "lua_ls",
-        "rubocop",
         "ruby_lsp",
         "rust_analyzer",
         "solargraph",
         "sqlls",
         "tailwindcss",
         "taplo",
+        "ts_ls"
       },
-      automatic_installation = true })
+      automatic_installation = true,
+    })
   end
 }

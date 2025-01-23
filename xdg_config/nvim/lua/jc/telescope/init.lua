@@ -1,7 +1,6 @@
 require 'core.globals'
 
 local builtin = require("telescope.builtin")
-local themes = require("telescope.themes")
 local Path = require("plenary.path")
 
 local M = {}
@@ -22,14 +21,6 @@ function M.find_files(opts)
   builtin.find_files(opts)
 end
 
-function M.git_status()
-  builtin.git_status()
-end
-
-function M.git_branches()
-  builtin.git_branches()
-end
-
 function M.git_changed_files_curr_branch()
   builtin.git_files({
     git_command = { "git", "diff", "--name-only", "main"}
@@ -43,31 +34,22 @@ function M.grep_string()
   })
 end
 
--- grep user-entered string
-function M.live_grep()
-  builtin.live_grep()
-end
-
 function M.find_all_files()
   builtin.find_files({
     find_command = { "fd", "--no-ignore", "--hidden" },
   })
 end
 
+-- This allows us to override Telescope methods with our own custom behavior,
+-- falling back to Telescope's built-in functions if there isn't one.
+-- In other words: method overriding. 
 return setmetatable({}, {
-  -- Define a function that gets called when you try to get an array index for this class... er, table.
+  -- `__index` is a metamethod that gets called when you try to access any
+  -- method on the returned table. Here we check if the function exists in 
+  -- our custom implementation, otherwise return Telescope's.
   __index = function(_, k)
-    -- reloader()
-
-    -- pcall(func, arg1, ...) is equivalent to func(arg1, ...) except that it
-    -- will catch any errors that occur in func. If it succeeds, then the first
-    -- return value will be true.
-    local has_custom, custom = pcall(require, string.format("jc.telescope.custom.%s", k))
-
     if M[k] then
       return M[k]
-    elseif has_custom then
-      return custom
     else
       return builtin[k]
     end

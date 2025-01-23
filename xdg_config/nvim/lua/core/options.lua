@@ -47,32 +47,28 @@ opt.tildeop = false -- lets ~ command work with motions: `~w` will toggle case o
 opt.timeoutlen = 500
 opt.wildmenu = true
 opt.wildmode = "longest,full"
+opt.wildoptions = 'fuzzy,tagfile'
 opt.wrap = true
 
 -- completion menu settings
-opt.completeopt = "menu,menuone,noselect" -- completion behaviour per cmp docs
-
--- whitespace settings
-opt.list = false
-opt.listchars:append("eol:↴")
+-- opt.completeopt = "menu,menuone,noselect" -- completion behaviour per cmp docs
 
 -- Set so that folders are indexed for find command
 opt.path = "**/*"
 opt.wildignore:append({
-  "node_modules",
   ".git/",
-  "vendor",
-  "coverage",
   "build",
+  "coverage",
+  "node_modules",
   "tmp",
   "vendor",
 })
 
 -- fold settings
-wo.foldmethod = "expr"
-o.foldtext =
-[[substitute(getline(v:foldstart),'\\t',repeat('\ ',&tabstop),'g').'...'.trim(getline(v:foldend)) . ' (' . (v:foldend - v:foldstart + 1) . ' lines)']]
-wo.foldexpr = "nvim_treesitter#foldexpr()"
+-- wo.foldmethod = "expr"
+-- o.foldtext =
+-- [[substitute(getline(v:foldstart),'\\t',repeat('\ ',&tabstop),'g').'...'.trim(getline(v:foldend)) . ' (' . (v:foldend - v:foldstart + 1) . ' lines)']]
+-- wo.foldexpr = "nvim_treesitter#foldexpr()"
 wo.foldlevel= 99 -- open all folds
 wo.foldnestmax = 3
 wo.foldminlines = 1

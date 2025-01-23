@@ -89,9 +89,6 @@ lines, or entire blocks. Try this:
 
 The <kbd>&lt;leader&gt;</kbd> key is <kbd>&lt;space&gt;</kbd>.
 
-## Look & feel
-
-
 ## Zen-ish Mode
 
 Press <kbd>&lt;leader&gt;z</kbd> to hide the gutter (current and relative line
@@ -181,14 +178,15 @@ The leader key is currently `<space>`.
 | <kbd>&lt;Leader&gt;]]</kbd> | Go to next error/warning |
 | <kbd>&lt;Leader&gt;[[</kbd> | Go to previous error/warning |
 
-### Running Tests
+### Editing and Running Tests
 
 | mapping | description |
 | :-----: | :---------- |
+| <kbd>&lt;Leader&gt;et</kbd> | Edit the recently modified test |
 | <kbd>&lt;Leader&gt;rt</kbd> | Run most recently modified test in left pane |
-| <kbd>&lt;Leader&gt;rT</kbd> | Run most recently modified test, current line/test case in left pane |
+| <kbd>&lt;Leader&gt;rT</kbd> | Run most recently modified test for current line/test case in left pane |
 
-I use these two very frequently.
+I use these very frequently.
 
 ### Sending to panes
 
@@ -200,13 +198,20 @@ below.
 | :-----: | :---------- |
 | <kbd>&lt;Leader&gt;s[dir]</kbd> | Send current line/visual selection to the `dir` pane (hjkl) |
 
-This lets you quickly test lines (or blocks) in an adjacent repl. Hitting
-`<Leader>sh` sends the current line to the pane to the left (`h` direction).
-This works with visual blocks as well.
+This lets you quickly run individual lines (or blocks) in an adjacent repl.
+Hitting `<Leader>sh` sends the current line to the pane to the left (`h`
+direction). This works with visual blocks as well.
+
+### Opening localhost in browser (neovim)
+
+| mapping | description |
+| :-----: | :---------- |
+| <kbd>&lt;Leader&gt;ol</kbd> | Switches to browser, then to the tab w/ localhost, & reloads |
 
 # zsh
 
 ## Mappings
+
 Additional zsh mappings:
 
 | mapping | description |
@@ -269,7 +274,7 @@ lets you `cd` to directories given just a partial path. Example:
 ```
 ➜ cd ~/work/proj1
 ➜ cd
-➜ z proj1 # takes you to ~/work/proj1
+➜ z pro # takes you to ~/work/proj1
 ```
 ## Using a devcontainer
 
