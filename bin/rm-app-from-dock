@@ -1,0 +1,36 @@
+#!/usr/bin/env zsh
+
+# Path to the Dock's plist file
+DOCK_PLIST="$HOME/Library/Preferences/com.apple.dock.plist"
+
+if [[ $# -ne 1 ]]; then
+  echo "Usage: $(basename "$0") <App>"
+  exit 1
+fi
+
+APP_NAME="$1"
+
+# Use PlistBuddy to iterate through and remove matching entries
+/usr/libexec/PlistBuddy -c "Print :persistent-apps" "$DOCK_PLIST" | grep -q "$APP_NAME"
+if [[ $? -ne 0 ]]; then
+  echo "$APP_NAME not found in Dock"
+  exit 1
+fi
+
+INDEX=0
+while :; do
+  ENTRY=$(/usr/libexec/PlistBuddy -c "Print :persistent-apps:${INDEX}:tile-data:file-label" "$DOCK_PLIST" 2>/dev/null)
+  if [[ $? -ne 0 ]]; then
+    echo "Got non-zero exit status when finding $INDEX"
+    break
+  fi
+
+  if [[ "$ENTRY" == "$APP_NAME" ]]; then
+    printf "Removing $APP_NAME from Dock... "
+    /usr/libexec/PlistBuddy -c "Delete :persistent-apps:$INDEX" "$DOCK_PLIST"
+    echo "removed"
+    break
+  fi
+
+  ((INDEX++))
+done

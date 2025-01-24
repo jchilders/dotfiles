@@ -1,6 +1,14 @@
 #!/usr/bin/env zsh
 
-# Close any open System Preferences panes, to prevent them from overriding
+# To reset a setting made with `defaults`:
+#
+#   defaults delete <domain>
+#
+# Example:
+#
+#    defaults delete com.apple.Dock
+
+# First, close any open System Preferences panes, to prevent them from overriding
 # settings we’re about to change
 osascript -e 'tell application "System Preferences" to quit'
 
@@ -10,32 +18,43 @@ sudo -v
 # Keep-alive: update existing `sudo` time stamp until `.macos` has finished
 while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 
-###############################################################################
-# Dock, Dashboard, and hot corners                                            #
-###############################################################################
-
+# -- Dock --
 # Automatically hide and show the Dock
-defaults write com.apple.dock autohide -bool true
+defaults write com.apple.Dock autohide -int 1
 
-printf "%s\n" "Dock - Remove the auto-hiding delay."
+# Dock - Remove the auto-hiding delay
 defaults write com.apple.Dock autohide-delay -float 0
 
-# Don’t show recent applications in Dock
+# Don’t show recent applications in the Dock
 defaults write com.apple.Dock show-recents -bool false
 
-# Turn on magnification
-defaults write com.apple.dock magnification -bool true
-defaults write com.apple.dock tilesize -int 40
+# Turn on Dock magnification
+defaults write com.apple.Dock magnification -int 1
+defaults write com.apple.Dock tilesize -int 40
+
+# Remove various stock apps from Dock
+apps=("Photos" "Notes" "Reminders" "Freeform" "TV" "News" "Keynote" "Numbers" "Pages" "App Store" "FaceTime" "Launchpad")
+for app in $apps; do
+	~/./bin/rm-app-from-dock "$app"
+done
+
+killall Dock
 
 # Hot Corners
 # top left: Mission Control 
-defaults write com.apple.dock wvous-tl-corner -int 2
+defaults write com.apple.Dock wvous-tl-corner -int 2
 # top right: Notification Center
-defaults write com.apple.dock wvous-tr-corner -int 12
+defaults write com.apple.Dock wvous-tr-corner -int 12
 # bottom left: Show Desktop
-defaults write com.apple.dock wvous-bl-corner -int 4
+defaults write com.apple.Dock wvous-bl-corner -int 4
 # bottom right: Start screen saver
-defaults write com.apple.dock wvous-br-corner -int 5
+defaults write com.apple.Dock wvous-br-corner -int 5
+
+# Disable Spotlight menu item - cmd-space ftw
+defaults write com.apple.Spotlight MenuItemHidden -bool true
+
+# Disable Spotlight suggestions - does this still work? ck after reboot
+defaults write com.apple.Spotlight SuggestionsEnabled -bool false
 
 ###############################################################################
 # General UI/UX                                                               #
@@ -54,10 +73,6 @@ defaults write NSGlobalDomain NSDisableAutomaticTermination -bool true
 # Disable dictionary lookup on deep trackpad press
 defaults write com.apple.AppleMultitouchTrackpad ForceSuppressed -bool true
 defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad ForceSuppressed -bool true
-
-###############################################################################
-# Trackpad, mouse, keyboard, Bluetooth accessories, and input                 #
-###############################################################################
 
 # Enable full keyboard access for all controls
 # (e.g. enable Tab in modal dialogs)
@@ -158,11 +173,10 @@ defaults write NSGlobalDomain WebKitDeveloperExtras -bool true
 # Enable continuous spellchecking
 defaults write com.apple.Safari WebContinuousSpellCheckingEnabled -bool true
 
-# Disable auto-correct
+# Safari: Disable auto-correct
 defaults write com.apple.Safari WebAutomaticSpellingCorrectionEnabled -bool false
 
-# Disable AutoFill
-printf "%s\n" "Safari - Disable AutoFill"
+# Safari: Disable AutoFill
 defaults write com.apple.Safari AutoFillFromAddressBook -bool false
 defaults write com.apple.Safari AutoFillPasswords -bool false
 defaults write com.apple.Safari AutoFillCreditCardData -bool false
@@ -209,27 +223,20 @@ defaults write com.apple.appstore WebKitDeveloperExtras -bool true
 # App Store - Enable Debug Menu in the Mac App Store
 defaults write com.apple.appstore ShowDebugMenu -bool true
 
-###############################################################################
-# Google Chrome
-###############################################################################
-
+# -- Chrome
 defaults write com.google.Chrome AppleEnableMouseSwipeNavigateWithScrolls -bool true
 defaults write com.google.Chrome AppleEnableSwipeNavigateWithScrolls -bool true
 
 defaults write com.google.Chrome AppleEnableMouseSwipeNavigateWithScrolls -bool true
 defaults write com.google.Chrome.canary AppleEnableMouseSwipeNavigateWithScrolls -bool true
 
-
-###############################################################################
-# VSCode
-###############################################################################
-
+# -- VSCode
 # These settings are recommended when using the (neo)vim plugin in VSCode
 defaults write com.microsoft.VSCode ApplePressAndHoldEnabled -bool false              # For VS Code
 defaults write com.microsoft.VSCodeInsiders ApplePressAndHoldEnabled -bool false      # For VS Code Insider
 defaults write com.vscodium ApplePressAndHoldEnabled -bool false                      # For VS Codium
 defaults write com.microsoft.VSCodeExploration ApplePressAndHoldEnabled -bool false   # For VS Codium Exploration users
-defaults delete -g ApplePressAndHoldEnabled
+# defaults delete -g ApplePressAndHoldEnabled
 
 ###############################################################################
 # Music

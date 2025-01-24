@@ -3,7 +3,7 @@
 set -e  # Exit on error
 
 if [[ $# -ne 1 ]]; then
-    echo "Usage: $0 <c-span-url>"
+    echo "Usage: $(basename "$0") <c-span-url>"
     exit 1
 fi
 
