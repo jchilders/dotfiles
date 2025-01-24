@@ -37,10 +37,10 @@ homebrew-clean: ## Uninstall homebrew
 
 ##@ Neovim
 
-neovim: neovim-clone-or-pull neovim-build-from-source ## Install Neovim
-
 NEOVIM_SRC_DIR := "$$HOME/work/neovim/neovim"
 NEOVIM_CFG_DIR := "$(XDG_CONFIG_HOME)/nvim"
+
+neovim: neovim-clone-or-pull /usr/local/bin/nvim neovim-install-plugins ## Install Neovim
 
 neovim-clone-or-pull: ## Clone neovim, or pull the latest
 		@mkdir -p $$(dirname $(NEOVIM_SRC_DIR))
@@ -50,7 +50,7 @@ neovim-clone-or-pull: ## Clone neovim, or pull the latest
 				git clone https://github.com/neovim/neovim.git $(NEOVIM_SRC_DIR); \
 		fi; \
 
-neovim-build-from-source: ## Install neovim from source
+/usr/local/bin/nvim: ## Install neovim from source
 		@for pkg in cmake automake ninja; do \
 				if ! which $$pkg >/dev/null; then \
 						brew install $$pkg; \
@@ -59,13 +59,14 @@ neovim-build-from-source: ## Install neovim from source
 		$(MAKE) -C $(NEOVIM_SRC_DIR) CMAKE_BUILD_TYPE=RelWithDebInfo; \
 		sudo $(MAKE) -C $(NEOVIM_SRC_DIR) CMAKE_INSTALL_PREFIX=/usr/local install
 
+neovim-plugins: /usr/local/bin/nvim ## Install Neovim plugins
+		@nvim --headless +Lazy! sync +qa
+
 neovim-clean: ## Uninstall neovim
 		-sudo rm /usr/local/bin/nvim
 		-sudo rm /usr/local/bin/vi
 		-sudo rm -r /usr/local/lib/nvim
 		-sudo rm -r /usr/local/share/nvim
-		-brew unlink neovim
-		bin/clean_neovim
 
 ##@ Languages
 mise: homebrew-bundle ## Install all languages configured for mise to handle
@@ -120,8 +121,6 @@ fonts: ## Install fonts
 
 ssh-cfg: ## Install ssh related files
 	@[ -d $$HOME/.ssh ] || mkdir $$HOME/.ssh
-
-ssh-cfg-clean: ## Install ssh related files
 
 ssh-add-key: -ssh ## Add key to SSH agent
 	ssh-add -K ~/.ssh/id_ed25519
