@@ -52,6 +52,7 @@ function loadAbbreviations() {
   abbr add gl='git l'
   abbr add gs='git status -sb'
   abbr add imgcat='wezterm imgcat'
+  abbr add v='nvim'
 
   # Ruby and Rails helpers
   abbr add rc='rails console'

@@ -1,3 +1,7 @@
+# frozen_string_literal: true
+
+# Run this file with `brew bundle`
+
 brew 'atuin' # store shell history in SQLite
 brew 'automake'
 brew 'bat' # cat replacement
@@ -22,6 +26,12 @@ brew 'httpie' # cURL replacement. e.g.: `http POST pie.dev/post hello=world`
 brew 'imagemagick'
 brew 'jq' # json processor
 brew 'lazygit' # git TUI
+
+# https://github.com/ggerganov/llama.cpp
+#    llama-cli --hf-repo ggml-org/Qwen2.5-Coder-7B-Q8_0-GGUF \
+#      --hf-file qwen2.5-coder-7b-q8_0.gguf -p "The meaning to life and the universe is"
+brew 'llama.cpp' # LLM inference in C/C++. Used by llama.vim plugin
+
 brew 'mas' # CLI for Mac App Store
 brew 'mise' # Version manager for Ruby, Node, etc.
 brew 'npm' # node package manager

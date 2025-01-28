@@ -1,3 +1,7 @@
+-- Standard locations:
+--
+-- Log files: XDG_CACHE_HOME ~/.cache
+-- Plugins: XDG_DATA_HOME ~/.local/share/nvim
 require "core/highlights" -- load before colorscheme cfg
 require "plugins/colorscheme"
 
