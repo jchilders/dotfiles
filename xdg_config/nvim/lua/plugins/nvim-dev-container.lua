@@ -8,7 +8,7 @@
 
 return {
   'https://codeberg.org/esensar/nvim-dev-container',
-  enabled = false,
+  enabled = true,
   config = function()
     require("devcontainer").setup({})
   end
