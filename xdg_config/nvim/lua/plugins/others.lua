@@ -1,7 +1,20 @@
 return {
-  { "tpope/vim-rhubarb" },
-  { "tpope/vim-sleuth" },
-  { "cohama/lexima.vim" }, -- auto-close parens/quotes/etc.
-  { "famiu/bufdelete.nvim" }, -- :Bd to really delete a buffer
-  { "NoahTheDuke/vim-just" }, -- syntax highlighting for `justfile`s
+  {
+    "tpope/vim-rhubarb",
+    enabled = true
+  },
+  {
+    "tpope/vim-sleuth",
+    enabled = true
+  },
+  {
+    -- auto-close parens/quotes/etc.
+    "cohama/lexima.vim",
+    enabled = true
+  },
+  {
+    -- :Bd to really delete a buffer
+    "famiu/bufdelete.nvim",
+    enabled = true
+  },
 }

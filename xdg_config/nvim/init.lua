@@ -2,8 +2,12 @@
 --
 -- Log files: XDG_CACHE_HOME ~/.cache
 -- Plugins: XDG_DATA_HOME ~/.local/share/nvim
+
 require "core/highlights" -- load before colorscheme cfg
 require "plugins/colorscheme"
+
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
@@ -21,8 +25,6 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.runtimepath:prepend(lazypath)
 
-require "core/options"
-
 require("lazy").setup(
   { import = "plugins" },
   {
@@ -36,11 +38,13 @@ require("lazy").setup(
       enabled = true,
       notify = false,
     },
-  })
+  }
+)
 
 pcall(vim.cmd.colorscheme, "tokyonight")
 
 require "core/mappings"
 require "core/autocmd"
+require "core/options"
 
 -- vim: ts=2 sts=2 sw=2 et

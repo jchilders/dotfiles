@@ -22,6 +22,8 @@ local extension = function(bufnr)
       ext = "rb"
     elseif ft == "typescript" then
       ext = "ts"
+    elseif ft == "python" then
+      ext = "py"
     else
       ext = ft
     end

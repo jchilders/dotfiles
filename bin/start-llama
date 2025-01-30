@@ -1,0 +1,5 @@
+#!/usr/bin/env zsh
+
+# Needed by llama.vim
+
+llama-server -m ~/Models/ggml-org_Qwen2.5-Coder-7B-Q8_0-GGUF_qwen2.5-coder-7b-q8_0.gguf --port 8012 -ngl 99 -fa -ub 1024 -b 1024 -dt 0.1 --ctx-size 0 --cache-reuse 256

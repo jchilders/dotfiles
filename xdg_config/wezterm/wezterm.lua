@@ -23,7 +23,7 @@ local config = {
   -- Dim inactive panes
   inactive_pane_hsb = {
     saturation = 0.5,
-    brightness = 0.3,
+    brightness = 0.5,
   },
 
   leader = { key = 'a', mods = 'CTRL', timeout_milliseconds = 1500 },
