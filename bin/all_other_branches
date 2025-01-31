@@ -1,0 +1,19 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Return a list of all branches that aren't the current one, both remote and
+# local, sorted by most recently modified.
+
+require 'English'
+
+# Check that we're in a git repo
+`git -C . rev-parse 2>/dev/null`
+exit($CHILD_STATUS.exitstatus) unless $CHILD_STATUS.success?
+
+git_branches_cmd = "git for-each-ref --sort=-committerdate --format='%(refname:lstrip=2)'"
+
+locals = `#{git_branches_cmd} refs/heads`.split
+remotes = `#{git_branches_cmd} refs/remotes`.gsub(%r{^origin/}, '').split
+current = `git branch --show-current`.chomp
+
+puts (locals | remotes) - ['HEAD', current]

@@ -160,8 +160,8 @@ bindkey '^ogs' edit_from_git_status
 
 function switch_branch {
   # TODO: handle git worktrees
-  # all_branches is an executable script
-  local branch=$(all_branches | fzf --tiebreak=index)
+  # all_other_branches is an executable script
+  local branch=$(all_other_branches | fzf --tiebreak=index)
 
   if [[ '' != $branch ]]; then
     git checkout $branch

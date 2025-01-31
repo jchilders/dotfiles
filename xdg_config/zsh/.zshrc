@@ -44,7 +44,6 @@ export ZSH="$XDG_STATE_HOME/ohmyzsh"
 ZSH_THEME="robbyrussell"
 plugins=(
   dotenv
-  git
   mise
   zoxide
 )
