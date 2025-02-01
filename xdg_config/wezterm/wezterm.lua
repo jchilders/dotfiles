@@ -1,7 +1,7 @@
 local wezterm = require("wezterm")
 local act = wezterm.action
 
-local default_font_size = 20.0
+local default_font_size = 18.0
 local default_font = {
   -- family = "Inconsolata Nerd Font",
   family = "Source Code Pro for Powerline",
@@ -98,14 +98,14 @@ local function new_tab_with_horizontal_split(window, pane)
 end
 
 config.keys = {
-  -- New tab with horizontal split
+  -- Create a new tab with two horizontally split panes
   { key = "t", mods = "CMD", action = wezterm.action_callback(new_tab_with_horizontal_split) },
   { key = "z", mods = "LEADER",    action = act.TogglePaneZoomState },
-  { key = "F", mods = "SHIFT|CMD", action = "ToggleFullScreen" },
-  { key = "H", mods = "SHIFT|CMD", action = act.ActivatePaneDirection("Left"), },
-  { key = "L", mods = "SHIFT|CMD", action = act.ActivatePaneDirection("Right"), },
-  { key = "K", mods = "SHIFT|CMD", action = act.ActivatePaneDirection("Up"), },
-  { key = "J", mods = "SHIFT|CMD", action = act.ActivatePaneDirection("Down"), },
+  { key = "f", mods = "SHIFT|CMD", action = "ToggleFullScreen" },
+  { key = "h", mods = "SHIFT|CMD", action = act.ActivatePaneDirection("Left" ), },
+  { key = "l", mods = "SHIFT|CMD", action = act.ActivatePaneDirection("Right"), },
+  { key = "k", mods = "SHIFT|CMD", action = act.ActivatePaneDirection("Up"   ), },
+  { key = "j", mods = "SHIFT|CMD", action = act.ActivatePaneDirection("Down" ), },
   {
     key = "r",
     mods = "LEADER",
@@ -122,7 +122,7 @@ config.keys = {
   { key = "O", mods = "SHIFT|CMD", action = "ShowTabNavigator" },
   { key = "P", mods = "SHIFT|CMD", action = act.RotatePanes "CounterClockwise", },
   { key = "%", mods = "LEADER", action = act.SplitHorizontal, },
-  { key = "-", mods = "LEADER", action = act.SplitVertical, },
+  { key = "-", mods = "LEADER", action = act.SplitVertical,   },
   { key = "+", mods = "SHIFT|CMD", action = act.IncreaseFontSize, },
   { key = "-", mods = "SHIFT|CMD", action = act.DecreaseFontSize, },
   { key = "[", mods = "LEADER", action = act.ActivateCopyMode, },

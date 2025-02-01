@@ -172,10 +172,10 @@ function open_localhost_and_switch_tabs() {
   if [[ -z $url ]]; then
     url="http://localhost"
   fi
-  local port=${PORT:-3000}
   
   # Append port to URL if it doesn't already contain one
-  if [[ $url != *":"* ]]; then
+  if [[ ! $url =~ :[0-9]+(/|$) ]]; then
+    local port=${PORT:-3000}
     url="${url}:${port}"
   fi
 
