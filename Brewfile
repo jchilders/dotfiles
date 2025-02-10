@@ -40,7 +40,6 @@ brew 'memcached'
 brew 'parallel' # gnu parallel
 brew 'redis' # redis is redis
 brew 'rg' # ripgrep
-brew 'sd' # easy search & replace. sed alternative/replacement
 brew 'sl' # 🚂
 brew 'showkey' # type a key and see it echoed in the terminal
 brew 'solargraph' # Ruby language server (LSP)
@@ -87,6 +86,9 @@ cask 'wezterm-nightly'
 # share your keystrokes when creating screencasts, presenting, or collaborating with others
 # ^⌥⌘K to toggle on/off
 cask 'keycastr'
+
+tap 'trycua/lume'
+brew 'lume' # create, run and manage macOS and Linux virtual machines (VMs)
 
 # Optionals. Uncomment to install
 # cask 'lulu' # allow/deny apps network access
