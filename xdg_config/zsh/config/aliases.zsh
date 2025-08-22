@@ -27,6 +27,7 @@ alias l='eza --all --long --git --icons --no-user --time-style relative'
 alias tree='eza --tree'
 
 command -v bat >/dev/null 2>&1 && alias cat='bat' # use bat as cat
+command -v gotop >/dev/null 2>&1 && alias top='gotop'
 command -v gping >/dev/null 2>&1 && alias ping='gping' # like ping but with a graph
 
 if (( $+commands[op] )) && (( $+commands[aichat] )); then

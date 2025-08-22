@@ -1,6 +1,7 @@
 local remap = require("utils").map_global
 local scratcher = require("jc.scratcher")
 local emu_utils = require("jc.emu-utils")
+local wezterm = require("jc.wezterm")
 
 TelescopeMapArgs = TelescopeMapArgs or {}
 
@@ -94,7 +95,7 @@ vim.keymap.set("n", "ccw", vim.lsp.buf.rename, {})
 --   6. Add your closing `'` and hit enter.
 -- tl;dr: * searches term under cursor but doesn't jump forward
 local search_cmd = [[:let @/='<C-R>=expand("<cword>")<CR>'<CR>:set hls<CR>]]
-vim.keymap.set("n", "*", search_cmd)
+vim.keymap.set("n", "*", search_cmd, { silent = true })
 
 -- Hit <CR> to clear highlighted search matches
 remap("n", "<CR>", '{-> v:hlsearch ? "<cmd>nohl\\<CR>" : "\\<CR>"}()', true)
@@ -146,6 +147,47 @@ vim.keymap.set("v", "<leader>sj", emu_utils.send_selection_down)
 -- Send ('a'gain) the last visually selected area to the left terminal pane
 -- TODO: get this working for all directions
 -- vim.keymap.set("n", "<leader>sa", emu_utils.send_selection_left)
+
+-- Send Up then Enter to the pane to the left
+vim.keymap.set("n", "<Leader>rr", function()
+  vim.defer_fn(function()
+    wezterm.send_text("Up") -- Send Up Arrow
+  end, 50) -- Slight delay to ensure proper order
+
+  vim.defer_fn(function()
+    wezterm.send_text("\n") -- Send Enter
+  end, 100) -- Another small delay
+end, { desc = "Resend last command" })
+
+vim.api.nvim_create_user_command("ResendOnSave", function()
+  local buf = vim.api.nvim_get_current_buf()
+  local ns = "resend_on_save_" .. buf -- Unique namespace per buffer
+
+  -- Check if autocmd exists by storing a buffer variable
+  if vim.b[ns] then
+    -- Autocmd exists, remove it
+    vim.api.nvim_clear_autocmds({ buffer = buf, event = "BufWritePost" })
+    vim.b[ns] = nil
+    vim.notify("Resend on save disabled", vim.log.levels.INFO)
+  else
+    -- Autocmd does not exist, create it
+    vim.api.nvim_create_autocmd("BufWritePost", {
+      buffer = buf,
+      callback = function()
+        vim.defer_fn(function()
+          wezterm.send_text("Up") -- Send Up Arrow
+        end, 50) -- Slight delay to ensure proper order
+
+        vim.defer_fn(function()
+          wezterm.send_text("\n") -- Send Enter
+        end, 100) -- Another small delay
+      end,
+      desc = "Send UpArrow then Enter to left split after saving this buffer",
+    })
+    vim.b[ns] = true
+    vim.notify("Resend on save enabled", vim.log.levels.INFO)
+  end
+end, { desc = "Toggle resend on save for this buffer" })
 
 -- Insert debug print statement below current line
 vim.keymap.set("n", "<leader>pp", function()
@@ -302,3 +344,5 @@ function ControlMusic(action)
   local handle = io.popen("osascript -e '" .. script .. "'")
   if handle then handle:close() end
 end
+
+

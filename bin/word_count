@@ -1,0 +1,15 @@
+#!/usr/bin/env zsh
+
+# Usage: ./count_word.zsh WORD [DIRECTORY]
+WORD="$1"
+DIR="${2:-.}"
+
+if [[ -z "$WORD" ]]; then
+  echo "Usage: $0 WORD [DIRECTORY]"
+  exit 1
+fi
+
+# Recursive search, case-insensitive, per-file count, skip zero matches, sort ascending
+rg -o -c -w -i -- "$WORD" "$DIR" \
+  | grep -v ':0$' \
+  | sort -t: -k2,2n

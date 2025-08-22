@@ -1,12 +1,10 @@
-# Custom zsh widgets
-
-# Use fzf to find a file and open it in the editor. This function has the side
-# effect of setting the `found_file` variable, which is used by other
-# functions. It expects the first (and only) argument to be a command that will
-# output a list of files. The command is evaluated and piped into fzf.
+# Use fzf to find a file based on fuzzy matching, preview it, and open it in
+# $EDITOR on enter. It is smart enough to handle previewing images. It expects the first
+# (and only) argument to be a command that will output a list of files.
 #
-# Example usage:
-#  __find_file "fd --type=file"
+# Example:
+#
+#   __find_file "fd --type=file"
 function __find_file() {
   local -a files
   local cmd=${1:?usage: __find_file "command"}
@@ -26,13 +24,18 @@ function __find_file() {
 
 function __eval_found_file {
   if [ -n "$found_file" ]; then
+    local cmd
     if file --mime-type -b "$found_file" | grep -qF image/; then
-      local cmd="chafa '$found_file'"
+      cmd=(chafa "$found_file")
     else
-      local cmd="$1 '$found_file'"
+      cmd=(${=1} "$found_file") # Split $1 into an array
     fi
-    print -s $cmd  # Add to history
-    eval "$cmd"
+
+    # Add to history (with proper quoting)
+    local line="${(j: :)${(q)cmd[@]}}"
+    print -r -s -- "$line"
+
+    command "${cmd[@]}"
   fi
   zle accept-line
 }

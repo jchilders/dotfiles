@@ -19,6 +19,7 @@ brew 'git' # git, you stupid git
 brew 'git-delta' # git-diff replacement
 brew 'git-lfs' # handle Large Files in git
 brew 'glow' # markdown reader
+brew 'gotop' # top replacement
 brew 'gpg' # pretty good
 brew 'gping' # ping, but with graphs
 brew 'grep' # gnu grep
@@ -46,11 +47,9 @@ brew 'solargraph' # Ruby language server (LSP)
 brew 'starship' # robust shell prompt
 brew 'tealdeer' # Rust impl of `tldr`: man page supplement. brief desc, then examples
 brew 'tig' # git history viewer
+brew 'trippy' # ping/traceroute replacement
 brew 'toilet' # ascii banners :)
 brew 'uv' # extremely fast Python package installer
-brew 'watchman' # watches files/dirs, does things
-brew 'watchexec' # auto-restart process when file(s) change
-brew 'wget'
 brew 'yt-dlp' # audio/video downloader
 
 # mkcert and nss are used to generate locally trusted development certificates

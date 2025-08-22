@@ -21,6 +21,8 @@ function M.get_pane_id(direction)
   end
 end
 
+-- Send the given `text` to the pane in `direction`. If text is literal "^C",
+-- then sends Ctrl+C as hex val
 function M.send_text(text, direction)
   direction = direction or "left"
   local success, pane_id = pcall(M.get_pane_id, direction)
@@ -30,8 +32,16 @@ function M.send_text(text, direction)
     return
   end
 
-  local esc_text = vim.fn.escape(text, '\\"$`	')
+  local esc_text
+  if text == "^C" then
+    esc_text = "$(printf '\\x03')"  -- Ctrl+C
+  elseif text == "Up" then
+    esc_text = "$(printf '\\x1b[A')" -- Up Arrow
+  else
+    esc_text = vim.fn.escape(text, '\\"$`	')
+  end
   local cmd = "wezterm cli send-text --pane-id " .. pane_id .. " --no-paste -- \"" .. esc_text .. "\n\""
+  -- local cmd = "wezterm cli send-text --pane-id " .. pane_id .. " --no-paste -- \"" .. esc_text .. "\""
   local result = vim.fn.system(cmd)
 
   if vim.v.shell_error ~= 0 then

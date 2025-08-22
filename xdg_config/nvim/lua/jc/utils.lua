@@ -316,11 +316,15 @@ function M.insert_print_statement(insert_above)
   -- Get current line number
   local line = api.nvim_win_get_cursor(0)[1]
 
-  -- Insert the debug print
+  -- Get the indentation of the current line
+  local current_line = api.nvim_buf_get_lines(0, line - 1, line, false)[1]
+  local indent = current_line:match("^%s+") or ""
+
+  -- Insert the debug print with proper indentation
   if insert_above then
-    api.nvim_buf_set_lines(0, line - 1, line - 1, false, {log_stmt})
+    api.nvim_buf_set_lines(0, line - 1, line - 1, false, {indent .. log_stmt})
   else
-    api.nvim_buf_set_lines(0, line, line, false, {log_stmt})
+    api.nvim_buf_set_lines(0, line, line, false, {indent .. log_stmt})
   end
 end
 
