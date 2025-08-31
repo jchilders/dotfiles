@@ -9,7 +9,23 @@ return {
   },
   config = function()
     require("nvim-treesitter.configs").setup({
-      ensure_installed = { "bash", "git_rebase", "json", "lua", "luadoc", "markdown", "ruby", "rust", "sql", "typescript", "vim", "vimdoc" },
+      ensure_installed = {
+        "bash",
+        "css",
+        "git_rebase",
+        "html",
+        "javascript",
+        "json",
+        "lua",
+        "luadoc",
+        "markdown",
+        "ruby",
+        "rust",
+        "sql",
+        "typescript",
+        "vim",
+        "vimdoc"
+      },
       indent = { enable = false },
       incremental_selection = {
         enable = true,
@@ -23,7 +39,8 @@ return {
       query_linter = {
         enable = true,
         use_virtual_text = true,
-        lint_events = { "bufwrite", "cursorhold" },
+        lint_events = { "bufwrite",
+"cursorhold" },
       },
       playground = {
         enable = true,
