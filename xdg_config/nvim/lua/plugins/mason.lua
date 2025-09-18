@@ -1,6 +1,6 @@
 -- Helps install LSPs.
 return {
-  "williamboman/mason.nvim",
+  "mason-org/mason.nvim",
   enabled = true,
   dependencies = {
     { 'williamboman/mason-lspconfig.nvim' },
