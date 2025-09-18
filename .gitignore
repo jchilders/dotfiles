@@ -4,6 +4,7 @@
 Brewfile.lock.json
 Session.vim
 abbreviations
+blocked-domains
 configstore/
 default.gems.lock
 htop/

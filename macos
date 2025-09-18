@@ -54,7 +54,7 @@ defaults write com.apple.Dock wvous-br-corner -int 5
 defaults write com.apple.Spotlight MenuItemHidden -bool true
 
 # Disable Spotlight suggestions - does this still work? ck after reboot
-defaults write com.apple.Spotlight SuggestionsEnabled -bool false
+# defaults write com.apple.Spotlight SuggestionsEnabled -bool false
 
 ###############################################################################
 # General UI/UX                                                               #
@@ -113,7 +113,7 @@ defaults write com.apple.screencapture location ~/Desktop
 ###############################################################################
 
 # Show all filename extensions
-defaults write NSGlobalDomain AppleShowAllExtensions -bool true
+defaults write NSGlobalDomain AppleShowAllExtensions -bool false
 
 # Show all files, including hidden ones
 defaults write com.apple.finder AppleShowAllFiles -bool true

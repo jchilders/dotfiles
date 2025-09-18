@@ -1,0 +1,70 @@
+#!/bin/zsh
+# hostblocker
+#
+# Reads domains from ./blocked-domains and blocks them from being accessible.
+# Each line in blocked-domains should contain a single domain (e.g., example.com)
+#
+# Usage:
+#   hostblocker            # enable / update blocklist
+#   hostblocker --disable  # disable blocklist
+#
+# After running, execute the following to verify.
+#
+#    sudo pfctl -sr
+#
+# This should return:
+#   
+#     block drop out quick from any to <blocked>
+#
+# To show the list of blocked IPs:
+# 
+#     sudo pfctl -t blocked -T show
+
+BLOCKLIST_FILE="./blocked-domains"
+TABLE_NAME="blocked"
+RULE_FILE="/tmp/pf-blocklist.conf"
+
+if [[ "$1" == "--disable" ]]; then
+  echo "Disabling blocklist..."
+  sudo pfctl -t "$TABLE_NAME" -T flush >/dev/null 2>&1
+  echo "# blocklist disabled" | sudo pfctl -f -
+  echo "Blocklist disabled."
+  exit 0
+fi
+
+if [[ ! -f "$BLOCKLIST_FILE" ]]; then
+  echo "Error: $BLOCKLIST_FILE not found."
+  exit 1
+fi
+
+typeset -a IPLIST
+
+while IFS= read -r domain || [[ -n "$domain" ]]; do
+  [[ -z "$domain" || "$domain" =~ ^# ]] && continue
+
+  echo "Resolving $domain..."
+  ips=($(dig +short "$domain" | grep -E '^[0-9.]+$'))
+  if [[ -n "$ips" ]]; then
+    IPLIST+=($ips)
+  else
+    echo "  (no A records found)"
+  fi
+done < "$BLOCKLIST_FILE"
+
+if (( ${#IPLIST[@]} == 0 )); then
+  echo "No IPs resolved — nothing to update."
+  exit 0
+fi
+
+cat > "$RULE_FILE" <<EOF
+table <$TABLE_NAME> persist
+block drop out quick to <$TABLE_NAME>
+EOF
+
+echo "Loading pf rules..."
+sudo pfctl -f "$RULE_FILE"
+
+echo "Updating pf table <$TABLE_NAME> with:"
+printf '%s\n' "${IPLIST[@]}"
+
+sudo pfctl -t "$TABLE_NAME" -T replace "${IPLIST[@]}"
