@@ -1,28 +1,34 @@
 #!/usr/bin/env ruby
+
 require 'json'
 require 'open3'
 require 'fileutils'
 require 'time'
 require 'optparse'
 
-class DevContainerChecker
-  GITHUB_ORG = 'rails'
-  OUTPUT_FILE = 'devcontainer_build_results.json'
-  RED = "\e[31m"
-  GREEN = "\e[32m"
-  RESET = "\e[0m"
+# Helper to clone the various Rails repos and see if their devcontainers are working.
 
-  def initialize(org:, summary_only: false)
+class DevContainerChecker
+  GITHUB_ORG = 'rails'.freeze
+  OUTPUT_FILE = 'devcontainer_build_results.json'.freeze
+  RED = "\e[31m".freeze
+  GREEN = "\e[32m".freeze
+  RESET = "\e[0m".freeze
+
+  def initialize(org:, summary_only: false, delete_repos: false)
     @org = org.nil? ? GITHUB_ORG : org
     @launch_dir = Dir.pwd
     @results_file = File.join(@launch_dir, OUTPUT_FILE)
     @results = load_existing_results
     @processed_count = 0
     @summary_only = summary_only
+    @delete_repos = delete_repos
   end
 
   def run
-    if @summary_only
+    if @delete_repos
+      delete_repositories
+    elsif @summary_only
       print_summary
     else
       update_repositories
@@ -35,6 +41,7 @@ class DevContainerChecker
 
   def load_existing_results
     return {} unless File.exist?(@results_file)
+
     JSON.parse(File.read(@results_file))
   rescue JSON::ParserError
     {}
@@ -42,28 +49,30 @@ class DevContainerChecker
 
   def save_results
     FileUtils.mkdir_p(File.dirname(@results_file))
-    
+
     # Load existing results (if any) and merge with new results
     existing_results = load_existing_results
     merged_results = existing_results.merge(@results)
-    
+
     # Write back to the launch directory
     File.write(@results_file, JSON.pretty_generate(merged_results))
   end
 
-  def update_repositories
+  def fetch_repositories
     puts "Fetching repositories for '#{@org}'..."
-    repos_json, status = Open3.capture2("gh repo list rails --json name,url")
-    repos = JSON.parse(repos_json)
-    
-    repos.each do |repo|
+    repos_json, = Open3.capture2('gh repo list rails --json name,url')
+    JSON.parse(repos_json)
+  end
+
+  def update_repositories
+    fetch_repositories.each do |repo|
       clone_url = repo['url']
       repo_name = repo['name']
-      
+
       if Dir.exist?(repo_name)
         puts "Updating #{repo_name}..."
         Dir.chdir(repo_name) do
-          system("git pull")
+          system('git pull')
         end
       else
         puts "Cloning #{repo_name}..."
@@ -72,10 +81,22 @@ class DevContainerChecker
     end
   end
 
+  def delete_repositories
+    puts "Deleting all repositories..."
+    fetch_repositories.each do |repo|
+      repo_name = repo['name']
+      if Dir.exist?(repo_name)
+        puts "Deleting #{repo_name}..."
+        FileUtils.rm_rf(repo_name)
+      end
+    end
+    puts "All repositories have been deleted."
+  end
+
   def check_devcontainers
     Dir.glob('*').select { |f| File.directory?(f) }.each do |dir|
       next unless File.directory?("#{dir}/.devcontainer")
-      
+
       @processed_count += 1
       puts "Found .devcontainer in #{dir}, building..."
       process_devcontainer(dir)
@@ -90,11 +111,11 @@ class DevContainerChecker
   def process_devcontainer(dir)
     Dir.chdir(dir) do
       command = "devcontainer build --workspace-folder ."
-      
+
       # Create a new thread to handle real-time output
       output_thread = nil
       stderr_thread = nil
-      
+
       begin
         Open3.popen3(command) do |stdin, stdout, stderr, wait_thr|
           # Thread for standard output
@@ -104,7 +125,7 @@ class DevContainerChecker
               (@stdout ||= []) << line
             end
           end
-          
+
           # Thread for standard error
           stderr_thread = Thread.new do
             while line = stderr.gets
@@ -112,11 +133,11 @@ class DevContainerChecker
               (@stderr ||= []) << line
             end
           end
-          
+
           # Wait for process to complete
           output_thread.join
           stderr_thread.join
-          
+
           @results[dir] = {
             'success' => wait_thr.value.success?,
             'exit_code' => wait_thr.value.exitstatus,
@@ -125,7 +146,7 @@ class DevContainerChecker
             'error_messages' => extract_error_messages((@stdout + @stderr).join("\n")),
             'timestamp' => Time.now.iso8601
           }
-          
+
           # Save results after each build
           save_results
         end
@@ -140,7 +161,7 @@ class DevContainerChecker
         }
         save_results
       end
-      
+
       # Clear output buffers for next run
       @stdout = []
       @stderr = []
@@ -195,6 +216,9 @@ OptionParser.new do |opts|
   opts.on("--org ORG", "Specify the GitHub org to query. Default: 'rails'.") do |org|
     options[:org] = org.empty? ? DevContainerChecker::GITHUB_ORG : org
   end
+  opts.on("--delete-repos", "Delete all cloned repositories") do |v|
+    options[:delete_repos] = v
+  end
 end.parse!
 
 # Check if GitHub CLI is installed (skip if only showing summary)
@@ -212,5 +236,9 @@ unless options[:summary]
 end
 
 # Run the checker
-checker = DevContainerChecker.new(org: options[:org], summary_only: options[:summary])
+checker = DevContainerChecker.new(
+  org: options[:org],
+  summary_only: options[:summary],
+  delete_repos: options[:delete_repos]
+)
 checker.run

@@ -1,0 +1,96 @@
+#!/usr/bin/env python
+
+import gc
+import re
+from pathlib import Path
+# import pynvim
+import neovim
+import asyncio
+import warnings
+
+def update_enabled_param(file_path, param):
+    """
+    Updates 'enabled = (true|false)' to 'enabled = {param}' in the specified Lua file.
+    Used to enable/disable plugins.
+
+    Args:
+        file_path (str): Path to the Lua file.
+        param (str): The new enabled value
+    """
+    try:
+        with open(file_path, 'r', encoding='utf-8') as file:
+            content = file.read()
+    except FileNotFoundError:
+        print(f"File not found: {file_path}")
+    except IOError as e:
+        print(f"Error reading file: {e}")
+    finally:
+        file.close()
+    
+    pattern = r'^(\s*)enabled\s*=\s*(true|false)'
+    if not re.search(pattern, content, flags=re.MULTILINE):
+        return
+
+    replacement = rf'\1enabled = {param}'
+    updated_content = re.sub(pattern, replacement, content, flags=re.MULTILINE)
+    
+    try:
+        with open(file_path, 'w', encoding='utf-8') as file:
+            file.write(updated_content)
+    except RuntimeError as e:
+        print(f"Error writing to file: {e}")
+    finally:
+        file.close()
+
+def get_files_in_directory(directory_path):
+    try:
+        directory = Path(directory_path)
+        files = [f.resolve() for f in directory.iterdir() if f.is_file()]
+    except RuntimeError as e:
+        if "Event loop is closed" in str(e):
+            print("Caught 'Event loop is closed' error.")
+        else:
+            print(f"Other RuntimeError: {e}")
+    finally:
+        return files
+
+# Start Neovim as an embedded process
+def get_formatoptions():
+    try:
+        nvim = neovim.attach('child', argv=["nvim", "--embed", "--headless"])
+        output = nvim.eval('&formatoptions')
+        formatoptions = "".join(sorted(output))
+    except RuntimeError as e:
+        if "Event loop is closed" in str(e):
+            print("Caught 'Event loop is closed' error.")
+        else:
+            print(f"Other RuntimeError: {e}")
+    finally:
+        nvim.close()
+        gc.collect()  # force-run
+        return formatoptions
+
+fo = get_formatoptions()
+print(f"original_formatoptions: '{fo}'")
+
+plugins = get_files_in_directory("./xdg_config/nvim/lua/plugins")
+for plugin in plugins:
+    try:
+        update_enabled_param(plugin, "false")
+
+        fo = get_formatoptions()
+        print(f"after disabling {plugin.name} formatoptions are '{fo}'")
+    except RuntimeError as e:
+        if "Event loop is closed" in str(e):
+            print("Caught 'Event loop is closed' error.")
+        else:
+            print(f"Other RuntimeError: {e}")
+
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore", category=RuntimeWarning)
+    try:
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(my_async_task())
+    finally:
+        if not loop.is_closed():
+            loop.close()
