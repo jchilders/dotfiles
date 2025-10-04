@@ -35,7 +35,7 @@
   br = branch
   sta = stash
   sw = switch
-  wc = whatchanged
+  wc = log --raw
 
   # undo last commit
   undo = !git reset --hard remotes/origin/$(git rev-parse --abbrev-ref HEAD)
