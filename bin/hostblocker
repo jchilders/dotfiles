@@ -1,12 +1,13 @@
 #!/bin/zsh
 # hostblocker
 #
-# Reads domains from ./blocked-domains and blocks them from being accessible.
+# Reads domains from $XDG_CONFIG_HOME/hostblocker/blocked-domains and blocks them from being accessible.
 # Each line in blocked-domains should contain a single domain (e.g., example.com)
 #
 # Usage:
 #   hostblocker            # enable / update blocklist
 #   hostblocker --disable  # disable blocklist
+#   hostblocker --status   # show blocked domains and their IPs
 #
 # After running, execute the following to verify.
 #
@@ -20,7 +21,8 @@
 # 
 #     sudo pfctl -t blocked -T show
 
-BLOCKLIST_FILE="./blocked-domains"
+CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/hostblocker"
+BLOCKLIST_FILE="$CONFIG_DIR/blocked-domains"
 TABLE_NAME="blocked"
 RULE_FILE="/tmp/pf-blocklist.conf"
 
@@ -29,6 +31,27 @@ if [[ "$1" == "--disable" ]]; then
   sudo pfctl -t "$TABLE_NAME" -T flush >/dev/null 2>&1
   echo "# blocklist disabled" | sudo pfctl -f -
   echo "Blocklist disabled."
+  exit 0
+fi
+
+if [[ "$1" == "--status" ]]; then
+  if [[ ! -f "$BLOCKLIST_FILE" ]]; then
+    echo "Error: $BLOCKLIST_FILE not found."
+    exit 1
+  fi
+  
+  printf "%-20s %s\n" "DOMAIN" "IPS"
+  printf "%-20s %s\n" "------" "---"
+  
+  while IFS= read -r domain || [[ -n "$domain" ]]; do
+    [[ -z "$domain" || "$domain" =~ ^# ]] && continue
+    ips=($(dig +short "$domain" | grep -E '^[0-9.]+$'))
+    if [[ -n "$ips" ]]; then
+      printf "%-20s %s\n" "$domain" "${ips[*]}"
+    else
+      printf "%-20s %s\n" "$domain" "(no A records)"
+    fi
+  done < "$BLOCKLIST_FILE"
   exit 0
 fi
 
