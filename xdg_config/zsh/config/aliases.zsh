@@ -4,7 +4,9 @@ if alias -L run-help > /dev/null; then
 fi
 autoload run-help
 export MANPAGER='nvim +Man!'
-export HELPDIR=/usr/share/zsh/$(zsh --version | ruby -ane 'puts $F[1]')/help
+if command -v ruby >/dev/null; then
+  export HELPDIR=/usr/share/zsh/$(zsh --version | ruby -ane 'puts $F[1]')/help
+fi
 
 # Override the `man` command so that it shows help pages for zsh builtins as
 # well as for "normal" executables.
@@ -39,6 +41,9 @@ fi
 # (like fish). To reload abbreviations run this function with the `--force`
 # flag.
 function loadAbbreviations() {
+  # Skip if abbr command not available
+  command -v abbr >/dev/null || return 0
+  
   # exit if abbreviations have already been already defined & the --force
   # parameter wasn't given
   [[ -s $ABBR_USER_ABBREVIATIONS_FILE && "$1" != "--force" ]] && return 1

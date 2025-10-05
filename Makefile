@@ -11,12 +11,23 @@ ZDOTDIR := $(XDG_CONFIG_HOME)/zsh
 cwd := $(shell pwd)
 
 ##@ Install
-install: macos cfg zsh homebrew-bundle neovim -fonts bat ## Install all the things
+install: detect-os ## Install all the things
+
+install-macos: macos cfg zsh homebrew-bundle neovim -fonts bat ## Install for macOS
+
+install-linux: cfg zsh-linux homebrew-bundle neovim-linux ## Install for Linux
 
 clean: cfg-clean neovim-clean zsh-clean homebrew-clean ## Uninstall all the things
 
-cfg: xdg-setup ## Link configuration files
-	@[ -e $(XDG_CONFIG_HOME) ] || ln -s $(cwd)/xdg_config $$HOME/.config
+detect-os: ## Detect OS and run appropriate install
+ifeq ($(shell uname -s), Darwin)
+	@$(MAKE) install-macos
+else
+	@$(MAKE) install-linux
+endif
+
+cfg: ## Link configuration files
+	@[ -e $$HOME/.config ] || ln -s $(cwd)/xdg_config $$HOME/.config
 	@[ -e $$HOME/bin ] || ln -sf $(cwd)/bin $$HOME/bin
 
 cfg-clean: ## Clean (rm) config $XDG_CONFIG_HOME
@@ -27,9 +38,14 @@ cfg-clean: ## Clean (rm) config $XDG_CONFIG_HOME
 homebrew: ## Install homebrew
 	sudo curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh | /bin/bash
 
-homebrew-bundle: homebrew ## Install default homebrew formulae
-	eval "$(/opt/homebrew/bin/brew shellenv)"
-	eval "$(/opt/homebrew/bin/brew bundle)"
+homebrew-bundle: homebrew ## Install default homebrew formulae.(Slow in Docker!)
+	@if [ -f /opt/homebrew/bin/brew ]; then \
+		eval "$(/opt/homebrew/bin/brew shellenv)" && /opt/homebrew/bin/brew bundle; \
+	elif [ -f /home/linuxbrew/.linuxbrew/bin/brew ]; then \
+		eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" && /home/linuxbrew/.linuxbrew/bin/brew bundle; \
+	else \
+		echo "Homebrew not found"; exit 1; \
+	fi
 
 homebrew-clean: ## Uninstall homebrew
 	sudo curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall.sh | /bin/bash
@@ -41,6 +57,9 @@ NEOVIM_SRC_DIR := "$$HOME/work/neovim/neovim"
 NEOVIM_CFG_DIR := "$(XDG_CONFIG_HOME)/nvim"
 
 neovim: neovim-clone-or-pull /usr/local/bin/nvim neovim-install-plugins ## Install Neovim
+
+neovim-linux: ## Install Neovim for Linux (use system package)
+	@echo "Using system neovim. Install plugins manually with: nvim --headless +Lazy! sync +qa"
 
 neovim-clone-or-pull: ## Clone neovim, or pull the latest
 		@mkdir -p $$(dirname $(NEOVIM_SRC_DIR))
@@ -74,6 +93,8 @@ mise: homebrew-bundle ## Install all languages configured for mise to handle
 
 ##@ zsh
 zsh: zsh-cfg ohmyzsh ## Install zsh-related items
+
+zsh-linux: zsh-cfg ## Install zsh for Linux (skip Oh My Zsh)
 
 zsh-clean: zsh-cfg-env-clean ## Uninstall zsh-related items
 

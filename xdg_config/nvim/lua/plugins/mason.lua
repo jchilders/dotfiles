@@ -18,7 +18,6 @@ return {
         "bashls",
         "dockerls",
         "jsonls",
-        "lemminx",
         "ruby_lsp",
         "rust_analyzer",
         "solargraph",

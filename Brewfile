@@ -10,6 +10,7 @@ brew 'choose-rust' # sed replacement. e.g.: `bat things.csv | choose 5`
 brew 'cmake'
 brew 'coreutils' # gnu coreutils
 brew 'datasette' # simple web interface to SQLite databases
+brew 'devcontainer' # Reference implementation for the Development Containers spec
 brew 'dua-cli' # display disk usage, & delete unwanted data
 brew 'eza' # git-aware ls replacement
 brew 'fd' # file finder
@@ -27,23 +28,14 @@ brew 'httpie' # cURL replacement. e.g.: `http POST pie.dev/post hello=world`
 brew 'imagemagick'
 brew 'jq' # json processor
 brew 'lazygit' # git TUI
-
-# https://github.com/ggerganov/llama.cpp
-#    llama-cli --hf-repo ggml-org/Qwen2.5-Coder-7B-Q8_0-GGUF \
-#      --hf-file qwen2.5-coder-7b-q8_0.gguf -p "The meaning to life and the universe is"
-brew 'llama.cpp' # LLM inference in C/C++. Used by llama.vim plugin
-
-brew 'mas' # CLI for Mac App Store
-brew 'mise' # Version manager for Ruby, Node, etc.
-brew 'npm' # node package manager
 brew 'make' # gnu make
 brew 'memcached'
-brew 'parallel' # gnu parallel
+brew 'mise' # Version manager for Ruby, Node, etc.
+brew 'npm' # node package manager
 brew 'redis' # redis is redis
 brew 'rg' # ripgrep
 brew 'sl' # 🚂
 brew 'showkey' # type a key and see it echoed in the terminal
-brew 'solargraph' # Ruby language server (LSP)
 brew 'starship' # robust shell prompt
 brew 'tealdeer' # Rust impl of `tldr`: man page supplement. brief desc, then examples
 brew 'tig' # git history viewer
@@ -54,8 +46,8 @@ brew 'yt-dlp' # audio/video downloader
 
 # mkcert and nss are used to generate locally trusted development certificates
 # needed for succesfully connecting locally via HTTPS
-brew 'mkcert'
-brew 'nss' # for Firefox
+# brew 'mkcert'
+# brew 'nss' # for Firefox
 
 # yank: TUI for copying values (to clipboard) via keyboard navigation (arrow
 # keys, hjkl, etc.)
@@ -72,22 +64,13 @@ brew 'zsh-syntax-highlighting' # syntax highlighting while typing
 
 # fish-like abbreviations for zsh: aliases that expand when you hit enter
 tap 'olets/tap'
-brew 'zsh-abbr'
-
-# find alternate (i.e. test) file
-tap 'uptech/homebrew-oss'
-brew 'uptech/oss/alt'
+brew 'olets/tap/zsh-abbr'
 
 cask '1password-cli'
-cask 'docker'
-cask 'wezterm-nightly'
 
 # share your keystrokes when creating screencasts, presenting, or collaborating with others
 # ^⌥⌘K to toggle on/off
 cask 'keycastr'
-
-tap 'trycua/lume'
-brew 'lume' # create, run and manage macOS and Linux virtual machines (VMs)
 
 # Optionals. Uncomment to install
 # cask 'lulu' # allow/deny apps network access

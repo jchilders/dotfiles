@@ -9,7 +9,7 @@ function __find_file() {
   local -a files
   local cmd=${1:?usage: __find_file "command"}
   local preview_cmd='
-    if [[ $(file --mime-type -b {}) =~ ^image/ ]]; then
+    if file --mime-type -b {} | grep -q "^image/"; then
       chafa --size=555x${FZF_PREVIEW_LINES} {}
     else 
       bat --color always --style numbers --line-range :200 {}

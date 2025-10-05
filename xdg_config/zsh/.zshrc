@@ -50,7 +50,7 @@ plugins=(
   zoxide
 )
 
-source $ZSH/oh-my-zsh.sh
+[ -f $ZSH/oh-my-zsh.sh ] && source $ZSH/oh-my-zsh.sh
 
 # 1password completions
 if type op &>/dev/null; then
