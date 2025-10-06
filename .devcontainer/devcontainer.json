@@ -18,13 +18,13 @@
         "ghcr.io/devcontainers/features/common-utils:2": {
             "installZsh": true,
             "configureZshAsDefaultShell": true,
-            "username": "dotfiles"
+            "username": "dot"
         },
         "ghcr.io/devcontainers/features/git:1": {},
         "ghcr.io/devcontainers/features/github-cli:1": {}
     },
     "mounts": [
-        "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/dotfiles/.ssh,type=bind,consistency=cached"
+        "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/dot/.ssh,type=bind,consistency=cached"
     ],
-    "remoteUser": "dotfiles"
+    "remoteUser": "dot"
 }

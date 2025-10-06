@@ -5,7 +5,7 @@ configuration will allow you to do common things with very few keystrokes.
 After trying various combinations over the years I settled on
 zsh/neovim/wezterm and have customized them to work with each other.
 
-"UNIX is an IDE."
+**Philosophy: "UNIX is an IDE."** This setup prioritizes efficiency through minimal keystrokes and seamless integration between terminal, editor, and git workflows.
 
 ![term_screenshot_left_active](https://github.com/user-attachments/assets/82f6231c-dbbb-4577-aec1-50dcee05b549)
 
@@ -30,6 +30,13 @@ line 35 is being reported by the LSP.
 This setup is fairly Zen: work is done primarily in the right pane, which means
 that the code I'm working on is generally centered on the screen.
 
+# Prerequisites
+
+- **macOS** (primary target platform)
+- **Git** (for cloning the repository)
+- **Make** (usually pre-installed on macOS)
+- **Internet connection** (for downloading Homebrew packages)
+
 # Installation
 
 ```
@@ -50,6 +57,41 @@ To undo the above:
 > make clean
 ```
 
+## Try it out without installing
+
+### Docker Container
+
+Build and run a containerized version to test the dotfiles:
+
+```bash
+docker build -t dotfiles-demo .
+docker run -it dotfiles-demo
+```
+
+This creates a full Linux environment with most tools installed via Homebrew.
+
+### VS Code Devcontainer
+
+Open the project in VS Code and use the devcontainer:
+
+1. Install the "Dev Containers" extension in VS Code
+2. Open this repository in VS Code
+3. Press `Cmd+Shift+P` and select "Dev Containers: Reopen in Container"
+4. VS Code will build and open the devcontainer
+
+Or use the devcontainer CLI:
+
+```bash
+# Install devcontainer CLI
+npm install -g @devcontainers/cli
+
+# Build and run
+devcontainer up --workspace-folder .
+devcontainer exec --workspace-folder . /bin/zsh
+```
+
+The devcontainer includes most tools and provides a consistent development environment.
+
 Q: lol why are you using Make?
 
 A: Because it works pretty well out of the box and is consistent. I tried nix,
@@ -57,12 +99,26 @@ and my experience was similar to
 [this](https://www.dgt.is/blog/2025-01-10-nix-death-by-a-thousand-cuts/): too
 many moving parts.
 
-# ctrl-o
+# Quick Demo
+
+After installation, try these key features:
+
+- **`ctrl-o` + `o`** - Open any file with fuzzy search and preview
+- **`ctrl-o` + `gs`** - Open files from git status (modified/staged files)
+- **`l`** - Enhanced directory listing with git info and icons
+- **`ctrl-o` + `gb`** - Switch git branches with fuzzy search
+- **`<leader>z`** in Neovim - Toggle zen mode (leader = space)
+
+The `ctrl-o` prefix acts like `cmd-p` in VS Code - it's your gateway to quickly opening and navigating files.
+
+# zsh/neovim: ctrl-o
+
+Once you get everything installed and get a zsh prompt, hit `ctrl-o`.
 
 `ctrl-o` acts as an action key prefix for opening files/doing things with them,
-similar to `cmd-p` in VSCode. Its primary purpose is to open files in $EDITOR
-(hence the `o` prefix). The full list of `ctrl-o` commands are given below, but
-these are a few of the most frequently used:
+similar to `cmd-p` in VSCode. Its primary purpose is to `o`pen files in $EDITOR.
+The full list of `ctrl-o` commands are given below, but these are a few of the
+most frequently used:
 
 | mapping | description |
 | :-----: | :---------- |
@@ -70,7 +126,7 @@ these are a few of the most frequently used:
 | <kbd>^ogs</kbd> | Open uncommited changed file ("git status") |
 | <kbd>^ob</kbd> | Open buffer (neovim only) |
 
-# Working with REPLs/shells
+# Neovim: Working with REPLs/shells
 
 Text in neovim can be sent to an adjacent pane for execution in the REPL or
 shell you're currently working in. This allows for testing out either single
@@ -89,7 +145,7 @@ lines, or entire blocks. Try this:
 
 The <kbd>&lt;leader&gt;</kbd> key is <kbd>&lt;space&gt;</kbd>.
 
-## Zen-ish Mode
+## Neovim: Zen-ish Mode
 
 Press <kbd>&lt;leader&gt;z</kbd> to hide the gutter (current and relative line
 numbers, git indicators, etc.), indentation helpers, and any inline LSP
@@ -295,4 +351,33 @@ docker rm jc_dotfiles
 devcontainer build --workspace-folder . --image-name jc_dotfiles:latest
 devcontainer up --workspace-folder .
 ```
+
+# Troubleshooting
+
+## Common Issues
+
+**Homebrew installation fails**
+- Ensure you have Xcode command line tools: `xcode-select --install`
+- Check internet connection and try again
+- On Apple Silicon, ensure Rosetta 2 is installed if needed
+
+**Permission denied errors**
+- Make sure you have write access to your home directory
+- Try running with `sudo` if needed for system-level installations
+- Check that `/usr/local` is writable or use Homebrew's recommended permissions
+
+**Shell doesn't switch to zsh**
+- Manually change shell: `chsh -s $(which zsh)`
+- Restart your terminal application
+- Check that zsh is in `/etc/shells`
+
+**Tools not found after installation**
+- Restart your terminal to reload PATH
+- Source your shell config: `source ~/.zshenv`
+- Check Homebrew PATH: `echo $PATH | grep brew`
+
+**Neovim plugins not working**
+- Run `:Lazy sync` inside Neovim to update plugins
+- Check for LSP errors with `:LspInfo`
+- Ensure required language servers are installed via Mason
 
