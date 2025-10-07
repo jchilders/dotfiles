@@ -5,7 +5,7 @@
 # Each line in blocked-domains should contain a single domain (e.g., example.com)
 #
 # Usage:
-#   hostblocker            # enable / update blocklist
+#   hostblocker --enable   # enable / update blocklist
 #   hostblocker --disable  # disable blocklist
 #   hostblocker --status   # show blocked domains and their IPs
 #
@@ -22,9 +22,30 @@
 #     sudo pfctl -t blocked -T show
 
 CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/hostblocker"
+DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/hostblocker"
 BLOCKLIST_FILE="$CONFIG_DIR/blocked-domains"
+CACHE_DB="$DATA_DIR/dns_cache.db"
 TABLE_NAME="blocked"
 RULE_FILE="/tmp/pf-blocklist.conf"
+TTL_SECONDS=86400  # 24 hours
+
+init_cache() {
+  mkdir -p "$DATA_DIR"
+  sqlite3 "$CACHE_DB" "CREATE TABLE IF NOT EXISTS dns_cache (domain TEXT PRIMARY KEY, ips TEXT, timestamp INTEGER);"
+}
+
+get_cached_ips() {
+  local domain="$1"
+  local cutoff=$(($(date +%s) - TTL_SECONDS))
+  sqlite3 "$CACHE_DB" "SELECT ips FROM dns_cache WHERE domain='$domain' AND timestamp > $cutoff;" 2>/dev/null
+}
+
+cache_ips() {
+  local domain="$1"
+  local ips="$2"
+  local timestamp=$(date +%s)
+  sqlite3 "$CACHE_DB" "INSERT OR REPLACE INTO dns_cache (domain, ips, timestamp) VALUES ('$domain', '$ips', $timestamp);"
+}
 
 if [[ "$1" == "--disable" ]]; then
   echo "Disabling blocklist..."
@@ -39,6 +60,14 @@ if [[ "$1" == "--status" ]]; then
     echo "Error: $BLOCKLIST_FILE not found."
     exit 1
   fi
+  
+  # Check if blocking is enabled
+  if sudo pfctl -t "$TABLE_NAME" -T show >/dev/null 2>&1 && [[ -n "$(sudo pfctl -t "$TABLE_NAME" -T show 2>/dev/null)" ]]; then
+    echo "Status: ENABLED"
+  else
+    echo "Status: DISABLED"
+  fi
+  echo
   
   printf "%-20s %s\n" "DOMAIN" "IPS"
   printf "%-20s %s\n" "------" "---"
@@ -55,22 +84,38 @@ if [[ "$1" == "--status" ]]; then
   exit 0
 fi
 
+if [[ "$1" != "--enable" ]]; then
+  echo "Usage: hostblocker [--enable|--disable|--status]"
+  exit 1
+fi
+
 if [[ ! -f "$BLOCKLIST_FILE" ]]; then
   echo "Error: $BLOCKLIST_FILE not found."
   exit 1
 fi
 
+init_cache
 typeset -a IPLIST
 
 while IFS= read -r domain || [[ -n "$domain" ]]; do
   [[ -z "$domain" || "$domain" =~ ^# ]] && continue
 
-  echo "Resolving $domain..."
-  ips=($(dig +short "$domain" | grep -E '^[0-9.]+$'))
+  cached_ips=$(get_cached_ips "$domain")
+  if [[ -n "$cached_ips" ]]; then
+    echo "Using cached IPs for $domain..."
+    ips=(${(s:,:)cached_ips})
+  else
+    echo "Resolving $domain..."
+    ips=($(dig +short "$domain" | grep -E '^[0-9.]+$'))
+    if [[ -n "$ips" ]]; then
+      cache_ips "$domain" "${(j:,:)ips}"
+    else
+      echo "  (no A records found)"
+    fi
+  fi
+  
   if [[ -n "$ips" ]]; then
     IPLIST+=($ips)
-  else
-    echo "  (no A records found)"
   fi
 done < "$BLOCKLIST_FILE"
 
