@@ -1,15 +1,16 @@
 #!/bin/zsh
 # hostblocker
 #
-# Reads domains from $XDG_CONFIG_HOME/hostblocker/blocked-domains and blocks them from being accessible.
-# Each line in blocked-domains should contain a single domain (e.g., example.com)
+# Reads domains from $XDG_CONFIG_HOME/hostblocker/blocked-domains and blocks
+# them from being accessible. Each line in blocked-domains should contain a
+# single domain (e.g., example.com)
 #
 # Usage:
 #   hostblocker --enable   # enable / update blocklist
 #   hostblocker --disable  # disable blocklist
 #   hostblocker --status   # show blocked domains and their IPs
 #
-# After running, execute the following to verify.
+# After running, execute the following to verify:
 #
 #    sudo pfctl -sr
 #
@@ -17,9 +18,8 @@
 #   
 #     block drop out quick from any to <blocked>
 #
-# To show the list of blocked IPs:
-# 
-#     sudo pfctl -t blocked -T show
+# Motivation: Keep my muscle memory/ADHD from opening reddit etc. when I should
+# be working :)
 
 CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/hostblocker"
 DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/hostblocker"
@@ -50,8 +50,8 @@ cache_ips() {
 if [[ "$1" == "--disable" ]]; then
   echo "Disabling blocklist..."
   sudo pfctl -t "$TABLE_NAME" -T flush >/dev/null 2>&1
-  echo "# blocklist disabled" | sudo pfctl -f -
-  echo "Blocklist disabled."
+  echo "# blocklist disabled" | sudo pfctl -f - >/dev/null 2>&1
+  echo "blocking disabled"
   exit 0
 fi
 
@@ -94,16 +94,47 @@ if [[ ! -f "$BLOCKLIST_FILE" ]]; then
   exit 1
 fi
 
+# Check if already enabled with same domains
+if sudo pfctl -t "$TABLE_NAME" -T show >/dev/null 2>&1 && [[ -n "$(sudo pfctl -t "$TABLE_NAME" -T show 2>/dev/null)" ]]; then
+  # Count domains in blocklist
+  domain_count=$(grep -v '^#' "$BLOCKLIST_FILE" | grep -v '^$' | wc -l | tr -d ' ')
+  if (( domain_count == 0 )); then
+    echo "blocking already enabled"
+    exit 0
+  fi
+  
+  # Quick check - if we have blocked IPs and domains in file, assume already enabled
+  echo "blocking already enabled"
+  exit 0
+fi
+
 init_cache
 typeset -a IPLIST
+typeset -A CURRENT_IPS
+typeset -i DOMAIN_COUNT=0
+
+# Get currently blocked IPs
+for ip in $(sudo pfctl -t "$TABLE_NAME" -T show 2>/dev/null); do
+  CURRENT_IPS[$ip]=1
+done
 
 while IFS= read -r domain || [[ -n "$domain" ]]; do
   [[ -z "$domain" || "$domain" =~ ^# ]] && continue
 
   cached_ips=$(get_cached_ips "$domain")
   if [[ -n "$cached_ips" ]]; then
-    echo "Using cached IPs for $domain..."
     ips=(${(s:,:)cached_ips})
+    # Check if all IPs for this domain are already blocked
+    all_blocked=true
+    for ip in $ips; do
+      if [[ -z "${CURRENT_IPS[$ip]}" ]]; then
+        all_blocked=false
+        break
+      fi
+    done
+    if $all_blocked; then
+      continue
+    fi
   else
     echo "Resolving $domain..."
     ips=($(dig +short "$domain" | grep -E '^[0-9.]+$'))
@@ -116,6 +147,7 @@ while IFS= read -r domain || [[ -n "$domain" ]]; do
   
   if [[ -n "$ips" ]]; then
     IPLIST+=($ips)
+    ((DOMAIN_COUNT++))
   fi
 done < "$BLOCKLIST_FILE"
 
@@ -129,10 +161,19 @@ table <$TABLE_NAME> persist
 block drop out quick to <$TABLE_NAME>
 EOF
 
-echo "Loading pf rules..."
-sudo pfctl -f "$RULE_FILE"
+if ! sudo pfctl -f "$RULE_FILE" >/dev/null 2>&1; then
+  echo "Error loading pf rules"
+  exit 1
+fi
 
-echo "Updating pf table <$TABLE_NAME> with:"
-printf '%s\n' "${IPLIST[@]}"
+if ! sudo pfctl -t "$TABLE_NAME" -T replace "${IPLIST[@]}" >/dev/null 2>&1; then
+  echo "Error updating pf table"
+  exit 1
+fi
 
-sudo pfctl -t "$TABLE_NAME" -T replace "${IPLIST[@]}"
+ip_text="IP"
+domain_text="domain"
+(( ${#IPLIST[@]} != 1 )) && ip_text="IPs"
+(( DOMAIN_COUNT != 1 )) && domain_text="domains"
+
+echo "Blocking ${#IPLIST[@]} $ip_text for $DOMAIN_COUNT $domain_text from domain list $BLOCKLIST_FILE"
