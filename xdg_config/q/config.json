@@ -1,0 +1,13 @@
+{
+  "hooks": {
+    "fs_write": {
+      "post": [
+        {
+          "condition": "file.extension == 'rb'",
+          "command": "rubocop --auto-correct {file.path}",
+          "description": "Auto-fix RuboCop violations in Ruby files"
+        }
+      ]
+    }
+  }
+}
