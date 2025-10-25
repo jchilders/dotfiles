@@ -16,7 +16,14 @@
 [pull]
   rebase = true
 [push]
+  # Prevent the "There is no tracking information for the current branch" error
+  # when pulling a branch that was just pushed. Also prevents having to do the
+  # `git branch --setup-upstream-to=...` dance.
+  autoSetupRemote = true
+
+  # Only push the current branch
   default = current
+
   # useForceIfIncludes will cause `git push --force` to fail if the remote has
   # changes that don't exist locally
   useForceIfIncludes = true
@@ -29,7 +36,10 @@
   l = log --pretty=format:'%C(yellow)%h%Creset %s%C(auto)%d%Creset'
   ll = log --pretty=format:'%Cblue%h%Cgreen %s%C(yellow)%d%Creset' --decorate --numstat
   st = status -sb
+
+  # copy branch to pasteboard
   cb = ! git rev-parse --abbrev-ref HEAD | tr -d '\n' | pbcopy
+
   co = checkout
   ci = commit
   br = branch

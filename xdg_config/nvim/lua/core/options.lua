@@ -1,4 +1,5 @@
 local g, opt, go, wo, o = vim.g, vim.opt, vim.go, vim.wo, vim.o
+local api = vim.api
 
 opt.backup = false
 opt.swapfile = false
@@ -13,7 +14,7 @@ opt.clipboard = "unnamedplus" -- clipboard yank
 opt.cursorline = true -- highlight current line
 opt.expandtab = true -- use spaces instead of tabs when indenting
 opt.fileformat = "unix"
-vim.api.nvim_command('filetype plugin indent on')
+api.nvim_command('filetype plugin indent on')
 
 -- Do not fix files (i.e. "add a newline") that do not have a newline as the final character
 opt.fixendofline = false
@@ -69,16 +70,21 @@ wo.foldlevel= 99 -- open all folds
 wo.foldnestmax = 3
 wo.foldminlines = 1
 
-opt.formatoptions = opt.formatoptions
-- "a" -- Disable auto-formatting.
-+ "t" -- Auto-wrap text.
-+ "c" -- Auto-wrap comments at 'textwidth'.
-+ "q" -- Enable formatting of comments with 'gq'.
-- "o" -- Prevent comment leader insertion with 'o' or 'O'.
-+ "r" -- Continue comments when pressing Enter.
-+ "n" -- Align to 'formatlistpat', not under it.
-+ "j" -- Remove comment leader when possible.
-- "2" -- Disable auto-numbering when entering numbered lists
+-- opt.wrap = false                 -- Soft wrap long lines visually
+opt.sidescroll = 5
+opt.list = true                  -- Show markers for truncated lines
+opt.listchars = "precedes:\\u226a,extends:\\u226b"
+
+-- Configure Vim's automatic text formatting behavior
+opt.formatoptions = {
+  j = true,  -- Remove comment leader when joining lines
+  c = true,  -- Auto-wrap comments using 'textwidth'
+  r = true,  -- Continue comments when pressing <Enter>
+  o = true,  -- Continue comments when using 'o' or 'O'
+  q = true,  -- Allow formatting with 'gq'
+  n = true,  -- Recognize numbered lists when formatting (useful for Markdown)
+  t = true,  -- Auto-wrap text as you type
+}
 
 -- shada file is used to save vim state
 -- :h shada for general info
