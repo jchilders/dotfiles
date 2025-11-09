@@ -12,6 +12,7 @@ brew 'coreutils' # gnu coreutils
 brew 'datasette' # simple web interface to SQLite databases
 brew 'devcontainer' # Reference implementation for the Development Containers spec
 brew 'dua-cli' # display disk usage, & delete unwanted data
+brew 'duti' # macOS: change default apps for file types/URL schemes
 brew 'eza' # git-aware ls replacement
 brew 'fd' # file finder
 brew 'fzf' # fuzzy finder
@@ -61,6 +62,8 @@ brew 'yank'
 
 brew 'zsh-autosuggestions'
 brew 'zsh-syntax-highlighting' # syntax highlighting while typing
+
+brew 'font-ioskeva'
 
 # fish-like abbreviations for zsh: aliases that expand when you hit enter
 tap 'olets/tap'

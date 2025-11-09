@@ -1,5 +1,3 @@
-# Amazon Q pre block. Keep at the top of this file.
-[[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh"
 # init homebrew env vars if we haven't already
 if [[ ! -v HOMEBREW_PREFIX ]] then
   OS="$(uname)"
@@ -87,6 +85,3 @@ fi
 # fi
 # unset __conda_setup
 # <<< conda initialize <<<
-
-# Amazon Q post block. Keep at the bottom of this file.
-[[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh"
