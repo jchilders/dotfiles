@@ -6,9 +6,13 @@ local default_font = {
   -- family = "Inconsolata Nerd Font",
   -- family = "Source Code Pro for Powerline",
   -- family = "SpaceMono Nerd Font",
-  family = 'Iosevka Fixed',
-  weight = 'Regular'
+  -- family = 'Iosevka Fixed',
+  family = "BlexMono Nerd Font",
+
+  -- Disable ligatures
+  harfbuzz_features = { 'calt=0', 'clig=0', 'liga=0' }
 }
+
 local tab_text_color = '#f0f0f0'
 
 local config = {
@@ -18,7 +22,7 @@ local config = {
   },
   font_size = default_font_size,
   font = wezterm.font(default_font),
-  cell_width = 0.9,
+  cell_width = 1.0,
   default_cursor_style = "BlinkingBlock",
 
   -- Dim inactive panes
@@ -37,7 +41,7 @@ local config = {
   -- Defaults for the tab bar
   window_frame = {
     -- font = wezterm.font(default_font),
-    font_size = default_font_size,
+    font_size = default_font_size - 2,
     active_titlebar_bg = "#300030",
   },
 }

@@ -14,6 +14,39 @@ return {
   config = function()
     local lspconfig = require("lspconfig")
     local capabilities = require("cmp_nvim_lsp").default_capabilities()
+    local severity = vim.diagnostic.severity
+
+    local severity_icons = {
+      [severity.ERROR] = "",
+      [severity.WARN] = "",
+      [severity.INFO] = "",
+      [severity.HINT] = "",
+    }
+
+    local severity_highlights = {
+      [severity.ERROR] = "DiagnosticFloatingError",
+      [severity.WARN] = "DiagnosticFloatingWarn",
+      [severity.INFO] = "DiagnosticFloatingInfo",
+      [severity.HINT] = "DiagnosticFloatingHint",
+    }
+
+    vim.diagnostic.config({
+      float = {
+        border = "rounded",
+        focusable = false,
+        source = "if_many",
+        severity_sort = true,
+        header = false,
+        prefix = function(diagnostic)
+          local icon = severity_icons[diagnostic.severity] or "•"
+          local hl = severity_highlights[diagnostic.severity] or "DiagnosticFloatingInfo"
+          return icon, hl
+        end,
+        format = function(diagnostic)
+          return " " .. diagnostic.message
+        end,
+      },
+    })
 
     -- Setup each LSP server automatically
     require("mason").setup({

@@ -18,6 +18,11 @@ then
   export XDG_STATE_HOME="$HOME/.local/state"
 fi
 
+if [[ -z $XDG_BIN_HOME ]]
+then
+  export XDG_BIN_HOME="$HOME/.local/bin"
+fi
+
 export ZDOTDIR="${XDG_CONFIG_HOME:-$HOME/.config}/zsh"
 mkdir -p "${ZDOTDIR}"
 

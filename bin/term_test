@@ -6,11 +6,7 @@ echo "Below this line should be eight colored lines: two red, two green, two blu
 echo 
 echo "Below this line should be a single line with slashes and backslashes, with a background that goes ROYGBIV from left to right:"
 
-# Use this to see if tmux supports 24-bit true color. If it looks the same when
-# run both inside and outside of tmux, then you're good. If not, tmux is still
-# buggy.
-# https://unix.stackexchange.com/questions/404414/print-true-color-24-bit-test-pattern/404415#404415
-
+# Check that the emulator supports 24-bit true color.
 # See https://gist.github.com/XVilka/8346728
 awk -v term_cols="${width:-$(tput cols || echo 80)}" 'BEGIN{
     s="/\\";
