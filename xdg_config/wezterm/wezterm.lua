@@ -5,9 +5,9 @@ local default_font_size = 18.0
 local default_font = {
   -- family = "Inconsolata Nerd Font",
   -- family = "Source Code Pro for Powerline",
-  -- family = "SpaceMono Nerd Font",
+  family = "SpaceMono Nerd Font",
   -- family = 'Iosevka Fixed',
-  family = "BlexMono Nerd Font",
+  -- family = "BlexMono Nerd Font",
 
   -- Disable ligatures
   harfbuzz_features = { 'calt=0', 'clig=0', 'liga=0' }

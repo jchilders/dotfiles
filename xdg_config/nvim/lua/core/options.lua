@@ -73,7 +73,7 @@ wo.foldminlines = 1
 -- opt.wrap = false                 -- Soft wrap long lines visually
 opt.sidescroll = 5
 opt.list = true                  -- Show markers for truncated lines
-opt.listchars = "precedes:\\u226a,extends:\\u226b"
+opt.listchars = "tab:  ,precedes:\\u226a,extends:\\u226b"
 
 -- Configure Vim's automatic text formatting behavior
 opt.formatoptions = {

@@ -85,3 +85,6 @@ fi
 # fi
 # unset __conda_setup
 # <<< conda initialize <<<
+
+# bun completions
+[ -s "$XDG_DATA_HOME/bun/_bun" ] && source "$XDG_DATA_HOME/bun/_bun"
