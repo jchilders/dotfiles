@@ -26,7 +26,6 @@ fi
 # these need to happen in the given order
 foreach file (
   exports.zsh
-  options.zsh
   sources.zsh
   aliases.zsh
   ctrlo-widgets.zsh
@@ -49,6 +48,9 @@ plugins=(
 )
 
 [ -f $ZSH/oh-my-zsh.sh ] && source $ZSH/oh-my-zsh.sh
+
+# This needs to happen after omz to ensure our options are preserved
+source $ZDOTDIR/config/options.zsh
 
 # 1password completions
 if type op &>/dev/null; then

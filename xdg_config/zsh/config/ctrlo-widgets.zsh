@@ -167,7 +167,7 @@ function switch_branch {
   local branch=$(all_other_branches | fzf --tiebreak=index)
 
   if [[ '' != $branch ]]; then
-    git checkout $branch
+    git switch $branch
     zle accept-line
   else
     zle reset-prompt

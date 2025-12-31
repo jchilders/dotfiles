@@ -38,7 +38,7 @@ setopt PUSHD_TO_HOME # Have pushd with no arguments act like `pushd $HOME`.
 # setopt GLOB_COMPLETE # Don't insert anything resulting from a glob pattern, show completion menu.
 # setopt NO_LIST_BEEP # Don't beep on an ambiguous completion.
 # setopt LIST_PACKED # Try to make the completion list smaller by drawing smaller columns.
-# setopt MENU_COMPLETE # Instead of listing possibilities, select the first match immediately.
+setopt MENU_COMPLETE # Instead of listing possibilities, select the first match immediately.
 
 # History
 typeset -g HISTSIZE=1000000 # The maximum number of events stored in the internal history list.
