@@ -59,8 +59,8 @@ function edit_file {
   fi
 }
 zle -N edit_file
-bindkey '^oo' edit_file
-bindkey '^o^o' edit_file
+bindkey -M viins '^oo' edit_file
+bindkey -M viins '^o^o' edit_file
 
 # ANY file
 function edit_any_file {
@@ -68,28 +68,28 @@ function edit_any_file {
   __eval_found_file "${EDITOR:-nvim}"
 }
 zle -N edit_any_file
-bindkey '^oO' edit_any_file
+bindkey -M viins '^oO' edit_any_file
 
 function edit_rails_controller {
   __find_file "fd --type=file . 'app/controllers'"
   __eval_found_file "${EDITOR:-nvim}"
 }
 zle -N edit_rails_controller
-bindkey '^orc' edit_rails_controller
+bindkey -M viins '^orc' edit_rails_controller
 
 function edit_rails_model {
   __find_file "fd --type=file . 'app/models'"
   __eval_found_file "${EDITOR:-nvim}"
 }
 zle -N edit_rails_model
-bindkey '^orm' edit_rails_model
+bindkey -M viins '^orm' edit_rails_model
 
 function edit_rails_view {
   __find_file "fd --type=file . 'app/views'"
   __eval_found_file "${EDITOR:-nvim}"
 }
 zle -N edit_rails_view
-bindkey '^orv' edit_rails_view
+bindkey -M viins '^orv' edit_rails_view
 
 function git_changed_files_curr_branch {
   # this xargs stuff is needed so it still works when you're in a subdirectory
@@ -99,7 +99,7 @@ function git_changed_files_curr_branch {
   __eval_found_file "${EDITOR:-nvim}"
 }
 zle -N git_changed_files_curr_branch
-bindkey '^ogc' git_changed_files_curr_branch
+bindkey -M viins '^ogc' git_changed_files_curr_branch
 
 # Git stuff. All are prefixed with ^og
 
@@ -145,21 +145,21 @@ function add_from_git_status {
   fi
 }
 zle -N add_from_git_status
-bindkey '^oga' add_from_git_status
+bindkey -M viins '^oga' add_from_git_status
 
 # show diff of file selected from from git status
 function diff_from_git_status {
   __search_git_status_and_eval "git diff"
 }
 zle -N diff_from_git_status
-bindkey '^ogd' diff_from_git_status
+bindkey -M viins '^ogd' diff_from_git_status
 
 # edit file selected from git status
 function edit_from_git_status {
   __search_git_status_and_eval "${EDITOR:-nvim}"
 }
 zle -N edit_from_git_status
-bindkey '^ogs' edit_from_git_status
+bindkey -M viins '^ogs' edit_from_git_status
 
 function switch_branch {
   # TODO: handle git worktrees
@@ -174,4 +174,4 @@ function switch_branch {
   fi
 }
 zle -N switch_branch
-bindkey '^ogb' switch_branch
+bindkey -M viins '^ogb' switch_branch

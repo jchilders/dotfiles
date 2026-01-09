@@ -17,6 +17,6 @@ xdg_config/gh/hosts.yml
 xdg_config/lazygit/state.yml
 xdg_config/macmon.json
 xdg_config/op
-xdg_config/zsh/.zcompdump
+xdg_config/zsh/.zcompdump*
 xdg_config/zsh-abbr/
 .aider*
