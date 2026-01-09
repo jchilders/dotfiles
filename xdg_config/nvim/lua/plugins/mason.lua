@@ -18,6 +18,7 @@ return {
         "bashls",
         "dockerls",
         "jsonls",
+        "pyright",
         "ruby_lsp",
         "rust_analyzer",
         "solargraph",

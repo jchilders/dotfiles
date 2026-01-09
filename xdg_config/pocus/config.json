@@ -1,0 +1,7 @@
+{
+  "action" : "hide",
+  "bundleIds" : [
+    "com.apple.Safari"
+  ],
+  "restoreFocusOnBlock" : true
+}

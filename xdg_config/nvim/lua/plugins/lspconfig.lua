@@ -49,7 +49,7 @@ return {
     })
 
     -- Setup each LSP server automatically
-    require("mason").setup({
+    require("mason-lspconfig").setup_handlers({
       -- Default handler
       function(server_name)
         local opts = {
@@ -109,5 +109,7 @@ return {
         end, opts)
       end,
     })
+
+    require("jc.lsp_auto").setup()
   end,
 }
