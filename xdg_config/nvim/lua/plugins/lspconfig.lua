@@ -12,7 +12,7 @@ return {
     "hrsh7th/nvim-cmp",
   },
   config = function()
-    local lspconfig = require("lspconfig")
+    local mason_lspconfig = require("mason-lspconfig")
     local capabilities = require("cmp_nvim_lsp").default_capabilities()
     local severity = vim.diagnostic.severity
 
@@ -48,40 +48,39 @@ return {
       },
     })
 
-    -- Setup each LSP server automatically
-    require("mason-lspconfig").setup_handlers({
-      -- Default handler
-      function(server_name)
-        local opts = {
-          capabilities = capabilities,
-          flags = {
-            debounce_text_changes = 150,
-          },
-        }
-        lspconfig[server_name].setup(opts)
-      end,
+    -- Configure and enable each installed LSP server.
+    mason_lspconfig.setup({
+      automatic_enable = false,
+    })
 
-      -- Server-specific overrides
-      ["lua_ls"] = function()
-        lspconfig.lua_ls.setup({
-          capabilities = capabilities,
-          settings = {
-            Lua = {
-              diagnostics = {
-                globals = { "vim" },
-              },
-              workspace = {
-                library = vim.api.nvim_get_runtime_file("", true),
-                checkThirdParty = false,
-              },
-              telemetry = {
-                enable = false,
-              },
+    for _, server_name in ipairs(mason_lspconfig.get_installed_servers()) do
+      local opts = {
+        capabilities = capabilities,
+        flags = {
+          debounce_text_changes = 150,
+        },
+      }
+
+      if server_name == "lua_ls" then
+        opts.settings = {
+          Lua = {
+            diagnostics = {
+              globals = { "vim" },
+            },
+            workspace = {
+              library = vim.api.nvim_get_runtime_file("", true),
+              checkThirdParty = false,
+            },
+            telemetry = {
+              enable = false,
             },
           },
-        })
-      end,
-    })
+        }
+      end
+
+      vim.lsp.config(server_name, opts)
+      vim.lsp.enable(server_name)
+    end
 
     -- Global LSP keymaps
     vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float)
