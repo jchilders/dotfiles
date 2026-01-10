@@ -36,7 +36,6 @@ return {
         focusable = false,
         source = "if_many",
         severity_sort = true,
-        header = false,
         prefix = function(diagnostic)
           local icon = severity_icons[diagnostic.severity] or "•"
           local hl = severity_highlights[diagnostic.severity] or "DiagnosticFloatingInfo"
@@ -73,6 +72,16 @@ return {
             },
             telemetry = {
               enable = false,
+            },
+          },
+        }
+      end
+      if server_name == "pyright" then
+        opts.settings = {
+          python = {
+            analysis = {
+              venvPath = ".",
+              venv = ".venv",
             },
           },
         }
