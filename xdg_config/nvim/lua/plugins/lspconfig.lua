@@ -50,6 +50,7 @@ return {
     -- Configure and enable each installed LSP server.
     mason_lspconfig.setup({
       automatic_enable = false,
+      ensure_installed = { "ltex" },  -- Ensure ltex is available
     })
 
     for _, server_name in ipairs(mason_lspconfig.get_installed_servers()) do
@@ -91,11 +92,43 @@ return {
       vim.lsp.enable(server_name)
     end
 
+    -- Specific configuration for ltex-ls for gitcommit and markdown files
+    local ltex_opts = {
+      capabilities = capabilities,
+      flags = {
+        debounce_text_changes = 150,
+      },
+      filetypes = { "gitcommit", "markdown" },
+      settings = {
+        ltex = {
+          language = "en-US",
+          diagnosticSeverity = "information",  -- Show as info rather than error
+          inheritDict = true,
+          dictionary = {},
+          disabledRules = {
+            ["en-US"] = {
+              "WHITESPACE_RULE",           -- Disable whitespace warnings
+              "COMMA_PARENTHESIS_WHITESPACE", -- Common in code comments
+              "EN_QUOTES",                 -- Often triggered in code contexts
+              "MORFOLOGIK_RULE_EN_US",     -- Main spelling rule (more forgiving)
+            },
+          },
+          hiddenFalsePositives = {},
+          sentenceCacheSize = 2000,
+          additionalRules = {
+            motherTongue = "en-US",
+          },
+        },
+      },
+    }
+
+    -- Setup ltex-ls specifically for the desired file types using the new API
+    vim.lsp.config("ltex", ltex_opts)
+    vim.lsp.enable("ltex")
+
     -- Global LSP keymaps
-    vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float)
-    vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
-    vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
-    vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)
+    vim.keymap.set('n', '<leader>e', function() vim.diagnostic.open_float() end, { desc = "Open diagnostic float" })
+    vim.keymap.set('n', '<leader>q', function() vim.diagnostic.setloclist() end, { desc = "Set loc list from diagnostics" })
 
     -- Use LspAttach autocommand to only map the following keys
     -- after the language server attaches to the current buffer

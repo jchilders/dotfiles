@@ -279,8 +279,17 @@ map_ctrlo_tele("gs", "git_status")    -- uncommitted changes ([s]tatus)
 -- little r -> Search for LSP references to word under cursor
 map_ctrlo_tele("r", "lsp_references")
 
-remap("n", "[[", "<cmd>lua vim.diagnostic.goto_prev()<CR>")
-remap("n", "]]", "<cmd>lua vim.diagnostic.goto_next()<CR>")
+local diagnostic_jump_and_open = function(count)
+  vim.diagnostic.jump({ count = count })
+  vim.schedule(function()
+    vim.diagnostic.open_float(nil, { focus = false, scope = "cursor" })
+  end)
+end
+
+vim.keymap.set("n", "[d", function() diagnostic_jump_and_open(-1) end)
+vim.keymap.set("n", "]d", function() diagnostic_jump_and_open(1) end)
+vim.keymap.set("n", "[[", function() diagnostic_jump_and_open(-1) end)
+vim.keymap.set("n", "]]", function() diagnostic_jump_and_open(1) end)
 remap("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>")
 remap("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>")
 remap("n", "<space>wl", "<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>")
@@ -344,5 +353,4 @@ function ControlMusic(action)
   local handle = io.popen("osascript -e '" .. script .. "'")
   if handle then handle:close() end
 end
-
 
