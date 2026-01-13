@@ -40,7 +40,7 @@ fi
 # Load abbreviations. Abbreviations are similar to aliases, but expand in place
 # (like fish). To reload abbreviations run this function with the `--force`
 # flag.
-function loadAbbreviations() {
+function load-abbreviations() {
   # Skip if abbr command not available
   command -v abbr >/dev/null || return 0
   
@@ -54,9 +54,6 @@ function loadAbbreviations() {
   abbr add be='bundle exec'
   abbr add bi='bundle install'
   abbr add dcom='docker-compose'
-  abbr add gd='git diff'
-  abbr add gl='git l'
-  abbr add gs='git status -sb'
   abbr add imgcat='wezterm imgcat'
   abbr add v='nvim'
 
@@ -72,7 +69,8 @@ function loadAbbreviations() {
   unset ABBR_FORCE
   unset ABBR_QUIET
 }
-loadAbbreviations
+
+load-abbreviations
 
 # Change directory to source dir for given Homebrew formula or cask
 # This has to be a function (instead of a script under bin/) because you can't

@@ -90,3 +90,9 @@ fi
 
 # bun completions
 [ -s "$XDG_DATA_HOME/bun/_bun" ] && source "$XDG_DATA_HOME/bun/_bun"
+
+# zsh-abbr: must be sourced AFTER fzf and other tools that rebind keys
+if command -v brew >/dev/null; then
+  [ -f $HOMEBREW_PREFIX/share/zsh-abbr/zsh-abbr.zsh ] && source $HOMEBREW_PREFIX/share/zsh-abbr/zsh-abbr.zsh
+  load-abbreviations  # defined in aliases.zsh
+fi
