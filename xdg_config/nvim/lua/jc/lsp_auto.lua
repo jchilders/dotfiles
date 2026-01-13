@@ -68,6 +68,9 @@ function M.setup()
       if chosen and chosen ~= "" then
         ensure_installed(chosen)
         return
+      elseif chosen == "" then
+        -- User previously declined, so don't prompt again
+        return
       end
 
       if pending[ft] then
@@ -89,6 +92,9 @@ function M.setup()
       }, function(choice)
         pending[ft] = nil
         if not choice then
+          -- Save empty string to remember that user declined to install an LSP
+          state[ft] = ""
+          save_state(state_path, state)
           return
         end
         state[ft] = choice
