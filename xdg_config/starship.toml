@@ -4,14 +4,6 @@ format = """
 $directory($git_branch)($git_status)$ruby
 $character """
 
-right_format = "$time"
-
-[time]
-disabled = false
-format = "[$time]($style)"
-time_format = "%H:%M"
-style = "bright-black"
-
 [character]
 success_symbol = "[➜](bold green)"
 error_symbol = "[➜](bold red)"
