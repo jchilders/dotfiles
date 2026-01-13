@@ -38,6 +38,9 @@ for app in $apps; do
 	~/./bin/rm-app-from-dock "$app"
 done
 
+# Always show scroll bars
+defaults write NSGlobalDomain AppleShowScrollBars -string "Always"
+
 killall Dock
 
 # Hot Corners
