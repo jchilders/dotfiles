@@ -40,11 +40,13 @@
   # copy branch to pasteboard
   cb = ! git rev-parse --abbrev-ref HEAD | tr -d '\n' | pbcopy
 
-  co = checkout
-  ci = commit
+  co = "!sh -c 'echo \"🚫 checkout is forbidden. Use git switch or git restore.\" >&2; exit 1'"
+  checkout = "!sh -c 'echo \"🚫 checkout is forbidden. Use git switch or git restore.\" >&2; exit 1'"
+
   br = branch
-  sta = stash
   sw = switch
+
+  # what changed
   wc = log --raw
 
   # undo last commit
