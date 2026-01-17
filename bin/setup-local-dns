@@ -1,0 +1,211 @@
+#!/usr/bin/env zsh
+
+# Configure Unbound on macOS for local DNS resolution with DNSSEC enabled.
+# This bootstraps a working config, starts the service, and optionally points
+# the system resolver at 127.0.0.1 for faster, validated lookups.
+
+set -euo pipefail
+
+BREW_PREFIX="${BREW_PREFIX:-$(brew --prefix)}"
+CONF_DIR="${BREW_PREFIX}/etc/unbound"
+CONF_FILE="${CONF_DIR}/unbound.conf"
+CONF_EXAMPLE="${CONF_DIR}/unbound.conf.example"
+ROOT_KEY="${CONF_DIR}/root.key"
+VAR_DIR="${BREW_PREFIX}/var/unbound"
+
+say()  { print -P "%F{cyan}==>%f $*"; }
+warn() { print -P "%F{yellow}Warning:%f $*"; }
+die()  { print -P "%F{red}Error:%f $*"; exit 1; }
+
+need_cmd() { command -v "$1" >/dev/null 2>&1 || die "Missing required command: $1"; }
+
+confirm() {
+  local prompt="$1" reply
+  read -r "reply?$prompt [y/N]: "
+  [[ "${reply:l}" == "y" || "${reply:l}" == "yes" ]]
+}
+
+has_unbound_listener() {
+  sudo lsof -nP -iTCP:53 -sTCP:LISTEN 2>/dev/null | grep -i unbound >/dev/null && return 0
+  sudo lsof -nP -iUDP:53 2>/dev/null | grep -i unbound >/dev/null && return 0
+  return 1
+}
+
+wait_for_unbound_listener() {
+  local tries=10
+  while (( tries > 0 )); do
+    if has_unbound_listener; then
+      return 0
+    fi
+    sleep 1
+    tries=$((tries - 1))
+  done
+  return 1
+}
+
+network_service_guess() {
+  local svc
+  svc="$(networksetup -listallnetworkservices 2>/dev/null | sed '1d' | grep -x 'Wi-Fi' || true)"
+  [[ -n "$svc" ]] && { print -r -- "$svc"; return; }
+  svc="$(networksetup -listallnetworkservices 2>/dev/null | sed '1d' | head -n 1 | tr -d '\r')"
+  [[ -n "$svc" ]] && print -r -- "$svc" || print -r -- "Wi-Fi"
+}
+
+say "Checking prerequisites"
+need_cmd brew
+need_cmd dig
+need_cmd networksetup
+need_cmd scutil
+need_cmd python3
+
+if ! command -v unbound >/dev/null 2>&1; then
+  say "Unbound not found; installing via Homebrew"
+  brew install unbound
+fi
+
+need_cmd unbound-checkconf
+need_cmd unbound-anchor
+
+say "Ensuring Unbound config exists at: ${CONF_FILE}"
+if [[ ! -f "${CONF_FILE}" ]]; then
+  [[ -f "${CONF_EXAMPLE}" ]] || die "No ${CONF_FILE} and no ${CONF_EXAMPLE}"
+  say "Requesting sudo to create ${CONF_DIR} and copy the example config."
+  sudo mkdir -p "${CONF_DIR}"
+  sudo cp -f "${CONF_EXAMPLE}" "${CONF_FILE}"
+fi
+
+say "Ensuring runtime directory exists at: ${VAR_DIR}"
+say "Requesting sudo to create ${VAR_DIR} for Unbound runtime files."
+sudo mkdir -p "${VAR_DIR}"
+
+say "Backing up config"
+ts="$(date +%Y%m%d-%H%M%S)"
+sudo cp -f "${CONF_FILE}" "${CONF_FILE}.bak.${ts}"
+
+say "Patching ${CONF_FILE} for loopback DNS + DNSSEC (safe patcher)"
+CONF_FILE="${CONF_FILE}" ROOT_KEY="${ROOT_KEY}" python3 - <<'PY'
+import re, os, sys, pathlib, datetime, textwrap, json, shutil, subprocess
+
+conf_file = os.environ["CONF_FILE"]
+root_key  = os.environ["ROOT_KEY"]
+
+p = pathlib.Path(conf_file)
+txt = p.read_text()
+
+# 1) Ensure there's a server: block
+if not re.search(r"(?m)^\s*server:\s*$", txt):
+  txt = "server:\n\n" + txt
+
+# Helper: find the first server: block and ensure settings exist within it.
+lines = txt.splitlines(True)
+
+# Locate server block start
+server_idx = None
+for i, line in enumerate(lines):
+  if re.match(r"^\s*server:\s*$", line):
+    server_idx = i
+    break
+if server_idx is None:
+  raise SystemExit("No server: block after insertion?")
+
+# Determine server block end (next top-level stanza like "forward-zone:" etc.)
+end_idx = len(lines)
+for j in range(server_idx + 1, len(lines)):
+  if re.match(r"^\S", lines[j]) and not re.match(r"^\s*#", lines[j]):  # top-level, non-comment
+    # If it's indented? top-level in unbound is usually non-indented
+    # This is a heuristic; we only want to stop at another stanza.
+    if re.match(r"^[A-Za-z0-9_-]+:\s*$", lines[j]):
+      end_idx = j
+      break
+
+server_block = lines[server_idx:end_idx]
+server_text = "".join(server_block)
+
+def set_or_add(key, value_line):
+  global server_text
+  # replace if present
+  if re.search(rf"(?m)^\s*{re.escape(key)}\s*:", server_text):
+    server_text = re.sub(rf"(?m)^\s*{re.escape(key)}\s*:.*$",
+                         "  " + value_line, server_text)
+  else:
+    # insert right after server:
+    server_text = re.sub(r"(?m)^(server:\s*\n)", r"\1  " + value_line + "\n", server_text, count=1)
+
+set_or_add("interface", "interface: 127.0.0.1")
+set_or_add("port", "port: 53")
+set_or_add("do-daemonize", "do-daemonize: no")
+set_or_add("username", 'username: ""')
+set_or_add("val-permissive-mode", "val-permissive-mode: no")
+set_or_add("auto-trust-anchor-file", f'auto-trust-anchor-file: "{root_key}"')
+
+# add do-ip6 if missing (no replace needed)
+if not re.search(r"(?m)^\s*do-ip6\s*:", server_text):
+  server_text = re.sub(r"(?m)^(server:\s*\n)", r"\1  do-ip6: no\n", server_text, count=1)
+
+# Write server block back
+lines[server_idx:end_idx] = [server_text]
+p.write_text("".join(lines))
+PY
+
+say "Ensuring DNSSEC root trust anchor exists at: ${ROOT_KEY}"
+if [[ ! -f "${ROOT_KEY}" ]]; then
+  say "Initializing root trust anchor (sudo required to write into ${CONF_DIR})"
+  sudo unbound-anchor -a "${ROOT_KEY}"
+else
+  say "root.key already exists"
+fi
+
+say "Validating config"
+sudo unbound-checkconf "${CONF_FILE}"
+
+say "Starting Unbound as a system service (sudo required)"
+cat <<'EOF'
+NOTE: sudo is required because:
+- Binding to port 53 is privileged on macOS.
+- Starting at boot uses the system launchd domain.
+EOF
+
+# Ensure we start in system domain (root)
+sudo brew services restart unbound >/dev/null 2>&1 || sudo brew services start unbound
+
+say "Verifying listeners on :53"
+if ! wait_for_unbound_listener; then
+  warn "Unbound did not appear to bind to :53 within 10 seconds"
+fi
+sudo lsof -nP -iTCP:53 -sTCP:LISTEN | grep -i unbound >/dev/null || {
+  warn "No unbound TCP listener detected on :53"
+  sudo lsof -nP -iTCP:53 -sTCP:LISTEN || true
+}
+sudo lsof -nP -iUDP:53 | grep -i unbound >/dev/null || {
+  warn "No unbound UDP listener detected on :53"
+  sudo lsof -nP -iUDP:53 || true
+}
+
+say "Testing resolution via Unbound"
+resolved=0
+for _ in {1..5}; do
+  if dig @127.0.0.1 cloudflare.com +time=2 +tries=1 >/dev/null; then
+    resolved=1
+    break
+  fi
+  sleep 1
+done
+(( resolved )) || die "Unbound did not resolve cloudflare.com"
+dnssec_status="$(dig @127.0.0.1 dnssec-failed.org +time=2 +tries=1 | awk '/status:/{print $6}' | tr -d ',')"
+[[ "${dnssec_status}" == "SERVFAIL" ]] && say "DNSSEC OK (dnssec-failed.org => SERVFAIL)" || warn "DNSSEC expected SERVFAIL; got ${dnssec_status}"
+
+svc="$(network_service_guess)"
+say "Detected primary network service: ${svc}"
+
+if confirm "Set macOS DNS for '${svc}' to 127.0.0.1 (so the OS uses Unbound)?"; then
+  sudo networksetup -setdnsservers "${svc}" 127.0.0.1
+  sudo dscacheutil -flushcache || true
+  sudo killall -HUP mDNSResponder || true
+  say "macOS nameservers now:"
+  scutil --dns | grep 'nameserver\[[0-9]*\]' || true
+else
+  warn "Leaving macOS DNS unchanged."
+fi
+
+say "Done. Revert macOS DNS anytime with:"
+say "  sudo networksetup -setdnsservers \"${svc}\" empty"
