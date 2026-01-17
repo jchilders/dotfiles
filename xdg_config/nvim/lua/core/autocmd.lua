@@ -9,6 +9,37 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   pattern = '*',
 })
 
+vim.api.nvim_create_augroup("ShebangFiletypeDetect", { clear = true })
+
+-- I frequently paste scripts with shebangs into extensionless files. This autocmd
+-- automatically sets the filetype for those on save, preventing the nead to reload
+-- the file to enable syntax
+vim.api.nvim_create_autocmd("BufWritePost", {
+  group = "ShebangFiletypeDetect",
+  callback = function(args)
+    local buf = args.buf
+
+    -- If filetype is already set, don't touch it
+    if vim.bo[buf].filetype ~= "" then
+      return
+    end
+
+    -- Read first line only
+    local first_line = vim.api.nvim_buf_get_lines(buf, 0, 1, false)[1]
+    if not first_line then
+      return
+    end
+
+    -- Shebang check
+    if not first_line:match("^#!") then
+      return
+    end
+
+    -- Re-run filetype detection
+    vim.cmd("filetype detect")
+  end,
+})
+
 -- When opening a file, restore cursor position (`g'"`) to where it was when
 -- that file was last edited
 vim.api.nvim_create_autocmd({ "BufReadPost" }, {
