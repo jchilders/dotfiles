@@ -1,5 +1,12 @@
 add_newline = true
 
+# For git_status:
+#   !   Modified
+#   ✘   Deleted
+#   ⇡   Ahead
+#   ⇣   Behind
+#   +   Staged
+#   $   Stashed changes
 format = """
 $directory($git_branch)($git_status)$ruby
 $character """
