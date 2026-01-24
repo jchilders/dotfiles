@@ -5,9 +5,9 @@ local default_font_size = 18.0
 local default_font = {
   -- family = "Inconsolata Nerd Font",
   -- family = "Source Code Pro for Powerline",
-  family = "SpaceMono Nerd Font",
+  -- family = "SpaceMono Nerd Font",
   -- family = 'Iosevka Fixed',
-  -- family = "BlexMono Nerd Font",
+  family = "BlexMono Nerd Font",
 
   -- Disable ligatures
   harfbuzz_features = { 'calt=0', 'clig=0', 'liga=0' }
@@ -22,8 +22,10 @@ local config = {
   },
   font_size = default_font_size,
   font = wezterm.font(default_font),
-  cell_width = 1.0,
+  cell_width = 1.05,
   default_cursor_style = "BlinkingBlock",
+  freetype_load_target = "Light",       -- lighter hinting closer to macOS feel
+  freetype_render_target = "HorizontalLcd", -- enables subpixel rendering
 
   -- Dim inactive panes
   inactive_pane_hsb = {
@@ -34,9 +36,9 @@ local config = {
   leader = { key = 'a', mods = 'CTRL', timeout_milliseconds = 1500 },
 
   max_fps = 120,
-  native_macos_fullscreen_mode = false,
-  scrollback_lines = 3500,
-  show_new_tab_button_in_tab_bar = false,
+  native_macos_fullscreen_mode = true,
+  scrollback_lines = 5000,
+  show_new_tab_button_in_tab_bar = true,
 
   -- Defaults for the tab bar
   window_frame = {
