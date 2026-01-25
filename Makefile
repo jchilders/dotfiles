@@ -4,7 +4,9 @@ XDG_CACHE_HOME := $(HOME)/.cache
 XDG_CONFIG_HOME := $(HOME)/.config
 XDG_DATA_HOME := $(HOME)/.local/share
 XDG_STATE_HOME := $(HOME)/.local/state
+XDG_RUNTIME_DIR ?= $(or $(TMPDIR),/tmp)
 ZDOTDIR := $(XDG_CONFIG_HOME)/zsh
+export XDG_CACHE_HOME XDG_CONFIG_HOME XDG_DATA_HOME XDG_STATE_HOME XDG_RUNTIME_DIR ZDOTDIR
 
 .PHONY: all
 
@@ -101,8 +103,8 @@ zsh-clean: zsh-cfg-env-clean ## Uninstall zsh-related items
 zsh-cfg: ## Link ~/.zshenv
 	ln -sf $(cwd)/.zshenv $$HOME/.zshenv
 
-ohmyzsh: ## Install Oh My Zsh
-	 ZSH=$$XDG_STATE_HOME/ohmyzsh sh -c "$$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" --unattended --keep-zshrc
+ohmyzsh: xdg-setup ## Install Oh My Zsh
+	ZSH=$(XDG_STATE_HOME)/ohmyzsh sh -c "$$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" --unattended --keep-zshrc
 
 ohmyzsh-clean: ## Uninstall Oh My Zsh
 	@if [ -d "$(XDG_STATE_HOME)/ohmyzsh" ]; then \
@@ -156,6 +158,7 @@ xdg-setup: ## Create standard XDG Base Directory Specification directories
 	@[ -d $(XDG_CACHE_HOME) ] || mkdir -p $(XDG_CACHE_HOME)
 	@[ -d $(XDG_DATA_HOME) ] || mkdir -p $(XDG_DATA_HOME)
 	@[ -d $(XDG_STATE_HOME) ] || mkdir -p $(XDG_STATE_HOME)
+	@[ -d $(XDG_RUNTIME_DIR) ] || mkdir -p $(XDG_RUNTIME_DIR)
 
 ##@ Helpers
 
