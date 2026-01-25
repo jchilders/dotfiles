@@ -102,7 +102,7 @@ zsh-cfg: ## Link ~/.zshenv
 	ln -sf $(cwd)/.zshenv $$HOME/.zshenv
 
 ohmyzsh: ## Install Oh My Zsh
-	 ZSH=$$XDG_STATE_HOME/ohmyzsh sh -c "$$(http -b GET https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" --unattended --keep-zshrc
+	 ZSH=$$XDG_STATE_HOME/ohmyzsh sh -c "$$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" --unattended --keep-zshrc
 
 ohmyzsh-clean: ## Uninstall Oh My Zsh
 	@if [ -d "$(XDG_STATE_HOME)/ohmyzsh" ]; then \
