@@ -7,6 +7,8 @@ XDG_STATE_HOME := $(HOME)/.local/state
 XDG_RUNTIME_DIR ?= $(or $(TMPDIR),/tmp)
 ZDOTDIR := $(XDG_CONFIG_HOME)/zsh
 export XDG_CACHE_HOME XDG_CONFIG_HOME XDG_DATA_HOME XDG_STATE_HOME XDG_RUNTIME_DIR ZDOTDIR
+BREW_PATHS := /opt/homebrew/bin:/usr/local/bin:/home/linuxbrew/.linuxbrew/bin
+export PATH := $(BREW_PATHS):$(PATH)
 
 .PHONY: all
 
@@ -110,7 +112,11 @@ zsh-cfg: ## Link ~/.zshenv
 	ln -sf $(cwd)/.zshenv $$HOME/.zshenv
 
 ohmyzsh: xdg-setup ## Install Oh My Zsh
-	CHSH=no KEEP_ZSHRC=yes RUNZSH=no ZSH=$(XDG_STATE_HOME)/ohmyzsh sh -c "$$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" --unattended
+	@if [ -d "$(XDG_STATE_HOME)/ohmyzsh" ]; then \
+		echo "Oh My Zsh already installed"; \
+	else \
+		CHSH=no KEEP_ZSHRC=yes RUNZSH=no ZSH=$(XDG_STATE_HOME)/ohmyzsh sh -c "$$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" --unattended; \
+	fi
 
 ohmyzsh-clean: ## Uninstall Oh My Zsh
 	@if [ -d "$(XDG_STATE_HOME)/ohmyzsh" ]; then \
