@@ -9,6 +9,7 @@ ZDOTDIR := $(XDG_CONFIG_HOME)/zsh
 export XDG_CACHE_HOME XDG_CONFIG_HOME XDG_DATA_HOME XDG_STATE_HOME XDG_RUNTIME_DIR ZDOTDIR
 BREW_PATHS := /opt/homebrew/bin:/usr/local/bin:/home/linuxbrew/.linuxbrew/bin
 export PATH := $(BREW_PATHS):$(PATH)
+BREW = $(firstword $(wildcard /opt/homebrew/bin/brew /usr/local/bin/brew /home/linuxbrew/.linuxbrew/bin/brew))
 
 .PHONY: all
 
@@ -42,20 +43,17 @@ cfg-clean: ## Clean (rm) XDG directories
 
 ##@ Homebrew
 homebrew: ## Install homebrew
-	@if [ -x /opt/homebrew/bin/brew ] || [ -x /usr/local/bin/brew ] || [ -x /home/linuxbrew/.linuxbrew/bin/brew ]; then \
+	@if [ -n "$(BREW)" ]; then \
 		echo "Homebrew already installed"; \
 	else \
 		sudo curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh | /bin/bash; \
 	fi
 
 homebrew-bundle: homebrew ## Install default homebrew formulae.(Slow in Docker!)
-	@if [ -f /opt/homebrew/bin/brew ]; then \
-		eval "$(/opt/homebrew/bin/brew shellenv)" && /opt/homebrew/bin/brew bundle; \
-	elif [ -f /home/linuxbrew/.linuxbrew/bin/brew ]; then \
-		eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" && /home/linuxbrew/.linuxbrew/bin/brew bundle; \
-	else \
+	@if [ -z "$(BREW)" ]; then \
 		echo "Homebrew not found"; exit 1; \
-	fi
+	fi; \
+	eval "$$($(BREW) shellenv)" && $(BREW) bundle
 
 homebrew-clean: ## Uninstall homebrew
 	sudo curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall.sh | /bin/bash
@@ -80,9 +78,12 @@ neovim-clone-or-pull: ## Clone neovim, or pull the latest
 		fi; \
 
 /usr/local/bin/nvim: ## Install neovim from source
+		@if [ -z "$(BREW)" ]; then \
+				echo "Homebrew not found"; exit 1; \
+		fi
 		@for pkg in cmake automake ninja; do \
 				if ! which $$pkg >/dev/null; then \
-						brew install $$pkg; \
+						$(BREW) install $$pkg; \
 				fi; \
 		done; \
 		$(MAKE) -C $(NEOVIM_SRC_DIR) CMAKE_BUILD_TYPE=RelWithDebInfo; \
@@ -148,9 +149,12 @@ bat: ## Get TokyoNight theme for bat
 	bat cache --build
 
 fonts: ## Install fonts
-	brew install font-space-mono-nerd-font
-	brew install font-blex-mono-nerd-font
-	brew install font-source-code-pro-for-powerline
+	@if [ -z "$(BREW)" ]; then \
+		echo "Homebrew not found"; exit 1; \
+	fi; \
+	$(BREW) install font-space-mono-nerd-font
+	$(BREW) install font-blex-mono-nerd-font
+	$(BREW) install font-source-code-pro-for-powerline
 	## Font used with toilet banner generator
 	cp cosmic.flf $$HOMEBREW_CELLAR/toilet/0.3/share/figlet
 
