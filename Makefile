@@ -11,6 +11,8 @@ export XDG_CACHE_HOME XDG_CONFIG_HOME XDG_DATA_HOME XDG_STATE_HOME XDG_RUNTIME_D
 .PHONY: all
 
 cwd := $(shell pwd)
+UNAME_S := $(shell uname -s)
+IS_DARWIN := $(if $(filter Darwin,$(UNAME_S)),1,0)
 
 ##@ Install
 install: detect-os ## Install all the things
@@ -22,7 +24,7 @@ install-linux: cfg zsh-linux homebrew-bundle neovim-linux ## Install for Linux
 clean: cfg-clean neovim-clean ohmyzsh-clean zsh-clean homebrew-clean ## Uninstall all the things
 
 detect-os: ## Detect OS and run appropriate install
-ifeq ($(shell uname -s), Darwin)
+ifeq ($(IS_DARWIN), 1)
 	@$(MAKE) install-macos
 else
 	@$(MAKE) install-linux
@@ -104,7 +106,7 @@ zsh-cfg: ## Link ~/.zshenv
 	ln -sf $(cwd)/.zshenv $$HOME/.zshenv
 
 ohmyzsh: xdg-setup ## Install Oh My Zsh
-	ZSH=$(XDG_STATE_HOME)/ohmyzsh sh -c "$$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" --unattended --keep-zshrc
+	CHSH=no KEEP_ZSHRC=yes RUNZSH=no ZSH=$(XDG_STATE_HOME)/ohmyzsh sh -c "$$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" --unattended
 
 ohmyzsh-clean: ## Uninstall Oh My Zsh
 	@if [ -d "$(XDG_STATE_HOME)/ohmyzsh" ]; then \
@@ -118,9 +120,9 @@ zsh-cfg-clean: ## Unlink ~/.zshenv
 
 ##@ Misc
 
-XCODE_INSTALLED := $(shell uname -s | grep Darwin >/dev/null && xcode-select -p 1>/dev/null; echo $$?)
+XCODE_INSTALLED := $(shell [ "$(IS_DARWIN)" = "1" ] && xcode-select -p 1>/dev/null; echo $$?)
 macos: ## Set macOS defaults and install XCode command line developer tools
-ifeq ($(shell uname -s), Darwin)
+ifeq ($(IS_DARWIN), 1)
 ifeq ($(XCODE_INSTALLED), 1)
 	xcode-select --install
 endif
@@ -158,7 +160,9 @@ xdg-setup: ## Create standard XDG Base Directory Specification directories
 	@[ -d $(XDG_CACHE_HOME) ] || mkdir -p $(XDG_CACHE_HOME)
 	@[ -d $(XDG_DATA_HOME) ] || mkdir -p $(XDG_DATA_HOME)
 	@[ -d $(XDG_STATE_HOME) ] || mkdir -p $(XDG_STATE_HOME)
-	@[ -d $(XDG_RUNTIME_DIR) ] || mkdir -p $(XDG_RUNTIME_DIR)
+	@if [ "$(IS_DARWIN)" != "1" ]; then \
+		[ -d $(XDG_RUNTIME_DIR) ] || mkdir -p $(XDG_RUNTIME_DIR); \
+	fi
 
 ##@ Helpers
 
