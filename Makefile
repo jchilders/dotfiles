@@ -40,7 +40,11 @@ cfg-clean: ## Clean (rm) XDG directories
 
 ##@ Homebrew
 homebrew: ## Install homebrew
-	sudo curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh | /bin/bash
+	@if [ -x /opt/homebrew/bin/brew ] || [ -x /usr/local/bin/brew ] || [ -x /home/linuxbrew/.linuxbrew/bin/brew ]; then \
+		echo "Homebrew already installed"; \
+	else \
+		sudo curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh | /bin/bash; \
+	fi
 
 homebrew-bundle: homebrew ## Install default homebrew formulae.(Slow in Docker!)
 	@if [ -f /opt/homebrew/bin/brew ]; then \
