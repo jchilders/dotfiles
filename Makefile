@@ -19,7 +19,7 @@ install-macos: macos cfg zsh homebrew-bundle neovim -fonts bat ## Install for ma
 
 install-linux: cfg zsh-linux homebrew-bundle neovim-linux ## Install for Linux
 
-clean: cfg-clean neovim-clean zsh-clean homebrew-clean ## Uninstall all the things
+clean: cfg-clean neovim-clean ohmyzsh-clean zsh-clean homebrew-clean ## Uninstall all the things
 
 detect-os: ## Detect OS and run appropriate install
 ifeq ($(shell uname -s), Darwin)
@@ -32,8 +32,8 @@ cfg: ## Link configuration files
 	@[ -e $$HOME/.config ] || ln -s $(cwd)/xdg_config $$HOME/.config
 	@[ -e $$HOME/bin ] || ln -sf $(cwd)/bin $$HOME/bin
 
-cfg-clean: ## Clean (rm) config $XDG_CONFIG_HOME
-	rm $(XDG_CONFIG_HOME)
+cfg-clean: ## Clean (rm) XDG directories
+	rm -rf $(XDG_CONFIG_HOME) $(XDG_CACHE_HOME) $(XDG_DATA_HOME) $(XDG_STATE_HOME)
 	rm $$HOME/bin
 
 ##@ Homebrew
@@ -98,7 +98,7 @@ zsh: zsh-cfg ohmyzsh ## Install zsh-related items
 
 zsh-linux: zsh-cfg ## Install zsh for Linux (skip Oh My Zsh)
 
-zsh-clean: zsh-cfg-env-clean ## Uninstall zsh-related items
+zsh-clean: zsh-cfg-clean ## Uninstall zsh-related items
 
 zsh-cfg: ## Link ~/.zshenv
 	ln -sf $(cwd)/.zshenv $$HOME/.zshenv
