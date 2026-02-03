@@ -8,7 +8,8 @@ cursor-color = "green"
 # title-auto-style = "directory"
 
 # Window frame settings
-theme = "GitHub Dark"
+# ghostty +list-themes
+theme = "Nightfox"
 
 cursor-color = 00ff00
 cursor-style = block

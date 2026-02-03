@@ -15,11 +15,22 @@ function __find_file() {
       bat --color always --style numbers --line-range :200 {}
     fi'
 
-  files=("${(@f)$(eval $cmd 2>/dev/null)}") || {
-    echo | fzf --header "No files found " --exit-0
-  }
+  files=("${(@f)$(eval $cmd 2>/dev/null)}") || return 1
+
+  if (( ${#files[@]} == 0 )); then
+    return 1
+  fi
 
   found_file=$(print -l $files | fzf --ansi --multi --preview="$preview_cmd")
+}
+
+function __no_files_found {
+  unset -v found_file
+  if [[ -n "$ZLE" ]]; then
+    zle -M "No files found"
+  else
+    print -r -- "No files found"
+  fi
 }
 
 function __eval_found_file {
@@ -41,7 +52,10 @@ function __eval_found_file {
 }
 
 function __search_git_status_and_eval {
-  __find_file "sorted_status"
+  __find_file "sorted_status" || {
+    __no_files_found
+    return 1
+  }
   found_file=$(echo "$found_file" | awk ' { print $NF } ')
   __eval_found_file $1
 }
@@ -52,7 +66,10 @@ function __is_git_repo {
 
 function edit_file {
   if __is_git_repo; then
-    __find_file "fd --type=file --type=symlink"
+    __find_file "fd --type=file --type=symlink" || {
+      __no_files_found
+      return 1
+    }
     __eval_found_file "${EDITOR:-nvim}"
   else
     edit_any_file
@@ -64,28 +81,40 @@ bindkey -M viins '^o^o' edit_file
 
 # ANY file
 function edit_any_file {
-  __find_file "fd --type=file --type=symlink --hidden --no-ignore"
+  __find_file "fd --type=file --type=symlink --hidden --no-ignore" || {
+    __no_files_found
+    return 1
+  }
   __eval_found_file "${EDITOR:-nvim}"
 }
 zle -N edit_any_file
 bindkey -M viins '^oO' edit_any_file
 
 function edit_rails_controller {
-  __find_file "fd --type=file . 'app/controllers'"
+  __find_file "fd --type=file . 'app/controllers'" || {
+    __no_files_found
+    return 1
+  }
   __eval_found_file "${EDITOR:-nvim}"
 }
 zle -N edit_rails_controller
 bindkey -M viins '^orc' edit_rails_controller
 
 function edit_rails_model {
-  __find_file "fd --type=file . 'app/models'"
+  __find_file "fd --type=file . 'app/models'" || {
+    __no_files_found
+    return 1
+  }
   __eval_found_file "${EDITOR:-nvim}"
 }
 zle -N edit_rails_model
 bindkey -M viins '^orm' edit_rails_model
 
 function edit_rails_view {
-  __find_file "fd --type=file . 'app/views'"
+  __find_file "fd --type=file . 'app/views'" || {
+    __no_files_found
+    return 1
+  }
   __eval_found_file "${EDITOR:-nvim}"
 }
 zle -N edit_rails_view
@@ -95,7 +124,20 @@ function git_changed_files_curr_branch {
   # this xargs stuff is needed so it still works when you're in a subdirectory
   # of the git root
   # grealpath - realpath from gnu coreutils, has `relative-to` flag
-  __find_file "git diff --name-only main 2>/dev/null | xargs -I '{}' grealpath --relative-to=. $(git rev-parse --show-toplevel)/'{}'"
+  local -a diff_files
+  diff_files=("${(@f)$(git diff --name-only main 2>/dev/null)}")
+  if (( ${#diff_files[@]} == 0 )); then
+    if [[ -n "$ZLE" ]]; then
+      zle -M "Squeaky clean! 🧼"
+    else
+      print -r -- "Squeaky clean! 🧼"
+    fi
+    return 0
+  fi
+  __find_file "git diff --name-only main 2>/dev/null | xargs -I '{}' grealpath --relative-to=. $(git rev-parse --show-toplevel)/'{}'" || {
+    __no_files_found
+    return 1
+  }
   __eval_found_file "${EDITOR:-nvim}"
 }
 zle -N git_changed_files_curr_branch
@@ -175,3 +217,19 @@ function switch_branch {
 }
 zle -N switch_branch
 bindkey -M viins '^ogb' switch_branch
+
+function switch_worktree {
+  if ! __is_git_repo; then
+    zle -M "Not a git repo"
+    return 1
+  fi
+
+  local dir
+  dir=$(git worktree list 2>/dev/null | fzf --height 30% | awk '{print $1}')
+  if [[ -n "$dir" ]]; then
+    builtin cd "$dir"
+  fi
+  zle reset-prompt
+}
+zle -N switch_worktree
+bindkey -M viins '^ogw' switch_worktree
