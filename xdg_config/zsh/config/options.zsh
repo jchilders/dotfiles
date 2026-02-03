@@ -28,6 +28,15 @@ setopt PUSHD_MINUS # Exchanges  the  meanings of `+` and `-` for pushd.
 setopt PUSHD_SILENT # Do not print the directory stack after pushd or popd.
 setopt PUSHD_TO_HOME # Have pushd with no arguments act like `pushd $HOME`.
 
+# Remember last directory - restore on new shell startup
+typeset -g _ZSH_LAST_DIR_FILE="${XDG_STATE_HOME:-$HOME/.local/state}/zsh/last_dir"
+chpwd() { print -r -- "$PWD" >| "$_ZSH_LAST_DIR_FILE" }
+if [[ -f "$_ZSH_LAST_DIR_FILE" ]]; then
+  typeset -g _last_dir="$(<$_ZSH_LAST_DIR_FILE)"
+  [[ -d "$_last_dir" ]] && cd "$_last_dir"
+  unset _last_dir
+fi
+
 # Completion
 # zstyle ':completion:*' menu select # Use completion menu for completion when available.
 # zstyle ':completion:*' rehash true # When new programs is installed, auto update without reloading.

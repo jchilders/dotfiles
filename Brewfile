@@ -2,7 +2,6 @@
 
 # Run this file with `brew bundle`
 
-brew 'atuin' # store shell history in SQLite
 brew 'automake'
 brew 'bat' # cat replacement
 brew 'chafa' # image and ASCII art viewer
@@ -30,7 +29,6 @@ brew 'imagemagick'
 brew 'jq' # json processor
 brew 'lazygit' # git TUI
 brew 'make' # gnu make
-brew 'memcached'
 brew 'mise' # Version manager for Ruby, Node, etc.
 brew 'npm' # node package manager
 brew 'redis' # redis is redis
@@ -39,7 +37,7 @@ brew 'sl' # 🚂
 brew 'showkey' # type a key and see it echoed in the terminal
 brew 'starship' # robust shell prompt
 brew 'tealdeer' # Rust impl of `tldr`: man page supplement. brief desc, then examples
-brew 'tig' # git history viewer
+brew 'timg' # terminal image/video viewer
 brew 'trippy' # ping/traceroute replacement
 brew 'toilet' # ascii banners :)
 brew 'uv' # extremely fast Python package installer
@@ -62,8 +60,6 @@ brew 'yank'
 
 brew 'zsh-autosuggestions'
 brew 'zsh-syntax-highlighting' # syntax highlighting while typing
-
-brew 'font-ioskeva'
 
 # fish-like abbreviations for zsh: aliases that expand when you hit enter
 tap 'olets/tap'

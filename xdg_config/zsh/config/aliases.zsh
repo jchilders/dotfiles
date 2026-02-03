@@ -54,8 +54,6 @@ function load-abbreviations() {
   abbr add be='bundle exec'
   abbr add bi='bundle install'
   abbr add dcom='docker-compose'
-  abbr add imgcat='wezterm imgcat'
-  abbr add v='nvim'
 
   # Ruby and Rails helpers
   abbr add rc='rails console'

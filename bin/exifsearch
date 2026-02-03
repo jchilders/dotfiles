@@ -15,9 +15,13 @@ jobs="${EXIFSEARCH_JOBS:-8}"
 setopt extended_glob null_glob glob_star_short
 files=("$root"/**/*.(#i)(${~exts})(.))
 (( ${#files} == 0 )) && exit 0
+tmpfile="$(mktemp -t exifsearch.XXXXXX)"
+cleanup() { rm -f "$tmpfile"; }
+trap cleanup EXIT
 printf '%s\0' -- $files[@] |
-parallel -0 --no-notice --jobs "$jobs" --will-cite --env EXIFSEARCH_PATTERN \
+parallel -0 --bar --no-notice --jobs "$jobs" --will-cite --env EXIFSEARCH_PATTERN \
   'if exiftool -s -s -s -a -G1 -charset filename=utf8 -FileName -FilePath -all:all -- {} 2>/dev/null \
     | rg -q -F -- "$EXIFSEARCH_PATTERN"; then
       printf "%s\n" {}
-    fi'
+    fi' >"$tmpfile"
+cat "$tmpfile"

@@ -11,6 +11,8 @@ BREW_PATHS := /opt/homebrew/bin:/usr/local/bin:/home/linuxbrew/.linuxbrew/bin
 export PATH := $(BREW_PATHS):$(PATH)
 BREW = $(firstword $(wildcard /opt/homebrew/bin/brew /usr/local/bin/brew /home/linuxbrew/.linuxbrew/bin/brew))
 
+BREW_BIN := $(BREW_PREFIX)/bin/brew
+
 .PHONY: all
 
 cwd := $(shell pwd)
@@ -46,8 +48,11 @@ homebrew: ## Install homebrew
 	@if [ -n "$(BREW)" ]; then \
 		echo "Homebrew already installed"; \
 	else \
-		sudo curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh | /bin/bash; \
+		echo "Installing Homebrew..."; \
+		NONINTERACTIVE=1 /bin/bash -c "$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"; \
 	fi
+	eval "$$($(BREW_BIN) shellenv)"
+	$(BREW_BIN) bundle --file "$(BREWFILE)"
 
 homebrew-bundle: homebrew ## Install default homebrew formulae.(Slow in Docker!)
 	@if [ -z "$(BREW)" ]; then \
