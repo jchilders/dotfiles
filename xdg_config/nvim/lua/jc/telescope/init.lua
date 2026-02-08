@@ -2,8 +2,46 @@ require 'core.globals'
 
 local builtin = require("telescope.builtin")
 local Path = require("plenary.path")
+local git_utils = require("jc.git_utils")
 
 local M = {}
+
+local function get_visual_selection_text()
+  local mode = vim.fn.mode()
+  local is_visual_mode = mode == "v" or mode == "V" or mode == string.char(22)
+  if not is_visual_mode then
+    return nil
+  end
+
+  local start_pos = vim.fn.getpos("v")
+  local end_pos = vim.fn.getpos(".")
+
+  local srow, scol = start_pos[2] - 1, start_pos[3] - 1
+  local erow, ecol = end_pos[2] - 1, end_pos[3] - 1
+
+  if srow > erow or (srow == erow and scol > ecol) then
+    srow, erow = erow, srow
+    scol, ecol = ecol, scol
+  end
+
+  local lines
+  if mode == "V" then
+    lines = vim.api.nvim_buf_get_lines(0, srow, erow + 1, false)
+  else
+    lines = vim.api.nvim_buf_get_text(0, srow, scol, erow, ecol + 1, {})
+  end
+
+  if lines == nil or #lines == 0 then
+    return nil
+  end
+
+  local text = vim.trim(table.concat(lines, "\n"))
+  if text == "" then
+    return nil
+  end
+
+  return text
+end
 
 function M.find_files(opts)
   opts = opts or {}
@@ -27,11 +65,72 @@ function M.git_changed_files_curr_branch()
   })
 end
 
--- grep string under the cursor
+-- grep selected text or, if none selected, word under cursor
 function M.grep_string()
-  builtin.grep_string({
-    word_match = "-w", -- exact word matches
+  local query = get_visual_selection_text()
+  local is_visual_query = query ~= nil
+
+  if not is_visual_query then
+    query = vim.fn.expand("<cword>")
+  end
+
+  if query == nil or query == "" then
+    vim.notify("Nothing selected and no word under cursor.", vim.log.levels.WARN, { title = "Search" })
+    return
+  end
+
+  query = vim.trim(query:gsub("\r", ""):gsub("\n", " "))
+  if query == "" then
+    vim.notify("Nothing selected and no word under cursor.", vim.log.levels.WARN, { title = "Search" })
+    return
+  end
+
+  local search_root = vim.fn.getcwd()
+  if git_utils.is_git_repo() then
+    search_root = git_utils.git_root()
+  end
+
+  local rg_args = {
+    "rg",
+    "--vimgrep",
+    "--smart-case",
+    "--hidden",
+    "--glob",
+    "!.git/*",
+    "--fixed-strings",
+  }
+
+  -- Keep <cword> behavior exact at word boundaries; selected text is literal.
+  if not is_visual_query then
+    table.insert(rg_args, "--word-regexp")
+  end
+
+  table.insert(rg_args, query)
+  table.insert(rg_args, search_root)
+
+  local output = vim.fn.system(rg_args)
+  local exit_code = vim.v.shell_error
+
+  if exit_code > 1 then
+    vim.notify("rg failed while searching for '" .. query .. "'", vim.log.levels.ERROR, { title = "Search" })
+    return
+  end
+
+  local lines = vim.split(output, "\n", { trimempty = true })
+  vim.fn.setqflist({}, "r", {
+    title = string.format("search: %s", query),
+    lines = lines,
+    efm = "%f:%l:%c:%m",
   })
+
+  if #lines == 0 then
+    vim.notify("No matches for '" .. query .. "'", vim.log.levels.INFO, { title = "Search" })
+    vim.cmd("cclose")
+    return
+  end
+
+  vim.cmd("copen")
+  vim.cmd("cc 1")
 end
 
 function M.find_all_files()

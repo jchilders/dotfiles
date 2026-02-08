@@ -269,6 +269,9 @@ map_ctrlo_tele("o", "find_files")     -- do not include hidden files, files in .
 map_ctrlo_tele("O", "find_all_files") -- include hidden files, files in .gitignore, etc.
 map_ctrlo_tele("b", "buffers")        -- open from [b]uffer list
 map_ctrlo_tele("f", "grep_string")
+vim.keymap.set("x", "<C-o>f", function()
+  require("jc.telescope").grep_string()
+end, { silent = true })
 map_ctrlo_tele("F", "live_grep")
 
 -- [g]it
@@ -353,4 +356,3 @@ function ControlMusic(action)
   local handle = io.popen("osascript -e '" .. script .. "'")
   if handle then handle:close() end
 end
-

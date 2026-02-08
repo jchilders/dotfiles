@@ -36,7 +36,7 @@ brew 'rg' # ripgrep
 brew 'sl' # 🚂
 brew 'showkey' # type a key and see it echoed in the terminal
 brew 'starship' # robust shell prompt
-brew 'tealdeer' # Rust impl of `tldr`: man page supplement. brief desc, then examples
+brew 'tealdeer' # `tldr`: man page supplement. brief desc, then examples
 brew 'timg' # terminal image/video viewer
 brew 'trippy' # ping/traceroute replacement
 brew 'toilet' # ascii banners :)
