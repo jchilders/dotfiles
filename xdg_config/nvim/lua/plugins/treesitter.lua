@@ -11,6 +11,7 @@ return {
     require("nvim-treesitter.configs").setup({
       ensure_installed = {
         "bash",
+        "cpp",
         "css",
         "git_rebase",
         "html",
@@ -25,6 +26,9 @@ return {
         "typescript",
         "vim",
         "vimdoc"
+      },
+      highlight = {
+        enable = true,
       },
       indent = { enable = false },
       incremental_selection = {

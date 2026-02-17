@@ -9,6 +9,14 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   pattern = '*',
 })
 
+vim.filetype.add({
+  extension = {
+    metal = "metal",
+  },
+})
+
+vim.treesitter.language.register("cpp", "metal")
+
 vim.api.nvim_create_augroup("ShebangFiletypeDetect", { clear = true })
 
 -- I frequently paste scripts with shebangs into extensionless files. This autocmd
