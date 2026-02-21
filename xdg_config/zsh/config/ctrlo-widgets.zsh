@@ -21,7 +21,7 @@ function __find_file() {
     return 1
   fi
 
-  found_file=$(print -l $files | fzf --ansi --multi --preview="$preview_cmd")
+  found_file=$(print -l $files | fzf --ansi --multi --cycle --preview="$preview_cmd")
 }
 
 function __no_files_found {
@@ -206,7 +206,7 @@ bindkey -M viins '^ogs' edit_from_git_status
 function switch_branch {
   # TODO: handle git worktrees
   # all_other_branches is an executable script
-  local branch=$(all_other_branches | fzf --tiebreak=index)
+  local branch=$(all_other_branches | fzf --tiebreak=index --cycle)
 
   if [[ '' != $branch ]]; then
     git switch $branch
@@ -225,7 +225,7 @@ function switch_worktree {
   fi
 
   local dir
-  dir=$(git worktree list 2>/dev/null | fzf --height 30% | awk '{print $1}')
+  dir=$(git worktree list 2>/dev/null | fzf --height 30% --cycle | awk '{print $1}')
   if [[ -n "$dir" ]]; then
     builtin cd "$dir"
   fi
