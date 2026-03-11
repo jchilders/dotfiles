@@ -1,7 +1,7 @@
 local remap = require("utils").map_global
 local scratcher = require("jc.scratcher")
 local emu_utils = require("jc.emu-utils")
-local wezterm = require("jc.wezterm")
+local emu = require("jc.emu")
 
 TelescopeMapArgs = TelescopeMapArgs or {}
 
@@ -151,11 +151,11 @@ vim.keymap.set("v", "<leader>sj", emu_utils.send_selection_down)
 -- Send Up then Enter to the pane to the left
 vim.keymap.set("n", "<Leader>rr", function()
   vim.defer_fn(function()
-    wezterm.send_text("Up") -- Send Up Arrow
+    emu.send_text("Up") -- Send Up Arrow
   end, 50) -- Slight delay to ensure proper order
 
   vim.defer_fn(function()
-    wezterm.send_text("\n") -- Send Enter
+    emu.send_text("\n") -- Send Enter
   end, 100) -- Another small delay
 end, { desc = "Resend last command" })
 
@@ -175,11 +175,11 @@ vim.api.nvim_create_user_command("ResendOnSave", function()
       buffer = buf,
       callback = function()
         vim.defer_fn(function()
-          wezterm.send_text("Up") -- Send Up Arrow
+          emu.send_text("Up") -- Send Up Arrow
         end, 50) -- Slight delay to ensure proper order
 
         vim.defer_fn(function()
-          wezterm.send_text("\n") -- Send Enter
+          emu.send_text("\n") -- Send Enter
         end, 100) -- Another small delay
       end,
       desc = "Send UpArrow then Enter to left split after saving this buffer",
