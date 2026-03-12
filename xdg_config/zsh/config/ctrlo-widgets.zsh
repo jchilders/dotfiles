@@ -191,7 +191,18 @@ bindkey -M viins '^oga' add_from_git_status
 
 # show diff of file selected from from git status
 function diff_from_git_status {
-  __search_git_status_and_eval "git diff"
+  __find_file "sorted_status" || {
+    __no_files_found
+    return 1
+  }
+  found_file=$(echo "$found_file" | awk ' { print $NF } ')
+
+  if [[ ! -e "$found_file" ]]; then
+    echo "Deleted: $found_file"
+    zle accept-line
+  else
+    __eval_found_file "git diff"
+  fi
 }
 zle -N diff_from_git_status
 bindkey -M viins '^ogd' diff_from_git_status
