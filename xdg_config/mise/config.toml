@@ -1,6 +1,7 @@
 [tools]
-nodejs = "latest"
+go = "latest"
 lua = "latest"
+nodejs = "latest"
 python = "latest"
 ruby = "latest"
 rust = "latest"

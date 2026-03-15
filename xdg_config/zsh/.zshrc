@@ -45,6 +45,7 @@ plugins=(
   dotenv
   mise
   zoxide
+  last-working-dir
 )
 
 [ -f $ZSH/oh-my-zsh.sh ] && source $ZSH/oh-my-zsh.sh
