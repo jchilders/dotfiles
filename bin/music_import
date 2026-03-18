@@ -1,0 +1,687 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Importing music files (flac/mp3) into the Music app's library. Adds artwork if present.
+
+require 'find'
+require 'fileutils'
+require 'open3'
+require 'optparse'
+require 'pathname'
+require 'set'
+require 'shellwords'
+require 'tempfile'
+
+begin
+  require 'sqlite3'
+rescue LoadError
+  warn "The 'sqlite3' gem is required. Install it with: gem install sqlite3"
+  exit 1
+end
+
+# Preferred artwork filenames in priority order: extension-first (jpg > jpeg > png),
+# then name-priority (cover > folder > front > album > artwork).
+ARTWORK_PREFERRED = %w[jpg jpeg png].flat_map { |ext|
+  %w[cover folder front album artwork].flat_map { |name|
+    ["#{name}.#{ext}", "#{name.capitalize}.#{ext}"]
+  }
+}.freeze
+
+NORM_TARGET_LUFS = -14.0
+NORM_MAX_TP_DBTP =  -1.0
+
+# Persists import and normalization history to an SQLite database under
+# $XDG_STATE_HOME/music_import/history.db (default: ~/.local/state/...).
+#
+# The database is the first line of defence before slower operations like
+# querying the Music library or re-running ffmpeg loudness analysis.
+class ImportDatabase
+  DB_DIR  = File.join(
+    ENV.fetch('XDG_STATE_HOME', File.join(Dir.home, '.local', 'state')),
+    'music_import'
+  )
+  DB_PATH = File.join(DB_DIR, 'history.db')
+
+  def initialize
+    FileUtils.mkdir_p(DB_DIR)
+    @db = SQLite3::Database.new(DB_PATH)
+    @db.results_as_hash = true
+    migrate!
+  end
+
+  def imported?(source_path)
+    row = @db.get_first_row(
+      'SELECT imported_at FROM tracks WHERE source_path = ?',
+      source_path.to_s
+    )
+    !row.nil? && !row['imported_at'].nil?
+  end
+
+  # Returns a Set of path strings for all given paths already recorded as
+  # imported in the DB. Uses a single IN (...) query regardless of batch size.
+  def imported_paths_for(paths)
+    return Set.new if paths.empty?
+
+    placeholders = Array.new(paths.size, '?').join(', ')
+    @db.execute(
+      "SELECT source_path FROM tracks WHERE imported_at IS NOT NULL AND source_path IN (#{placeholders})",
+      paths
+    ).map { |r| r['source_path'] }.to_set
+  end
+
+  def normalized?(source_path)
+    row = @db.get_first_row(
+      'SELECT normalized_at FROM tracks WHERE source_path = ?',
+      source_path.to_s
+    )
+    !row.nil? && !row['normalized_at'].nil?
+  end
+
+  # Returns a Set of path strings for all given paths already recorded as
+  # normalized in the DB. Uses a single IN (...) query regardless of batch size.
+  def normalized_paths_for(paths)
+    return Set.new if paths.empty?
+
+    placeholders = Array.new(paths.size, '?').join(', ')
+    @db.execute(
+      "SELECT source_path FROM tracks WHERE normalized_at IS NOT NULL AND source_path IN (#{placeholders})",
+      paths
+    ).map { |r| r['source_path'] }.to_set
+  end
+
+  def record_import(source_path, title: nil, artist: nil)
+    @db.execute(<<~SQL, [source_path.to_s, title, artist, now])
+      INSERT INTO tracks (source_path, title, artist, imported_at)
+      VALUES (?, ?, ?, ?)
+      ON CONFLICT(source_path) DO UPDATE SET
+        title       = excluded.title,
+        artist      = excluded.artist,
+        imported_at = excluded.imported_at
+    SQL
+  end
+
+  def record_normalization(source_path, gain_db:)
+    @db.execute(<<~SQL, [source_path.to_s, now, gain_db.to_f])
+      INSERT INTO tracks (source_path, normalized_at, gain_db)
+      VALUES (?, ?, ?)
+      ON CONFLICT(source_path) DO UPDATE SET
+        normalized_at = excluded.normalized_at,
+        gain_db       = excluded.gain_db
+    SQL
+  end
+
+  private
+
+  def now
+    Time.now.utc.iso8601
+  end
+
+  def migrate!
+    @db.execute('PRAGMA journal_mode=WAL')
+    @db.execute(<<~SQL)
+      CREATE TABLE IF NOT EXISTS tracks (
+        source_path   TEXT PRIMARY KEY,
+        title         TEXT,
+        artist        TEXT,
+        imported_at   TEXT,
+        normalized_at TEXT,
+        gain_db       REAL
+      )
+    SQL
+  end
+end
+
+class MusicImporter
+  def initialize(options)
+    @options  = options
+    @counters = Hash.new(0)
+    @db       = ImportDatabase.new
+  end
+
+  def run(target_dir)
+    dir = Pathname.new(target_dir)
+    abort "Directory not found: #{target_dir}" unless dir.directory?
+
+    all_files = collect_files(dir)
+    if all_files.empty?
+      puts "No .flac or .mp3 files found under #{target_dir}"
+      return
+    end
+
+    # Fast initial pass: remove everything the DB already knows is imported.
+    # One SQL query for the whole run avoids redundant metadata fetching,
+    # Music.app queries, and ffmpeg work for files we've already processed.
+    files_to_process = filter_known_imported(all_files)
+
+    files_to_process.group_by(&:dirname).each do |album_dir, files|
+      flacs = files.select { |f| f.extname.casecmp('.flac').zero? }
+      mp3s  = files.select { |f| f.extname.casecmp('.mp3').zero? }
+
+      gain = @options[:normalize] ? compute_album_gain(album_dir, flacs) : nil
+
+      # Three-phase FLAC processing:
+      #   1. plan    — pre-flight checks (DB, Music library batch), no side effects
+      #   2. convert — parallel ffmpeg encode for all files that need it
+      #   3. finalize — sequential DB recording and Music import
+      flac_work = plan_flacs(flacs, gain)
+      convert_pending(flac_work)
+      flac_work.each { |w| finalize_flac(w) }
+
+      mp3_work = plan_mp3s(mp3s)
+      mp3_work.each { |w| finalize_mp3(w) }
+    end
+
+    print_summary
+  end
+
+  private
+
+  # Removes files already recorded as imported in the DB from the given list,
+  # updating counters so the summary stays accurate. Skipped files are reported
+  # as a single line rather than per-file to keep output readable for large runs.
+  def filter_known_imported(files)
+    return files unless @options[:import]
+
+    already_imported = @db.imported_paths_for(files.map(&:to_s))
+    return files if already_imported.empty?
+
+    remaining, skipped = files.partition { |f| !already_imported.include?(f.to_s) }
+
+    skipped.each do |f|
+      @counters[:found]   += 1
+      @counters[:flac]    += 1 if f.extname.casecmp('.flac').zero?
+      @counters[:mp3]     += 1 if f.extname.casecmp('.mp3').zero?
+      @counters[:skipped] += 1
+    end
+
+    puts "Skipping #{skipped.size} already-imported file(s) (per history db)"
+    remaining
+  end
+
+  def collect_files(dir)
+    files = []
+    Find.find(dir.to_s) do |path|
+      next unless File.file?(path)
+      files << Pathname.new(path) if %w[.flac .mp3].include?(File.extname(path).downcase)
+    end
+    files
+  end
+
+  # Measures only FLACs that haven't already been normalized (per DB), then
+  # returns a uniform dB gain targeting NORM_TARGET_LUFS for that subset.
+  def compute_album_gain(album_dir, flacs)
+    pending = if @options[:overwrite]
+      flacs
+    else
+      already_normalized = @db.normalized_paths_for(flacs.map(&:to_s))
+      flacs.reject { |f| already_normalized.include?(f.to_s) }
+    end
+    return nil if pending.empty?
+
+    if @options[:dry_run]
+      puts "Album: #{album_dir}"
+      puts "  Would measure #{pending.size} FLAC(s) for album normalization"
+      return nil
+    end
+
+    puts "Album: #{album_dir}"
+    puts "  Measuring #{pending.size} FLAC(s) in parallel..."
+
+    measurements = measure_lufs_parallel(pending)
+    return nil unless measurements
+
+    mean_i   = measurements.sum { |m| m[:i] } / measurements.size
+    max_tp   = measurements.map { |m| m[:tp] }.max
+    raw_gain = NORM_TARGET_LUFS - mean_i
+    gain     = [raw_gain, NORM_MAX_TP_DBTP - max_tp].min.round(2)
+
+    puts "  Album loudness: #{'%.1f' % mean_i} LUFS → applying #{gain} dB"
+    gain
+  end
+
+  # Runs ffmpeg loudnorm analysis on all files simultaneously using GNU parallel.
+  #
+  # Uses --tagstring to prefix every output line with "{job_number}|||", letting
+  # us collect each job's output and map it back to the corresponding input file
+  # by sequence number. parallel's own citation notice goes to its stderr, which
+  # capture3 keeps separate so it never contaminates the tagged output we parse.
+  #
+  # Returns an array of { i: Float, tp: Float } in the same order as +files+,
+  # or nil if any single measurement fails.
+  def measure_lufs_parallel(files)
+    stdout, = Open3.capture3(
+      'parallel', '--will-cite', '--jobs', '0', '--tagstring', '{#}|||',
+      'ffmpeg -hide_banner -loglevel info -i {} ' \
+        '-af "loudnorm=I=-14:TP=-1:LRA=11:print_format=json" -f null /dev/null 2>&1',
+      ':::', *files.map(&:to_s)
+    )
+
+    # Accumulate each job's output lines keyed by 1-based sequence number.
+    job_outputs = Hash.new { |h, k| h[k] = +'' }
+    stdout.each_line do |line|
+      job_outputs[Regexp.last_match(1).to_i] << Regexp.last_match(2) if line =~ /\A(\d+)\|\|\|(.*)/m
+    end
+
+    files.each_with_index.map do |file, idx|
+      out = job_outputs[idx + 1]
+      i   = out[/"input_i"\s*:\s*"([^"]+)"/, 1]&.to_f
+      tp  = out[/"input_tp"\s*:\s*"([^"]+)"/, 1]&.to_f
+
+      unless i && tp
+        warn "  Warning: could not measure #{file.basename}, skipping album normalization"
+        return nil
+      end
+
+      { i: i, tp: tp }
+    end
+  end
+
+  # Pre-flight phase for FLACs: fetches metadata for the whole album, makes a
+  # single batched Music library check, then decides per-file what to do.
+  #
+  # Work-item keys:
+  #   :source, :output, :artwork, :title, :artist — file metadata
+  #   :gain_db          — dB gain to apply, or nil
+  #   :needs_conversion — true if ffmpeg must run
+  #   :ready            — true if the .m4a is already available for import
+  #   :tmp_path         — temp path used for atomic write (needs_conversion only)
+  #   :converted        — set by convert_pending after parallel encode
+  def plan_flacs(flacs, gain)
+    return [] if flacs.empty?
+
+    # Fetch title/artist for every FLAC in parallel (one ffprobe per file, all concurrent).
+    metadata = fetch_metadata_parallel(flacs)
+
+    # Batch normalized check for the whole album in one SQL query.
+    normalized_set = if @options[:normalize] && !@options[:overwrite]
+      @db.normalized_paths_for(flacs.map(&:to_s))
+    else
+      Set.new
+    end
+
+    # One AppleScript call for the entire album instead of one per track.
+    in_music = if @options[:import]
+      exists_in_music_batch?(metadata.map { |m| { title: m[:title], artist: m[:artist] } })
+    else
+      Array.new(flacs.size, false)
+    end
+
+    metadata.each_with_index.filter_map do |meta, idx|
+      source  = meta[:source]
+      title   = meta[:title]
+      artist  = meta[:artist]
+      output  = source.sub_ext('.m4a')
+      artwork = find_artwork(source.dirname)
+
+      @counters[:found] += 1
+      @counters[:flac]  += 1
+      puts "Processing: #{source}"
+
+      if @options[:import] && in_music[idx]
+        puts "  Already in Music library, skipping"
+        @counters[:skipped] += 1
+        @db.record_import(source, title: title, artist: artist)
+        next
+      end
+
+      already_normalized = @options[:normalize] && normalized_set.include?(source.to_s)
+      base = { source: source, output: output, artwork: artwork, title: title, artist: artist }
+
+      if already_normalized
+        puts "  Already normalized (per history db), reusing: #{output}"
+        @counters[:reused] += 1
+        base.merge(gain_db: nil, needs_conversion: false, ready: true)
+      elsif output.exist? && !@options[:overwrite]
+        puts "  Reusing existing file: #{output}"
+        @counters[:reused] += 1
+        base.merge(gain_db: nil, needs_conversion: false, ready: true)
+      elsif @options[:dry_run]
+        puts "  Would convert to: #{output}"
+        puts(artwork ? "  Would use artwork: #{artwork}" : "  No artwork found in: #{source.dirname}")
+        puts "  Would apply gain: #{gain} dB" if gain
+        base.merge(gain_db: gain, needs_conversion: false, ready: true)
+      else
+        puts(artwork ? "  Using artwork: #{artwork}" : "  No artwork found in: #{source.dirname}")
+        tmp = File.join(Dir.tmpdir, "music-import-#{$$}-#{rand(1_000_000)}.m4a")
+        base.merge(gain_db: gain, needs_conversion: true, ready: false, tmp_path: tmp)
+      end
+    end
+  end
+
+  # Pre-flight phase for MP3s: same batched Music library check as plan_flacs.
+  # Returns an array of work-item hashes for files that still need importing.
+  def plan_mp3s(mp3s)
+    return [] if mp3s.empty?
+
+    metadata = fetch_metadata_parallel(mp3s)
+
+    in_music = if @options[:import]
+      exists_in_music_batch?(metadata.map { |m| { title: m[:title], artist: m[:artist] } })
+    else
+      Array.new(mp3s.size, false)
+    end
+
+    metadata.each_with_index.filter_map do |meta, idx|
+      @counters[:found] += 1
+      @counters[:mp3]   += 1
+      puts "Processing: #{meta[:source]}"
+
+      if @options[:import] && in_music[idx]
+        puts "  Already in Music library, skipping"
+        @counters[:skipped] += 1
+        @db.record_import(meta[:source], title: meta[:title], artist: meta[:artist])
+        next
+      end
+
+      puts "  Importing existing MP3"
+      @counters[:import_only] += 1
+      meta
+    end
+  end
+
+  # Checks whether each (title, artist) pair in +tracks+ exists in the Music
+  # library using a single AppleScript call.
+  #
+  # The script receives a flat argv list [title1, artist1, title2, artist2, ...]
+  # and returns a pipe-delimited string of "1"/"0" results. A single call avoids
+  # the per-track osascript startup and Music.app connection overhead that makes
+  # the one-at-a-time approach slow for albums with many tracks.
+  #
+  # Returns an array of booleans in the same order as +tracks+.
+  def exists_in_music_batch?(tracks)
+    return Array.new(tracks.size, false) if tracks.empty?
+
+    script = <<~APPLESCRIPT
+      on run argv
+        set results to {}
+        tell application "Music"
+          set lib to library playlist 1
+          set i to 1
+          repeat while i ≤ (count of argv)
+            set trackName to item i of argv
+            set trackArtist to item (i + 1) of argv
+            set i to i + 2
+            if trackName is "" then
+              set end of results to "0"
+            else if trackArtist is not "" then
+              if (count (every track of lib whose name is trackName and artist is trackArtist)) > 0 then
+                set end of results to "1"
+              else
+                set end of results to "0"
+              end if
+            else
+              if (count (every track of lib whose name is trackName)) > 0 then
+                set end of results to "1"
+              else
+                set end of results to "0"
+              end if
+            end if
+          end repeat
+        end tell
+        set output to ""
+        repeat with i from 1 to count of results
+          if i > 1 then set output to output & "|"
+          set output to output & item i of results
+        end repeat
+        return output
+      end run
+    APPLESCRIPT
+
+    args   = tracks.flat_map { |t| [t[:title].to_s, t[:artist].to_s] }
+    output, status = run_applescript(script, *args)
+    return Array.new(tracks.size, false) unless status.success?
+
+    results = output.split('|')
+    Array.new(tracks.size) { |i| results[i] == '1' }
+  end
+
+  # Conversion phase: runs all pending ffmpeg encodes simultaneously using
+  # GNU parallel, piping one shell command per line to its stdin.
+  #
+  # Each command writes to a temp file and then atomically renames it to the
+  # final output path (ffmpeg ... tmp && mv tmp output). parallel's --joblog
+  # records the exit value of every job so we can detect individual failures
+  # without relying on parallel's overall exit code.
+  #
+  # Mutates each work item in +pending+: sets :ready and :converted booleans.
+  def convert_pending(work_items)
+    pending = work_items.select { |w| w[:needs_conversion] }
+    return if pending.empty?
+
+    puts "  Converting #{pending.size} FLAC(s) in parallel..."
+
+    Tempfile.create(['parallel-jobs', '.log']) do |joblog|
+      stdin_data = pending.map { |w| build_convert_cmd(w) }.join("\n") + "\n"
+      Open3.capture3(
+        'parallel', '--will-cite', '--jobs', '0', '--joblog', joblog.path,
+        stdin_data: stdin_data
+      )
+
+      successes = parse_joblog_successes(joblog.path)
+      pending.each_with_index do |w, i|
+        w[:converted] = successes[i] || false
+        w[:ready]     = w[:converted]
+      end
+    end
+
+    # Clean up temp files left behind by any failed conversions.
+    pending.each do |w|
+      File.delete(w[:tmp_path]) if !w[:converted] && w[:tmp_path] && File.exist?(w[:tmp_path])
+    end
+  end
+
+  # Builds a single shell command string for one FLAC conversion. The command
+  # writes to a temp file and renames atomically on success so a failed encode
+  # never leaves a partial file at the output path.
+  def build_convert_cmd(work)
+    parts = ['ffmpeg -hide_banner -loglevel error -y']
+    parts << "-i #{Shellwords.escape(work[:source].to_s)}"
+    parts << "-i #{Shellwords.escape(work[:artwork].to_s)}" if work[:artwork]
+    parts << '-map 0:a:0 -map_metadata 0 -c:a aac -q:a 2'
+    parts << "-af #{Shellwords.escape("volume=#{work[:gain_db]}dB")}" if work[:gain_db]
+    parts << '-map 1:v:0 -c:v mjpeg -disposition:v:0 attached_pic' if work[:artwork]
+    parts << Shellwords.escape(work[:tmp_path])
+    parts << "&& mv -f #{Shellwords.escape(work[:tmp_path])} #{Shellwords.escape(work[:output].to_s)}"
+    parts.join(' ')
+  end
+
+  # Parses a parallel --joblog file and returns a boolean array (one entry per
+  # job) indicating success, in submission order. Looks up column indices from
+  # the header row rather than assuming fixed positions.
+  def parse_joblog_successes(path)
+    lines = File.readlines(path)
+    return [] if lines.size <= 1
+
+    headers     = lines.first.chomp.split("\t")
+    seq_col     = headers.index('Seq')     || 0
+    exitval_col = headers.index('Exitval') || 6
+
+    lines.drop(1)
+         .map { |l| l.chomp.split("\t") }
+         .sort_by { |cols| cols[seq_col].to_i }
+         .map { |cols| cols[exitval_col].to_i.zero? }
+  rescue Errno::ENOENT
+    []
+  end
+
+  # Finalize phase for FLACs (sequential): reports conversion result, records
+  # the DB, imports into Music, and optionally deletes the source FLAC.
+  def finalize_flac(work)
+    if work[:needs_conversion]
+      if work[:converted]
+        puts "  Wrote: #{work[:output]}"
+        @counters[:converted] += 1
+        @db.record_normalization(work[:source], gain_db: work[:gain_db]) if work[:gain_db]
+      else
+        warn "  Conversion failed: #{work[:source].basename}"
+        @counters[:failed] += 1
+        return
+      end
+    end
+
+    import_ok = import_file(
+      work[:output],
+      ready:  work[:ready],
+      source: work[:source],
+      title:  work[:title],
+      artist: work[:artist]
+    )
+
+    if @options[:delete_flac] && !@options[:dry_run] && work[:ready] && import_ok
+      work[:source].delete
+      puts "  Deleted source FLAC"
+      @counters[:deleted] += 1
+    end
+  end
+
+  # Finalize phase for MP3s: just imports into Music.
+  def finalize_mp3(work)
+    import_file(work[:source], ready: true, source: work[:source], title: work[:title], artist: work[:artist])
+  end
+
+  # Returns true if the track was successfully handled (imported, or import
+  # disabled). The return value controls whether --delete-flac may proceed.
+  def import_file(path, ready:, source: nil, title: nil, artist: nil)
+    return false unless ready
+    return true  unless @options[:import]
+
+    if @options[:dry_run]
+      puts "  Would import into Music"
+      true
+    elsif import_into_music(path.expand_path)
+      puts "  Imported into Music"
+      @counters[:imported] += 1
+      @db.record_import(source || path, title: title, artist: artist)
+      true
+    else
+      warn "  Music import failed; file is still available at #{path}"
+      false
+    end
+  end
+
+  def import_into_music(path)
+    script = <<~APPLESCRIPT
+      on run argv
+        set trackPath to item 1 of argv
+        set trackFile to (POSIX file trackPath) as alias
+        tell application "Music"
+          add trackFile
+        end tell
+      end run
+    APPLESCRIPT
+    _, status = run_applescript(script, path.to_s)
+    status.success?
+  end
+
+  # Fetches title and artist for a single file in one ffprobe call.
+  # Returns a hash with string keys 'title' and 'artist' (values may be nil).
+  def ffprobe_tags(file)
+    output, status = Open3.capture2e(
+      'ffprobe', '-v', 'quiet',
+      '-show_entries', 'format_tags=title,artist',
+      '-of', 'default=noprint_wrappers=1',
+      file.to_s
+    )
+    return {} unless status.success?
+
+    output.each_line.with_object({}) do |line, h|
+      h[Regexp.last_match(1).downcase] = Regexp.last_match(2).chomp if line =~ /\ATAG:([^=]+)=(.*)/i
+    end
+  end
+
+  # Fetches title/artist metadata for all files in parallel using Ruby threads.
+  # Each file gets one ffprobe call (title + artist together), and all files
+  # run concurrently, cutting metadata I/O from O(2n) sequential to O(1) parallel.
+  def fetch_metadata_parallel(files)
+    return [] if files.empty?
+
+    threads = files.map do |source|
+      Thread.new do
+        tags = @options[:import] ? ffprobe_tags(source) : {}
+        { source: source, title: tags['title'], artist: tags['artist'] }
+      end
+    end
+    threads.map(&:value)
+  end
+
+  def find_artwork(dir)
+    ARTWORK_PREFERRED.each do |name|
+      path = dir.join(name)
+      return path if path.exist?
+    end
+    Dir.glob(dir.join('*.{jpg,jpeg,png}').to_s, File::FNM_CASEFOLD).min
+       &.then { |p| Pathname.new(p) }
+  end
+
+  # Runs an AppleScript via stdin (matching `osascript -`), passing extra
+  # positional args as argv items inside the script.
+  def run_applescript(script, *args)
+    Open3.popen2e('osascript', '-', *args) do |stdin, output_io, wait_thr|
+      stdin.write(script)
+      stdin.close
+      [output_io.read.strip, wait_thr.value]
+    end
+  end
+
+  def print_summary
+    puts
+    puts 'Summary'
+    puts "  Files found:      #{@counters[:found]}"
+    puts "  FLAC files:       #{@counters[:flac]}"
+    puts "  MP3 files:        #{@counters[:mp3]}"
+    puts "  Converted:        #{@counters[:converted]}"
+    puts "  Reused .m4a:      #{@counters[:reused]}"
+    puts "  Import-only MP3s: #{@counters[:import_only]}"
+    if @options[:import]
+      puts "  Skipped:          #{@counters[:skipped]}"
+      puts "  Imported:         #{@counters[:imported]}"
+    end
+    puts "  Deleted FLACs:    #{@counters[:deleted]}" if @options[:delete_flac]
+    puts "  Failures:         #{@counters[:failed]}"
+  end
+end
+
+def require_command(name)
+  return if system('which', name, out: File::NULL, err: File::NULL)
+
+  warn "Missing required command: #{name}"
+  exit 1
+end
+
+options = {
+  import:      true,
+  overwrite:   false,
+  delete_flac: false,
+  normalize:   false,
+  dry_run:     false,
+}
+
+OptionParser.new do |opts|
+  opts.banner = <<~BANNER
+    Usage: music_import [options] [directory]
+
+    Convert .flac files under a directory to .m4a and import music files into Music.
+
+    Options:
+  BANNER
+
+  opts.on('--no-import',   'Convert .flac files but do not add anything to Music')          { options[:import]      = false }
+  opts.on('--overwrite',   'Re-convert .flac files even if the .m4a already exists')        { options[:overwrite]   = true  }
+  opts.on('--delete-flac', 'Delete the original .flac after successful conversion/import')  { options[:delete_flac] = true  }
+  opts.on('--normalize',   'Apply album-level loudness normalization (-14 LUFS target)')     { options[:normalize]   = true  }
+  opts.on('--dry-run',     'Show what would happen without changing anything')               { options[:dry_run]     = true  }
+  opts.on('-h', '--help',  'Show this help')                                                 { puts opts; exit }
+end.parse!
+
+if ARGV.size > 1
+  warn 'Only one directory may be provided.'
+  exit 1
+end
+
+target_dir = ARGV.first || '.'
+
+require_command 'ffmpeg'
+require_command 'parallel'
+require_command 'osascript' if options[:import]
+
+MusicImporter.new(options).run(target_dir)
