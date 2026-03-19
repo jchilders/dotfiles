@@ -8,9 +8,17 @@ add_newline = true
 #   +   Staged
 #   $   Stashed changes
 format = """
-$directory($git_branch)($git_status)$ruby
+$directory($git_branch)($git_status)$python$ruby
 $character """
 
 [character]
 success_symbol = "[➜](bold green)"
 error_symbol = "[➜](bold red)"
+
+[python]
+format = " [venv:$virtualenv]($style)"
+style = "bold blue"
+detect_extensions = []
+detect_files = []
+detect_folders = []
+detect_env_vars = ["VIRTUAL_ENV"]

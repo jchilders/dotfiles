@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-# Importing music files (flac/mp3) into the Music app's library. Adds artwork if present.
+# Imports music files (flac/mp3) into the Music app's library. Adds artwork if present.
 
 require 'find'
 require 'fileutils'
@@ -29,6 +29,15 @@ ARTWORK_PREFERRED = %w[jpg jpeg png].flat_map { |ext|
 
 NORM_TARGET_LUFS = -14.0
 NORM_MAX_TP_DBTP =  -1.0
+ALBUM_PROGRESS_WIDTH = 24
+PROGRESS_SPINNER_FRAMES = %w[⠋ ⠙ ⠚ ⠞ ⠖ ⠦ ⠴ ⠲ ⠳ ⠓].freeze
+ANSI_STYLES = {
+  reset: "\e[0m",
+  bold:  "\e[1m",
+  dim:   "\e[2m",
+  green: "\e[32m",
+  cyan:  "\e[36m",
+}.freeze
 
 # Persists import and normalization history to an SQLite database under
 # $XDG_STATE_HOME/music_import/history.db (default: ~/.local/state/...).
@@ -133,9 +142,10 @@ end
 
 class MusicImporter
   def initialize(options)
-    @options  = options
-    @counters = Hash.new(0)
-    @db       = ImportDatabase.new
+    @options          = options
+    @counters         = Hash.new(0)
+    @db               = ImportDatabase.new
+    @current_progress = nil
   end
 
   def run(target_dir)
@@ -164,21 +174,20 @@ class MusicImporter
       #   2. convert — parallel ffmpeg encode for all files that need it
       #   3. finalize — sequential DB recording and Music import
       flac_work = plan_flacs(flacs, gain)
+      mp3_work  = plan_mp3s(mp3s)
+      progress  = start_album_progress(album_dir, files, flac_work, mp3_work)
+
       convert_pending(flac_work)
-      flac_work.each { |w| finalize_flac(w) }
-
-      mp3_work = plan_mp3s(mp3s)
-      mp3_work.each { |w| finalize_mp3(w) }
+      flac_work.each { |w| tick_album_progress(progress) if finalize_flac(w) }
+      mp3_work.each { |w| tick_album_progress(progress) if finalize_mp3(w) }
+      finish_album_progress(progress)
     end
-
-    print_summary
   end
 
   private
 
   # Removes files already recorded as imported in the DB from the given list,
-  # updating counters so the summary stays accurate. Skipped files are reported
-  # as a single line rather than per-file to keep output readable for large runs.
+  # updating counters so later album progress reflects only work left to do.
   def filter_known_imported(files)
     return files unless @options[:import]
 
@@ -194,7 +203,6 @@ class MusicImporter
       @counters[:skipped] += 1
     end
 
-    puts "Skipping #{skipped.size} already-imported file(s) (per history db)"
     remaining
   end
 
@@ -209,7 +217,7 @@ class MusicImporter
 
   # Measures only FLACs that haven't already been normalized (per DB), then
   # returns a uniform dB gain targeting NORM_TARGET_LUFS for that subset.
-  def compute_album_gain(album_dir, flacs)
+  def compute_album_gain(_album_dir, flacs)
     pending = if @options[:overwrite]
       flacs
     else
@@ -218,14 +226,7 @@ class MusicImporter
     end
     return nil if pending.empty?
 
-    if @options[:dry_run]
-      puts "Album: #{album_dir}"
-      puts "  Would measure #{pending.size} FLAC(s) for album normalization"
-      return nil
-    end
-
-    puts "Album: #{album_dir}"
-    puts "  Measuring #{pending.size} FLAC(s) in parallel..."
+    return nil if @options[:dry_run]
 
     measurements = measure_lufs_parallel(pending)
     return nil unless measurements
@@ -235,7 +236,6 @@ class MusicImporter
     raw_gain = NORM_TARGET_LUFS - mean_i
     gain     = [raw_gain, NORM_MAX_TP_DBTP - max_tp].min.round(2)
 
-    puts "  Album loudness: #{'%.1f' % mean_i} LUFS → applying #{gain} dB"
     gain
   end
 
@@ -268,7 +268,7 @@ class MusicImporter
       tp  = out[/"input_tp"\s*:\s*"([^"]+)"/, 1]&.to_f
 
       unless i && tp
-        warn "  Warning: could not measure #{file.basename}, skipping album normalization"
+        warn_line("Warning: could not measure #{file.basename}, skipping album normalization")
         return nil
       end
 
@@ -310,38 +310,32 @@ class MusicImporter
       source  = meta[:source]
       title   = meta[:title]
       artist  = meta[:artist]
+      album   = meta[:album]
       output  = source.sub_ext('.m4a')
       artwork = find_artwork(source.dirname)
 
       @counters[:found] += 1
       @counters[:flac]  += 1
-      puts "Processing: #{source}"
 
       if @options[:import] && in_music[idx]
-        puts "  Already in Music library, skipping"
         @counters[:skipped] += 1
         @db.record_import(source, title: title, artist: artist)
+        remove_converted_copy(output)
         next
       end
 
       already_normalized = @options[:normalize] && normalized_set.include?(source.to_s)
-      base = { source: source, output: output, artwork: artwork, title: title, artist: artist }
+      base = { source: source, output: output, artwork: artwork, title: title, artist: artist, album: album }
 
       if already_normalized
-        puts "  Already normalized (per history db), reusing: #{output}"
         @counters[:reused] += 1
         base.merge(gain_db: nil, needs_conversion: false, ready: true)
       elsif output.exist? && !@options[:overwrite]
-        puts "  Reusing existing file: #{output}"
         @counters[:reused] += 1
         base.merge(gain_db: nil, needs_conversion: false, ready: true)
       elsif @options[:dry_run]
-        puts "  Would convert to: #{output}"
-        puts(artwork ? "  Would use artwork: #{artwork}" : "  No artwork found in: #{source.dirname}")
-        puts "  Would apply gain: #{gain} dB" if gain
         base.merge(gain_db: gain, needs_conversion: false, ready: true)
       else
-        puts(artwork ? "  Using artwork: #{artwork}" : "  No artwork found in: #{source.dirname}")
         tmp = File.join(Dir.tmpdir, "music-import-#{$$}-#{rand(1_000_000)}.m4a")
         base.merge(gain_db: gain, needs_conversion: true, ready: false, tmp_path: tmp)
       end
@@ -364,16 +358,13 @@ class MusicImporter
     metadata.each_with_index.filter_map do |meta, idx|
       @counters[:found] += 1
       @counters[:mp3]   += 1
-      puts "Processing: #{meta[:source]}"
 
       if @options[:import] && in_music[idx]
-        puts "  Already in Music library, skipping"
         @counters[:skipped] += 1
         @db.record_import(meta[:source], title: meta[:title], artist: meta[:artist])
         next
       end
 
-      puts "  Importing existing MP3"
       @counters[:import_only] += 1
       meta
     end
@@ -448,8 +439,6 @@ class MusicImporter
     pending = work_items.select { |w| w[:needs_conversion] }
     return if pending.empty?
 
-    puts "  Converting #{pending.size} FLAC(s) in parallel..."
-
     Tempfile.create(['parallel-jobs', '.log']) do |joblog|
       stdin_data = pending.map { |w| build_convert_cmd(w) }.join("\n") + "\n"
       Open3.capture3(
@@ -509,11 +498,10 @@ class MusicImporter
   def finalize_flac(work)
     if work[:needs_conversion]
       if work[:converted]
-        puts "  Wrote: #{work[:output]}"
         @counters[:converted] += 1
         @db.record_normalization(work[:source], gain_db: work[:gain_db]) if work[:gain_db]
       else
-        warn "  Conversion failed: #{work[:source].basename}"
+        warn_line("Conversion failed: #{work[:source].basename}")
         @counters[:failed] += 1
         return
       end
@@ -529,9 +517,11 @@ class MusicImporter
 
     if @options[:delete_flac] && !@options[:dry_run] && work[:ready] && import_ok
       work[:source].delete
-      puts "  Deleted source FLAC"
       @counters[:deleted] += 1
     end
+
+    remove_converted_copy(work[:output]) if import_ok && @options[:import]
+    import_ok
   end
 
   # Finalize phase for MP3s: just imports into Music.
@@ -546,17 +536,25 @@ class MusicImporter
     return true  unless @options[:import]
 
     if @options[:dry_run]
-      puts "  Would import into Music"
       true
     elsif import_into_music(path.expand_path)
-      puts "  Imported into Music"
       @counters[:imported] += 1
       @db.record_import(source || path, title: title, artist: artist)
       true
     else
-      warn "  Music import failed; file is still available at #{path}"
+      warn_line("Music import failed; file is still available at #{path}")
       false
     end
+  end
+
+  def remove_converted_copy(path)
+    return if @options[:dry_run]
+    return unless path.exist?
+
+    path.delete
+    @counters[:removed_converted] += 1
+  rescue SystemCallError => e
+    warn_line("Could not remove converted copy #{path}: #{e.message}")
   end
 
   def import_into_music(path)
@@ -578,7 +576,7 @@ class MusicImporter
   def ffprobe_tags(file)
     output, status = Open3.capture2e(
       'ffprobe', '-v', 'quiet',
-      '-show_entries', 'format_tags=title,artist',
+      '-show_entries', 'format_tags=title,artist,album',
       '-of', 'default=noprint_wrappers=1',
       file.to_s
     )
@@ -598,7 +596,7 @@ class MusicImporter
     threads = files.map do |source|
       Thread.new do
         tags = @options[:import] ? ffprobe_tags(source) : {}
-        { source: source, title: tags['title'], artist: tags['artist'] }
+        { source: source, title: tags['title'], artist: tags['artist'], album: tags['album'] }
       end
     end
     threads.map(&:value)
@@ -623,21 +621,113 @@ class MusicImporter
     end
   end
 
-  def print_summary
-    puts
-    puts 'Summary'
-    puts "  Files found:      #{@counters[:found]}"
-    puts "  FLAC files:       #{@counters[:flac]}"
-    puts "  MP3 files:        #{@counters[:mp3]}"
-    puts "  Converted:        #{@counters[:converted]}"
-    puts "  Reused .m4a:      #{@counters[:reused]}"
-    puts "  Import-only MP3s: #{@counters[:import_only]}"
-    if @options[:import]
-      puts "  Skipped:          #{@counters[:skipped]}"
-      puts "  Imported:         #{@counters[:imported]}"
+  def start_album_progress(album_dir, files, flac_work, mp3_work)
+    return unless @options[:import]
+
+    pending = flac_work.size + mp3_work.size
+    return if pending.zero?
+
+    work_items = flac_work + mp3_work
+    progress = {
+      album:      album_name_for(album_dir, work_items),
+      artist:     artist_name_for(work_items),
+      total:      files.size,
+      current:    files.size - pending,
+      line_width: 0
+    }
+    render_album_progress(progress)
+    progress
+  end
+
+  def tick_album_progress(progress)
+    return unless progress
+
+    progress[:current] += 1
+    render_album_progress(progress)
+  end
+
+  def finish_album_progress(progress)
+    return unless progress
+
+    clear_progress_line
+    return unless progress[:current] == progress[:total]
+
+    verb = @options[:dry_run] ? 'would be imported into Music' : 'imported into Music'
+    message = "#{progress[:album]} by #{progress[:artist]} (#{progress[:total]} songs) #{verb}"
+    puts(color_enabled? ? paint(message, :green, :bold) : message)
+  end
+
+  def render_album_progress(progress)
+    filled = (progress[:current] * ALBUM_PROGRESS_WIDTH / progress[:total].to_f).floor
+    empty  = ALBUM_PROGRESS_WIDTH - filled
+    spinner = PROGRESS_SPINNER_FRAMES[progress[:current] % PROGRESS_SPINNER_FRAMES.length]
+    bar_fill = '█' * filled
+    bar_rest = '░' * empty
+    count = "#{progress[:current]}/#{progress[:total]}"
+    plain_line = "#{spinner} [#{bar_fill}#{bar_rest}] #{count} #{progress[:album]} by #{progress[:artist]}"
+    line = if color_enabled?
+      [
+        paint(spinner, :cyan),
+        ' ',
+        paint('[', :dim),
+        paint(bar_fill, :green),
+        paint(bar_rest, :dim),
+        paint(']', :dim),
+        ' ',
+        paint(count, :bold),
+        ' ',
+        paint(progress[:album], :cyan, :bold),
+        ' ',
+        paint('by', :dim),
+        ' ',
+        paint(progress[:artist], :dim),
+      ].join
+    else
+      plain_line
     end
-    puts "  Deleted FLACs:    #{@counters[:deleted]}" if @options[:delete_flac]
-    puts "  Failures:         #{@counters[:failed]}"
+
+    progress[:line_width] = [progress[:line_width], plain_line.length].max
+    padding = ' ' * (progress[:line_width] - plain_line.length)
+    @current_progress = progress
+    $stdout.print("\r#{line}#{padding}")
+    $stdout.flush
+  end
+
+  def clear_progress_line
+    return unless @current_progress
+
+    $stdout.print("\r#{' ' * @current_progress[:line_width]}\r")
+    $stdout.flush
+    @current_progress = nil
+  end
+
+  def warn_line(message)
+    clear_progress_line
+    warn message
+  end
+
+  def color_enabled?
+    $stdout.tty? && ENV['NO_COLOR'].nil? && ENV.fetch('TERM', 'dumb') != 'dumb'
+  end
+
+  def paint(text, *styles)
+    return text unless color_enabled?
+    return text if text.empty?
+
+    prefix = styles.filter_map { |style| ANSI_STYLES[style] }.join
+    "#{prefix}#{text}#{ANSI_STYLES[:reset]}"
+  end
+
+  def album_name_for(album_dir, work_items)
+    work_items.lazy.map { |w| w[:album].to_s.strip }.find { |name| !name.empty? } || album_dir.basename.to_s
+  end
+
+  def artist_name_for(work_items)
+    artists = work_items.map { |w| w[:artist].to_s.strip }.reject(&:empty?).uniq
+    return 'Unknown Artist' if artists.empty?
+    return artists.first if artists.one?
+
+    'Various Artists'
   end
 end
 
