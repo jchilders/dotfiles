@@ -6,9 +6,11 @@
 # single domain (e.g., example.com)
 #
 # Usage:
-#   hostblocker --enable   # enable / update blocklist
-#   hostblocker --disable  # disable blocklist
-#   hostblocker --status   # show blocked domains and their IPs
+#   hostblocker enable       # enable / update blocklist
+#   hostblocker disable      # disable blocklist
+#   hostblocker reload       # re-resolve all domains and re-apply blocklist
+#   hostblocker status       # show blocked domains and their IPs
+#   hostblocker edit-config  # open blocked-domains in $EDITOR
 #
 # Motivation: Keep my muscle memory/ADHD from opening reddit etc. when I should
 # be working :)
@@ -49,7 +51,7 @@ format_blocking_message() {
   echo "Blocking $ip_count $ip_text for $domain_count $domain_text from $BLOCKLIST_FILE"
 }
 
-if [[ "$1" == "--disable" ]]; then
+if [[ "$1" == "disable" ]]; then
   echo "Disabling blocklist..."
   sudo pfctl -t "$TABLE_NAME" -T flush >/dev/null 2>&1
   echo "# blocklist disabled" | sudo pfctl -f - >/dev/null 2>&1
@@ -57,25 +59,25 @@ if [[ "$1" == "--disable" ]]; then
   exit 0
 fi
 
-if [[ "$1" == "--status" ]]; then
+if [[ "$1" == "status" ]]; then
   if [[ ! -f "$BLOCKLIST_FILE" ]]; then
     echo "Error: $BLOCKLIST_FILE not found."
     exit 1
   fi
-  
+
   # Check if blocking is enabled
   if sudo pfctl -t "$TABLE_NAME" -T show >/dev/null 2>&1 && [[ -n "$(sudo pfctl -t "$TABLE_NAME" -T show 2>/dev/null)" ]]; then
     # Count domains and IPs
     domain_count=$(grep -v '^#' "$BLOCKLIST_FILE" | grep -v '^$' | wc -l | tr -d ' ')
     ip_count=$(sudo pfctl -t "$TABLE_NAME" -T show 2>/dev/null | wc -l | tr -d ' ')
-    
+
     echo "Status: ENABLED"
     format_blocking_message "$ip_count" "$domain_count"
     echo
-    
+
     printf "%-20s %s\n" "DOMAIN" "IPS"
     printf "%-20s %s\n" "------" "---"
-    
+
     while IFS= read -r domain || [[ -n "$domain" ]]; do
       [[ -z "$domain" || "$domain" =~ ^# ]] && continue
       ips=($(dig +short "$domain" | grep -E '^[0-9.]+$'))
@@ -91,8 +93,24 @@ if [[ "$1" == "--status" ]]; then
   exit 0
 fi
 
-if [[ "$1" != "--enable" ]]; then
-  echo "Usage: hostblocker [--enable|--disable|--status]"
+if [[ "$1" == "edit-config" ]]; then
+  mkdir -p "$CONFIG_DIR"
+  ${EDITOR:-vi} "$BLOCKLIST_FILE"
+  exit 0
+fi
+
+FORCE_RELOAD=false
+if [[ "$1" == "reload" ]]; then
+  FORCE_RELOAD=true
+elif [[ "$1" != "enable" ]]; then
+  echo "Usage: hostblocker <command>"
+  echo
+  echo "Commands:"
+  echo "  enable       Enable / update blocklist"
+  echo "  disable      Disable blocklist"
+  echo "  reload       Re-resolve all domains and re-apply blocklist"
+  echo "  status       Show blocked domains and their IPs"
+  echo "  edit-config  Open blocked-domains in \$EDITOR"
   exit 1
 fi
 
@@ -101,15 +119,22 @@ if [[ ! -f "$BLOCKLIST_FILE" ]]; then
   exit 1
 fi
 
+# On reload, flush the pf table and clear the DNS cache so everything is re-resolved
+if $FORCE_RELOAD; then
+  echo "Reloading blocklist..."
+  sudo pfctl -t "$TABLE_NAME" -T flush >/dev/null 2>&1
+  [[ -f "$CACHE_DB" ]] && sqlite3 "$CACHE_DB" "DELETE FROM dns_cache;"
+fi
+
 # Check if already enabled with same domains
-if sudo pfctl -t "$TABLE_NAME" -T show >/dev/null 2>&1 && [[ -n "$(sudo pfctl -t "$TABLE_NAME" -T show 2>/dev/null)" ]]; then
+if ! $FORCE_RELOAD && sudo pfctl -t "$TABLE_NAME" -T show >/dev/null 2>&1 && [[ -n "$(sudo pfctl -t "$TABLE_NAME" -T show 2>/dev/null)" ]]; then
   # Count domains in blocklist
   domain_count=$(grep -v '^#' "$BLOCKLIST_FILE" | grep -v '^$' | wc -l | tr -d ' ')
   if (( domain_count == 0 )); then
     echo "blocking already enabled"
     exit 0
   fi
-  
+
   # Quick check - if we have blocked IPs and domains in file, assume already enabled
   echo "blocking already enabled"
   exit 0
@@ -151,7 +176,7 @@ while IFS= read -r domain || [[ -n "$domain" ]]; do
       echo "  (no A records found)"
     fi
   fi
-  
+
   if [[ -n "$ips" ]]; then
     IPLIST+=($ips)
     ((DOMAIN_COUNT++))
