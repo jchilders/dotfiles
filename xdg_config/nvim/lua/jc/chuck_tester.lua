@@ -1,4 +1,4 @@
-local emu = require("jc.emu")
+local emu = require("jc.terminal")
 
 local M = {}
 

@@ -1,6 +1,6 @@
 local uv = vim.loop
 
-local emu = require("jc.emu")
+local emu = require("jc.terminal")
 
 local M = {}
 
@@ -93,7 +93,7 @@ function M.visual_selection_range(tabnr)
   tabnr = tabnr or vim.api.nvim_get_current_tabpage()
   local winnr = vim.api.nvim_tabpage_get_win(tabnr)
 
-  local in_visual_mode = vim.fn.mode():match("[vV]")
+  local in_visual_mode = vim.fn.mode():match("[vV]")
 
   if in_visual_mode then
     local start_pos = vim.fn.getpos("v")

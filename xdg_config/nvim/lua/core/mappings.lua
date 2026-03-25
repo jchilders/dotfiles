@@ -1,7 +1,7 @@
-local remap = require("utils").map_global
+local remap = require("jc.utils").map_global
 local scratcher = require("jc.scratcher")
-local emu_utils = require("jc.emu-utils")
-local emu = require("jc.emu")
+local emu_utils = require("jc.terminal.shared")
+local emu = require("jc.terminal")
 
 TelescopeMapArgs = TelescopeMapArgs or {}
 
@@ -106,26 +106,11 @@ vim.keymap.set("n", "<leader>W", "<cmd>wqa<CR>")
 -- Zenish-mode. Hides gutter, indentation indicators, and LSP messages. Keeps statusline.
 vim.keymap.set("n", "<leader>z", require("jc.utils").toggle_zenish)
 
-local gitsigns_ok, gitsigns = pcall(require, "gitsigns")
-if gitsigns_ok then
-  vim.keymap.set("n", "<leader>ga", gitsigns.stage_hunk, { desc = "Stage change" })
-  vim.keymap.set("n", "<leader>gA", gitsigns.stage_buffer, { desc = "Stage all changes made to current buffer" })
-  vim.keymap.set("n", "<leader>gb", gitsigns.blame_line, { desc = "git blame" })
-  vim.keymap.set("n", "<leader>gp", gitsigns.prev_hunk, { desc = "Go to previous unstaged hunk" })
-  vim.keymap.set("n", "<leader>gP", gitsigns.preview_hunk, { desc = "Preview hunk" })
-  vim.keymap.set("n", "<leader>gn", gitsigns.next_hunk, { desc = "Go to next unstaged hunk" })
-  vim.keymap.set("n", "<leader>gu", gitsigns.reset_hunk, { desc = "Undo changes to current hunk" })
-  vim.keymap.set("n", "<leader>gU", gitsigns.reset_buffer, { desc = "Undo all changes made to current buffer" })
-  vim.keymap.set("n", "<leader>gq", function()
-                                      gitsigns.setqflist("all")
-                                    end, { desc = "Set quickfix list to unstaged changes" })
-end
-
 -- Open Scratch file for this project
 vim.keymap.set("n", "<leader>rs", scratcher.split_open_scratch_file)
 
 -- Lua Inspect current line
-remap("n", "<leader>li", "<cmd>lua print(require('utils.inspect').inspect(loadstring(\"return \" .. vim.fn.getline('.'))()))<CR>")
+remap("n", "<leader>li", "<cmd>lua print(vim.inspect(loadstring(\"return \" .. vim.fn.getline('.'))()))<CR>")
 
 -- Send the current line to the pane to the left
 vim.keymap.set("n", "<leader>sh", emu_utils.send_line_left)
@@ -232,7 +217,7 @@ remap("n", "<leader>et", "<cmd>wa<CR><cmd>lua require('jc.chuck_tester').edit_mr
 remap("v", "<C-c>", '"+y')
 
 -- quickfix
-vim.keymap.set("n", "<leader>qf", require('utils').toggle_qf)
+vim.keymap.set("n", "<leader>qf", require('jc.utils').toggle_qf)
 remap("n", "<leader>qn", "<cmd>cnext<CR>")
 remap("n", "<leader>qp", "<cmd>cprev<CR>")
 
@@ -301,22 +286,6 @@ remap("n", "<space>wl", "<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_f
 map_ctrlo_tele("t", "lsp_document_symbols")
 -- Big T -> Search list of symbols (tags) from entire workspace
 map_ctrlo_tele("T", "lsp_workspace_symbols")
-
--- harpoon
-local harpoon_ok, harpoon = pcall(require, "harpoon")
-if harpoon_ok then
-  vim.keymap.set("n", "<leader>ha", function() harpoon:list():add() end)
-  -- open list of files marked as harpooned
-  vim.keymap.set("n", "<leader>hl", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
-  -- ctrl-h opens the first harpooned file, ctrl-j opens the second harpooned file...
-  vim.keymap.set("n", "<C-h>", function() harpoon:list():select(1) end)
-  vim.keymap.set("n", "<C-j>", function() harpoon:list():select(2) end)
-  vim.keymap.set("n", "<C-k>", function() harpoon:list():select(3) end)
-  vim.keymap.set("n", "<C-l>", function() harpoon:list():select(4) end)
-  vim.keymap.set("n", "<C-;>", function() harpoon:list():select(5) end)
-else
-  vim.notify("Problem when loading Harpoon", vim.log.levels.WARN, { title = "mappings.lua" })
-end
 
 map_ctrlo_tele("rc", "find_files", { search_dir = "app/controllers" })
 map_ctrlo_tele("rm", "find_files", { search_dir = "app/models" })
