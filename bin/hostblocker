@@ -1,206 +1,363 @@
-#!/bin/zsh
-# hostblocker
-#
-# Reads domains from $XDG_CONFIG_HOME/hostblocker/blocked-domains and blocks
-# them from being accessible. Each line in blocked-domains should contain a
-# single domain (e.g., example.com)
-#
-# Usage:
-#   hostblocker enable       # enable / update blocklist
-#   hostblocker disable      # disable blocklist
-#   hostblocker reload       # re-resolve all domains and re-apply blocklist
-#   hostblocker status       # show blocked domains and their IPs
-#   hostblocker edit-config  # open blocked-domains in $EDITOR
-#
-# Motivation: Keep my muscle memory/ADHD from opening reddit etc. when I should
-# be working :)
+#!/usr/bin/env ruby
+# frozen_string_literal: true
 
-CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/hostblocker"
-DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/hostblocker"
-BLOCKLIST_FILE="$CONFIG_DIR/blocked-domains"
-CACHE_DB="$DATA_DIR/dns_cache.db"
-TABLE_NAME="blocked"
-RULE_FILE="/tmp/pf-blocklist.conf"
-TTL_SECONDS=86400  # 24 hours
+require 'fileutils'
+require 'open3'
+require 'shellwords'
+require 'set'
 
-init_cache() {
-  mkdir -p "$DATA_DIR"
-  sqlite3 "$CACHE_DB" "CREATE TABLE IF NOT EXISTS dns_cache (domain TEXT PRIMARY KEY, ips TEXT, timestamp INTEGER);"
-}
+class CommandError < StandardError; end
 
-get_cached_ips() {
-  local domain="$1"
-  local cutoff=$(($(date +%s) - TTL_SECONDS))
-  sqlite3 "$CACHE_DB" "SELECT ips FROM dns_cache WHERE domain='$domain' AND timestamp > $cutoff;" 2>/dev/null
-}
+class DnsCache
+  TABLE_NAME = 'dns_cache'
 
-cache_ips() {
-  local domain="$1"
-  local ips="$2"
-  local timestamp=$(date +%s)
-  sqlite3 "$CACHE_DB" "INSERT OR REPLACE INTO dns_cache (domain, ips, timestamp) VALUES ('$domain', '$ips', $timestamp);"
-}
+  def initialize(path:, ttl_seconds:)
+    @path = path
+    @ttl_seconds = ttl_seconds
+  end
 
-format_blocking_message() {
-  local ip_count="$1"
-  local domain_count="$2"
-  local ip_text="IP"
-  local domain_text="domain"
-  (( ip_count != 1 )) && ip_text="IPs"
-  (( domain_count != 1 )) && domain_text="domains"
-  echo "Blocking $ip_count $ip_text for $domain_count $domain_text from $BLOCKLIST_FILE"
-}
+  def init!
+    FileUtils.mkdir_p(File.dirname(@path))
+    sqlite(<<~SQL)
+      CREATE TABLE IF NOT EXISTS #{TABLE_NAME} (
+        domain TEXT PRIMARY KEY,
+        ips TEXT,
+        timestamp INTEGER
+      );
+    SQL
+  end
 
-if [[ "$1" == "disable" ]]; then
-  echo "Disabling blocklist..."
-  sudo pfctl -t "$TABLE_NAME" -T flush >/dev/null 2>&1
-  echo "# blocklist disabled" | sudo pfctl -f - >/dev/null 2>&1
-  echo "blocking disabled"
-  exit 0
-fi
+  def fetch(domain)
+    cutoff = Time.now.to_i - @ttl_seconds
+    output, = sqlite(<<~SQL, allow_failure: true)
+      SELECT ips
+      FROM #{TABLE_NAME}
+      WHERE domain = #{sql_quote(domain)}
+        AND timestamp > #{cutoff};
+    SQL
 
-if [[ "$1" == "status" ]]; then
-  if [[ ! -f "$BLOCKLIST_FILE" ]]; then
-    echo "Error: $BLOCKLIST_FILE not found."
-    exit 1
-  fi
+    parse_ips(output.lines.first)
+  end
 
-  # Check if blocking is enabled
-  if sudo pfctl -t "$TABLE_NAME" -T show >/dev/null 2>&1 && [[ -n "$(sudo pfctl -t "$TABLE_NAME" -T show 2>/dev/null)" ]]; then
-    # Count domains and IPs
-    domain_count=$(grep -v '^#' "$BLOCKLIST_FILE" | grep -v '^$' | wc -l | tr -d ' ')
-    ip_count=$(sudo pfctl -t "$TABLE_NAME" -T show 2>/dev/null | wc -l | tr -d ' ')
+  def write(domain, ips)
+    sqlite(<<~SQL)
+      INSERT OR REPLACE INTO #{TABLE_NAME} (domain, ips, timestamp)
+      VALUES (
+        #{sql_quote(domain)},
+        #{sql_quote(ips.join(','))},
+        #{Time.now.to_i}
+      );
+    SQL
+  end
 
-    echo "Status: ENABLED"
-    format_blocking_message "$ip_count" "$domain_count"
-    echo
+  def clear!
+    return unless File.exist?(@path)
 
-    printf "%-20s %s\n" "DOMAIN" "IPS"
-    printf "%-20s %s\n" "------" "---"
+    sqlite("DELETE FROM #{TABLE_NAME};", allow_failure: true)
+  end
 
-    while IFS= read -r domain || [[ -n "$domain" ]]; do
-      [[ -z "$domain" || "$domain" =~ ^# ]] && continue
-      ips=($(dig +short "$domain" | grep -E '^[0-9.]+$'))
-      if [[ -n "$ips" ]]; then
-        printf "%-20s %s\n" "$domain" "${ips[*]}"
-      else
-        printf "%-20s %s\n" "$domain" "(no A records)"
-      fi
-    done < "$BLOCKLIST_FILE"
-  else
-    echo "Status: DISABLED"
-  fi
-  exit 0
-fi
+  private
 
-if [[ "$1" == "edit-config" ]]; then
-  mkdir -p "$CONFIG_DIR"
-  ${EDITOR:-vi} "$BLOCKLIST_FILE"
-  exit 0
-fi
+  def parse_ips(value)
+    value.to_s.strip.split(',').reject(&:empty?)
+  end
 
-FORCE_RELOAD=false
-if [[ "$1" == "reload" ]]; then
-  FORCE_RELOAD=true
-elif [[ "$1" != "enable" ]]; then
-  echo "Usage: hostblocker <command>"
-  echo
-  echo "Commands:"
-  echo "  enable       Enable / update blocklist"
-  echo "  disable      Disable blocklist"
-  echo "  reload       Re-resolve all domains and re-apply blocklist"
-  echo "  status       Show blocked domains and their IPs"
-  echo "  edit-config  Open blocked-domains in \$EDITOR"
-  exit 1
-fi
+  def sql_quote(value)
+    "'#{value.to_s.gsub("'", "''")}'"
+  end
 
-if [[ ! -f "$BLOCKLIST_FILE" ]]; then
-  echo "Error: $BLOCKLIST_FILE not found."
-  exit 1
-fi
+  def sqlite(sql, allow_failure: false)
+    stdout, stderr, status = Open3.capture3('sqlite3', @path, sql)
+    return [stdout, stderr] if status.success? || allow_failure
 
-# On reload, flush the pf table and clear the DNS cache so everything is re-resolved
-if $FORCE_RELOAD; then
-  echo "Reloading blocklist..."
-  sudo pfctl -t "$TABLE_NAME" -T flush >/dev/null 2>&1
-  [[ -f "$CACHE_DB" ]] && sqlite3 "$CACHE_DB" "DELETE FROM dns_cache;"
-fi
+    raise CommandError, stderr.empty? ? 'sqlite3 command failed' : stderr.strip
+  end
+end
 
-# Check if already enabled with same domains
-if ! $FORCE_RELOAD && sudo pfctl -t "$TABLE_NAME" -T show >/dev/null 2>&1 && [[ -n "$(sudo pfctl -t "$TABLE_NAME" -T show 2>/dev/null)" ]]; then
-  # Count domains in blocklist
-  domain_count=$(grep -v '^#' "$BLOCKLIST_FILE" | grep -v '^$' | wc -l | tr -d ' ')
-  if (( domain_count == 0 )); then
-    echo "blocking already enabled"
-    exit 0
-  fi
+class Hostblocker
+  CONFIG_DIR = File.join(ENV.fetch('XDG_CONFIG_HOME', File.join(Dir.home, '.config')), 'hostblocker')
+  DATA_DIR = File.join(ENV.fetch('XDG_DATA_HOME', File.join(Dir.home, '.local', 'share')), 'hostblocker')
+  BLOCKLIST_FILE = File.join(CONFIG_DIR, 'blocked-domains')
+  CACHE_DB = File.join(DATA_DIR, 'dns_cache.db')
+  PF_TABLE = 'blocked'
+  TTL_SECONDS = 86_400
+  IPV4_PATTERN = /\A\d{1,3}(?:\.\d{1,3}){3}\z/
+  ANSI_STYLES = {
+    reset: "\e[0m",
+    bold: "\e[1m",
+    dim: "\e[2m",
+    red: "\e[31m",
+    green: "\e[32m",
+    yellow: "\e[33m",
+    blue: "\e[34m",
+    magenta: "\e[35m",
+    cyan: "\e[36m"
+  }.freeze
 
-  # Quick check - if we have blocked IPs and domains in file, assume already enabled
-  echo "blocking already enabled"
-  exit 0
-fi
+  def initialize(command, editor: ENV.fetch('EDITOR', 'vi'))
+    @command = command
+    @editor = editor
+    @cache = DnsCache.new(path: CACHE_DB, ttl_seconds: TTL_SECONDS)
+  end
 
-init_cache
-typeset -a IPLIST
-typeset -A CURRENT_IPS
-typeset -i DOMAIN_COUNT=0
-
-# Get currently blocked IPs
-for ip in $(sudo pfctl -t "$TABLE_NAME" -T show 2>/dev/null); do
-  CURRENT_IPS[$ip]=1
-done
-
-while IFS= read -r domain || [[ -n "$domain" ]]; do
-  [[ -z "$domain" || "$domain" =~ ^# ]] && continue
-
-  cached_ips=$(get_cached_ips "$domain")
-  if [[ -n "$cached_ips" ]]; then
-    ips=(${(s:,:)cached_ips})
-    # Check if all IPs for this domain are already blocked
-    all_blocked=true
-    for ip in $ips; do
-      if [[ -z "${CURRENT_IPS[$ip]}" ]]; then
-        all_blocked=false
-        break
-      fi
-    done
-    if $all_blocked; then
-      continue
-    fi
-  else
-    echo "Resolving $domain..."
-    ips=($(dig +short "$domain" | grep -E '^[0-9.]+$'))
-    if [[ -n "$ips" ]]; then
-      cache_ips "$domain" "${(j:,:)ips}"
+  def run
+    case @command
+    when 'enable'
+      enable
+    when 'reload'
+      enable(force_reload: true)
+    when 'disable'
+      disable
+    when 'status'
+      status
+    when 'edit-config'
+      edit_config
     else
-      echo "  (no A records found)"
-    fi
-  fi
+      usage!
+    end
+  end
 
-  if [[ -n "$ips" ]]; then
-    IPLIST+=($ips)
-    ((DOMAIN_COUNT++))
-  fi
-done < "$BLOCKLIST_FILE"
+  private
 
-if (( ${#IPLIST[@]} == 0 )); then
-  echo "No IPs resolved — nothing to update."
-  exit 0
-fi
+  def enable(force_reload: false)
+    ensure_blocklist!
+    domains = blocked_domains
 
-cat > "$RULE_FILE" <<EOF
-table <$TABLE_NAME> persist
-block drop out quick to <$TABLE_NAME>
-EOF
+    @cache.init!
+    puts title_line(force_reload ? 'Reloading blocklist' : 'Updating blocklist', tone: force_reload ? :yellow : :cyan)
 
-if ! sudo pfctl -f "$RULE_FILE" >/dev/null 2>&1; then
-  echo "Error loading pf rules"
-  exit 1
-fi
+    if force_reload
+      flush_pf_table
+      @cache.clear!
+    end
 
-if ! sudo pfctl -t "$TABLE_NAME" -T replace "${IPLIST[@]}" >/dev/null 2>&1; then
-  echo "Error updating pf table"
-  exit 1
-fi
+    current_ips = pf_table_ips.to_set
+    desired_ips = []
+    resolved_domain_count = 0
 
-format_blocking_message "${#IPLIST[@]}" "$DOMAIN_COUNT"
+    domains.each do |domain|
+      ips = resolved_ips_for(domain, refresh: force_reload)
+      next if ips.empty?
+
+      desired_ips.concat(ips)
+      resolved_domain_count += 1
+    end
+
+    desired_ips = desired_ips.uniq
+
+    if !force_reload && blocking_enabled?(current_ips) && desired_ips.to_set == current_ips
+      puts status_line('Already enabled', tone: :green)
+      return
+    end
+
+    if desired_ips.empty?
+      puts status_line('No IPs resolved; nothing to update', tone: :yellow)
+      return
+    end
+
+    load_pf_rules
+    replace_pf_table(desired_ips)
+
+    puts status_line('Blocking active', tone: :green)
+    puts "  #{blocking_message(desired_ips.size, resolved_domain_count)}"
+  end
+
+  def disable
+    puts title_line('Disabling blocklist', tone: :yellow)
+    flush_pf_table
+    run_command('sudo', 'pfctl', '-f', '-', stdin_data: "# blocklist disabled\n", allow_failure: true)
+    puts status_line('Blocking disabled', tone: :yellow)
+  end
+
+  def status
+    ensure_blocklist!
+
+    current_ips = pf_table_ips
+    if current_ips.empty?
+      puts title_line('Hostblocker status', tone: :blue)
+      puts status_line('DISABLED', tone: :yellow)
+      return
+    end
+
+    puts title_line('Hostblocker status', tone: :blue)
+    puts status_line('ENABLED', tone: :green)
+    puts "  #{blocking_summary(current_ips.size, blocked_domains.size)}"
+    puts "  #{paint(BLOCKLIST_FILE, :dim)}"
+    puts
+    puts table_row('DOMAIN', 'IPS', left_styles: %i[bold cyan], right_styles: %i[bold cyan])
+    puts table_row('------', '---', left_styles: [:dim], right_styles: [:dim])
+
+    blocked_domains.each do |domain|
+      ips = resolve_domain(domain)
+      row = if ips.empty?
+        paint('(no A records)', :dim, :yellow)
+      else
+        ips.join(paint(' • ', :dim))
+      end
+
+      puts table_row(domain, row, left_styles: [:bold])
+    end
+  end
+
+  def edit_config
+    FileUtils.mkdir_p(CONFIG_DIR)
+    editor_command = Shellwords.split(@editor)
+    editor_command = ['vi'] if editor_command.empty?
+    exec(*editor_command, BLOCKLIST_FILE)
+  end
+
+  def ensure_blocklist!
+    return if File.exist?(BLOCKLIST_FILE)
+
+    raise CommandError, "Error: #{BLOCKLIST_FILE} not found."
+  end
+
+  def blocked_domains
+    @blocked_domains ||= File.readlines(BLOCKLIST_FILE, chomp: true).filter_map do |line|
+      domain = line.strip
+      next if domain.empty? || domain.start_with?('#')
+
+      domain
+    end
+  end
+
+  def resolved_ips_for(domain, refresh:)
+    cached_ips = refresh ? [] : @cache.fetch(domain)
+    if cached_ips.any?
+      puts step_line('cached', domain, tone: :blue)
+      return cached_ips
+    end
+
+    puts step_line('resolve', domain, tone: :magenta)
+    resolved_ips = resolve_domain(domain)
+
+    if resolved_ips.empty?
+      puts "  #{paint('no A records found', :dim, :yellow)}"
+    else
+      @cache.write(domain, resolved_ips)
+      puts "  #{paint(resolved_ips.join(' '), :dim)}"
+    end
+
+    resolved_ips
+  end
+
+  def resolve_domain(domain)
+    stdout, = run_command('dig', '+short', domain, allow_failure: true)
+    stdout.lines.map(&:strip).grep(IPV4_PATTERN)
+  end
+
+  def pf_table_ips
+    stdout, = run_command('sudo', 'pfctl', '-t', PF_TABLE, '-T', 'show', allow_failure: true)
+    stdout.lines.map(&:strip).reject(&:empty?)
+  end
+
+  def blocking_enabled?(current_ips)
+    !current_ips.empty?
+  end
+
+  def flush_pf_table
+    run_command('sudo', 'pfctl', '-t', PF_TABLE, '-T', 'flush', allow_failure: true)
+  end
+
+  def load_pf_rules
+    pf_rules = <<~RULES
+      table <#{PF_TABLE}> persist
+      block drop out quick to <#{PF_TABLE}>
+    RULES
+
+    run_command('sudo', 'pfctl', '-f', '-', stdin_data: pf_rules, failure_message: 'Error loading pf rules')
+  end
+
+  def replace_pf_table(ips)
+    run_command(
+      'sudo',
+      'pfctl',
+      '-t',
+      PF_TABLE,
+      '-T',
+      'replace',
+      *ips,
+      failure_message: 'Error updating pf table'
+    )
+  end
+
+  def run_command(*command, stdin_data: nil, allow_failure: false, failure_message: nil)
+    stdout, stderr, status = Open3.capture3(*command, stdin_data: stdin_data)
+    return [stdout, stderr] if status.success? || allow_failure
+
+    message = failure_message || stderr.strip
+    message = "Command failed: #{command.join(' ')}" if message.nil? || message.empty?
+
+    raise CommandError, message
+  end
+
+  def blocking_message(ip_count, domain_count)
+    "Blocking #{ip_count} #{pluralize(ip_count, 'IP', 'IPs')} " \
+      "for #{domain_count} #{pluralize(domain_count, 'domain', 'domains')} " \
+      "from #{BLOCKLIST_FILE}"
+  end
+
+  def blocking_summary(ip_count, domain_count)
+    "Blocking #{ip_count} #{pluralize(ip_count, 'IP', 'IPs')} " \
+      "for #{domain_count} #{pluralize(domain_count, 'domain', 'domains')}"
+  end
+
+  def pluralize(count, singular, plural)
+    count == 1 ? singular : plural
+  end
+
+  def usage!
+    raise CommandError, <<~USAGE
+      #{title_line('Hostblocker', tone: :cyan)}
+
+      #{paint('Usage:', :bold)} hostblocker <command>
+
+      Commands:
+        #{paint('enable', :green)}       Enable / update blocklist
+        #{paint('disable', :yellow)}      Disable blocklist
+        #{paint('reload', :magenta)}       Re-resolve all domains and re-apply blocklist
+        #{paint('status', :blue)}       Show blocked domains and their IPs
+        #{paint('edit-config', :cyan)}  Open blocked-domains in $EDITOR
+    USAGE
+  end
+
+  def title_line(text, tone:)
+    "#{paint('==>', :bold, tone)} #{paint(text, :bold)}"
+  end
+
+  def status_line(text, tone:)
+    "#{paint('[hostblocker]', :bold, tone)} #{paint(text, :bold)}"
+  end
+
+  def step_line(action, domain, tone:)
+    "#{paint(action.upcase.ljust(7), :bold, tone)} #{paint(domain, :bold)}"
+  end
+
+  def table_row(left, right, width: 22, left_styles: [], right_styles: [])
+    formatted_left = paint(left.ljust(width), *left_styles)
+    formatted_right = paint(right, *right_styles)
+    "#{formatted_left} #{formatted_right}"
+  end
+
+  def paint(text, *styles)
+    return text unless color?
+
+    codes = styles.filter_map { |style| ANSI_STYLES[style] }.join
+    return text if codes.empty?
+
+    "#{codes}#{text}#{ANSI_STYLES[:reset]}"
+  end
+
+  def color?
+    return false if ENV.key?('NO_COLOR')
+    return true if ENV['CLICOLOR_FORCE'] == '1' || ENV['FORCE_COLOR'] == '1'
+
+    $stdout.tty?
+  end
+end
+
+begin
+  Hostblocker.new(ARGV.first).run
+rescue CommandError => e
+  abort e.message
+end
