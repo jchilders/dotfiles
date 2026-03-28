@@ -15,13 +15,27 @@ function __find_file() {
       bat --color always --style numbers --line-range :200 {}
     fi'
 
-  files=("${(@f)$(eval $cmd 2>/dev/null)}") || return 1
+  files=("${(@f)$(eval $cmd 2>/dev/null)}") || return 2
 
   if (( ${#files[@]} == 0 )); then
-    return 1
+    return 2
   fi
 
   found_file=$(print -l $files | fzf --ansi --multi --cycle --preview="$preview_cmd")
+  return $?  # 0 = selected, 130 = cancelled by user (ESC/Ctrl-C)
+}
+
+# Like __find_file but shows "No files found" message only when there are no files.
+# Silently returns non-zero when user cancels fzf (ESC/Ctrl-C).
+function __find_file_required() {
+  __find_file "$@"
+  local rc=$?
+  if (( rc == 2 )); then
+    __no_files_found
+  elif (( rc != 0 )); then
+    zle reset-prompt
+  fi
+  return $rc
 }
 
 function __no_files_found {
@@ -52,10 +66,7 @@ function __eval_found_file {
 }
 
 function __search_git_status_and_eval {
-  __find_file "sorted_status" || {
-    __no_files_found
-    return 1
-  }
+  __find_file_required "sorted_status" || return 1
   found_file=$(echo "$found_file" | awk ' { print $NF } ')
   __eval_found_file $1
 }
@@ -66,10 +77,7 @@ function __is_git_repo {
 
 function edit_file {
   if __is_git_repo; then
-    __find_file "fd --type=file --type=symlink" || {
-      __no_files_found
-      return 1
-    }
+    __find_file_required "fd --type=file --type=symlink" || return 1
     __eval_found_file "${EDITOR:-nvim}"
   else
     edit_any_file
@@ -81,44 +89,11 @@ bindkey -M viins '^o^o' edit_file
 
 # ANY file
 function edit_any_file {
-  __find_file "fd --type=file --type=symlink --hidden --no-ignore" || {
-    __no_files_found
-    return 1
-  }
+  __find_file_required "fd --type=file --type=symlink --hidden --no-ignore" || return 1
   __eval_found_file "${EDITOR:-nvim}"
 }
 zle -N edit_any_file
 bindkey -M viins '^oO' edit_any_file
-
-function edit_rails_controller {
-  __find_file "fd --type=file . 'app/controllers'" || {
-    __no_files_found
-    return 1
-  }
-  __eval_found_file "${EDITOR:-nvim}"
-}
-zle -N edit_rails_controller
-bindkey -M viins '^orc' edit_rails_controller
-
-function edit_rails_model {
-  __find_file "fd --type=file . 'app/models'" || {
-    __no_files_found
-    return 1
-  }
-  __eval_found_file "${EDITOR:-nvim}"
-}
-zle -N edit_rails_model
-bindkey -M viins '^orm' edit_rails_model
-
-function edit_rails_view {
-  __find_file "fd --type=file . 'app/views'" || {
-    __no_files_found
-    return 1
-  }
-  __eval_found_file "${EDITOR:-nvim}"
-}
-zle -N edit_rails_view
-bindkey -M viins '^orv' edit_rails_view
 
 function git_changed_files_curr_branch {
   # this xargs stuff is needed so it still works when you're in a subdirectory
@@ -134,10 +109,7 @@ function git_changed_files_curr_branch {
     fi
     return 0
   fi
-  __find_file "git diff --name-only main 2>/dev/null | xargs -I '{}' grealpath --relative-to=. $(git rev-parse --show-toplevel)/'{}'" || {
-    __no_files_found
-    return 1
-  }
+  __find_file_required "git diff --name-only main 2>/dev/null | xargs -I '{}' grealpath --relative-to=. $(git rev-parse --show-toplevel)/'{}'" || return 1
   __eval_found_file "${EDITOR:-nvim}"
 }
 zle -N git_changed_files_curr_branch
@@ -191,10 +163,7 @@ bindkey -M viins '^oga' add_from_git_status
 
 # show diff of file selected from from git status
 function diff_from_git_status {
-  __find_file "sorted_status" || {
-    __no_files_found
-    return 1
-  }
+  __find_file_required "sorted_status" || return 1
   found_file=$(echo "$found_file" | awk ' { print $NF } ')
 
   if [[ ! -e "$found_file" ]]; then
