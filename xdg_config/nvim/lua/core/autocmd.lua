@@ -13,6 +13,25 @@ vim.filetype.add({
   extension = {
     metal = "metal",
   },
+  pattern = {
+    -- Detect shebang filetypes early (during BufReadPre) so treesitter
+    -- attaches after the filetype is set, avoiding a 0.12 race condition
+    -- where the highlighter hits a nil node. See neovim/neovim#27591.
+    [".*"] = {
+      function(_, bufnr)
+        local line = vim.api.nvim_buf_get_lines(bufnr, 0, 1, false)[1] or ""
+        if not line:match("^#!") then return end
+        local map = {
+          ruby = "ruby", python = "python", python3 = "python",
+          node = "javascript", bash = "bash", sh = "sh",
+          zsh = "zsh", perl = "perl",
+        }
+        local interp = line:match("[/ ](%w+)%s*$")
+        return map[interp]
+      end,
+      priority = -1,
+    },
+  },
 })
 
 vim.treesitter.language.register("cpp", "metal")

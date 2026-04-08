@@ -4,8 +4,7 @@ return {
   "nvim-treesitter/nvim-treesitter",
   enabled = true,
   dependencies = {
-    "p00f/nvim-ts-rainbow",
-    "nvim-treesitter/playground",
+    "HiPhish/rainbow-delimiters.nvim",
   },
   config = function()
     require("nvim-treesitter.configs").setup({
@@ -39,15 +38,6 @@ return {
           node_decremental = "<S-C-M>",
           scope_incremental = "grm",
         },
-      },
-      query_linter = {
-        enable = true,
-        use_virtual_text = true,
-        lint_events = { "bufwrite",
-"cursorhold" },
-      },
-      playground = {
-        enable = true,
       },
     })
   end

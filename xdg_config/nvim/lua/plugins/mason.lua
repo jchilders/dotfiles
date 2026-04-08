@@ -21,7 +21,6 @@ return {
         "pyright",
         "ruby_lsp",
         "rust_analyzer",
-        "solargraph",
         "sqlls",
         "tailwindcss",
         "taplo",
