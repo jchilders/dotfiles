@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+
+require 'open3'
+
+imgs = Dir.glob('**/*.{jpg,jpeg,png,webp}').select { |i| File.file?(i) }
+abort 'No images found.' if imgs.empty?
+
+img = imgs.sample
+system('timg', '-I', '--title=%b', img)
+
+puts img

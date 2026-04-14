@@ -1,0 +1,44 @@
+#!/usr/bin/env ruby
+# Get the current macOS wallpaper path.
+# If set to a single image, returns that path.
+# If set to a folder (shuffle mode), returns the most recently accessed image in that folder.
+
+require 'open3'
+
+IMAGE_EXTS = %w[.jpg .jpeg .png .heic .tiff .gif .webp].freeze
+
+desktop_path, err, status = Open3.capture3(
+  'osascript', '-e',
+  'tell application "System Events" to tell current desktop to get picture'
+)
+
+unless status.success?
+  warn "Failed to get wallpaper: #{err}"
+  exit 1
+end
+
+path = desktop_path.strip
+
+if File.file?(path)
+  puts path
+  exit 0
+end
+
+if File.directory?(path)
+  images = Dir.children(path)
+    .select { |f| IMAGE_EXTS.include?(File.extname(f).downcase) }
+    .map { |f| File.join(path, f) }
+    .sort_by { |f| File.atime(f) }
+    .reverse
+
+  if images.empty?
+    warn "No images found in wallpaper folder: #{path}"
+    exit 1
+  end
+
+  puts images.first
+  exit 0
+end
+
+warn "Unexpected wallpaper path: #{path}"
+exit 1

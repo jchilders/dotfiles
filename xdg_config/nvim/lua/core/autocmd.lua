@@ -14,6 +14,7 @@ vim.filetype.add({
     metal = "metal",
   },
   pattern = {
+    [".*/git/config"] = "gitconfig",
     -- Detect shebang filetypes early (during BufReadPre) so treesitter
     -- attaches after the filetype is set, avoiding a 0.12 race condition
     -- where the highlighter hits a nil node. See neovim/neovim#27591.

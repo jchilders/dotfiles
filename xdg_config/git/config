@@ -37,9 +37,10 @@
   ll = log --pretty=format:'%Cblue%h%Cgreen %s%C(yellow)%d%Creset' --decorate --numstat
   st = status -sb
 
-  # copy branch to pasteboard
+  # copy branch to pasteboard. see also: `gcb` shell alias
   cb = ! git rev-parse --abbrev-ref HEAD | tr -d '\n' | pbcopy
 
+  # discourage using checkout
   co = "!sh -c 'echo \"🚫 checkout is forbidden. Use git switch or git restore.\" >&2; exit 1'"
   checkout = "!sh -c 'echo \"🚫 checkout is forbidden. Use git switch or git restore.\" >&2; exit 1'"
 
@@ -52,10 +53,15 @@
   # undo last commit
   undo = !git reset --hard remotes/origin/$(git rev-parse --abbrev-ref HEAD)
 
-  # files changes on current branch from main
+  # list which tracked files have changed from main. no chrome. suitable for piping.
   df = !git diff --name-only main | xargs -I '{}' grealpath --relative-to=$PWD/$GIT_PREFIX $(git rev-parse --show-toplevel)/'{}'
 
-  ; git for-each-ref refs/heads/pr/* --format=\"%(refname)\" | while read ref ; do branch=${ref#refs/heads/} ; git branch -D $branch ; done
+  most-chgd = !git log --format=format: --name-only --since='1 year ago' | sort | uniq -c | sort -nr | head -20
+
+  contribs = shortlog -sn --no-merges
+
+  bug-clusters = !git log -i -E --grep='fix|bug|broken' --name-only --format='' | sort | uniq -c | sort -nr | head -20
+
 [user]
   name = James Childers
   email = james.childers@gmail.com
