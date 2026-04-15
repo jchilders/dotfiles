@@ -1,0 +1,102 @@
+#!/usr/bin/env ruby
+# nvim-plugin: manage neovim plugin enabled/disabled state for bisecting issues
+#
+# Usage:
+#   nvim-plugin list                  - list plugin files and their enabled status
+#   nvim-plugin disable <file>        - set enabled=false for all plugins in <file>.lua
+#   nvim-plugin enable <file>         - set enabled=true for all plugins in <file>.lua
+#   nvim-plugin disable-all           - disable all plugin files
+#   nvim-plugin enable-all            - enable all plugin files
+#
+# <file> can be a file stem (e.g. "editing"), a path, or a plugin name (e.g. "tpope/vim-sleuth")
+
+PLUGINS_DIR = File.expand_path("~/.config/nvim/lua/plugins")
+
+def plugin_files
+  Dir.glob("#{PLUGINS_DIR}/*.lua").sort
+end
+
+def resolve_file(name)
+  # Try exact stem match first
+  by_stem = "#{PLUGINS_DIR}/#{name}.lua"
+  return by_stem if File.exist?(by_stem)
+
+  # Try exact path
+  return name if File.exist?(name)
+
+  # Try matching against plugin name strings inside files
+  plugin_files.find { |f| File.read(f).include?("\"#{name}\"") }
+end
+
+def enabled_status(content)
+  states = content.scan(/\benabled\s*=\s*(true|false)/).map { |m| m[0] == "true" }
+  return "?" if states.empty?
+  return "~" if states.uniq.size > 1
+  states.first ? "on" : "off"
+end
+
+def set_enabled(file, value)
+  content = File.read(file)
+
+  new_content = if content.match?(/\benabled\s*=\s*(true|false)/)
+    # Update all existing enabled fields
+    content.gsub(/\benabled\s*=\s*(true|false)/, "enabled = #{value}")
+  else
+    # Insert enabled = <value> after each plugin name line (e.g. "author/plugin",)
+    content.gsub(/(^([ \t]+)"[^"]+\/[^"]+",[^\n]*\n)/) do
+      indent = $2
+      "#{$1}#{indent}enabled = #{value},\n"
+    end
+  end
+
+  File.write(file, new_content)
+  status = value == "false" ? "disabled" : "enabled"
+  puts "#{File.basename(file, '.lua').ljust(20)} #{status}"
+end
+
+def plugin_names(content)
+  # Match lines where a "author/plugin" string is the only meaningful content
+  # (plugin spec name lines in lazy.nvim), e.g.:  "tpope/vim-sleuth",
+  content.scan(/^\s+"([^"]+\/[^"]+)",?\s*$/).map(&:first)
+end
+
+def list
+  plugin_files.each do |f|
+    content = File.read(f)
+    status = enabled_status(content)
+    names = plugin_names(content)
+    puts "[#{status.center(3)}] #{File.basename(f, '.lua')}"
+    names.each { |n| puts "         #{n}" }
+  end
+end
+
+case ARGV[0]
+when "list"
+  list
+
+when "disable"
+  name = ARGV[1] or abort "Usage: nvim-plugin disable <file>"
+  file = resolve_file(name) or abort "No plugin file matching '#{name}'"
+  set_enabled(file, "false")
+
+when "enable"
+  name = ARGV[1] or abort "Usage: nvim-plugin enable <file>"
+  file = resolve_file(name) or abort "No plugin file matching '#{name}'"
+  set_enabled(file, "true")
+
+when "disable-all"
+  plugin_files.each { |f| set_enabled(f, "false") }
+
+when "enable-all"
+  plugin_files.each { |f| set_enabled(f, "true") }
+
+else
+  puts "Usage: nvim-plugin <list|disable|enable|disable-all|enable-all> [file]"
+  puts
+  puts "Examples:"
+  puts "  nvim-plugin list"
+  puts "  nvim-plugin disable editing"
+  puts "  nvim-plugin enable tpope/vim-sleuth"
+  puts "  nvim-plugin disable-all && nvim-plugin enable colorscheme"
+  exit 1
+end

@@ -135,6 +135,14 @@ return {
     vim.api.nvim_create_autocmd('LspAttach', {
       group = vim.api.nvim_create_augroup('UserLspConfig', {}),
       callback = function(ev)
+        -- nvim 0.11+ auto-sets formatexpr to LSP range-formatting when an LSP
+        -- with textDocument/rangeFormatting attaches. This breaks gq for comment
+        -- wrapping since the LSP formatter doesn't reflow text.
+        --
+        -- "1" (non-zero) tells neovim to fall back to the built-in C formatter,
+        -- which respects formatoptions/textwidth/comments. Using "" would still
+        -- allow subsequent LSP clients to overwrite via is_empty_or_default().
+        vim.bo[ev.buf].formatexpr = "1"
         local opts = { buffer = ev.buf }
         vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
         vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)

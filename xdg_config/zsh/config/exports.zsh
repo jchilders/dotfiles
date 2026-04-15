@@ -58,6 +58,7 @@ fi
 # Speed up new shells
 ABBR_AUTOLOAD=0
 
+export AWS_PAGER="bat --plain"
 export FZF_DEFAULT_COMMAND="fd"
 export FZF_DEFAULT_OPTS="--height 30% --border --tiebreak=index --info=inline"
 export NVM_DIR="$XDG_DATA_HOME/nvm"

@@ -1,0 +1,138 @@
+#!/usr/bin/env ruby
+# nvim-bisect: binary search over neovim plugin files to find which causes an error
+#
+# Usage: nvim-bisect [test-file]
+#
+# Disables all plugins, then binary searches to find the culprit.
+# You open nvim after each step and answer y/n.
+
+PLUGINS_DIR = File.expand_path("~/.config/nvim/lua/plugins")
+NVIM_PLUGIN  = File.expand_path("~/bin/nvim-plugin")
+TEST_FILE    = ARGV[0] || File.expand_path("~/bin/hostblocker")
+
+def plugin_files
+  Dir.glob("#{PLUGINS_DIR}/*.lua")
+     .sort
+     .reject { |f| File.basename(f) == "colorscheme.lua" }
+end
+
+def stem(file)
+  File.basename(file, ".lua")
+end
+
+def set_all(files, value)
+  files.each { |f| system("#{NVIM_PLUGIN} #{value} #{stem(f)} > /dev/null") }
+end
+
+def ask(prompt)
+  print prompt
+  $stdout.flush
+  loop do
+    ans = gets&.strip&.downcase
+    return ans if %w[y n].include?(ans)
+    print "Please answer y or n: "
+    $stdout.flush
+  end
+end
+
+def prompt_test(enabled_names)
+  puts "\n  Enabled: #{enabled_names.join(', ')}"
+  puts "  Open nvim: nvim #{TEST_FILE}"
+  ask("  Error? (y/n): ") == "y"
+end
+
+files = plugin_files
+puts "nvim-bisect — #{files.size} plugin files to search"
+puts "Test file: #{TEST_FILE}\n"
+
+# Baseline: all disabled
+puts "\n[baseline] Disabling all plugins..."
+set_all(files, "disable")
+puts "  Open nvim: nvim #{TEST_FILE}"
+if ask("  Error? (y/n): ") == "y"
+  puts "\nError appears with all plugins disabled — not a plugin issue."
+  set_all(files, "enable")
+  exit 1
+end
+puts "Good — no error with all plugins disabled.\n"
+
+# Binary search
+culprits = []
+remaining = files.dup
+
+while remaining.any?
+  if remaining.size == 1
+    f = remaining.first
+    puts "\n[test] #{stem(f)}"
+    system("#{NVIM_PLUGIN} enable #{stem(f)} > /dev/null")
+    if prompt_test([stem(f)] + culprits.map { |c| "#{stem(c)}(disabled)" })
+      culprits << f
+      system("#{NVIM_PLUGIN} disable #{stem(f)} > /dev/null")
+    end
+    remaining = []
+  else
+    mid = (remaining.size / 2.0).ceil
+    group_a = remaining[0...mid]
+    group_b = remaining[mid..]
+
+    puts "\n[bisect] Testing first half (#{group_a.size} of #{remaining.size} remaining):"
+    set_all(group_a, "enable")
+
+    if prompt_test(group_a.map { |f| stem(f) })
+      # Culprit in group_a — discard group_b
+      set_all(group_b, "disable")
+      remaining = group_a
+    else
+      # Culprit in group_b — disable group_a, enable group_b
+      set_all(group_a, "disable")
+      set_all(group_b, "enable")
+      remaining = group_b
+    end
+  end
+end
+
+puts "\n#{"=" * 50}"
+if culprits.any?
+  puts "Culprit(s) found: #{culprits.map { |f| stem(f) }.join(', ')}"
+  puts "\nRestoring all plugins to enabled..."
+  set_all(files, "enable")
+  exit 0
+end
+
+# No single culprit — switch to knock-out mode:
+# Enable everything, then disable one at a time to find which are necessary.
+puts "No single culprit found. Switching to knock-out mode..."
+puts "(Enable all, disable one at a time — find which ones suppress the error)\n"
+
+set_all(files, "enable")
+puts "\n[knock-out baseline] All plugins enabled."
+puts "  Open nvim: nvim #{TEST_FILE}"
+if ask("  Error? (y/n): ") == "n"
+  puts "\nNo error with all plugins enabled — the issue may be gone or intermittent."
+  exit 0
+end
+
+necessary = []
+
+files.each do |f|
+  puts "\n[knock-out] Disabling #{stem(f)}..."
+  system("#{NVIM_PLUGIN} disable #{stem(f)} > /dev/null")
+  puts "  Open nvim: nvim #{TEST_FILE}"
+  if ask("  Error? (y/n): ") == "n"
+    puts "  -> #{stem(f)} is necessary for the error."
+    necessary << f
+  end
+  system("#{NVIM_PLUGIN} enable #{stem(f)} > /dev/null")
+end
+
+puts "\n#{"=" * 50}"
+if necessary.any?
+  puts "Necessary plugin(s) (error disappears without them):"
+  necessary.each { |f| puts "  #{stem(f)}" }
+  puts "\nNote: the error may require ALL of these together, or just some subset."
+else
+  puts "No necessary plugins found — error persists regardless. Likely a core nvim bug."
+end
+
+puts "\nRestoring all plugins to enabled..."
+set_all(files, "enable")

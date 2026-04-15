@@ -1,8 +1,26 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
+#
+# hostblocker — block distracting sites at the network level. Fixes a problem I
+# have for ADHD+muscle memory = "let me check reddit while Claude is doing
+# something"
+#
+# Blocks by doing the following:
+#   1. Adds pf rules that drop outbound packets to resolved IPs
+#   2. Adds /etc/hosts entries pointing blocked domains to 127.0.0.1,
+#      where a local HTTP server serves a simple "site blocked" page
+#      instead of leaving the browser to spin forever.
+#
+# The local server runs as a LaunchDaemon (local.hostblocker) so it
+# survives reboots without any extra setup. For the most part, this works
+# in Firefox and Chrome, but not in Safari.
+#
+# Usage: hostblocker <enable|disable|reload|status|edit-config>
+# Config: $XDG_CONFIG_HOME/hostblocker/blocked-domains (one domain per line)
 
 require 'fileutils'
 require 'open3'
+require 'rbconfig'
 require 'shellwords'
 require 'set'
 
@@ -74,11 +92,161 @@ class DnsCache
   end
 end
 
+class HostsFile
+  HOSTS_PATH = '/etc/hosts'
+  SECTION_START = '# hostblocker-start'
+  SECTION_END = '# hostblocker-end'
+  SECTION_PATTERN = /#{Regexp.escape(SECTION_START)}\n.*?#{Regexp.escape(SECTION_END)}\n?/m
+
+  def write(domains)
+    content = File.read(HOSTS_PATH).gsub(SECTION_PATTERN, '').rstrip
+    entries = domains.map { |d| "127.0.0.1 #{d}" }.join("\n")
+    write_file("#{content}\n\n#{SECTION_START}\n#{entries}\n#{SECTION_END}\n")
+    flush_dns_cache
+  end
+
+  def clear
+    content = File.read(HOSTS_PATH).gsub(SECTION_PATTERN, '').rstrip
+    write_file("#{content}\n")
+    flush_dns_cache
+  end
+
+  private
+
+  def write_file(content)
+    _out, stderr, status = Open3.capture3('sudo', 'tee', HOSTS_PATH, stdin_data: content)
+    raise CommandError, "Failed to update #{HOSTS_PATH}: #{stderr.strip}" unless status.success?
+  end
+
+  def flush_dns_cache
+    system('sudo', 'dscacheutil', '-flushcache', out: File::NULL, err: File::NULL)
+    system('sudo', 'killall', '-HUP', 'mDNSResponder', out: File::NULL, err: File::NULL)
+  end
+end
+
+class LocalServer
+  DAEMON_LABEL = 'local.hostblocker'
+  DAEMON_PLIST_PATH = "/Library/LaunchDaemons/#{DAEMON_LABEL}.plist"
+
+  def initialize(server_script_path:)
+    @server_script_path = server_script_path
+  end
+
+  def ensure_running!
+    write_server_script
+    return if installed?
+
+    write_plist
+    system('sudo', 'launchctl', 'load', '-w', DAEMON_PLIST_PATH)
+  end
+
+  def stop!
+    return unless installed?
+
+    system('sudo', 'launchctl', 'unload', DAEMON_PLIST_PATH)
+    system('sudo', 'rm', '-f', DAEMON_PLIST_PATH)
+  end
+
+  private
+
+  def installed?
+    File.exist?(DAEMON_PLIST_PATH)
+  end
+
+  def write_server_script
+    FileUtils.mkdir_p(File.dirname(@server_script_path))
+    File.write(@server_script_path, server_ruby_code)
+  end
+
+  def write_plist
+    _out, stderr, status = Open3.capture3('sudo', 'tee', DAEMON_PLIST_PATH, stdin_data: plist_content)
+    raise CommandError, "Failed to write server plist: #{stderr.strip}" unless status.success?
+
+    system('sudo', 'chmod', '644', DAEMON_PLIST_PATH)
+  end
+
+  def plist_content
+    <<~PLIST
+      <?xml version="1.0" encoding="UTF-8"?>
+      <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+      <plist version="1.0">
+      <dict>
+        <key>Label</key>
+        <string>#{DAEMON_LABEL}</string>
+        <key>ProgramArguments</key>
+        <array>
+          <string>#{RbConfig.ruby}</string>
+          <string>#{@server_script_path}</string>
+        </array>
+        <key>RunAtLoad</key>
+        <true/>
+        <key>KeepAlive</key>
+        <true/>
+        <key>StandardErrorPath</key>
+        <string>/tmp/hostblocker-server.log</string>
+      </dict>
+      </plist>
+    PLIST
+  end
+
+  def server_ruby_code
+    <<~'RUBY'
+      # frozen_string_literal: true
+      require 'socket'
+
+      HTML = <<~HTML
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Blocked</title>
+          <style>
+            * { box-sizing: border-box; margin: 0; padding: 0; }
+            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+                   display: flex; align-items: center; justify-content: center;
+                   min-height: 100vh; background: #f0f0f0; }
+            .card { background: white; border-radius: 12px; padding: 48px 64px;
+                    box-shadow: 0 4px 24px rgba(0,0,0,0.08); text-align: center; max-width: 480px; }
+            h1 { color: #c0392b; font-size: 2.2em; margin-bottom: 12px; }
+            p { color: #888; font-size: 1.1em; }
+          </style>
+        </head>
+        <body>
+          <div class="card">
+            <h1>Site Blocked</h1>
+            <p>This site is blocked by hostblocker.</p>
+          </div>
+        </body>
+        </html>
+      HTML
+
+      RESPONSE = [
+        'HTTP/1.1 200 OK',
+        'Content-Type: text/html; charset=utf-8',
+        "Content-Length: #{HTML.bytesize}",
+        'Connection: close',
+        '',
+        HTML
+      ].join("\r\n").freeze
+
+      server = TCPServer.new('127.0.0.1', 80)
+      loop do
+        Thread.new(server.accept) do |client|
+          client.recv(4096) rescue nil
+          client.print RESPONSE
+          client.close
+        end
+      end
+    RUBY
+  end
+end
+
 class Hostblocker
   CONFIG_DIR = File.join(ENV.fetch('XDG_CONFIG_HOME', File.join(Dir.home, '.config')), 'hostblocker')
   DATA_DIR = File.join(ENV.fetch('XDG_DATA_HOME', File.join(Dir.home, '.local', 'share')), 'hostblocker')
   BLOCKLIST_FILE = File.join(CONFIG_DIR, 'blocked-domains')
   CACHE_DB = File.join(DATA_DIR, 'dns_cache.db')
+  SERVER_SCRIPT = File.join(DATA_DIR, 'server.rb')
   PF_TABLE = 'blocked'
   TTL_SECONDS = 86_400
   IPV4_PATTERN = /\A\d{1,3}(?:\.\d{1,3}){3}\z/
@@ -98,6 +266,8 @@ class Hostblocker
     @command = command
     @editor = editor
     @cache = DnsCache.new(path: CACHE_DB, ttl_seconds: TTL_SECONDS)
+    @hosts_file = HostsFile.new
+    @local_server = LocalServer.new(server_script_path: SERVER_SCRIPT)
   end
 
   def run
@@ -145,6 +315,9 @@ class Hostblocker
 
     desired_ips = desired_ips.uniq
 
+    @hosts_file.write(domains)
+    @local_server.ensure_running!
+
     if !force_reload && blocking_enabled?(current_ips) && desired_ips.to_set == current_ips
       puts status_line('Already enabled', tone: :green)
       return
@@ -166,6 +339,8 @@ class Hostblocker
     puts title_line('Disabling blocklist', tone: :yellow)
     flush_pf_table
     run_command('sudo', 'pfctl', '-f', '-', stdin_data: "# blocklist disabled\n", allow_failure: true)
+    @hosts_file.clear
+    @local_server.stop!
     puts status_line('Blocking disabled', tone: :yellow)
   end
 

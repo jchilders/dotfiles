@@ -58,8 +58,12 @@ function M.send_selection(direction)
     emu.send_left(table.concat(content, "\r"))
   elseif direction == "right" then
     emu.send_right(table.concat(content, "\r"))
+  elseif direction == "up" then
+    emu.send_up(table.concat(content, "\r"))
+  elseif direction == "down" then
+    emu.send_down(table.concat(content, "\r"))
   else
-    error("Invalid direction. Allowed values are 'left' or 'right'")
+    error("Invalid direction. Allowed values are 'left', 'right', 'up', or 'down'")
   end
 end
 

@@ -2,7 +2,7 @@
 --   `:TSUpdate`
 return {
   "nvim-treesitter/nvim-treesitter",
-  enabled = true,
+  enabled = false,
   dependencies = {
     "HiPhish/rainbow-delimiters.nvim",
   },
