@@ -294,7 +294,7 @@ class Hostblocker
     domains = blocked_domains
 
     @cache.init!
-    puts title_line(force_reload ? 'Reloading blocklist' : 'Updating blocklist', tone: force_reload ? :yellow : :cyan)
+    puts title_line(force_reload ? 'Reloading blocklist' : 'Enabling blocklist', tone: force_reload ? :yellow : :cyan)
 
     if force_reload
       flush_pf_table

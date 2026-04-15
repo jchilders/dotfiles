@@ -16,7 +16,8 @@ success_symbol = "[➜](bold green)"
 error_symbol = "[➜](bold red)"
 
 [python]
-format = " [venv:$virtualenv]($style)"
+format = " [$symbol$version]($style)"
+symbol = "🐍 "
 style = "bold blue"
 detect_extensions = []
 detect_files = []
