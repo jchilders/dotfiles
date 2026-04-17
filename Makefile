@@ -116,6 +116,7 @@ zsh-clean: zsh-cfg-clean ## Uninstall zsh-related items
 
 zsh-cfg: ## Link ~/.zshenv
 	ln -sf $(cwd)/.zshenv $$HOME/.zshenv
+	ln -sf $(cwd)/.zshrc $$HOME/.zshrc
 
 ohmyzsh: xdg-setup ## Install Oh My Zsh
 	@if [ -d "$(XDG_STATE_HOME)/ohmyzsh" ]; then \
