@@ -3,38 +3,15 @@ local scratcher = require("jc.scratcher")
 local emu_utils = require("jc.terminal.shared")
 local emu = require("jc.terminal")
 
-TelescopeMapArgs = TelescopeMapArgs or {}
-
-local map_ctrlo = function(key, rhs, map_options, bufnr)
-  key = "<C-o>" .. key
-  local mode = "n"
-
-  if map_options == nil then
-    map_options = {
-      noremap = true,
-      silent = true,
-    }
-  end
-
-  if not bufnr then
-    -- vim.api.nvim_set_keymap(mode, key, rhs, map_options)
-    vim.keymap.set(mode, key, rhs, map_options)
-  else
-    vim.api.nvim_buf_set_keymap(0, mode, key, rhs, map_options)
-  end
+local map_ctrlo = function(key, rhs)
+  vim.keymap.set("n", "<C-o>" .. key, rhs, { noremap = true, silent = true })
 end
 
 -- @param {string} f - telescope function to call
-local map_ctrlo_tele = function(key, f, tele_options, bufnr)
-  local map_key = vim.api.nvim_replace_termcodes(key .. f, true, true, true)
-  TelescopeMapArgs[map_key] = tele_options or {}
-  local rhs = string.format(
-    "<cmd>lua require('jc.telescope')['%s'](TelescopeMapArgs['%s'])<CR>",
-    f,
-    map_key
-  )
-
-  map_ctrlo(key, rhs, bufnr)
+local map_ctrlo_tele = function(key, f, tele_options)
+  map_ctrlo(key, function()
+    require("jc.telescope")[f](tele_options or {})
+  end)
 end
 
 -- Quickly toggle between next/previous buffers

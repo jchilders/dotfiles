@@ -14,8 +14,8 @@ local scratch_path = function()
 end
 
 local extension = function(bufnr)
-  bufnr = 0 or bufnr
-  local ft = vim.api.nvim_buf_get_option(bufnr, "filetype")
+  bufnr = bufnr or 0
+  local ft = vim.bo[bufnr].filetype
   local ext = ""
   if ft ~= nil then
     if ft == "ruby" then

@@ -1,0 +1,48 @@
+#!/usr/bin/env zsh
+# Load every module under xdg_config/nvim/lua/{jc,core} headlessly and report
+# any that fail. Used as a smoke test during the nvim refactor — see
+# xdg_config/nvim/REFACTOR.md.
+
+set -u
+
+cfg_root="${XDG_CONFIG_HOME:-$HOME/.config}/nvim"
+lua_root="$cfg_root/lua"
+
+if [[ ! -d $lua_root ]]; then
+  print -u2 "nvim-smoke: $lua_root not found"
+  exit 1
+fi
+
+fail=0
+while IFS= read -r path; do
+  # path is relative to $lua_root, e.g. "jc/utils.lua" or "jc/terminal/init.lua"
+  mod="${path%.lua}"
+  mod="${mod//\//.}"
+
+  # Skip submodule entry points that have already been pulled in via their package.
+  # Each module still gets loaded on its own below.
+
+  out=$(nvim --headless --clean \
+    --cmd "set rtp^=$cfg_root" \
+    --cmd "set rtp^=${HOME}/.local/share/nvim/lazy/plenary.nvim" \
+    --cmd "set rtp^=${HOME}/.local/share/nvim/lazy/nvim-treesitter" \
+    --cmd "set rtp^=${HOME}/.local/share/nvim/lazy/telescope.nvim" \
+    -c "lua local ok, err = pcall(require, '$mod'); if not ok then io.stderr:write(err); vim.cmd('cq') end" \
+    -c "qa" 2>&1)
+  rc=$?
+
+  if (( rc != 0 )); then
+    print "FAIL  $mod"
+    print -r -- "      ${out//$'\n'/$'\n      '}"
+    (( fail++ ))
+  else
+    print "ok    $mod"
+  fi
+done < <(cd "$lua_root" && fd -e lua . jc core)
+
+if (( fail > 0 )); then
+  print "\n$fail module(s) failed to load"
+  exit 1
+fi
+
+print "\nall modules loaded cleanly"
