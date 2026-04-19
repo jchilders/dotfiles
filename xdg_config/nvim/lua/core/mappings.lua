@@ -1,4 +1,3 @@
-local remap = require("jc.utils").map_global
 local scratcher = require("jc.scratcher")
 local emu_utils = require("jc.terminal.shared")
 local emu = require("jc.terminal")
@@ -75,7 +74,12 @@ local search_cmd = [[:let @/='<C-R>=expand("<cword>")<CR>'<CR>:set hls<CR>]]
 vim.keymap.set("n", "*", search_cmd, { silent = true })
 
 -- Hit <CR> to clear highlighted search matches
-remap("n", "<CR>", '{-> v:hlsearch ? "<cmd>nohl\\<CR>" : "\\<CR>"}()', true)
+vim.keymap.set("n", "<CR>", function()
+  if vim.v.hlsearch == 1 then
+    return "<cmd>nohlsearch<CR>"
+  end
+  return "<CR>"
+end, { expr = true, silent = true, replace_keycodes = true })
 
 vim.keymap.set("n", "<leader>w", "<cmd>wa<CR>")
 vim.keymap.set("n", "<leader>W", "<cmd>wqa<CR>")
@@ -87,7 +91,9 @@ vim.keymap.set("n", "<leader>z", require("jc.utils").toggle_zenish)
 vim.keymap.set("n", "<leader>rs", scratcher.split_open_scratch_file)
 
 -- Lua Inspect current line
-remap("n", "<leader>li", "<cmd>lua print(vim.inspect(loadstring(\"return \" .. vim.fn.getline('.'))()))<CR>")
+vim.keymap.set("n", "<leader>li", function()
+  print(vim.inspect(loadstring("return " .. vim.fn.getline("."))()))
+end, { silent = true })
 
 -- Send the current line to the pane to the left
 vim.keymap.set("n", "<leader>sh", emu_utils.send_line_left)
@@ -182,7 +188,10 @@ vim.keymap.set("n", "<leader>rt", "<cmd>wa<CR><cmd>lua require('jc.chuck_tester'
 vim.keymap.set("n", "<leader>rT", "<cmd>wa<CR><cmd>lua require('jc.chuck_tester').run_mru_test_current_line()<CR>")
 
 -- Edit the most recently modified test
-remap("n", "<leader>et", "<cmd>wa<CR><cmd>lua require('jc.chuck_tester').edit_mru_test()<CR>")
+vim.keymap.set("n", "<leader>et", function()
+  vim.cmd("wa")
+  require("jc.chuck_tester").edit_mru_test()
+end, { silent = true })
 
 -- Toggle treesitter highlighting
 -- remap("n", "<leader>tstog", "<cmd>TSBufToggle highlight<CR>")
@@ -191,18 +200,18 @@ remap("n", "<leader>et", "<cmd>wa<CR><cmd>lua require('jc.chuck_tester').edit_mr
 -- remap("n", "<leader>tshi", "<cmd>TSHighlightCapturesUnderCursor<CR>")
 
 -- Copy to system clipboard with ctrl-c
-remap("v", "<C-c>", '"+y')
+vim.keymap.set("v", "<C-c>", '"+y', { silent = true })
 
 -- quickfix
-vim.keymap.set("n", "<leader>qf", require('jc.utils').toggle_qf)
-remap("n", "<leader>qn", "<cmd>cnext<CR>")
-remap("n", "<leader>qp", "<cmd>cprev<CR>")
+vim.keymap.set("n", "<leader>qf", require("jc.utils").toggle_qf)
+vim.keymap.set("n", "<leader>qn", "<cmd>cnext<CR>", { silent = true })
+vim.keymap.set("n", "<leader>qp", "<cmd>cprev<CR>", { silent = true })
 
 -- locationlist
-remap("n", "<leader>ll", "<cmd>lopen<CR>")
-remap("n", "<leader>lc", "<cmd>lclose<CR>")
-remap("n", "<leader>ln", "<cmd>lnext<CR>")
-remap("n", "<leader>lp", "<cmd>lprev<CR>")
+vim.keymap.set("n", "<leader>ll", "<cmd>lopen<CR>", { silent = true })
+vim.keymap.set("n", "<leader>lc", "<cmd>lclose<CR>", { silent = true })
+vim.keymap.set("n", "<leader>ln", "<cmd>lnext<CR>", { silent = true })
+vim.keymap.set("n", "<leader>lp", "<cmd>lprev<CR>", { silent = true })
 
 local telescope_builtin_ok, telescope_builtin = pcall(require, "telescope.builtin")
 if telescope_builtin_ok then
@@ -255,9 +264,11 @@ vim.keymap.set("n", "[d", function() diagnostic_jump_and_open(-1) end)
 vim.keymap.set("n", "]d", function() diagnostic_jump_and_open(1) end)
 vim.keymap.set("n", "[[", function() diagnostic_jump_and_open(-1) end)
 vim.keymap.set("n", "]]", function() diagnostic_jump_and_open(1) end)
-remap("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>")
-remap("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>")
-remap("n", "<space>wl", "<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>")
+vim.keymap.set("n", "gd", vim.lsp.buf.definition, { silent = true })
+vim.keymap.set("n", "gD", vim.lsp.buf.declaration, { silent = true })
+vim.keymap.set("n", "<space>wl", function()
+  print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+end, { silent = true })
 
 -- little t -> Search list of symbols (tags) for current document
 map_ctrlo_tele("t", "lsp_document_symbols")
@@ -285,20 +296,14 @@ vim.keymap.set("n", "<leader>cbn", function()
   print(string.format("Current buffer number: %d, Current window number: %d", vim.fn.bufnr('%'), vim.api.nvim_win_get_number(0)))
 end)
 
-vim.api.nvim_set_keymap('n', '<leader>mp', [[<cmd>lua ControlMusic("playpause")<CR>]], { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>mn', [[<cmd>lua ControlMusic("next")<CR>]], { noremap = true, silent = true })
-
--- Control Music app
-function ControlMusic(action)
-  local script = ""
-  if action == "playpause" then
-    script = "tell application \"Music\" to playpause"
-  elseif action == "next" then
-    script = "tell application \"Music\" to next track"
-  else
-    print("Invalid action: " .. action)
-    return
-  end
+local function tell_music(script)
   local handle = io.popen("osascript -e '" .. script .. "'")
   if handle then handle:close() end
 end
+
+vim.keymap.set("n", "<leader>mp", function()
+  tell_music('tell application "Music" to playpause')
+end, { silent = true })
+vim.keymap.set("n", "<leader>mn", function()
+  tell_music('tell application "Music" to next track')
+end, { silent = true })

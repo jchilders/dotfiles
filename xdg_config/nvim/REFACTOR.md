@@ -30,15 +30,15 @@ After each change:
 ## Deprecated APIs
 
 - [x] `scratcher.lua:18` — `nvim_buf_get_option` → `vim.bo[bufnr].filetype` (done as part of the bufnr fix).
-- [ ] `autocmd.lua:6` — `vim.highlight.on_yank()` → `vim.hl.on_yank()`.
-- [ ] `terminal/shared.lua:1`, `core/globals.lua:22` — `vim.loop` → `(vim.uv or vim.loop)`.
-- [ ] Purge `nvim_set_keymap` / `nvim_buf_set_keymap` in favor of `vim.keymap.set`. Affects `utils.lua` (`key_mapper`, `map`, `map_global`) and `mappings.lua:311-312`. Delete the helpers once callers are migrated.
+- [x] `autocmd.lua:6` — use `(vim.hl or vim.highlight).on_yank()` (works on 0.11+ and older).
+- [x] `core/globals.lua` — `vim.loop` → `(vim.uv or vim.loop)`. `terminal/shared.lua` had an unused `local uv = vim.loop`, deleted.
+- [x] Purged `nvim_set_keymap` / `nvim_buf_set_keymap` everywhere. Deleted `utils.lua` helpers (`key_mapper`, `set_mappings`, `map`, `map_global`); migrated all `remap(...)` callers in `mappings.lua`, the Ruby `insert_binding` autocmd in `autocmd.lua`, and the Music app keymaps (which also turned `ControlMusic` global into a local `tell_music`).
 
 ## Dead code
 
 - [ ] `utils.lua` — delete `is_array`, `table_length`, `dump`, `T`, `N`, `root_node_text`, `prequire`. The comments already point at the stdlib replacements. (`dump_to_buffer`, `blameVirtText`, `clearBlameVirtText` already removed in the bug batch.)
 - [ ] `mappings.lua` — strip commented-out blocks at lines ~50, 134, 198-200, 211-214, 245-248.
-- [ ] `terminal/shared.lua:1` — unused `local uv = vim.loop`.
+- [x] `terminal/shared.lua:1` — unused `local uv = vim.loop` (done with the deprecated-APIs batch).
 - [ ] `chuck_tester.lua:211` — redundant second `vim.fn.bufnr(test_file)` call; `return bufnr`.
 
 ## Duplication
@@ -50,7 +50,7 @@ After each change:
 
 - [ ] `core/globals.lua` — add `local` to `reloader`, make `RELOAD`/`R` opt-in (move under `_G` explicitly or drop). Replace the fake-class `globals:load_variables()` with a plain table of fields.
 - [x] `mappings.lua:6` — `TelescopeMapArgs` global removed; `map_ctrlo_tele` now uses a closure (done as part of the bug batch).
-- [ ] `mappings.lua:315` — make `ControlMusic` local; call it from closures in the keymap definitions.
+- [x] `mappings.lua:315` — `ControlMusic` is gone; replaced with a local `tell_music` helper and closures in each keymap (done with the deprecated-APIs batch).
 
 ## Structural
 

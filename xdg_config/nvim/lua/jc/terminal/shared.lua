@@ -1,5 +1,3 @@
-local uv = vim.loop
-
 local emu = require("jc.terminal")
 
 local M = {}

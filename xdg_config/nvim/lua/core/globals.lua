@@ -19,7 +19,7 @@ local globals = {}
 local home = os.getenv("HOME")
 -- local path_sep = globals.is_windows and "\\" or "/"
 local path_sep = package.config:sub(1, 1)
-local os_name = vim.loop.os_uname().sysname
+local os_name = (vim.uv or vim.loop).os_uname().sysname
 
 function globals:load_variables()
   self.is_darwin = os_name == "Darwin"

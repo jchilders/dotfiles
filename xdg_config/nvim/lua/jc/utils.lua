@@ -14,24 +14,6 @@ function M.prequire(m)
   return err
 end
 
--- Create silent normal mode mappings
-function M.key_mapper(lhs, rhs)
-  if type(rhs) == "table" then
-    M.key_mapper(rhs[1], rhs[2])
-  else
-    local opts = { noremap = true, silent = true }
-    api.nvim_set_keymap("n", lhs, rhs .. "<CR>", opts)
-  end
-end
-
--- Takes array of following form, e.g.:
--- { { '<leader>u', 'gg' } }
-function M.set_mappings(keymaps)
-  for lhs, rhs in pairs(keymaps) do
-    M.key_mapper(lhs, rhs)
-  end
-end
-
 -- This toggles the displaying of the non-text text that can appear in the window: git status indicators in the gutter, relnums, LSP warnings, and so forth. It is intended to quickly allow for a clean view of the file being edited, without all the helpers.
 function M.toggle_zenish()
   if vim.wo.relativenumber == true then
@@ -269,21 +251,6 @@ function M.insert_print_statement(insert_above)
   end
 end
 
--- Buffer-local keymap helper
-function M.map(bufnr, type, key, value, opt)
-  if opt then
-    vim.api.nvim_buf_set_keymap(bufnr, type, key, value, opt)
-  else
-    vim.api.nvim_buf_set_keymap(
-      bufnr,
-      type,
-      key,
-      value,
-      { noremap = true, silent = true, expr = false }
-    )
-  end
-end
-
 function M.toggle_qf()
   local qf_exists = false
   for _, win in pairs(vim.fn.getwininfo()) do
@@ -297,11 +264,6 @@ function M.toggle_qf()
   end
 
   vim.cmd("copen")
-end
-
--- TODO: Update this to use `vim.keymap.set`
-function M.map_global(type, key, value, expr)
-  vim.api.nvim_set_keymap(type, key, value, { noremap = true, silent = true, expr = expr })
 end
 
 return M
