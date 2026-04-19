@@ -1,10 +1,6 @@
-# CLAUDE.md
-
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
 ## Overview
 
-This is a macOS-focused dotfiles repository implementing the "UNIX is an IDE" philosophy. It integrates zsh, neovim, and wezterm with seamless workflows between terminal, editor, and git operations.
+This is a macOS-focused dotfiles repository implementing the "UNIX is an IDE" philosophy. It integrates zsh, neovim, and others, with seamless workflows between terminal, editor, and git operations. Homebrew is used to manage tools (neovim, ripgrep, etc.), and mise is used to manage languages (Ruby, Python, etc.)
 
 ## Key Commands
 
@@ -34,7 +30,6 @@ nvim --headless +Lazy! sync +qa  # Sync plugins headlessly
 ### Directory Structure
 - `xdg_config/` - Links to `~/.config`, contains all tool configurations
 - `bin/` - Links to `~/bin`, custom scripts and utilities
-- `.zshenv` - Entry point for zsh, links to `~/.zshenv`
 - `Makefile` - Primary installation/management interface
 - `Brewfile` - Homebrew package definitions
 - `macos` - macOS system defaults script
@@ -43,15 +38,16 @@ nvim --headless +Lazy! sync +qa  # Sync plugins headlessly
 - `init.lua` - Entry point, bootstraps lazy.nvim
 - `lua/core/` - Core settings (options, keymaps, autocmds)
 - `lua/plugins/` - Plugin specifications for lazy.nvim
-- `lua/jc/` - Custom modules and utilities
-- `lua/utils/` - Shared utility functions
+- `lua/jc/` - Custom modules and utilities (git helpers, LSP auto-attach, scratch buffers, telescope/terminal extensions)
 
 ### Zsh Configuration (`xdg_config/zsh/`)
-- `.zshrc` - Main shell config
+- `.zshenv` / `.zshrc` - Entry points; `ZDOTDIR` points here
 - `config/aliases.zsh` - Shell aliases
 - `config/ctrlo-widgets.zsh` - `ctrl-o` prefix keybindings (file opening, git operations)
+- `config/misc-widgets.zsh` - Additional ZLE widgets
 - `config/exports.zsh` - Environment variables
 - `config/options.zsh` - Shell options and completions
+- `config/sources.zsh` - Sources external tools (mise, fzf, starship, etc.)
 
 ### Key Integration Points
 - `ctrl-o` prefix works in both zsh and neovim for consistent file/git operations
