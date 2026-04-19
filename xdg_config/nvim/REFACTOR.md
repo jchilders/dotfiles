@@ -48,7 +48,7 @@ After each change:
 
 ## Globals / scoping
 
-- [ ] `core/globals.lua` — add `local` to `reloader`, make `RELOAD`/`R` opt-in (move under `_G` explicitly or drop). Replace the fake-class `globals:load_variables()` with a plain table of fields.
+- [x] `core/globals.lua` — rewrote: `reloader` is now `local`, `RELOAD`/`R` are explicit `_G.RELOAD`/`_G.R`. The entire dead `globals` table + `load_variables` method was deleted (grep confirmed no callers). Moved the `require "core/globals"` into `init.lua` so the interactive helpers are defined at startup instead of only after telescope loads; dropped the now-useless `require 'core.globals'` from `jc/telescope/init.lua:1`. **Verify:** `:lua print(_G.R)` in a running nvim shows a function.
 - [x] `mappings.lua:6` — `TelescopeMapArgs` global removed; `map_ctrlo_tele` now uses a closure (done as part of the bug batch).
 - [x] `mappings.lua:315` — `ControlMusic` is gone; replaced with a local `tell_music` helper and closures in each keymap (done with the deprecated-APIs batch).
 

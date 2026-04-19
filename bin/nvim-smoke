@@ -22,7 +22,7 @@ while IFS= read -r path; do
   # Skip submodule entry points that have already been pulled in via their package.
   # Each module still gets loaded on its own below.
 
-  out=$(nvim --headless --clean \
+  out=$(command nvim --headless --clean \
     --cmd "set rtp^=$cfg_root" \
     --cmd "set rtp^=${HOME}/.local/share/nvim/lazy/plenary.nvim" \
     --cmd "set rtp^=${HOME}/.local/share/nvim/lazy/nvim-treesitter" \

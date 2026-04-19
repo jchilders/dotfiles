@@ -3,6 +3,7 @@
 -- Log files: XDG_CACHE_HOME ~/.cache
 -- Plugins: XDG_DATA_HOME ~/.local/share/nvim
 
+require "core/globals"   -- defines _G.RELOAD / _G.R for interactive use
 require "core/highlights" -- load before colorscheme cfg
 require "plugins/colorscheme"
 

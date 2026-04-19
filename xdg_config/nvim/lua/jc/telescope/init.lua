@@ -1,5 +1,3 @@
-require 'core.globals'
-
 local builtin = require("telescope.builtin")
 local Path = require("plenary.path")
 local git_utils = require("jc.git_utils")
