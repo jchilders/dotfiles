@@ -33,6 +33,7 @@ brew 'mise' # Version manager for Ruby, Node, etc.
 brew 'npm' # node package manager
 brew 'redis' # redis is redis
 brew 'rg' # ripgrep
+brew 'selene' # lua linter (for xdg_config/nvim)
 brew 'sl' # 🚂
 brew 'showkey' # type a key and see it echoed in the terminal
 brew 'starship' # robust shell prompt

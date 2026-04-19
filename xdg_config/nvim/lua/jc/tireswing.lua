@@ -15,6 +15,7 @@ local function sibling_or_parent_sibling(node, up)
   if parent ~= nil then
     return sibling_or_parent_sibling(parent, up)
   end
+  return nil
 end
 
 local function parent_node_of_type(node, type)
@@ -23,6 +24,7 @@ local function parent_node_of_type(node, type)
   elseif node:parent() ~= nil then
     return parent_node_of_type(node:parent(), type)
   end
+  return nil
 end
 
 M.swap_nodes = function(up)

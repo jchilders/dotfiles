@@ -54,9 +54,10 @@ After each change:
 
 ## Structural
 
-- [ ] Split `utils.lua` (366 lines):
+- [x] Split `utils.lua`:
   - `jc/debug_print.lua` — templates + `insert_print_statement`.
   - `jc/ui.lua` — `toggle_qf`, `toggle_zenish`.
-  - Everything else gets deleted per the dead-code section.
-- [ ] Add `return nil` to recursive dead-ends in `tireswing.lua` (`sibling_or_parent_sibling`, `parent_node_of_type`).
-- [ ] Add `selene` or `luacheck` config so the above classes of issue get caught automatically going forward.
+  - `lsp_name` was dropped as dead (no callers anywhere in the repo).
+  - `utils.lua` itself is gone; callers in `core/mappings.lua` point at the new modules. **Verify:** `<leader>z`, `<leader>qf`, `<leader>pp`, `<leader>pP` all fire.
+- [x] Added `return nil` to the recursive dead-ends in `tireswing.lua` (`sibling_or_parent_sibling`, `parent_node_of_type`).
+- [x] Added a `selene` config (`xdg_config/nvim/selene.toml` + a minimal `vim.yml` std) and added `brew 'selene'` to the Brewfile. Run with `selene xdg_config/nvim/lua` to catch future globals / unused-locals / unreachable-branch regressions.

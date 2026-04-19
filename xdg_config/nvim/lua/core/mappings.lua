@@ -85,7 +85,7 @@ vim.keymap.set("n", "<leader>w", "<cmd>wa<CR>")
 vim.keymap.set("n", "<leader>W", "<cmd>wqa<CR>")
 
 -- Zenish-mode. Hides gutter, indentation indicators, and LSP messages. Keeps statusline.
-vim.keymap.set("n", "<leader>z", require("jc.utils").toggle_zenish)
+vim.keymap.set("n", "<leader>z", require("jc.ui").toggle_zenish)
 
 -- Open Scratch file for this project
 vim.keymap.set("n", "<leader>rs", scratcher.split_open_scratch_file)
@@ -156,12 +156,12 @@ end, { desc = "Toggle resend on save for this buffer" })
 
 -- Insert debug print statement below current line
 vim.keymap.set("n", "<leader>pp", function()
-  require("jc.utils").insert_print_statement(false)
+  require("jc.debug_print").insert_print_statement(false)
 end)
 
 -- Insert debug print statement above current line
 vim.keymap.set("n", "<leader>pP", function()
-  require("jc.utils").insert_print_statement(true)
+  require("jc.debug_print").insert_print_statement(true)
 end)
 
 local tireswing_ok, tireswing = pcall(require, "jc.tireswing")
@@ -189,7 +189,7 @@ end, { silent = true })
 vim.keymap.set("v", "<C-c>", '"+y', { silent = true })
 
 -- quickfix
-vim.keymap.set("n", "<leader>qf", require("jc.utils").toggle_qf)
+vim.keymap.set("n", "<leader>qf", require("jc.ui").toggle_qf)
 vim.keymap.set("n", "<leader>qn", "<cmd>cnext<CR>", { silent = true })
 vim.keymap.set("n", "<leader>qp", "<cmd>cprev<CR>", { silent = true })
 
