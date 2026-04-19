@@ -43,8 +43,8 @@ After each change:
 
 ## Duplication
 
-- [ ] `terminal/wezterm.lua` and `terminal/ghostty.lua` both re-implement `send_left/right/up/down` wrappers. Move those four into `terminal/init.lua` so each backend only exposes `send_text`. **Verify:** `<leader>sh/sj/sk/sl` still send to the expected pane under both `$TERM_PROGRAM=ghostty` and wezterm.
-- [ ] `valid_directions` lives in both backends — move to shared.
+- [x] `terminal/wezterm.lua` and `terminal/ghostty.lua` both re-implemented `send_left/right/up/down` wrappers. Moved those four into `terminal/init.lua`, which now returns a small wrapper with `__index = backend` so other backend methods (`send_text`, `get_pane_id`) still pass through. Each backend only implements `send_text` + `get_pane_id`. **Verify:** `<leader>sh/sj/sk/sl` still send to the expected pane under both `$TERM_PROGRAM=ghostty` and wezterm.
+- [x] `valid_directions` lives in `terminal/shared.lua` as `M.valid_directions` and both backends reference it via `require("jc.terminal.shared").valid_directions`.
 
 ## Globals / scoping
 
