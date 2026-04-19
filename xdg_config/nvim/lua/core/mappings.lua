@@ -112,9 +112,6 @@ vim.keymap.set("v", "<leader>sl", emu_utils.send_selection_right)
 vim.keymap.set("v", "<leader>sk", emu_utils.send_selection_up)
 -- Send the visually selected text to the pane below the current pane
 vim.keymap.set("v", "<leader>sj", emu_utils.send_selection_down)
--- Send ('a'gain) the last visually selected area to the left terminal pane
--- TODO: get this working for all directions
--- vim.keymap.set("n", "<leader>sa", emu_utils.send_selection_left)
 
 -- Send Up then Enter to the pane to the left
 vim.keymap.set("n", "<Leader>rr", function()
@@ -176,11 +173,6 @@ if tireswing_ok then
   end)
   -- Quote Toggler: toggle between single/double quotes for string under cursor.
   vim.keymap.set("n", "<leader>tq", tireswing.toggle_quotes)
-
-  -- move current treesitter object up
-  -- remap("n", "J", "<cmd>lua require('jc.tireswing').swap_nodes(false)<CR>")
-  -- move current treesitter object down
-  -- remap("n", "K", "<cmd>lua require('jc.tireswing').swap_nodes(true)<CR>")
 end
 
 -- Save & run the current, or most recently modified, test in the terminal pane to the left
@@ -192,12 +184,6 @@ vim.keymap.set("n", "<leader>et", function()
   vim.cmd("wa")
   require("jc.chuck_tester").edit_mru_test()
 end, { silent = true })
-
--- Toggle treesitter highlighting
--- remap("n", "<leader>tstog", "<cmd>TSBufToggle highlight<CR>")
-
--- Show tree-sitter highlight group(s) for current cursor position
--- remap("n", "<leader>tshi", "<cmd>TSHighlightCapturesUnderCursor<CR>")
 
 -- Copy to system clipboard with ctrl-c
 vim.keymap.set("v", "<C-c>", '"+y', { silent = true })
@@ -226,12 +212,6 @@ if telescope_builtin_ok then
   vim.keymap.set('n', '<leader>tsh', telescope_builtin.help_tags, { desc = '[S]earch [H]elp' })
   vim.keymap.set('n', '<leader>sd', telescope_builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
 end
-
--- LSP Diagnostic keymaps
--- vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
--- vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
--- vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float)
--- vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)
 
 -- ctrl-o
 

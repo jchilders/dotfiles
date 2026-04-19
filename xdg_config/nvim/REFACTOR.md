@@ -36,10 +36,10 @@ After each change:
 
 ## Dead code
 
-- [ ] `utils.lua` — delete `is_array`, `table_length`, `dump`, `T`, `N`, `root_node_text`, `prequire`. The comments already point at the stdlib replacements. (`dump_to_buffer`, `blameVirtText`, `clearBlameVirtText` already removed in the bug batch.)
-- [ ] `mappings.lua` — strip commented-out blocks at lines ~50, 134, 198-200, 211-214, 245-248.
+- [x] `utils.lua` — deleted `prequire`, `add_gem_to_lsp_workspace` ("Does this work?"), `T`/`N`/`root_node_text`, `is_array`, `table_length`, `dump`. Stdlib replacements were already pointed at in the prior comments.
+- [x] `mappings.lua` — stripped the `<leader>sa` TODO, the tireswing `J`/`K` block, the treesitter-toggle block, and the LSP-diagnostic block. (The long `*`-search StackOverflow explainer stays — it's documentation, not dead code.)
 - [x] `terminal/shared.lua:1` — unused `local uv = vim.loop` (done with the deprecated-APIs batch).
-- [ ] `chuck_tester.lua:211` — redundant second `vim.fn.bufnr(test_file)` call; `return bufnr`.
+- [x] `chuck_tester.lua:211` — `return bufnr` instead of re-looking it up.
 
 ## Duplication
 

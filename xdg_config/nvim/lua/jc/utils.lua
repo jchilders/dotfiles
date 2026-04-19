@@ -2,18 +2,6 @@ local M = {}
 
 local api = vim.api
 
--- Grab bag of stuff that may or may not work
-
--- Like require, but gracefully handles errors
-function M.prequire(m)
-  local ok, err = pcall(require, m)
-  if not ok then
-    print("There was an error when requiring '" .. m .. "'")
-    return nil, err
-  end
-  return err
-end
-
 -- This toggles the displaying of the non-text text that can appear in the window: git status indicators in the gutter, relnums, LSP warnings, and so forth. It is intended to quickly allow for a clean view of the file being edited, without all the helpers.
 function M.toggle_zenish()
   if vim.wo.relativenumber == true then
@@ -35,16 +23,6 @@ function M.toggle_zenish()
   end
 end
 
--- Does this work?
-function M.add_gem_to_lsp_workspace(gem_name)
-  local cmd = "gem open " .. gem_name .. " -e echo"
-  local gem_path = vim.fn.system(cmd)
-  gem_path = string.gsub(gem_path, "\n", "")
-  print("Adding " .. gem_name .. " to LSP, path: " .. gem_path)
-
-  vim.lsp.buf.add_workspace_folder(gem_path)
-end
-
 -- returns a string containing a comma-separated list of LSPs the current
 -- buffer is attached to
 function M.lsp_name()
@@ -53,80 +31,6 @@ function M.lsp_name()
     return "(no client)"
   end
   return table.concat(vim.tbl_map(function(c) return c.name end, clients), ", ")
-end
-
--- local ts_utils = M.prequire("vim.treesitter.query")
-
-function M.T()
-  local ts_utils = require("nvim-treesitter.ts_utils")
-  print(ts_utils.get_node_at_cursor():type())
-end
-
-function M.root_node_text()
-  local ts_utils = require("nvim-treesitter.ts_utils")
-  local curr_node = ts_utils.get_node_at_cursor()
-  local root_node = ts_utils.get_root_for_node(curr_node)
-  local lines = ts_utils.get_node_text(root_node)
-
-  return lines
-end
-
-function M.N()
-  local ts_utils = require("nvim-treesitter.ts_utils")
-  print(ts_utils.get_node_at_cursor())
-end
-
--- See also: vim.islist(table)
-function M.is_array(table)
-  if type(table) ~= "table" then
-    return false
-  end
-
-  -- objects always return empty size
-  if #table > 0 then
-    return true
-  end
-
-  -- only object can have empty length with elements inside
-  for _, _ in pairs(table) do
-    return false
-  end
-
-  -- if no elements it can be array and not at same time
-  return true
-end
-
--- See also: vim.tbl_isempty(table)
--- See also: vim.tbl_count(table)
-function M.table_length(table)
-  setmetatable(table, {
-    __index = {
-      len = function(len)
-        local incr = 0
-        for _ in pairs(len) do
-          incr = incr + 1
-        end
-        return incr
-      end,
-    },
-  })
-  return table:len()
-end
-
--- See also:vim.inspect(table)
-function M.dump(table)
-  if type(table) == "table" then
-    local s = "{ "
-    for k, v in pairs(table) do
-      if type(k) ~= "number" then
-        k = '"' .. k .. '"'
-      end
-      s = s .. "[" .. k .. "] = " .. M.dump(v) .. ","
-    end
-    return s .. "} "
-  else
-    return tostring(table)
-  end
 end
 
 -- Language-specific debug print templates
