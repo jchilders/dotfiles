@@ -23,29 +23,17 @@ then
   export XDG_BIN_HOME="$HOME/.local/bin"
 fi
 
-export ZDOTDIR="${XDG_CONFIG_HOME:-$HOME/.config}/zsh"
-mkdir -p "${ZDOTDIR}"
+[[ -d $ZDOTDIR ]] || mkdir -p "$ZDOTDIR"
 
 export HISTFILE="${XDG_STATE_HOME:-$HOME/.local/state}/zsh/history"
-mkdir -p "${XDG_STATE_HOME:-$HOME/.local/state}/zsh"
+[[ -d ${HISTFILE:h} ]] || mkdir -p "${HISTFILE:h}"
 
-# Binaries built by Cargo (Rust)
-path+=($HOME/.cargo/bin)
-
-# pipx/python binaries
-path+=($HOME/.local/bin)
-
-# My scripts
-path+=($HOME/bin)
-
-if [[ -z $HOME/miniconda3/bin ]]
-then
-  path+=($HOME/miniconda3/bin)
-fi
+# Dedupe fpath on re-source (path is already -U'd in .zshenv)
+typeset -U fpath
 
 # fpath is where zsh looks for command completion scripts
-if command -v brew &>/dev/null; then
-  fpath+=($(brew --prefix)/share/zsh/site-functions)
+if [[ -n $HOMEBREW_PREFIX ]]; then
+  fpath+=($HOMEBREW_PREFIX/share/zsh/site-functions)
 fi
 
 # Preferred editor for local and remote sessions
@@ -77,10 +65,11 @@ NODE_GLOBALS+=("nvm")
 
 # Lazy-loading nvm + npm on node globals call
 load_nvm () {
-  [ -s "$(brew --prefix nvm)/nvm.sh" ] && . "$(brew --prefix nvm)/nvm.sh"
+  local nvm_sh="$HOMEBREW_PREFIX/opt/nvm/nvm.sh"
+  [ -s "$nvm_sh" ] && . "$nvm_sh"
 }
 
 # Making node global trigger the lazy loading
 for cmd in "${NODE_GLOBALS[@]}"; do
-  eval "${cmd}(){ unset -f ${NODE_GLOBALS}; load_nvm; ${cmd} \$@ }"
+  eval "${cmd}(){ unset -f ${NODE_GLOBALS[@]}; load_nvm; ${cmd} \$@ }"
 done

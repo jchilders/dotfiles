@@ -15,6 +15,7 @@ if [[ -z ${HOMEBREW_PREFIX:-} ]]; then
 fi
 
 path=(
+  "$HOMEBREW_PREFIX/opt/coreutils/libexec/gnubin"
   "$HOMEBREW_PREFIX/bin"
   "$HOMEBREW_PREFIX/sbin"
   "${XDG_BIN_HOME:-$HOME/.local/bin}"

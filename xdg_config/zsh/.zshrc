@@ -26,7 +26,6 @@ fi
 # these need to happen in the given order
 foreach file (
   exports.zsh
-  sources.zsh
   aliases.zsh
   ctrlo-widgets.zsh
   misc-widgets.zsh
@@ -34,6 +33,9 @@ foreach file (
   source $ZDOTDIR/config/$file
 }
 unset file
+
+# mise: version manager for Ruby, Node, Python, etc.
+command -v mise >/dev/null && eval "$(mise activate zsh)"
 
 # Oh My Zsh
 # Skip only aliases defined in the directories.zsh lib file
@@ -92,8 +94,16 @@ fi
 # bun completions
 [ -s "$XDG_DATA_HOME/bun/_bun" ] && source "$XDG_DATA_HOME/bun/_bun"
 
+# zsh-autosuggestions: must be after compinit (OMZ handles that)
+[ -f $HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh ] \
+  && source $HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+
 # zsh-abbr: must be sourced AFTER fzf and other tools that rebind keys
-if command -v brew >/dev/null; then
-  [ -f $HOMEBREW_PREFIX/share/zsh-abbr/zsh-abbr.zsh ] && source $HOMEBREW_PREFIX/share/zsh-abbr/zsh-abbr.zsh
+if [[ -f $HOMEBREW_PREFIX/share/zsh-abbr/zsh-abbr.zsh ]]; then
+  source $HOMEBREW_PREFIX/share/zsh-abbr/zsh-abbr.zsh
   load-abbreviations  # defined in aliases.zsh
 fi
+
+# zsh-syntax-highlighting: MUST be sourced last so it wraps all registered widgets
+[ -f $HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ] \
+  && source $HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
