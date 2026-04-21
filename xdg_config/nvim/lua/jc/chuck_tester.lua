@@ -208,7 +208,7 @@ local bufnr_for_test_file = function()
     bufnr = vim.fn.bufnr(test_file)
   end
 
-  return vim.fn.bufnr(test_file)
+  return bufnr
 end
 
 function M.run_mru_test(linenr, test_name)

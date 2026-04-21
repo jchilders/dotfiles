@@ -1,8 +1,15 @@
-local uv = vim.loop
-
 local emu = require("jc.terminal")
 
 local M = {}
+
+M.valid_directions = {
+  left = true,
+  right = true,
+  up = true,
+  down = true,
+  next = true,
+  prev = true,
+}
 
 -- Send line under the cursor to the pane in the given direction, then move the
 -- cursor to the next line

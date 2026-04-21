@@ -1,0 +1,30 @@
+---
+# Minimal selene std for Neovim's embedded Lua runtime.
+# Everything hanging off `vim.*` is treated as opaque rather than exhaustively
+# enumerated — we trust Neovim's API and just want to catch the classes of
+# issue that surfaced in the REFACTOR.md review (globals, shadowed params,
+# unused locals, unreachable branches).
+globals:
+  vim:
+    any: true
+  jit:
+    any: true
+  _G:
+    any: true
+  unpack:
+    args:
+      - type: any
+      - type: number
+        required: false
+      - type: number
+        required: false
+  describe:
+    any: true
+  it:
+    any: true
+  before_each:
+    any: true
+  after_each:
+    any: true
+  assert:
+    any: true

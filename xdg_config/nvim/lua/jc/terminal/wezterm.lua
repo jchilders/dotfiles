@@ -1,12 +1,10 @@
 local M = {}
 
--- Get the ID of the pane to the left
+-- Get the ID of the pane in `direction`
 function M.get_pane_id(direction)
-  local valid_directions = { "left", "right", "up", "down", "next", "prev" }
   direction = direction or "left"
 
-  -- Validate the direction parameter
-  if not vim.tbl_contains(valid_directions, direction) then
+  if not require("jc.terminal.shared").valid_directions[direction] then
     error("Invalid direction. Allowed values are 'left', 'right', 'up', 'down', 'next', or 'prev'")
   end
 
@@ -47,22 +45,6 @@ function M.send_text(text, direction)
   if vim.v.shell_error ~= 0 then
     vim.notify(result, vim.log.levels.ERROR, { title = "Send Text (" .. direction .. ")" })
   end
-end
-
-function M.send_left(text)
-  M.send_text(text, "left")
-end
-
-function M.send_right(text)
-  M.send_text(text, "right")
-end
-
-function M.send_up(text)
-  M.send_text(text, "up")
-end
-
-function M.send_down(text)
-  M.send_text(text, "down")
 end
 
 return M

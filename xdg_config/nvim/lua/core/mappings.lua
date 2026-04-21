@@ -1,40 +1,16 @@
-local remap = require("jc.utils").map_global
 local scratcher = require("jc.scratcher")
 local emu_utils = require("jc.terminal.shared")
 local emu = require("jc.terminal")
 
-TelescopeMapArgs = TelescopeMapArgs or {}
-
-local map_ctrlo = function(key, rhs, map_options, bufnr)
-  key = "<C-o>" .. key
-  local mode = "n"
-
-  if map_options == nil then
-    map_options = {
-      noremap = true,
-      silent = true,
-    }
-  end
-
-  if not bufnr then
-    -- vim.api.nvim_set_keymap(mode, key, rhs, map_options)
-    vim.keymap.set(mode, key, rhs, map_options)
-  else
-    vim.api.nvim_buf_set_keymap(0, mode, key, rhs, map_options)
-  end
+local map_ctrlo = function(key, rhs)
+  vim.keymap.set("n", "<C-o>" .. key, rhs, { noremap = true, silent = true })
 end
 
 -- @param {string} f - telescope function to call
-local map_ctrlo_tele = function(key, f, tele_options, bufnr)
-  local map_key = vim.api.nvim_replace_termcodes(key .. f, true, true, true)
-  TelescopeMapArgs[map_key] = tele_options or {}
-  local rhs = string.format(
-    "<cmd>lua require('jc.telescope')['%s'](TelescopeMapArgs['%s'])<CR>",
-    f,
-    map_key
-  )
-
-  map_ctrlo(key, rhs, bufnr)
+local map_ctrlo_tele = function(key, f, tele_options)
+  map_ctrlo(key, function()
+    require("jc.telescope")[f](tele_options or {})
+  end)
 end
 
 -- Quickly toggle between next/previous buffers
@@ -98,19 +74,26 @@ local search_cmd = [[:let @/='<C-R>=expand("<cword>")<CR>'<CR>:set hls<CR>]]
 vim.keymap.set("n", "*", search_cmd, { silent = true })
 
 -- Hit <CR> to clear highlighted search matches
-remap("n", "<CR>", '{-> v:hlsearch ? "<cmd>nohl\\<CR>" : "\\<CR>"}()', true)
+vim.keymap.set("n", "<CR>", function()
+  if vim.v.hlsearch == 1 then
+    return "<cmd>nohlsearch<CR>"
+  end
+  return "<CR>"
+end, { expr = true, silent = true, replace_keycodes = true })
 
 vim.keymap.set("n", "<leader>w", "<cmd>wa<CR>")
 vim.keymap.set("n", "<leader>W", "<cmd>wqa<CR>")
 
 -- Zenish-mode. Hides gutter, indentation indicators, and LSP messages. Keeps statusline.
-vim.keymap.set("n", "<leader>z", require("jc.utils").toggle_zenish)
+vim.keymap.set("n", "<leader>z", require("jc.ui").toggle_zenish)
 
 -- Open Scratch file for this project
 vim.keymap.set("n", "<leader>rs", scratcher.split_open_scratch_file)
 
 -- Lua Inspect current line
-remap("n", "<leader>li", "<cmd>lua print(vim.inspect(loadstring(\"return \" .. vim.fn.getline('.'))()))<CR>")
+vim.keymap.set("n", "<leader>li", function()
+  print(vim.inspect(loadstring("return " .. vim.fn.getline("."))()))
+end, { silent = true })
 
 -- Send the current line to the pane to the left
 vim.keymap.set("n", "<leader>sh", emu_utils.send_line_left)
@@ -129,9 +112,6 @@ vim.keymap.set("v", "<leader>sl", emu_utils.send_selection_right)
 vim.keymap.set("v", "<leader>sk", emu_utils.send_selection_up)
 -- Send the visually selected text to the pane below the current pane
 vim.keymap.set("v", "<leader>sj", emu_utils.send_selection_down)
--- Send ('a'gain) the last visually selected area to the left terminal pane
--- TODO: get this working for all directions
--- vim.keymap.set("n", "<leader>sa", emu_utils.send_selection_left)
 
 -- Send Up then Enter to the pane to the left
 vim.keymap.set("n", "<Leader>rr", function()
@@ -176,12 +156,12 @@ end, { desc = "Toggle resend on save for this buffer" })
 
 -- Insert debug print statement below current line
 vim.keymap.set("n", "<leader>pp", function()
-  require("jc.utils").insert_print_statement(false)
+  require("jc.debug_print").insert_print_statement(false)
 end)
 
 -- Insert debug print statement above current line
 vim.keymap.set("n", "<leader>pP", function()
-  require("jc.utils").insert_print_statement(true)
+  require("jc.debug_print").insert_print_statement(true)
 end)
 
 local tireswing_ok, tireswing = pcall(require, "jc.tireswing")
@@ -193,11 +173,6 @@ if tireswing_ok then
   end)
   -- Quote Toggler: toggle between single/double quotes for string under cursor.
   vim.keymap.set("n", "<leader>tq", tireswing.toggle_quotes)
-
-  -- move current treesitter object up
-  -- remap("n", "J", "<cmd>lua require('jc.tireswing').swap_nodes(false)<CR>")
-  -- move current treesitter object down
-  -- remap("n", "K", "<cmd>lua require('jc.tireswing').swap_nodes(true)<CR>")
 end
 
 -- Save & run the current, or most recently modified, test in the terminal pane to the left
@@ -205,27 +180,24 @@ vim.keymap.set("n", "<leader>rt", "<cmd>wa<CR><cmd>lua require('jc.chuck_tester'
 vim.keymap.set("n", "<leader>rT", "<cmd>wa<CR><cmd>lua require('jc.chuck_tester').run_mru_test_current_line()<CR>")
 
 -- Edit the most recently modified test
-remap("n", "<leader>et", "<cmd>wa<CR><cmd>lua require('jc.chuck_tester').edit_mru_test()<CR>")
-
--- Toggle treesitter highlighting
--- remap("n", "<leader>tstog", "<cmd>TSBufToggle highlight<CR>")
-
--- Show tree-sitter highlight group(s) for current cursor position
--- remap("n", "<leader>tshi", "<cmd>TSHighlightCapturesUnderCursor<CR>")
+vim.keymap.set("n", "<leader>et", function()
+  vim.cmd("wa")
+  require("jc.chuck_tester").edit_mru_test()
+end, { silent = true })
 
 -- Copy to system clipboard with ctrl-c
-remap("v", "<C-c>", '"+y')
+vim.keymap.set("v", "<C-c>", '"+y', { silent = true })
 
 -- quickfix
-vim.keymap.set("n", "<leader>qf", require('jc.utils').toggle_qf)
-remap("n", "<leader>qn", "<cmd>cnext<CR>")
-remap("n", "<leader>qp", "<cmd>cprev<CR>")
+vim.keymap.set("n", "<leader>qf", require("jc.ui").toggle_qf)
+vim.keymap.set("n", "<leader>qn", "<cmd>cnext<CR>", { silent = true })
+vim.keymap.set("n", "<leader>qp", "<cmd>cprev<CR>", { silent = true })
 
 -- locationlist
-remap("n", "<leader>ll", "<cmd>lopen<CR>")
-remap("n", "<leader>lc", "<cmd>lclose<CR>")
-remap("n", "<leader>ln", "<cmd>lnext<CR>")
-remap("n", "<leader>lp", "<cmd>lprev<CR>")
+vim.keymap.set("n", "<leader>ll", "<cmd>lopen<CR>", { silent = true })
+vim.keymap.set("n", "<leader>lc", "<cmd>lclose<CR>", { silent = true })
+vim.keymap.set("n", "<leader>ln", "<cmd>lnext<CR>", { silent = true })
+vim.keymap.set("n", "<leader>lp", "<cmd>lprev<CR>", { silent = true })
 
 local telescope_builtin_ok, telescope_builtin = pcall(require, "telescope.builtin")
 if telescope_builtin_ok then
@@ -240,12 +212,6 @@ if telescope_builtin_ok then
   vim.keymap.set('n', '<leader>tsh', telescope_builtin.help_tags, { desc = '[S]earch [H]elp' })
   vim.keymap.set('n', '<leader>sd', telescope_builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
 end
-
--- LSP Diagnostic keymaps
--- vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
--- vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
--- vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float)
--- vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)
 
 -- ctrl-o
 
@@ -278,9 +244,11 @@ vim.keymap.set("n", "[d", function() diagnostic_jump_and_open(-1) end)
 vim.keymap.set("n", "]d", function() diagnostic_jump_and_open(1) end)
 vim.keymap.set("n", "[[", function() diagnostic_jump_and_open(-1) end)
 vim.keymap.set("n", "]]", function() diagnostic_jump_and_open(1) end)
-remap("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>")
-remap("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>")
-remap("n", "<space>wl", "<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>")
+vim.keymap.set("n", "gd", vim.lsp.buf.definition, { silent = true })
+vim.keymap.set("n", "gD", vim.lsp.buf.declaration, { silent = true })
+vim.keymap.set("n", "<space>wl", function()
+  print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+end, { silent = true })
 
 -- little t -> Search list of symbols (tags) for current document
 map_ctrlo_tele("t", "lsp_document_symbols")
@@ -308,20 +276,14 @@ vim.keymap.set("n", "<leader>cbn", function()
   print(string.format("Current buffer number: %d, Current window number: %d", vim.fn.bufnr('%'), vim.api.nvim_win_get_number(0)))
 end)
 
-vim.api.nvim_set_keymap('n', '<leader>mp', [[<cmd>lua ControlMusic("playpause")<CR>]], { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>mn', [[<cmd>lua ControlMusic("next")<CR>]], { noremap = true, silent = true })
-
--- Control Music app
-function ControlMusic(action)
-  local script = ""
-  if action == "playpause" then
-    script = "tell application \"Music\" to playpause"
-  elseif action == "next" then
-    script = "tell application \"Music\" to next track"
-  else
-    print("Invalid action: " .. action)
-    return
-  end
+local function tell_music(script)
   local handle = io.popen("osascript -e '" .. script .. "'")
   if handle then handle:close() end
 end
+
+vim.keymap.set("n", "<leader>mp", function()
+  tell_music('tell application "Music" to playpause')
+end, { silent = true })
+vim.keymap.set("n", "<leader>mn", function()
+  tell_music('tell application "Music" to next track')
+end, { silent = true })

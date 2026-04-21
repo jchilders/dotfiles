@@ -1,15 +1,5 @@
 local M = {}
 
-
-local valid_directions = {
-  left = true,
-  right = true,
-  up = true,
-  down = true,
-  next = true,
-  prev = true,
-}
-
 local ghostty_directions = {
   left = "left",
   right = "right",
@@ -62,7 +52,7 @@ end
 function M.get_pane_id(direction)
   direction = direction or "left"
 
-  if not valid_directions[direction] then
+  if not require("jc.terminal.shared").valid_directions[direction] then
     error("Invalid direction. Allowed values are 'left', 'right', 'up', 'down', 'next', or 'prev'")
   end
 
@@ -136,22 +126,6 @@ function M.send_text(text, direction)
   if not ok then
     vim.notify(result, vim.log.levels.ERROR, { title = "Send Text (" .. direction .. ")" })
   end
-end
-
-function M.send_left(text)
-  M.send_text(text, "left")
-end
-
-function M.send_right(text)
-  M.send_text(text, "right")
-end
-
-function M.send_up(text)
-  M.send_text(text, "up")
-end
-
-function M.send_down(text)
-  M.send_text(text, "down")
 end
 
 return M

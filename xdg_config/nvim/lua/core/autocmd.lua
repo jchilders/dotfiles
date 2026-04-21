@@ -3,7 +3,7 @@
 local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
 vim.api.nvim_create_autocmd('TextYankPost', {
   callback = function()
-    vim.highlight.on_yank()
+    (vim.hl or vim.highlight).on_yank()
   end,
   group = highlight_group,
   pattern = '*',
@@ -133,10 +133,8 @@ end
 -- Map the functions to key combinations, only in Ruby files
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "ruby",
-  callback = function()
-    -- Insert below with <leader>db
-    vim.api.nvim_buf_set_keymap(0, 'n', '<leader>db', '', {noremap = true, callback = function() insert_binding('below') end })
-    -- Insert above with <leader>dB
-    vim.api.nvim_buf_set_keymap(0, 'n', '<leader>dB', '', {noremap = true, callback = function() insert_binding('above') end })
-  end
+  callback = function(args)
+    vim.keymap.set("n", "<leader>db", function() insert_binding("below") end, { buffer = args.buf })
+    vim.keymap.set("n", "<leader>dB", function() insert_binding("above") end, { buffer = args.buf })
+  end,
 })

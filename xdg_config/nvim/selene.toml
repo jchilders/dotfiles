@@ -1,0 +1,5 @@
+std = "lua51+vim"
+
+[lints]
+mixed_table = "allow"        # we define list-like tables with named fields (e.g. templates)
+if_same_then_else = "allow"  # toggle functions mirror their branches by design
