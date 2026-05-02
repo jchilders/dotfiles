@@ -36,6 +36,8 @@ if [[ -n $HOMEBREW_PREFIX ]]; then
   fpath+=($HOMEBREW_PREFIX/share/zsh/site-functions)
 fi
 
+export HOMEBREW_NO_ENV_HINTS=1
+
 # Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then
   export EDITOR='vim'

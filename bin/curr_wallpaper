@@ -1,44 +1,112 @@
 #!/usr/bin/env ruby
 # Get the current macOS wallpaper path.
-# If set to a single image, returns that path.
-# If set to a folder (shuffle mode), returns the most recently accessed image in that folder.
+# - Single image: prints that path.
+# - Folder (shuffle): prints the most recently accessed image in that folder.
+# - Dynamic/system provider (e.g. Sonoma aerials): prints a description to stderr
+#   and exits 2 so callers can distinguish "no file path" from a real error.
+#
+# macOS Sonoma+ moved wallpaper state out of `System Events` into
+# ~/Library/Application Support/com.apple.wallpaper/Store/Index.plist. The
+# active path lives inside an embedded bplist under the Choice's Configuration
+# data blob.
 
 require 'open3'
+require 'rexml/document'
+require 'base64'
+require 'tempfile'
+require 'uri'
 
 IMAGE_EXTS = %w[.jpg .jpeg .png .heic .tiff .gif .webp].freeze
+PLIST = File.expand_path('~/Library/Application Support/com.apple.wallpaper/Store/Index.plist')
 
-desktop_path, err, status = Open3.capture3(
-  'osascript', '-e',
-  'tell application "System Events" to tell current desktop to get picture'
-)
+def plutil_extract(key_path, format: 'xml1', file: PLIST)
+  out, _err, status = Open3.capture3('plutil', '-extract', key_path, format, '-o', '-', file)
+  status.success? ? out : nil
+end
 
-unless status.success?
-  warn "Failed to get wallpaper: #{err}"
+def decode_configuration(b64)
+  bytes = Base64.decode64(b64)
+  Tempfile.create(['wp-config', '.bplist']) do |f|
+    f.binmode
+    f.write(bytes)
+    f.flush
+    out, _err, status = Open3.capture3('plutil', '-convert', 'xml1', '-o', '-', f.path)
+    return status.success? ? out : nil
+  end
+end
+
+# Walk a parsed REXML doc and pull every <string>file://...</string>.
+def file_urls_in(xml_doc)
+  REXML::XPath.match(xml_doc, '//string')
+    .map(&:text)
+    .compact
+    .select { |s| s.start_with?('file://') }
+    .map { |u| URI.decode_www_form_component(u.sub(%r{^file://}, '')) }
+    .uniq
+end
+
+def latest_image_in(dir)
+  Dir.children(dir)
+    .select { |f| IMAGE_EXTS.include?(File.extname(f).downcase) }
+    .map { |f| File.join(dir, f) }
+    .max_by { |f| File.atime(f) }
+end
+
+unless File.file?(PLIST)
+  warn "Wallpaper index plist not found: #{PLIST}"
   exit 1
 end
 
-path = desktop_path.strip
+choices_xml = plutil_extract('AllSpacesAndDisplays.Desktop.Content.Choices')
+unless choices_xml
+  warn 'Could not read wallpaper Choices from plist'
+  exit 1
+end
 
-if File.file?(path)
-  puts path
+choice = REXML::Document.new(choices_xml).elements['plist/array/dict']
+unless choice
+  warn 'No wallpaper choices present'
+  exit 1
+end
+
+provider = choice.elements["key[text()='Provider']/following-sibling::string[1]"]&.text
+
+# Collect candidate paths from both Files and the embedded Configuration bplist.
+paths = []
+
+files_array = choice.elements["key[text()='Files']/following-sibling::array[1]"]
+if files_array
+  files_array.each_element('dict') do |d|
+    rel = d.elements["key[text()='relative']/following-sibling::string[1]"]&.text
+    paths << URI.decode_www_form_component(rel.sub(%r{^file://}, '')) if rel&.start_with?('file://')
+  end
+end
+
+config_b64 = choice.elements["key[text()='Configuration']/following-sibling::data[1]"]&.text&.gsub(/\s+/, '')
+if config_b64 && !config_b64.empty?
+  config_xml = decode_configuration(config_b64)
+  paths.concat(file_urls_in(REXML::Document.new(config_xml))) if config_xml
+end
+
+paths.uniq!
+
+files = paths.select { |p| File.file?(p) }
+dirs  = paths.select { |p| File.directory?(p) }
+
+if !files.empty?
+  print files.max_by { |f| File.atime(f) }
   exit 0
 end
 
-if File.directory?(path)
-  images = Dir.children(path)
-    .select { |f| IMAGE_EXTS.include?(File.extname(f).downcase) }
-    .map { |f| File.join(path, f) }
-    .sort_by { |f| File.atime(f) }
-    .reverse
-
-  if images.empty?
-    warn "No images found in wallpaper folder: #{path}"
+if !dirs.empty?
+  candidates = dirs.flat_map { |d| Dir.children(d).select { |f| IMAGE_EXTS.include?(File.extname(f).downcase) }.map { |f| File.join(d, f) } }
+  if candidates.empty?
+    warn "No images found in wallpaper folder(s): #{dirs.join(', ')}"
     exit 1
   end
-
-  puts images.first
+  print candidates.max_by { |f| File.atime(f) }
   exit 0
 end
 
-warn "Unexpected wallpaper path: #{path}"
-exit 1
+warn "Dynamic wallpaper (no file path): #{provider || 'unknown provider'}"
+exit 2
