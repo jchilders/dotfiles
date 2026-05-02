@@ -18,11 +18,6 @@ if [[ ! -v HOMEBREW_PREFIX ]] then
   [ -f $HOMEBREW_PREFIX/bin/brew ] && eval "$(${HOMEBREW_PREFIX}/bin/brew shellenv)"
 fi
 
-# Load machine-specific config: API keys, etc.
-if [[ -f $HOME/.env.local ]]; then
-  source $HOME/.env.local
-fi
-
 # these need to happen in the given order
 foreach file (
   exports.zsh
@@ -33,6 +28,10 @@ foreach file (
   source $ZDOTDIR/config/$file
 }
 unset file
+
+# Load machine-specific config: API keys, etc. Since omz's dotenv only loads from pwd,
+# this let's me have exports in $HOME that I don't want to commit to exports.zsh
+ [[ -f $HOME/.env ]] && { set -a; source $HOME/.env; set +a; }
 
 # mise: version manager for Ruby, Node, Python, etc.
 command -v mise >/dev/null && eval "$(mise activate zsh)"
