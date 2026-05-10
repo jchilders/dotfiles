@@ -10,6 +10,11 @@ bindkey '^[OA'  up-line-or-beginning-search
 bindkey '^[[B'  down-line-or-beginning-search  # Arrow down
 bindkey '^[OB'  down-line-or-beginning-search
 
+autoload -Uz edit-command-line
+zle -N edit-command-line
+bindkey -M viins '^g' edit-command-line
+bindkey -M vicmd '^g' edit-command-line
+
 # Lets you rename multiple files w/ regexes, including group capturing
 # man zmv
 # Replace all spaces in filenames with underscores:
