@@ -37,7 +37,7 @@
   ll = log --pretty=format:'%Cblue%h%Cgreen %s%C(yellow)%d%Creset' --decorate --numstat
   st = status -sb
 
-  # copy branch to pasteboard. see also: `gcb` shell alias
+  # copy branch to pasteboard. see also: `ccb` shell alias
   cb = ! git rev-parse --abbrev-ref HEAD | tr -d '\n' | pbcopy
 
   # discourage using checkout

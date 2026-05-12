@@ -279,7 +279,7 @@ Additional zsh mappings:
 
 | alias | description |
 | :---: | :---------- |
-| <kbd>gcb</kbd> | Copies current branch name to pasteboard (clipboard) |
+| <kbd>ccb</kbd> | Copies current branch name to pasteboard (clipboard) |
 | <kbd>gd</kbd> | `git diff` |
 | <kbd>gst</kbd> |  `git status -sb` |
 | <kbd>r</kbd> | Rerun previous command |
