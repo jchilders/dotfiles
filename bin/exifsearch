@@ -21,7 +21,7 @@ trap cleanup EXIT
 printf '%s\0' -- $files[@] |
 parallel -0 --bar --no-notice --jobs "$jobs" --will-cite --env EXIFSEARCH_PATTERN \
   'if exiftool -s -s -s -a -G1 -charset filename=utf8 -FileName -FilePath -all:all -- {} 2>/dev/null \
-    | rg -q -F -- "$EXIFSEARCH_PATTERN"; then
+    | rg -q -F -i -- "$EXIFSEARCH_PATTERN"; then
       printf "%s\n" {}
     fi' >"$tmpfile"
 cat "$tmpfile"
