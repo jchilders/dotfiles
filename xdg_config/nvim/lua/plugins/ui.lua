@@ -1,17 +1,21 @@
 return {
   {
-    -- :Notifications - show log of notification history
-    -- require('telescope').extensions.notify.notify() - same as above, w/ Telescope
-    -- require("notify")("My super important message")
-    -- vim.notify("Look out!", vim.log.levels.ERROR)
-    "rcarriga/nvim-notify",
-    enabled = true,
-    config = function()
-      require("notify").setup {
-        background_colour = "#000000",
-      }
-      vim.notify = require("notify")
-    end,
+    -- Snacks.notifier.show_history() - show notification history
+    "folke/snacks.nvim",
+    priority = 1000,
+    lazy = false,
+    opts = {
+      notifier = {
+        enabled = true,
+        timeout = 5000,
+        width = { min = 40, max = 0.45 },
+        style = "compact",
+        top_down = false,
+      },
+      styles = {
+        notification = { wo = { wrap = true, linebreak = true } },
+      },
+    },
   },
   {
     "nvim-tree/nvim-web-devicons",
