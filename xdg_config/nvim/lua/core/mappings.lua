@@ -6,10 +6,9 @@ local map_ctrlo = function(key, rhs)
   vim.keymap.set("n", "<C-o>" .. key, rhs, { noremap = true, silent = true })
 end
 
--- @param {string} f - telescope function to call
-local map_ctrlo_tele = function(key, f, tele_options)
+local map_ctrlo_fzf = function(key, f, opts)
   map_ctrlo(key, function()
-    require("jc.telescope")[f](tele_options or {})
+    require("jc.fzf")[f](opts or {})
   end)
 end
 
@@ -199,39 +198,33 @@ vim.keymap.set("n", "<leader>lc", "<cmd>lclose<CR>", { silent = true })
 vim.keymap.set("n", "<leader>ln", "<cmd>lnext<CR>", { silent = true })
 vim.keymap.set("n", "<leader>lp", "<cmd>lprev<CR>", { silent = true })
 
-local telescope_builtin_ok, telescope_builtin = pcall(require, "telescope.builtin")
-if telescope_builtin_ok then
-  vim.keymap.set('n', '<leader>/', function()
-    telescope_builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
-      winblend = 10,
-      previewer = false,
-    })
-  end, { desc = '[/] Fuzzily search in current buffer]' })
+vim.keymap.set("n", "<leader>/", function()
+  require("fzf-lua").blines()
+end, { desc = "[/] Fuzzily search in current buffer" })
 
-  vim.keymap.set("n", "<C-o>h", telescope_builtin.command_history, { desc = "Command [h]istory" })
-  vim.keymap.set('n', '<leader>tsh', telescope_builtin.help_tags, { desc = '[S]earch [H]elp' })
-  vim.keymap.set('n', '<leader>sd', telescope_builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
-end
+vim.keymap.set("n", "<C-o>h", function() require("fzf-lua").command_history() end, { desc = "Command [h]istory" })
+vim.keymap.set("n", "<leader>tsh", function() require("fzf-lua").help_tags() end, { desc = "[S]earch [H]elp" })
+vim.keymap.set("n", "<leader>sd", function() require("fzf-lua").diagnostics_workspace() end, { desc = "[S]earch [D]iagnostics" })
 
 -- ctrl-o
 
 -- opening files
-map_ctrlo_tele("o", "find_files")     -- do not include hidden files, files in .gitignore, etc.
-map_ctrlo_tele("O", "find_all_files") -- include hidden files, files in .gitignore, etc.
-map_ctrlo_tele("b", "buffers")        -- open from [b]uffer list
-map_ctrlo_tele("f", "grep_string")
+map_ctrlo_fzf("o", "find_files")     -- do not include hidden files, files in .gitignore, etc.
+map_ctrlo_fzf("O", "find_all_files") -- include hidden files, files in .gitignore, etc.
+map_ctrlo_fzf("b", "buffers")        -- open from [b]uffer list
+map_ctrlo_fzf("f", "grep_string")
 vim.keymap.set("x", "<C-o>f", function()
-  require("jc.telescope").grep_string()
+  require("jc.fzf").grep_string()
 end, { silent = true })
-map_ctrlo_tele("F", "live_grep")
+map_ctrlo_fzf("F", "live_grep")
 
 -- [g]it
-map_ctrlo_tele("gb", "git_branches")  -- switch [b]ranches
-map_ctrlo_tele("gs", "git_status")    -- uncommitted changes ([s]tatus)
+map_ctrlo_fzf("gb", "git_branches")  -- switch [b]ranches
+map_ctrlo_fzf("gs", "git_status")    -- uncommitted changes ([s]tatus)
 
 -- LSP
 -- little r -> Search for LSP references to word under cursor
-map_ctrlo_tele("r", "lsp_references")
+map_ctrlo_fzf("r", "lsp_references")
 
 local diagnostic_jump_and_open = function(count)
   vim.diagnostic.jump({ count = count })
@@ -251,13 +244,13 @@ vim.keymap.set("n", "<space>wl", function()
 end, { silent = true })
 
 -- little t -> Search list of symbols (tags) for current document
-map_ctrlo_tele("t", "lsp_document_symbols")
+map_ctrlo_fzf("t", "lsp_document_symbols")
 -- Big T -> Search list of symbols (tags) from entire workspace
-map_ctrlo_tele("T", "lsp_workspace_symbols")
+map_ctrlo_fzf("T", "lsp_workspace_symbols")
 
-map_ctrlo_tele("rc", "find_files", { search_dir = "app/controllers" })
-map_ctrlo_tele("rm", "find_files", { search_dir = "app/models" })
-map_ctrlo_tele("rv", "find_files", { search_dir = "app/views" })
+map_ctrlo_fzf("rc", "find_files", { search_dir = "app/controllers" })
+map_ctrlo_fzf("rm", "find_files", { search_dir = "app/models" })
+map_ctrlo_fzf("rv", "find_files", { search_dir = "app/views" })
 
 -- Open the browser, switch to the localhost tab, and reload
 vim.keymap.set("n", "<leader>ol", function()
