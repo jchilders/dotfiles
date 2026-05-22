@@ -54,6 +54,9 @@ export FZF_DEFAULT_OPTS="--height 30% --border --tiebreak=index --info=inline"
 export NVM_DIR="$XDG_DATA_HOME/nvm"
 export RIPGREP_CONFIG_PATH=$XDG_CONFIG_HOME/ripgrep/.ripgreprc
 
+# pin pip --user installs to ~/.local/bin regardless of active Python version
+export PYTHONUSERBASE="$HOME/.local"
+
 # colon-separated list of directories to exclude from zoxide dir switcher
 export _ZO_EXCLUDE_DIRS="$HOME/temp/*"
 

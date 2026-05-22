@@ -18,7 +18,11 @@ end.parse!
 
 img = ARGV.shift
 
-if img
+if img && File.directory?(img)
+  imgs = Dir.glob(File.join(img, '**/*.{gif,jpg,jpeg,png,webp,mp4,webm}')).select { |i| File.file?(i) }
+  abort "No images found in: #{img}" if imgs.empty?
+  img = imgs.sample
+elsif img
   abort "File not found: #{img}" unless File.file?(img)
 elsif !force_random && (show_models || show_prompts) && File.file?(LAST_IMG_FILE)
   img = File.read(LAST_IMG_FILE).strip
