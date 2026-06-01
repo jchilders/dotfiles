@@ -1,27 +1,52 @@
-#!/usr/bin/env zsh
-set -euo pipefail
+#!/usr/bin/env ruby
+# frozen_string_literal: true
 
 # usage: exifsearch <pattern> [dir]
-pattern="${1:?usage: ${0:t} <pattern> [dir]}"
-root="${2:-.}"
-root="${~root}"
+# Batches multiple files per exiftool invocation to eliminate per-file
+# startup overhead.
 
-# File extensions glob (zsh extended glob)
-exts="jpg|jpeg|png|heic|heif|tif|tiff|webp|arw|cr2|cr3|nef|dng|raf|orf|rw2"
+require 'json'
+require 'open3'
 
-# zsh globbing with null delimiters for safety
-export EXIFSEARCH_PATTERN="$pattern"
-jobs="${EXIFSEARCH_JOBS:-8}"
-setopt extended_glob null_glob glob_star_short
-files=("$root"/**/*.(#i)(${~exts})(.))
-(( ${#files} == 0 )) && exit 0
-tmpfile="$(mktemp -t exifsearch.XXXXXX)"
-cleanup() { rm -f "$tmpfile"; }
-trap cleanup EXIT
-printf '%s\0' -- $files[@] |
-parallel -0 --bar --no-notice --jobs "$jobs" --will-cite --env EXIFSEARCH_PATTERN \
-  'if exiftool -s -s -s -a -G1 -charset filename=utf8 -FileName -FilePath -all:all -- {} 2>/dev/null \
-    | rg -q -F -i -- "$EXIFSEARCH_PATTERN"; then
-      printf "%s\n" {}
-    fi' >"$tmpfile"
-cat "$tmpfile"
+EXTS = %w[jpg jpeg png heic heif tif tiff webp arw cr2 cr3 nef dng raf orf rw2].freeze
+
+pattern_str = ARGV[0] or abort "usage: #{File.basename($PROGRAM_NAME)} <pattern> [dir]"
+root        = File.expand_path(ARGV[1] || '.')
+jobs        = (ENV['EXIFSEARCH_JOBS'] || '8').to_i
+
+begin
+  regex = Regexp.new(pattern_str, Regexp::IGNORECASE)
+rescue RegexpError => e
+  abort "Invalid regex: #{e.message}"
+end
+
+ext_flags = EXTS.flat_map { |e| ['-e', e] }
+files = IO.popen(['fd', '--type', 'f', *ext_flags, '.', root], err: '/dev/null').read.split("\n")
+exit 0 if files.empty?
+
+# Divide files into exactly `jobs` batches so every thread does one call
+batch_size = [(files.size.to_f / jobs).ceil, 1].max
+batches    = files.each_slice(batch_size).to_a
+
+found = []
+mutex = Mutex.new
+
+threads = batches.map do |batch|
+  Thread.new(batch) do |b|
+    out, = Open3.capture3(
+      'exiftool', '-json', '-G1', '-all:all', '-charset', 'filename=utf8', '--', *b
+    )
+    records = begin; JSON.parse(out); rescue JSON::ParserError; []; end
+    records.each do |data|
+      file = data['SourceFile']
+      next unless file
+      match = data.any? do |k, v|
+        k != 'SourceFile' && v.is_a?(String) && v.match?(regex)
+      end
+      mutex.synchronize { found << file } if match
+    end
+  end
+end
+
+threads.each(&:join)
+found.sort.each { |f| puts f }
