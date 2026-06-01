@@ -7,6 +7,7 @@
 require 'json'
 require 'open3'
 require 'optparse'
+require 'tempfile'
 
 EXTS    = %w[jpg jpeg png heic heif tif tiff webp arw cr2 cr3 nef dng raf orf rw2].freeze
 CONTEXT = 30
@@ -89,6 +90,26 @@ threads = options[:jobs].times.map do
         updates.each { |k, v| args << "-#{k}=#{v[:new]}" }
         args += ['--', file]
         _, err, st = Open3.capture3(*args)
+
+        # Custom PNG text chunks (e.g. Draw Things' "Generation_data"/"Prompt")
+        # aren't writable unless defined. If exiftool rejects tags as undefined,
+        # generate a config defining exactly those tags and retry the write.
+        undefined = err.scan(/Tag '([^']+)' is not defined/).flatten
+        unless st.success? || undefined.empty?
+          names = undefined.map { |t| t.split(':', 2).last }.uniq
+          cfg = Tempfile.new(['exifreplace', '.cfg'])
+          cfg.write(<<~CONFIG)
+            %Image::ExifTool::UserDefined = (
+              'Image::ExifTool::PNG::TextualData' => {
+            #{names.map { |n| "    '#{n}' => { }," }.join("\n")}
+              },
+            );
+          CONFIG
+          cfg.close
+          _, err, st = Open3.capture3('exiftool', '-config', cfg.path, *args[1..])
+          cfg.unlink
+        end
+
         write_result = st.success? ? "  #{GREEN}[written]#{RESET}" : "  #{RED}[error: #{err.strip}]#{RESET}"
       end
 

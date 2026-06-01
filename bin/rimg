@@ -44,13 +44,33 @@ end
 exif_json, = Open3.capture2('exiftool', '-j', img)
 exif = JSON.parse(exif_json).first rescue {}
 
+# Draw Things stores its generation data as JSON in the "User Comment" field,
+# flagged by a "Creator Tool" of "Draw Things". Normalize it into the same
+# shape used for the "Generation data" field so the rest of the script is shared.
+draw_things = exif['CreatorTool'].to_s.strip == 'Draw Things'
+dt_data = (JSON.parse(exif['UserComment']) rescue nil) if draw_things
+
 gen_key = exif.keys.find { |k| k.match?(/generation.?data/i) }
-has_gen_data = gen_key || exif.keys.any? { |k| k.match?(/prompt/i) }
+
+gen_data =
+  if dt_data
+    {
+      'prompt'         => dt_data['c'],
+      'negativePrompt' => dt_data['uc'],
+      'baseModel'      => { 'type' => 'base', 'modelFileName' => dt_data['model'] },
+      'models'         => Array(dt_data['lora']).map do |l|
+        { 'type' => 'lora', 'modelFileName' => l['model'], 'weight' => l['weight'] }
+      end,
+    }
+  elsif gen_key
+    JSON.parse(exif[gen_key]) rescue nil
+  end
+
+has_gen_data = gen_data || gen_key || draw_things || exif.keys.any? { |k| k.match?(/prompt/i) }
 
 puts has_gen_data ? "#{img} *" : img unless show_json
 
-if (show_models || show_prompts) && gen_key
-  gen_data = JSON.parse(exif[gen_key]) rescue nil
+if show_models || show_prompts
   if gen_data
     if show_prompts
       puts
@@ -78,17 +98,20 @@ if (show_models || show_prompts) && gen_key
              [m['type'], m['label'], m['modelFileName'], m['weight'], m['hash']]
       end
     end
-  else
+  elsif gen_key || draw_things
     puts '(Generation data found but could not parse as JSON)'
   end
 end
 
 if show_json
-  prompt_key = exif.keys.find { |k| k.match?(/\Aprompt\z/i) }
   output = { file: img }
-  output[:prompt] = exif[prompt_key] if prompt_key
-  if gen_key
-    output[:generation_data] = JSON.parse(exif[gen_key]) rescue exif[gen_key]
+  if dt_data
+    output[:prompt] = dt_data['c']
+    output[:generation_data] = dt_data
+  else
+    prompt_key = exif.keys.find { |k| k.match?(/\Aprompt\z/i) }
+    output[:prompt] = exif[prompt_key] if prompt_key
+    output[:generation_data] = (JSON.parse(exif[gen_key]) rescue exif[gen_key]) if gen_key
   end
   puts JSON.generate(output)
 end
