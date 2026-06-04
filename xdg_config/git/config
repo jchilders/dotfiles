@@ -3,14 +3,25 @@
   excludesfile = ~/.gitignore
   editor = $EDITOR
   pager = delta
+[column]
+  ui = auto
 [branch]
   autoSetupMerge = true
+  sort = -committerdate
 [interactive]
   diffFilter = delta --color-only
 [diff]
+  algorithm = histogram
+  colorMoved = plain
+  mnemonicPrefix = true
+  renames = true
   tool = delta
 [difftool]
   prompt = false
+[fetch]
+  prune = true
+  pruneTags = true
+  all = true
 [merge]
   tool = vimdiff
 [pull]
@@ -30,8 +41,10 @@
 [rerere]
   enabled = true
 [rebase]
+  autoSquash = true
   autoStash = true
-
+[tag]
+  sort = version:refname
 [alias]
   l = log --pretty=format:'%C(yellow)%h%Creset %s%C(auto)%d%Creset'
   ll = log --pretty=format:'%Cblue%h%Cgreen %s%C(yellow)%d%Creset' --decorate --numstat

@@ -1,17 +1,25 @@
 # Use fzf to find a file based on fuzzy matching, preview it, and open it in
-# $EDITOR on enter. It is smart enough to handle previewing images. It expects the first
-# (and only) argument to be a command that will output a list of files.
+# $EDITOR on enter. It is smart enough to handle previewing images. The first
+# argument is a command that will output a list of files.
 #
-# Example:
+# An optional second command enables ctrl-o toggling: while fzf is open, ctrl-o
+# reloads the list using the other command and flips the prompt to match. The
+# third/fourth args are the prompt labels for the first/second command.
+#
+# Examples:
 #
 #   __find_file "fd --type=file"
+#   __find_file "fd --type=file" "fd --type=file --no-ignore" "git" "all"
 function __find_file() {
   local -a files
-  local cmd=${1:?usage: __find_file "command"}
+  local cmd=${1:?usage: __find_file "command" ["alt-command" "label" "alt-label"]}
+  local alt_cmd=$2
+  local label=${3:-files}
+  local alt_label=${4:-all}
   local preview_cmd='
     if file --mime-type -b {} | grep -q "^image/"; then
       chafa --size=555x${FZF_PREVIEW_LINES} {}
-    else 
+    else
       bat --color always --style numbers --line-range :200 {}
     fi'
 
@@ -21,7 +29,21 @@ function __find_file() {
     return 2
   fi
 
-  found_file=$(print -l $files | fzf --ansi --multi --cycle --preview="$preview_cmd")
+  local -a fzf_args=(--ansi --multi --cycle --preview="$preview_cmd")
+  if [[ -n "$alt_cmd" ]]; then
+    # ctrl-o toggles between $cmd and $alt_cmd, tracking which mode is active
+    # via the prompt string. reload preserves the current query.
+    fzf_args+=(
+      --prompt "$label> "
+      --bind "ctrl-o:transform:
+        case {fzf:prompt} in
+          '$label> ') echo 'change-prompt($alt_label> )+reload($alt_cmd)' ;;
+          *) echo 'change-prompt($label> )+reload($cmd)' ;;
+        esac"
+    )
+  fi
+
+  found_file=$(print -l $files | fzf "${fzf_args[@]}")
   return $?  # 0 = selected, 130 = cancelled by user (ESC/Ctrl-C)
 }
 
@@ -77,7 +99,10 @@ function __is_git_repo {
 
 function edit_file {
   if __is_git_repo; then
-    __find_file_required "fd --type=file --type=symlink" || return 1
+    __find_file_required \
+      "fd --type=file --type=symlink" \
+      "fd --type=file --type=symlink --hidden --no-ignore" \
+      "git" "all" || return 1
     __eval_found_file "${EDITOR:-nvim}"
   else
     edit_any_file
@@ -89,7 +114,10 @@ bindkey -M viins '^o^o' edit_file
 
 # ANY file
 function edit_any_file {
-  __find_file_required "fd --type=file --type=symlink --hidden --no-ignore" || return 1
+  __find_file_required \
+    "fd --type=file --type=symlink --hidden --no-ignore" \
+    "fd --type=file --type=symlink" \
+    "all" "git" || return 1
   __eval_found_file "${EDITOR:-nvim}"
 }
 zle -N edit_any_file

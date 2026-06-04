@@ -9,11 +9,13 @@ LAST_IMG_FILE = File.join(Dir.tmpdir, 'rimg_last')
 
 show_models = false
 show_prompts = false
+show_json = false
 force_random = false
 OptionParser.new do |opts|
   opts.on('-m', '--models', 'Print model table from Generation data EXIF field') { show_models = true }
   opts.on('-M', '--random', 'Show a random image with model table, ignoring the last-viewed cache') { force_random = true; show_models = true }
   opts.on('-p', '--prompts', 'Print positive and negative prompts from Generation data EXIF field') { show_prompts = true }
+  opts.on('-j', '--json', 'Output Prompt and Generation data EXIF fields as JSON') { show_json = true }
 end.parse!
 
 img = ARGV.shift
@@ -24,7 +26,7 @@ if img && File.directory?(img)
   img = imgs.sample
 elsif img
   abort "File not found: #{img}" unless File.file?(img)
-elsif !force_random && (show_models || show_prompts) && File.file?(LAST_IMG_FILE)
+elsif !force_random && (show_models || show_prompts || show_json) && File.file?(LAST_IMG_FILE)
   img = File.read(LAST_IMG_FILE).strip
   abort "Last image not found: #{img}" unless File.file?(img)
 else
@@ -35,18 +37,40 @@ end
 
 File.write(LAST_IMG_FILE, img)
 
-system('timg', img)
+unless show_json
+  system('timg', img)
+end
 
 exif_json, = Open3.capture2('exiftool', '-j', img)
 exif = JSON.parse(exif_json).first rescue {}
 
+# Draw Things stores its generation data as JSON in the "User Comment" field,
+# flagged by a "Creator Tool" of "Draw Things". Normalize it into the same
+# shape used for the "Generation data" field so the rest of the script is shared.
+draw_things = exif['CreatorTool'].to_s.strip == 'Draw Things'
+dt_data = (JSON.parse(exif['UserComment']) rescue nil) if draw_things
+
 gen_key = exif.keys.find { |k| k.match?(/generation.?data/i) }
-has_gen_data = gen_key || exif.keys.any? { |k| k.match?(/prompt/i) }
 
-puts has_gen_data ? "#{img} *" : img
+gen_data =
+  if dt_data
+    {
+      'prompt'         => dt_data['c'],
+      'negativePrompt' => dt_data['uc'],
+      'baseModel'      => { 'type' => 'base', 'modelFileName' => dt_data['model'] },
+      'models'         => Array(dt_data['lora']).map do |l|
+        { 'type' => 'lora', 'modelFileName' => l['model'], 'weight' => l['weight'] }
+      end,
+    }
+  elsif gen_key
+    JSON.parse(exif[gen_key]) rescue nil
+  end
 
-if (show_models || show_prompts) && gen_key
-  gen_data = JSON.parse(exif[gen_key]) rescue nil
+has_gen_data = gen_data || gen_key || draw_things || exif.keys.any? { |k| k.match?(/prompt/i) }
+
+puts has_gen_data ? "#{img} *" : img unless show_json
+
+if show_models || show_prompts
   if gen_data
     if show_prompts
       puts
@@ -58,22 +82,36 @@ if (show_models || show_prompts) && gen_key
       models = [gen_data['baseModel']].compact + Array(gen_data['models'])
 
       col_widths = {
-        type:  [models.map { |m| m['type'].to_s.length }.max, 4].max,
-        label: [models.map { |m| m['label'].to_s.length }.max, 5].max,
-        name:  [models.map { |m| m['modelFileName'].to_s.length }.max, 5].max,
+        type:   [models.map { |m| m['type'].to_s.length }.max, 4].max,
+        label:  [models.map { |m| m['label'].to_s.length }.max, 5].max,
+        name:   [models.map { |m| m['modelFileName'].to_s.length }.max, 5].max,
+        weight: [models.map { |m| m['weight'].to_s.length }.max, 6].max,
       }
 
-      header = "%-#{col_widths[:type]}s  %-#{col_widths[:label]}s  %-#{col_widths[:name]}s  %s" %
-               %w[Type Label Model Hash]
+      header = "%-#{col_widths[:type]}s  %-#{col_widths[:label]}s  %-#{col_widths[:name]}s  %-#{col_widths[:weight]}s  %s" %
+               %w[Type Label Model Weight Hash]
       puts
       puts header
       puts '-' * header.length
       models.each do |m|
-        puts "%-#{col_widths[:type]}s  %-#{col_widths[:label]}s  %-#{col_widths[:name]}s  %s" %
-             [m['type'], m['label'], m['modelFileName'], m['hash']]
+        puts "%-#{col_widths[:type]}s  %-#{col_widths[:label]}s  %-#{col_widths[:name]}s  %-#{col_widths[:weight]}s  %s" %
+             [m['type'], m['label'], m['modelFileName'], m['weight'], m['hash']]
       end
     end
-  else
+  elsif gen_key || draw_things
     puts '(Generation data found but could not parse as JSON)'
   end
+end
+
+if show_json
+  output = { file: img }
+  if dt_data
+    output[:prompt] = dt_data['c']
+    output[:generation_data] = dt_data
+  else
+    prompt_key = exif.keys.find { |k| k.match?(/\Aprompt\z/i) }
+    output[:prompt] = exif[prompt_key] if prompt_key
+    output[:generation_data] = (JSON.parse(exif[gen_key]) rescue exif[gen_key]) if gen_key
+  end
+  puts JSON.generate(output)
 end

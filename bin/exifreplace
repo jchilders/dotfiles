@@ -1,0 +1,129 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# usage: exifreplace [-w] [-j N] <regex> <replacement> [dir]
+# Dry-run by default; pass -w to write changes.
+
+require 'json'
+require 'open3'
+require 'optparse'
+require 'tempfile'
+
+EXTS    = %w[jpg jpeg png heic heif tif tiff webp arw cr2 cr3 nef dng raf orf rw2].freeze
+CONTEXT = 30
+COLOR   = $stdout.tty?
+
+CYAN  = COLOR ? "\e[36m"  : ''
+RED   = COLOR ? "\e[31m"  : ''
+GREEN = COLOR ? "\e[32m"  : ''
+DIM   = COLOR ? "\e[2m"   : ''
+BOLD  = COLOR ? "\e[1m"   : ''
+RESET = COLOR ? "\e[0m"   : ''
+
+def ctx(str, len)
+  str.length > len ? "#{str[0, len]}…" : str
+end
+
+def format_change(key, old_val, new_val, regex, replacement)
+  m = old_val.match(regex)
+  unless m
+    return "  #{CYAN}#{key}#{RESET}: #{old_val.inspect} => #{new_val.inspect}"
+  end
+
+  pre  = m.pre_match.length  > CONTEXT ? "…#{m.pre_match[-CONTEXT..]}"   : m.pre_match
+  post = m.post_match.length > CONTEXT ? "#{m.post_match[0, CONTEXT]}…"  : m.post_match
+
+  old_disp = "#{DIM}#{pre}#{RESET}#{RED}#{BOLD}#{m[0]}#{RESET}#{DIM}#{post}#{RESET}"
+  new_disp = "#{DIM}#{pre}#{RESET}#{GREEN}#{BOLD}#{replacement}#{RESET}#{DIM}#{post}#{RESET}"
+
+  "  #{CYAN}#{key}#{RESET}: #{old_disp} => #{new_disp}"
+end
+
+options = { write: false, jobs: 8 }
+parser = OptionParser.new do |o|
+  o.banner = "Usage: exifreplace [options] <regex> <replacement> [dir]\n\nDry-run by default."
+  o.on('-w', '--write', 'Write changes (default: dry run)') { options[:write] = true }
+  o.on('-j JOBS', Integer, 'Parallel jobs (default: 8)') { |j| options[:jobs] = j }
+end
+parser.parse!(ARGV)
+
+pattern_str = ARGV.shift or abort parser.to_s
+replacement  = ARGV.shift or abort parser.to_s
+root         = File.expand_path(ARGV.shift || '.')
+
+begin
+  regex = Regexp.new(pattern_str, Regexp::IGNORECASE)
+rescue RegexpError => e
+  abort "Invalid regex: #{e.message}"
+end
+
+ext_flags = EXTS.flat_map { |e| ['-e', e] }
+files = IO.popen(['fd', '--type', 'f', *ext_flags, '.', root], err: '/dev/null').read.split("\n")
+exit 0 if files.empty?
+
+queue = Queue.new
+files.each { |f| queue << f }
+queue.close
+
+mutex = Mutex.new
+total = 0
+
+threads = options[:jobs].times.map do
+  Thread.new do
+    while (file = queue.pop)
+      out, = Open3.capture3('exiftool', '-json', '-G1', '-all:all', '-charset', 'filename=utf8', '--', file)
+      data = begin; JSON.parse(out).first; rescue JSON::ParserError; next; end
+      next unless data
+
+      updates = {}
+      data.each do |key, value|
+        next if key == 'SourceFile'
+        next unless value.is_a?(String) && value.match?(regex)
+        new_val = value.gsub(regex, replacement)
+        updates[key] = { old: value, new: new_val } unless new_val == value
+      end
+      next if updates.empty?
+
+      write_result = nil
+      if options[:write]
+        args = ['exiftool', '-overwrite_original', '-charset', 'filename=utf8']
+        updates.each { |k, v| args << "-#{k}=#{v[:new]}" }
+        args += ['--', file]
+        _, err, st = Open3.capture3(*args)
+
+        # Custom PNG text chunks (e.g. Draw Things' "Generation_data"/"Prompt")
+        # aren't writable unless defined. If exiftool rejects tags as undefined,
+        # generate a config defining exactly those tags and retry the write.
+        undefined = err.scan(/Tag '([^']+)' is not defined/).flatten
+        unless st.success? || undefined.empty?
+          names = undefined.map { |t| t.split(':', 2).last }.uniq
+          cfg = Tempfile.new(['exifreplace', '.cfg'])
+          cfg.write(<<~CONFIG)
+            %Image::ExifTool::UserDefined = (
+              'Image::ExifTool::PNG::TextualData' => {
+            #{names.map { |n| "    '#{n}' => { }," }.join("\n")}
+              },
+            );
+          CONFIG
+          cfg.close
+          _, err, st = Open3.capture3('exiftool', '-config', cfg.path, *args[1..])
+          cfg.unlink
+        end
+
+        write_result = st.success? ? "  #{GREEN}[written]#{RESET}" : "  #{RED}[error: #{err.strip}]#{RESET}"
+      end
+
+      mutex.synchronize do
+        total += 1
+        puts "#{BOLD}#{file}#{RESET}"
+        updates.each { |k, v| puts format_change(k, v[:old], v[:new], regex, replacement) }
+        puts write_result if write_result
+      end
+    end
+  end
+end
+
+threads.each(&:join)
+
+label = options[:write] ? 'updated' : 'would be updated (dry run — use -w to write)'
+puts "\n#{total} file(s) #{label}."
