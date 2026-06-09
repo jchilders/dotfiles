@@ -26,7 +26,7 @@ install-macos: macos cfg zsh homebrew-bundle neovim -fonts bat ## Install for ma
 
 install-linux: cfg zsh-linux homebrew-bundle neovim-linux ## Install for Linux
 
-clean: cfg-clean neovim-clean ohmyzsh-clean zsh-clean homebrew-clean ## Uninstall all the things
+clean: cfg-clean neovim-clean zsh-clean homebrew-clean ## Uninstall all the things
 
 detect-os: ## Detect OS and run appropriate install
 ifeq ($(IS_DARWIN), 1)
@@ -108,29 +108,15 @@ mise: homebrew-bundle ## Install all languages configured for mise to handle
 	mise install
 
 ##@ zsh
-zsh: zsh-cfg ohmyzsh ## Install zsh-related items
+zsh: zsh-cfg ## Install zsh-related items
 
-zsh-linux: zsh-cfg ## Install zsh for Linux (skip Oh My Zsh)
+zsh-linux: zsh-cfg ## Install zsh for Linux
 
 zsh-clean: zsh-cfg-clean ## Uninstall zsh-related items
 
 zsh-cfg: ## Link ~/.zshenv
 	ln -sf $(cwd)/.zshenv $$HOME/.zshenv
 	ln -sf $(cwd)/.zshrc $$HOME/.zshrc
-
-ohmyzsh: xdg-setup ## Install Oh My Zsh
-	@if [ -d "$(XDG_STATE_HOME)/ohmyzsh" ]; then \
-		echo "Oh My Zsh already installed"; \
-	else \
-		CHSH=no KEEP_ZSHRC=yes RUNZSH=no ZSH=$(XDG_STATE_HOME)/ohmyzsh sh -c "$$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" --unattended; \
-	fi
-
-ohmyzsh-clean: ## Uninstall Oh My Zsh
-	@if [ -d "$(XDG_STATE_HOME)/ohmyzsh" ]; then \
-		rm -rf $(XDG_STATE_HOME)/ohmyzsh; \
-	else \
-		echo "Oh My Zsh not found in $(XDG_STATE_HOME)"; \
-	fi
 
 zsh-cfg-clean: ## Unlink ~/.zshenv
 	rm $$HOME/.zshenv

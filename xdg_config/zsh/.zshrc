@@ -29,30 +29,17 @@ foreach file (
 }
 unset file
 
-# Load machine-specific config: API keys, etc. Since omz's dotenv only loads from pwd,
-# this let's me have exports in $HOME that I don't want to commit to exports.zsh
+# Load machine-specific config: API keys, etc. in $HOME that I don't want to commit.
  [[ -f $HOME/.env ]] && { set -a; source $HOME/.env; set +a; }
 
 # mise: version manager for Ruby, Node, Python, etc.
 command -v mise >/dev/null && eval "$(mise activate zsh)"
 
-# Oh My Zsh
-# Skip only aliases defined in the directories.zsh lib file
-zstyle ':omz:lib:directories' aliases no
-
-export ZSH="$XDG_STATE_HOME/ohmyzsh"
-ZSH_THEME="robbyrussell"
-plugins=(
-  dotenv
-  mise
-  zoxide
-  last-working-dir
-)
-
-[ -f $ZSH/oh-my-zsh.sh ] && source $ZSH/oh-my-zsh.sh
-
-# This needs to happen after omz to ensure our options are preserved
+# Shell options + completion init (compinit). See the file for details.
 source $ZDOTDIR/config/options.zsh
+
+# zoxide: smarter `cd`. Previously loaded via the omz zoxide plugin.
+command -v zoxide >/dev/null && eval "$(zoxide init zsh)"
 
 # 1password completions
 if type op &>/dev/null; then
@@ -93,7 +80,7 @@ fi
 # bun completions
 [ -s "$XDG_DATA_HOME/bun/_bun" ] && source "$XDG_DATA_HOME/bun/_bun"
 
-# zsh-autosuggestions: must be after compinit (OMZ handles that)
+# zsh-autosuggestions: must be after compinit (handled in options.zsh)
 [ -f $HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh ] \
   && source $HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 

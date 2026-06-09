@@ -1,7 +1,19 @@
 export ZSH_COMPDUMP="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zcompdump"
 mkdir -p "$(dirname $ZSH_COMPDUMP)"
 autoload -Uz compinit
-compinit -C
+# If the dump was rebuilt in the last 24h, load it directly with -C, which skips
+# the slow compaudit security scan. Otherwise do a full compinit (rebuild + scan).
+# We point compinit at $ZSH_COMPDUMP with -d; a bare `compinit` would use the
+# default ~/.zcompdump instead. The glob is wrapped in an anon function because a
+# variable path never undergoes filename generation inside `[[ ]]`.
+() {
+  local -a dump=( ${~ZSH_COMPDUMP}(Nmh-24) )
+  if (( ${#dump} )); then
+    compinit -C -d "$ZSH_COMPDUMP"
+  else
+    compinit -d "$ZSH_COMPDUMP"
+  fi
+}
 
 export ZCACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
 mkdir -p "${ZCACHE_HOME}/zcompcache"
