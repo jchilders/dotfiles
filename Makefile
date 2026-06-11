@@ -84,9 +84,8 @@ zsh-linux: zsh-cfg ## Install zsh for Linux
 
 zsh-clean: zsh-cfg-clean ## Uninstall zsh-related items
 
-zsh-cfg: ## Link ~/.zshenv
-	ln -sf $(cwd)/.zshenv $$HOME/.zshenv
-	ln -sf $(cwd)/.zshrc $$HOME/.zshrc
+zsh-cfg: ## Link ~/.zshenv (it sets ZDOTDIR; .zshrc lives in xdg_config/zsh)
+	ln -sf $(cwd)/xdg_config/zsh/.zshenv $$HOME/.zshenv
 
 zsh-cfg-clean: ## Unlink ~/.zshenv
 	rm $$HOME/.zshenv
