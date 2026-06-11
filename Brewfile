@@ -2,11 +2,9 @@
 
 # Run this file with `brew bundle`
 
-brew 'automake'
 brew 'bat' # cat replacement
 brew 'chafa' # image and ASCII art viewer
 brew 'choose-rust' # sed replacement. e.g.: `bat things.csv | choose 5`
-brew 'cmake'
 brew 'coreutils' # gnu coreutils
 brew 'datasette' # simple web interface to SQLite databases
 brew 'devcontainer' # Reference implementation for the Development Containers spec
@@ -30,6 +28,7 @@ brew 'jq' # json processor
 brew 'lazygit' # git TUI
 brew 'make' # gnu make
 brew 'mise' # Version manager for Ruby, Node, etc.
+brew 'neovim'
 brew 'npm' # node package manager
 brew 'redis' # redis is redis
 brew 'rg' # ripgrep
@@ -63,8 +62,12 @@ brew 'zsh-autosuggestions'
 brew 'zsh-syntax-highlighting' # syntax highlighting while typing
 
 # fish-like abbreviations for zsh: aliases that expand when you hit enter
-tap 'olets/tap'
+tap 'olets/tap', trusted: true
 brew 'olets/tap/zsh-abbr'
+
+cask 'font-space-mono-nerd-font'
+cask 'font-blex-mono-nerd-font'
+cask 'font-source-code-pro-for-powerline'
 
 cask '1password-cli'
 

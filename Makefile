@@ -9,9 +9,9 @@ ZDOTDIR := $(XDG_CONFIG_HOME)/zsh
 export XDG_CACHE_HOME XDG_CONFIG_HOME XDG_DATA_HOME XDG_STATE_HOME XDG_RUNTIME_DIR ZDOTDIR
 BREW_PATHS := /opt/homebrew/bin:/usr/local/bin:/home/linuxbrew/.linuxbrew/bin
 export PATH := $(BREW_PATHS):$(PATH)
+# Homebrew 6 prompts for confirmation before install/upgrade by default
+export HOMEBREW_NO_ASK := 1
 BREW = $(firstword $(wildcard /opt/homebrew/bin/brew /usr/local/bin/brew /home/linuxbrew/.linuxbrew/bin/brew))
-
-BREW_BIN := $(BREW_PREFIX)/bin/brew
 
 .PHONY: all
 
@@ -22,11 +22,11 @@ IS_DARWIN := $(if $(filter Darwin,$(UNAME_S)),1,0)
 ##@ Install
 install: detect-os ## Install all the things
 
-install-macos: macos cfg zsh homebrew-bundle neovim -fonts bat ## Install for macOS
+install-macos: macos cfg zsh homebrew-bundle neovim -toilet-font bat ## Install for macOS
 
-install-linux: cfg zsh-linux homebrew-bundle neovim-linux ## Install for Linux
+install-linux: cfg zsh-linux homebrew-bundle neovim-plugins ## Install for Linux
 
-clean: cfg-clean neovim-clean zsh-clean homebrew-clean ## Uninstall all the things
+clean: cfg-clean zsh-clean homebrew-clean ## Uninstall all the things
 
 detect-os: ## Detect OS and run appropriate install
 ifeq ($(IS_DARWIN), 1)
@@ -51,57 +51,24 @@ homebrew: ## Install homebrew
 		echo "Installing Homebrew..."; \
 		NONINTERACTIVE=1 /bin/bash -c "$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"; \
 	fi
-	eval "$$($(BREW_BIN) shellenv)"
-	$(BREW_BIN) bundle --file "$(BREWFILE)"
 
 homebrew-bundle: homebrew ## Install default homebrew formulae.(Slow in Docker!)
-	@if [ -z "$(BREW)" ]; then \
-		echo "Homebrew not found"; exit 1; \
-	fi; \
-	eval "$$($(BREW) shellenv)" && $(BREW) bundle
+	brew bundle
+
+homebrew-bundle-cleanup: ## Uninstall brew packages not listed in the Brewfile
+	HOMEBREW_NO_ASK= brew bundle cleanup --force
 
 homebrew-clean: ## Uninstall homebrew
-	sudo curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall.sh | /bin/bash
-	rm -r /usr/local/var/homebrew
+	@prefix="$$(brew --prefix)"; \
+	sudo curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall.sh | /bin/bash; \
+	rm -rf "$$prefix/var/homebrew"
 
 ##@ Neovim
 
-NEOVIM_SRC_DIR := "$$HOME/work/neovim/neovim"
-NEOVIM_CFG_DIR := "$(XDG_CONFIG_HOME)/nvim"
+neovim: homebrew-bundle neovim-plugins ## Install Neovim (via Homebrew) and plugins
 
-neovim: neovim-clone-or-pull /usr/local/bin/nvim neovim-install-plugins ## Install Neovim
-
-neovim-linux: ## Install Neovim for Linux (use system package)
-	@echo "Using system neovim. Install plugins manually with: nvim --headless +Lazy! sync +qa"
-
-neovim-clone-or-pull: ## Clone neovim, or pull the latest
-		@mkdir -p $$(dirname $(NEOVIM_SRC_DIR))
-		@if [ -d $(NEOVIM_SRC_DIR) ]; then \
-				git -C $(NEOVIM_SRC_DIR) pull; \
-		else \
-				git clone https://github.com/neovim/neovim.git $(NEOVIM_SRC_DIR); \
-		fi; \
-
-/usr/local/bin/nvim: ## Install neovim from source
-		@if [ -z "$(BREW)" ]; then \
-				echo "Homebrew not found"; exit 1; \
-		fi
-		@for pkg in cmake automake ninja; do \
-				if ! which $$pkg >/dev/null; then \
-						$(BREW) install $$pkg; \
-				fi; \
-		done; \
-		$(MAKE) -C $(NEOVIM_SRC_DIR) CMAKE_BUILD_TYPE=RelWithDebInfo; \
-		sudo $(MAKE) -C $(NEOVIM_SRC_DIR) CMAKE_INSTALL_PREFIX=/usr/local install
-
-neovim-plugins: /usr/local/bin/nvim ## Install Neovim plugins
+neovim-plugins: ## Install Neovim plugins
 		@nvim --headless +Lazy! sync +qa
-
-neovim-clean: ## Uninstall neovim
-		-sudo rm /usr/local/bin/nvim
-		-sudo rm /usr/local/bin/vi
-		-sudo rm -r /usr/local/lib/nvim
-		-sudo rm -r /usr/local/share/nvim
 
 ##@ Languages
 mise: homebrew-bundle ## Install all languages configured for mise to handle
@@ -140,15 +107,8 @@ bat: ## Get TokyoNight theme for bat
 	curl -H "Accept: application/xml" -O https://raw.githubusercontent.com/folke/tokyonight.nvim/main/extras/sublime/tokyonight_night.tmTheme --output-dir "$$(bat --config-dir)/themes"
 	bat cache --build
 
-fonts: ## Install fonts
-	@if [ -z "$(BREW)" ]; then \
-		echo "Homebrew not found"; exit 1; \
-	fi; \
-	$(BREW) install font-space-mono-nerd-font
-	$(BREW) install font-blex-mono-nerd-font
-	$(BREW) install font-source-code-pro-for-powerline
-	## Font used with toilet banner generator
-	cp cosmic.flf $$HOMEBREW_CELLAR/toilet/0.3/share/figlet
+toilet-font: ## Install cosmic font for the toilet banner generator
+	cp cosmic.flf "$$(brew --prefix toilet)/share/figlet"
 
 ssh-cfg: ## Install ssh related files
 	@[ -d $$HOME/.ssh ] || mkdir $$HOME/.ssh

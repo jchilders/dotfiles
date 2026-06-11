@@ -14,8 +14,8 @@ make clean          # Uninstall everything
 ```bash
 make cfg            # Link xdg_config to ~/.config and bin to ~/bin
 make homebrew-bundle # Install Homebrew packages from Brewfile
-make neovim         # Build neovim from source (macOS)
-make zsh            # Set up zsh with Oh My Zsh
+make neovim         # Install neovim (via Homebrew) and sync plugins
+make zsh            # Link zsh entry points (~/.zshenv, ~/.zshrc)
 make macos          # Apply macOS system defaults
 ```
 
