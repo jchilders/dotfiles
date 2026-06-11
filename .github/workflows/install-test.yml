@@ -1,0 +1,33 @@
+name: install-test
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - Makefile
+      - Brewfile
+      - .github/workflows/install-test.yml
+      - .github/ubuntu-install-test/Dockerfile
+  pull_request:
+    paths:
+      - Makefile
+      - Brewfile
+      - .github/workflows/install-test.yml
+      - .github/ubuntu-install-test/Dockerfile
+
+jobs:
+  ubuntu-install:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build test image
+        run: docker build -t dotfiles-test .github/ubuntu-install-test
+
+      # Mount the repo read-only and copy it inside so the install can't
+      # write back into the checkout; run the full install as on a fresh box.
+      - name: make install on fresh Ubuntu
+        run: |
+          docker run --rm -v "$GITHUB_WORKSPACE":/src:ro dotfiles-test \
+            zsh -c 'cp -r /src ~/dotfiles && cd ~/dotfiles && make install'

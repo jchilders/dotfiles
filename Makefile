@@ -53,6 +53,9 @@ homebrew: ## Install homebrew
 	fi
 
 homebrew-bundle: homebrew ## Install default homebrew formulae.(Slow in Docker!)
+	@# Homebrew 6.0.0's parallel bundle install races the tap clone against
+	@# installing formulae from that tap; pre-tap so the formula is readable.
+	brew tap olets/tap || true
 	brew bundle
 
 homebrew-bundle-cleanup: ## Uninstall brew packages not listed in the Brewfile

@@ -9,7 +9,7 @@ brew 'coreutils' # gnu coreutils
 brew 'datasette' # simple web interface to SQLite databases
 brew 'devcontainer' # Reference implementation for the Development Containers spec
 brew 'dua-cli' # display disk usage, & delete unwanted data
-brew 'duti' # macOS: change default apps for file types/URL schemes
+brew 'duti' if OS.mac? # macOS: change default apps for file types/URL schemes
 brew 'eza' # git-aware ls replacement
 brew 'fd' # file finder
 brew 'fzf' # fuzzy finder
@@ -41,6 +41,7 @@ brew 'timg' # terminal image/video viewer
 brew 'trippy' # ping/traceroute replacement
 brew 'toilet' # ascii banners :)
 brew 'uv' # extremely fast Python package installer
+brew 'xz' # modern file compression
 brew 'yt-dlp' # audio/video downloader
 
 # mkcert and nss are used to generate locally trusted development certificates
@@ -62,12 +63,16 @@ brew 'zsh-autosuggestions'
 brew 'zsh-syntax-highlighting' # syntax highlighting while typing
 
 # fish-like abbreviations for zsh: aliases that expand when you hit enter
-tap 'olets/tap', trusted: true
-brew 'olets/tap/zsh-abbr'
+# NOTE: `tap 'olets/tap', trusted: true` does NOT work: the hash lands in the
+# DSL's clone_target param. Trusting the formula is the supported granular form.
+tap 'olets/tap'
+brew 'olets/tap/zsh-abbr', trusted: true
 
-cask 'font-space-mono-nerd-font'
-cask 'font-blex-mono-nerd-font'
-cask 'font-source-code-pro-for-powerline'
+if OS.mac?
+  cask 'font-space-mono-nerd-font'
+  cask 'font-blex-mono-nerd-font'
+  cask 'font-source-code-pro-for-powerline'
+end
 
 cask '1password-cli'
 
