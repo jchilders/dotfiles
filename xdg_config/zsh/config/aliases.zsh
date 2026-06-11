@@ -22,8 +22,19 @@ function man() {
 
 # Aliases
 alias ...='cd ../..'
-alias ccb="git branch --show-current | tr -d '\n' | pbcopy; print 'Current branch copied to pasteboard'"
-alias cpwd="pwd | tr -d '\n' | pbcopy; print 'Current directory copied to pasteboard'"
+
+# Copy current branch to pasteboard
+function ccb {
+  local branch=$(git branch --show-current)
+  print -n "$branch" | pbcopy
+  print "$branch copied to pasteboard"
+}
+
+# Copy current directory to pasteboard
+function cpwd {
+  print -n "$PWD" | pbcopy
+  print "$PWD copied to pasteboard"
+}
 alias diff='delta' # viewer for `git diff` and `diff`
 alias l='eza --all --long --git --icons --no-user --time-style relative'
 alias tree='eza --tree'

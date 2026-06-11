@@ -4,8 +4,100 @@ require 'open3'
 require 'json'
 require 'optparse'
 require 'tmpdir'
+require 'io/console'
 
 LAST_IMG_FILE = File.join(Dir.tmpdir, 'rimg_last')
+IMG_GLOB = '**/*.{gif,jpg,jpeg,png,webp,mp4,webm}'
+
+BOLD  = "\e[1m"
+ULINE = "\e[4m"
+RESET = "\e[0m"
+
+# Render a word with its first letter bold + underlined to mark its hotkey.
+def cmd(word)
+  "#{BOLD}#{ULINE}#{word[0]}#{RESET}#{word[1..]}"
+end
+
+# Render a whole word bold + underlined (for multi-char keys like space/esc).
+def key(word)
+  "#{BOLD}#{ULINE}#{word}#{RESET}"
+end
+
+def read_metadata(img)
+  exif_json, = Open3.capture2('exiftool', '-j', img)
+  exif = JSON.parse(exif_json).first rescue {}
+
+  # Draw Things stores its generation data as JSON in the "User Comment" field,
+  # flagged by a "Creator Tool" of "Draw Things". Normalize it into the same
+  # shape used for the "Generation data" field so the rest of the script is shared.
+  draw_things = exif['CreatorTool'].to_s.strip == 'Draw Things'
+  dt_data = (JSON.parse(exif['UserComment']) rescue nil) if draw_things
+  gen_key = exif.keys.find { |k| k.match?(/generation.?data/i) }
+
+  gen_data =
+    if dt_data
+      {
+        'prompt'         => dt_data['c'],
+        'negativePrompt' => dt_data['uc'],
+        'baseModel'      => { 'type' => 'base', 'modelFileName' => dt_data['model'] },
+        'models'         => Array(dt_data['lora']).map do |l|
+          { 'type' => 'lora', 'modelFileName' => l['model'], 'weight' => l['weight'] }
+        end,
+      }
+    elsif gen_key
+      JSON.parse(exif[gen_key]) rescue nil
+    end
+
+  { exif: exif, gen_data: gen_data, gen_key: gen_key, draw_things: draw_things, dt_data: dt_data }
+end
+
+def display(img)
+  File.write(LAST_IMG_FILE, img)
+  system('timg', img)
+  meta = read_metadata(img)
+  has_gen_data = meta[:gen_data] || meta[:gen_key] || meta[:draw_things] ||
+                 meta[:exif].keys.any? { |k| k.match?(/prompt/i) }
+  puts has_gen_data ? "#{img} *" : img
+  meta
+end
+
+def print_prompts(gen_data)
+  puts
+  puts "Prompt:   #{gen_data['prompt']}"
+  puts "Negative: #{gen_data['negativePrompt']}"
+end
+
+def print_models(gen_data)
+  models = [gen_data['baseModel']].compact + Array(gen_data['models'])
+
+  col_widths = {
+    type:   [models.map { |m| m['type'].to_s.length }.max, 4].max,
+    label:  [models.map { |m| m['label'].to_s.length }.max, 5].max,
+    name:   [models.map { |m| m['modelFileName'].to_s.length }.max, 5].max,
+    weight: [models.map { |m| m['weight'].to_s.length }.max, 6].max,
+  }
+
+  header = "%-#{col_widths[:type]}s  %-#{col_widths[:label]}s  %-#{col_widths[:name]}s  %-#{col_widths[:weight]}s  %s" %
+           %w[Type Label Model Weight Hash]
+  puts
+  puts header
+  puts '-' * header.length
+  models.each do |m|
+    puts "%-#{col_widths[:type]}s  %-#{col_widths[:label]}s  %-#{col_widths[:name]}s  %-#{col_widths[:weight]}s  %s" %
+         [m['type'], m['label'], m['modelFileName'], m['weight'], m['hash']]
+  end
+end
+
+def print_metadata(meta, models:, prompts:)
+  if meta[:gen_data]
+    print_prompts(meta[:gen_data]) if prompts
+    print_models(meta[:gen_data]) if models
+  elsif meta[:gen_key] || meta[:draw_things]
+    puts '(Generation data found but could not parse as JSON)'
+  else
+    puts '(No generation data)'
+  end
+end
 
 show_models = false
 show_prompts = false
@@ -19,9 +111,10 @@ OptionParser.new do |opts|
 end.parse!
 
 img = ARGV.shift
+imgs = nil
 
 if img && File.directory?(img)
-  imgs = Dir.glob(File.join(img, '**/*.{gif,jpg,jpeg,png,webp,mp4,webm}')).select { |i| File.file?(i) }
+  imgs = Dir.glob(File.join(img, IMG_GLOB)).select { |i| File.file?(i) }
   abort "No images found in: #{img}" if imgs.empty?
   img = imgs.sample
 elsif img
@@ -30,88 +123,61 @@ elsif !force_random && (show_models || show_prompts || show_json) && File.file?(
   img = File.read(LAST_IMG_FILE).strip
   abort "Last image not found: #{img}" unless File.file?(img)
 else
-  imgs = Dir.glob('**/*.{gif,jpg,jpeg,png,webp,mp4,webm}').select { |i| File.file?(i) }
+  imgs = Dir.glob(IMG_GLOB).select { |i| File.file?(i) }
   abort 'No images found.' if imgs.empty?
   img = imgs.sample
 end
 
-File.write(LAST_IMG_FILE, img)
-
-unless show_json
-  system('timg', img)
-end
-
-exif_json, = Open3.capture2('exiftool', '-j', img)
-exif = JSON.parse(exif_json).first rescue {}
-
-# Draw Things stores its generation data as JSON in the "User Comment" field,
-# flagged by a "Creator Tool" of "Draw Things". Normalize it into the same
-# shape used for the "Generation data" field so the rest of the script is shared.
-draw_things = exif['CreatorTool'].to_s.strip == 'Draw Things'
-dt_data = (JSON.parse(exif['UserComment']) rescue nil) if draw_things
-
-gen_key = exif.keys.find { |k| k.match?(/generation.?data/i) }
-
-gen_data =
-  if dt_data
-    {
-      'prompt'         => dt_data['c'],
-      'negativePrompt' => dt_data['uc'],
-      'baseModel'      => { 'type' => 'base', 'modelFileName' => dt_data['model'] },
-      'models'         => Array(dt_data['lora']).map do |l|
-        { 'type' => 'lora', 'modelFileName' => l['model'], 'weight' => l['weight'] }
-      end,
-    }
-  elsif gen_key
-    JSON.parse(exif[gen_key]) rescue nil
-  end
-
-has_gen_data = gen_data || gen_key || draw_things || exif.keys.any? { |k| k.match?(/prompt/i) }
-
-puts has_gen_data ? "#{img} *" : img unless show_json
-
-if show_models || show_prompts
-  if gen_data
-    if show_prompts
-      puts
-      puts "Prompt:   #{gen_data['prompt']}"
-      puts "Negative: #{gen_data['negativePrompt']}"
-    end
-
-    if show_models
-      models = [gen_data['baseModel']].compact + Array(gen_data['models'])
-
-      col_widths = {
-        type:   [models.map { |m| m['type'].to_s.length }.max, 4].max,
-        label:  [models.map { |m| m['label'].to_s.length }.max, 5].max,
-        name:   [models.map { |m| m['modelFileName'].to_s.length }.max, 5].max,
-        weight: [models.map { |m| m['weight'].to_s.length }.max, 6].max,
-      }
-
-      header = "%-#{col_widths[:type]}s  %-#{col_widths[:label]}s  %-#{col_widths[:name]}s  %-#{col_widths[:weight]}s  %s" %
-               %w[Type Label Model Weight Hash]
-      puts
-      puts header
-      puts '-' * header.length
-      models.each do |m|
-        puts "%-#{col_widths[:type]}s  %-#{col_widths[:label]}s  %-#{col_widths[:name]}s  %-#{col_widths[:weight]}s  %s" %
-             [m['type'], m['label'], m['modelFileName'], m['weight'], m['hash']]
-      end
-    end
-  elsif gen_key || draw_things
-    puts '(Generation data found but could not parse as JSON)'
-  end
-end
-
 if show_json
+  File.write(LAST_IMG_FILE, img)
+  meta = read_metadata(img)
+  exif = meta[:exif]
   output = { file: img }
-  if dt_data
-    output[:prompt] = dt_data['c']
-    output[:generation_data] = dt_data
+  if meta[:dt_data]
+    output[:prompt] = meta[:dt_data]['c']
+    output[:generation_data] = meta[:dt_data]
   else
     prompt_key = exif.keys.find { |k| k.match?(/\Aprompt\z/i) }
     output[:prompt] = exif[prompt_key] if prompt_key
-    output[:generation_data] = (JSON.parse(exif[gen_key]) rescue exif[gen_key]) if gen_key
+    output[:generation_data] = (JSON.parse(exif[meta[:gen_key]]) rescue exif[meta[:gen_key]]) if meta[:gen_key]
   end
   puts JSON.generate(output)
+  exit
+end
+
+meta = display(img)
+
+if show_models || show_prompts
+  print_metadata(meta, models: show_models, prompts: show_prompts)
+  exit
+end
+
+exit unless $stdin.tty?
+
+loop do
+  print "\n#{key('space')} next  #{cmd('models')}  #{cmd('prompts')}  #{cmd('all')}  #{cmd('review')}  #{key('esc')} quit "
+  ch = begin
+    $stdin.getch
+  rescue Interrupt
+    "\e"
+  end
+  print "\r\e[K"
+
+  case ch
+  when ' '
+    imgs ||= Dir.glob(IMG_GLOB).select { |i| File.file?(i) }
+    imgs.empty? ? puts('No images found.') : meta = display(img = imgs.sample)
+  when 'r'
+    meta = display(img)
+  when 'm'
+    print_metadata(meta, models: true, prompts: false)
+  when 'p'
+    print_metadata(meta, models: false, prompts: true)
+  when 'a'
+    print_metadata(meta, models: true, prompts: true)
+  when "\e", "\u0003" # ctrl+c (raw mode delivers it as a byte)
+    # Drain any escape-sequence tail (e.g. arrow keys) so it doesn't leak into the shell
+    ($stdin.raw { $stdin.read_nonblock(16) } rescue nil) if ch == "\e"
+    break
+  end
 end
