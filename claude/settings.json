@@ -1,0 +1,48 @@
+{
+  "env": {
+    "EDITOR": "nvim"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(rg:*)",
+      "Bash(fd:*)",
+      "Bash(jq:*)",
+      "Bash(duckdb:*)",
+      "Bash(gt:*)",
+      "Bash(bd:*)",
+      "Bash(bat:*)",
+      "Bash(eza:*)",
+      "Read(//Users/jchilders/work/flliver/patina-foundation-grants/grants/Krabby-Uno/Milestone14-Jetson-Orin-Installable-Stack/**)",
+      "Read(//Users/jchilders/work/flliver/patina-foundation-grants/grants/Krabby-Uno/Milestone17-Krab-E2E-Sensor/**)"
+    ],
+    "additionalDirectories": [
+      "/Users/jchilders/work/flliver/patina-foundation-grants/grants/Krabby-Uno/Milestone14-Jetson-Orin-Installable-Stack",
+      "/Users/jchilders/work/flliver/patina-foundation-grants/grants/Krabby-Uno/Milestone17-Krab-E2E-Sensor"
+    ]
+  },
+  "model": "opus[1m]",
+  "enabledPlugins": {
+    "code-simplifier@claude-plugins-official": true,
+    "commit-commands@claude-plugins-official": true,
+    "pyright-lsp@claude-plugins-official": true,
+    "swift-lsp@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": true,
+    "lua-lsp@claude-plugins-official": true,
+    "clangd-lsp@claude-plugins-official": true
+  },
+  "extraKnownMarketplaces": {
+    "beads-marketplace": {
+      "source": {
+        "source": "github",
+        "repo": "steveyegge/beads"
+      }
+    }
+  },
+  "effortLevel": "high",
+  "skipDangerousModePermissionPrompt": true,
+  "skipWorkflowUsageWarning": true,
+  "theme": "dark",
+  "autoCompactEnabled": true,
+  "agentPushNotifEnabled": true,
+  "voiceEnabled": false
+}

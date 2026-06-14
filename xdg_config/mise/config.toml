@@ -12,3 +12,6 @@ usage = "latest"
 [settings]
 idiomatic_version_file_enable_tools = ["ruby"]
 python.uv_venv_auto = true
+# Auto-load a directory's .env into the environment (replaces omz dotenv plugin).
+# Requires `mise trust` in a dir before its .env is loaded; vars unset on leave.
+env_file = ".env"

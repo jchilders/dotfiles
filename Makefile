@@ -35,11 +35,11 @@ else
 	@$(MAKE) install-linux
 endif
 
-cfg: ## Link configuration files
+cfg: claude-cfg ## Link configuration files
 	@[ -e $$HOME/.config ] || ln -s $(cwd)/xdg_config $$HOME/.config
 	@[ -e $$HOME/bin ] || ln -sf $(cwd)/bin $$HOME/bin
 
-cfg-clean: ## Clean (rm) XDG directories
+cfg-clean: claude-cfg-clean ## Clean (rm) XDG directories
 	rm -rf $(XDG_CONFIG_HOME) $(XDG_CACHE_HOME) $(XDG_DATA_HOME) $(XDG_STATE_HOME)
 	rm $$HOME/bin
 
@@ -89,6 +89,19 @@ zsh-cfg: ## Link ~/.zshenv (it sets ZDOTDIR; .zshrc lives in xdg_config/zsh)
 
 zsh-cfg-clean: ## Unlink ~/.zshenv
 	rm $$HOME/.zshenv
+
+##@ Claude
+
+CLAUDE_HOME := $(HOME)/.claude
+claude-cfg: ## Link Claude Code config (CLAUDE.md, settings.json, skills) into ~/.claude
+	@mkdir -p $(CLAUDE_HOME)
+	ln -sf $(cwd)/claude/CLAUDE.md     $(CLAUDE_HOME)/CLAUDE.md
+	ln -sf $(cwd)/claude/settings.json $(CLAUDE_HOME)/settings.json
+	@[ -L $(CLAUDE_HOME)/skills ] || rm -rf $(CLAUDE_HOME)/skills
+	ln -sf $(cwd)/claude/skills        $(CLAUDE_HOME)/skills
+
+claude-cfg-clean: ## Unlink Claude Code config from ~/.claude
+	rm -f $(CLAUDE_HOME)/CLAUDE.md $(CLAUDE_HOME)/settings.json $(CLAUDE_HOME)/skills
 
 ##@ Misc
 

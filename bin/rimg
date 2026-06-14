@@ -155,7 +155,7 @@ end
 exit unless $stdin.tty?
 
 loop do
-  print "\n#{key('space')} next  #{cmd('models')}  #{cmd('prompts')}  #{cmd('all')}  #{cmd('review')}  #{key('esc')} quit "
+  print "\n#{key('space')} next | #{cmd('models')} | #{cmd('prompts')} | #{cmd('all')} | #{cmd('review')} | #{cmd('quit')} "
   ch = begin
     $stdin.getch
   rescue Interrupt
@@ -175,7 +175,7 @@ loop do
     print_metadata(meta, models: false, prompts: true)
   when 'a'
     print_metadata(meta, models: true, prompts: true)
-  when "\e", "\u0003" # ctrl+c (raw mode delivers it as a byte)
+  when "q", "\u0003" # ctrl+c (raw mode delivers it as a byte)
     # Drain any escape-sequence tail (e.g. arrow keys) so it doesn't leak into the shell
     ($stdin.raw { $stdin.read_nonblock(16) } rescue nil) if ch == "\e"
     break
