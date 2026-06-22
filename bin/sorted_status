@@ -1,44 +1,13 @@
-#!/usr/bin/env bash
-# Get a list of changed files from git status, newest-modified first.
-#
-# Pure-shell on purpose: this feeds the ctrl-o git widgets (^ogd/^oga/^ogs),
-# so it must not depend on a working mise/Ruby toolchain. Exits 1 when there
-# are no changes so callers can distinguish "clean repo" from a real failure.
-set -uo pipefail
+#!/usr/bin/env ruby
+# frozen_string_literal: true
 
-# Collect paths from porcelain status. core.quotePath=false keeps unicode and
-# spaces literal; renames/copies show up as "orig -> new", and we keep only the
-# destination path. The leading 3 chars are the "XY " status code.
-paths=()
-while IFS= read -r line; do
-  [ -n "$line" ] || continue
-  p=${line:3}
-  case "$p" in
-    *" -> "*) p=${p##* -> } ;;
-  esac
-  paths+=("$p")
-done < <(git -c core.quotePath=false status --porcelain)
+# Get a list of files from git status sorted by path.
+# Returns 1 if there are no changes
 
-if [ ${#paths[@]} -eq 0 ]; then
-  exit 1
-fi
+require_relative 'status_lines'
 
-# Split into files that still exist vs. deleted ones. `ls -t` sorts the
-# survivors newest-first (portable across macOS/Linux, no `stat` flag drift);
-# deleted paths can't be timestamped, so they trail at the end.
-existing=()
-missing=()
-for p in "${paths[@]}"; do
-  if [ -e "$p" ]; then
-    existing+=("$p")
-  else
-    missing+=("$p")
-  fi
-done
+lines = StatusLines.new.sort.map(&:path).compact
 
-if [ ${#existing[@]} -gt 0 ]; then
-  ls -1td -- "${existing[@]}"
-fi
-for p in "${missing[@]}"; do
-  printf '%s\n' "$p"
-done
+exit 1 if lines.empty?
+
+puts lines
