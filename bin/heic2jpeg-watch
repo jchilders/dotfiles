@@ -1,0 +1,97 @@
+#!/usr/bin/env bash
+# Convert any HEIC images in ~/Downloads to JPEG, then put the converted
+# paths on the pasteboard (newline-separated) so they can be pasted straight
+# into a prompt. Originals are deleted after a successful conversion.
+#
+# Invoked by the com.jchilders.heic2jpeg launchd agent on any change to
+# ~/Downloads. Must be idempotent: the conversion + deletion below themselves
+# mutate the directory and re-fire the watcher, so a run that finds no HEIC
+# files exits quietly without touching the pasteboard.
+#
+# REQUIRES Full Disk Access for /bin/bash (~/Downloads is TCC-protected and a
+# background launchd agent can't be prompted): System Settings > Privacy &
+# Security > Full Disk Access > add /bin/bash. Without it the directory read is
+# denied and nothing converts.
+set -euo pipefail
+
+WATCH_DIR="${HEIC2JPEG_DIR:-$HOME/Downloads}"
+LOG_FILE="${XDG_STATE_HOME:-$HOME/.local/state}/heic2jpeg.log"
+LOCK_FILE="${TMPDIR:-/tmp}/heic2jpeg.lock"
+
+log() { printf '%s %s\n' "$(date '+%Y-%m-%dT%H:%M:%S')" "$*" >>"$LOG_FILE"; }
+
+mkdir -p "$(dirname "$LOG_FILE")"
+
+# Serialize runs: the watcher can fire several times in quick succession.
+# A non-blocking lock means overlapping fires just bail; the holder handles
+# whatever HEICs are present.
+# flock isn't available on macOS, so use a mkdir-based lock (atomic).
+if ! mkdir "${LOCK_FILE}.d" 2>/dev/null; then
+  exit 0
+fi
+trap 'rmdir "${LOCK_FILE}.d" 2>/dev/null || true' EXIT
+
+cd "$WATCH_DIR" 2>/dev/null || { log "cannot enter $WATCH_DIR"; exit 0; }
+
+# ~/Downloads is TCC-protected. A background launchd agent reads it only if it
+# has been granted Full Disk Access; otherwise the directory read is denied and
+# we'd silently see no files. Detect that explicitly so the log is actionable.
+if ! ls "$WATCH_DIR" >/dev/null 2>&1; then
+  log "permission denied reading $WATCH_DIR — grant Full Disk Access to /bin/bash (or this script) in System Settings > Privacy & Security > Full Disk Access"
+  exit 0
+fi
+
+shopt -s nullglob nocaseglob
+heics=( *.heic )
+shopt -u nocaseglob
+[ ${#heics[@]} -eq 0 ] && exit 0
+
+converted=()
+for src in "${heics[@]}"; do
+  [ -f "$src" ] || continue
+
+  # WatchPaths fires the moment a file appears, often mid-write. Wait for the
+  # size to stop changing (AirDrop finished) rather than skipping, since a
+  # skip would have nothing to re-trigger it. `wc -c` avoids the BSD-vs-GNU
+  # `stat` flag differences.
+  prev=-1
+  stable=0
+  for _ in $(seq 1 40); do
+    cur=$(wc -c <"$src" 2>/dev/null | tr -d ' ' || echo 0)
+    if [ "$cur" -gt 0 ] && [ "$cur" = "$prev" ]; then
+      stable=1
+      break
+    fi
+    prev=$cur
+    sleep 0.5
+  done
+  if [ "$stable" -ne 1 ]; then
+    log "skip (never settled): $src"
+    continue
+  fi
+
+  base="${src%.*}"
+  dst="${base}.jpeg"
+  # Avoid clobbering an existing JPEG of the same name.
+  n=1
+  while [ -e "$dst" ]; do
+    dst="${base}-${n}.jpeg"
+    n=$((n + 1))
+  done
+
+  if sips -s format jpeg "$src" --out "$dst" >/dev/null 2>>"$LOG_FILE"; then
+    rm -f "$src"
+    abs="$WATCH_DIR/$dst"
+    converted+=( "$abs" )
+    log "converted: $src -> $dst"
+  else
+    log "FAILED: $src (left in place)"
+  fi
+done
+
+# Only touch the pasteboard when we actually produced something, so re-fires
+# triggered by our own file changes don't clobber a useful clipboard.
+if [ ${#converted[@]} -gt 0 ]; then
+  printf '%s\n' "${converted[@]}" | pbcopy
+  log "pasteboard: ${#converted[@]} path(s)"
+fi

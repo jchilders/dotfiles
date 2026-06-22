@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Watches ~/Downloads and runs heic2jpeg-watch on any change to it, converting
+  AirDropped HEIC images to JPEG. {{HOME}} and {{BIN}} are substituted by the
+  `make heic2jpeg` target (launchd does not expand ~ in WatchPaths).
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.jchilders.heic2jpeg</string>
+
+  <!-- Invoke /bin/bash explicitly so the binary needing Full Disk Access is
+       unambiguous: grant FDA to /bin/bash (see the script's header). -->
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>{{BIN}}/heic2jpeg-watch</string>
+  </array>
+
+  <key>WatchPaths</key>
+  <array>
+    <string>{{HOME}}/Downloads</string>
+  </array>
+
+  <key>RunAtLoad</key>
+  <true/>
+
+  <key>StandardOutPath</key>
+  <string>{{HOME}}/.local/state/heic2jpeg.out.log</string>
+  <key>StandardErrorPath</key>
+  <string>{{HOME}}/.local/state/heic2jpeg.err.log</string>
+</dict>
+</plist>

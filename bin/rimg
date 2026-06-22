@@ -5,8 +5,10 @@ require 'json'
 require 'optparse'
 require 'tmpdir'
 require 'io/console'
+require 'net/http'
 
 LAST_IMG_FILE = File.join(Dir.tmpdir, 'rimg_last')
+DT_PORT = ENV.fetch('DT_PORT', '7860')
 IMG_GLOB = '**/*.{gif,jpg,jpeg,png,webp,mp4,webm}'
 
 BOLD  = "\e[1m"
@@ -21,6 +23,17 @@ end
 # Render a whole word bold + underlined (for multi-char keys like space/esc).
 def key(word)
   "#{BOLD}#{ULINE}#{word}#{RESET}"
+end
+
+# Draw Things stores LoRAs under "v2.loras" (each with a "file" key); older/other
+# variants used a top-level "lora" list (each with a "model" key). Normalize both
+# to a list of {file, weight}.
+def dt_loras(dt)
+  raw = dt.dig('v2', 'loras')
+  raw = dt['lora'] if raw.nil? || raw.empty?
+  Array(raw)
+    .map { |l| { 'file' => l['file'] || l['model'], 'weight' => l['weight'] } }
+    .reject { |l| l['file'].to_s.empty? }
 end
 
 def read_metadata(img)
@@ -40,8 +53,8 @@ def read_metadata(img)
         'prompt'         => dt_data['c'],
         'negativePrompt' => dt_data['uc'],
         'baseModel'      => { 'type' => 'base', 'modelFileName' => dt_data['model'] },
-        'models'         => Array(dt_data['lora']).map do |l|
-          { 'type' => 'lora', 'modelFileName' => l['model'], 'weight' => l['weight'] }
+        'models'         => dt_loras(dt_data).map do |l|
+          { 'type' => 'lora', 'modelFileName' => l['file'], 'weight' => l['weight'] }
         end,
       }
     elsif gen_key
@@ -85,6 +98,99 @@ def print_models(gen_data)
   models.each do |m|
     puts "%-#{col_widths[:type]}s  %-#{col_widths[:label]}s  %-#{col_widths[:name]}s  %-#{col_widths[:weight]}s  %s" %
          [m['type'], m['label'], m['modelFileName'], m['weight'], m['hash']]
+  end
+end
+
+def print_exif(meta)
+  exif = meta[:exif]
+  if exif.nil? || exif.empty?
+    puts '(No EXIF data)'
+    return
+  end
+  width = exif.keys.map(&:length).max
+  puts
+  exif.each do |k, v|
+    puts "%-#{width}s  %s" % [k, v]
+  end
+end
+
+# Build a Draw Things txt2img request body from an image's generation metadata.
+# Handles both Draw Things' own "User Comment" JSON (dt_data) and the generic
+# "Generation data" field shape. Returns nil if there's nothing to send.
+def dt_body(meta)
+  if (dt = meta[:dt_data])
+    v2 = dt['v2'] || {}
+    body = { 'prompt' => dt['c'].to_s, 'batch_count' => 1 }
+    body['negative_prompt'] = dt['uc']          unless dt['uc'].to_s.empty?
+    body['model']           = dt['model']       if dt['model']
+    body['sampler_name']    = dt['sampler']     if dt['sampler']
+    body['seed']            = dt['seed']        if dt['seed']
+    body['steps']           = dt['steps']       if dt['steps']
+    body['guidance_scale']  = v2['guidanceScale'] if v2['guidanceScale']
+    if dt['size'].to_s =~ /(\d+)\s*x\s*(\d+)/
+      body['width'], body['height'] = $1.to_i, $2.to_i
+    elsif v2['width'] && v2['height']
+      body['width'], body['height'] = v2['width'], v2['height']
+    end
+    loras = dt_loras(dt)
+    body['loras'] = loras unless loras.empty?
+    body
+  elsif (g = meta[:gen_data]) && !g['prompt'].to_s.empty?
+    body = { 'prompt' => g['prompt'].to_s, 'batch_count' => 1 }
+    body['negative_prompt'] = g['negativePrompt'] unless g['negativePrompt'].to_s.empty?
+    body['seed']           = g['seed'].to_i  if g['seed']
+    body['steps']          = g['steps'].to_i if g['steps']
+    body['guidance_scale'] = g['cfgScale'].to_f if g['cfgScale']
+    body['sampler_name']   = g['samplerName'] if g['samplerName']
+    body['width']          = g['width'].to_i  if g['width']
+    body['height']         = g['height'].to_i if g['height']
+    base = g['baseModel'] && g['baseModel']['modelFileName']
+    body['model'] = base if base
+    loras = Array(g['models'])
+            .select { |m| m['type'] == 'lora' }
+            .map { |m| { 'file' => m['modelFileName'], 'weight' => m['weight'] } }
+            .reject { |l| l['file'].to_s.empty? }
+    body['loras'] = loras unless loras.empty?
+    body
+  end
+end
+
+def send_to_dt(meta)
+  body = dt_body(meta)
+  if body.nil? || body['prompt'].to_s.empty?
+    puts '(No generation data to send)'
+    return
+  end
+
+  uri = URI("http://localhost:#{DT_PORT}/sdapi/v1/txt2img")
+  req = Net::HTTP::Post.new(uri, 'Content-Type' => 'application/json')
+  req.body = JSON.generate(body)
+
+  done = false
+  spinner = Thread.new do
+    frames = '⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏'.chars
+    i = 0
+    until done
+      print "\r#{frames[i % frames.length]} Sending to Draw Things…"
+      i += 1
+      sleep 0.1
+    end
+  end
+
+  begin
+    res = Net::HTTP.start(uri.host, uri.port, read_timeout: 600) { |http| http.request(req) }
+  rescue StandardError => e
+    done = true; spinner.join; print "\r\e[K"
+    puts "Could not reach Draw Things on port #{DT_PORT}: #{e.message}"
+    puts 'Enable it in Draw Things → Settings → API Server.'
+    return
+  end
+  done = true; spinner.join; print "\r\e[K"
+
+  if res.is_a?(Net::HTTPSuccess)
+    puts "Sent to Draw Things (seed #{body['seed'] || 'random'})."
+  else
+    puts "Draw Things returned HTTP #{res.code}: #{res.body.to_s[0, 300]}"
   end
 end
 
@@ -155,7 +261,8 @@ end
 exit unless $stdin.tty?
 
 loop do
-  print "\n#{key('space')} next | #{cmd('models')} | #{cmd('prompts')} | #{cmd('all')} | #{cmd('review')} | #{cmd('quit')} "
+  exif_cmd = "e#{BOLD}#{ULINE}x#{RESET}if"
+  print "\n#{key('space')} next | #{cmd('models')} | #{cmd('prompts')} | #{cmd('all')} | #{exif_cmd} | #{cmd('send')} to DT | #{cmd('review')} | #{cmd('quit')} "
   ch = begin
     $stdin.getch
   rescue Interrupt
@@ -164,7 +271,7 @@ loop do
   print "\r\e[K"
 
   case ch
-  when ' '
+  when ' ', "\x7f", "\b"
     imgs ||= Dir.glob(IMG_GLOB).select { |i| File.file?(i) }
     imgs.empty? ? puts('No images found.') : meta = display(img = imgs.sample)
   when 'r'
@@ -175,6 +282,10 @@ loop do
     print_metadata(meta, models: false, prompts: true)
   when 'a'
     print_metadata(meta, models: true, prompts: true)
+  when 'x'
+    print_exif(meta)
+  when 's'
+    send_to_dt(meta)
   when "q", "\u0003" # ctrl+c (raw mode delivers it as a byte)
     # Drain any escape-sequence tail (e.g. arrow keys) so it doesn't leak into the shell
     ($stdin.raw { $stdin.read_nonblock(16) } rescue nil) if ch == "\e"

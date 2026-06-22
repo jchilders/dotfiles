@@ -13,6 +13,7 @@ path=(
   "$HOMEBREW_PREFIX/bin"
   "$HOMEBREW_PREFIX/sbin"
   "${XDG_BIN_HOME:-$HOME/.local/bin}"
+  "${XDG_CACHE_HOME:-$HOME/.cache}/.bun/bin"
   "$HOME/.cargo/bin"
   "$HOME/bin"
   $path
