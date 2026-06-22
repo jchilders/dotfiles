@@ -35,13 +35,41 @@ else
 	@$(MAKE) install-linux
 endif
 
-cfg: claude-cfg ## Link configuration files
-	@[ -e $$HOME/.config ] || ln -s $(cwd)/xdg_config $$HOME/.config
+# Link each entry of xdg_config/ into ~/.config individually. Linking the
+# whole ~/.config directory only works on a box where it doesn't already
+# exist; GNOME (and others) pre-create ~/.config, so the old whole-dir symlink
+# silently did nothing there. Per-entry linking works either way.
+cfg: claude-cfg ## Link configuration files into ~/.config
+	@if [ -L $$HOME/.config ]; then \
+		echo "~/.config is already a symlink to the repo; skipping per-entry link"; \
+	else \
+		mkdir -p $$HOME/.config; \
+		for src in $(cwd)/xdg_config/*(DN); do \
+			dest=$$HOME/.config/$${src:t}; \
+			if [ -L "$$dest" ]; then \
+				rm -f "$$dest"; \
+			elif [ -e "$$dest" ]; then \
+				echo "backing up existing $$dest -> $$dest.pre-dotfiles"; \
+				rm -rf "$$dest.pre-dotfiles"; \
+				mv "$$dest" "$$dest.pre-dotfiles"; \
+			fi; \
+			ln -s "$$src" "$$dest"; \
+		done; \
+	fi
 	@[ -e $$HOME/bin ] || ln -sf $(cwd)/bin $$HOME/bin
 
-cfg-clean: claude-cfg-clean ## Clean (rm) XDG directories
-	rm -rf $(XDG_CONFIG_HOME) $(XDG_CACHE_HOME) $(XDG_DATA_HOME) $(XDG_STATE_HOME)
-	rm $$HOME/bin
+# Remove only the symlinks we created; never rm -rf a real ~/.config (it may
+# hold OS-managed config like dconf/gtk on a Linux desktop).
+cfg-clean: claude-cfg-clean ## Unlink configuration files from ~/.config
+	@if [ -L $$HOME/.config ]; then \
+		rm -f $$HOME/.config; \
+	else \
+		for src in $(cwd)/xdg_config/*(DN); do \
+			dest=$$HOME/.config/$${src:t}; \
+			[ -L "$$dest" ] && rm -f "$$dest"; \
+		done; \
+	fi
+	@[ -L $$HOME/bin ] && rm -f $$HOME/bin || true
 
 ##@ Homebrew
 homebrew: ## Install homebrew
@@ -78,11 +106,24 @@ mise: homebrew-bundle ## Install all languages configured for mise to handle
 	mise install
 
 ##@ zsh
-zsh: zsh-cfg ## Install zsh-related items
+zsh: zsh-cfg zsh-default ## Install zsh-related items
 
-zsh-linux: zsh-cfg ## Install zsh for Linux
+zsh-linux: zsh-cfg zsh-default ## Install zsh for Linux
 
 zsh-clean: zsh-cfg-clean ## Uninstall zsh-related items
+
+zsh-default: ## Set zsh as the default login shell
+	@zsh_path="$$(command -v zsh)"; \
+	if [ -z "$$zsh_path" ]; then \
+		echo "zsh is not installed; run 'make homebrew-bundle' (or your package manager) first"; \
+		exit 1; \
+	fi; \
+	if [ "$$SHELL" = "$$zsh_path" ]; then \
+		echo "zsh ($$zsh_path) is already the default shell"; \
+	else \
+		grep -qxF "$$zsh_path" /etc/shells || echo "$$zsh_path" | sudo tee -a /etc/shells >/dev/null; \
+		chsh -s "$$zsh_path" && echo "default shell changed to $$zsh_path (log out and back in to take effect)"; \
+	fi
 
 zsh-cfg: ## Link ~/.zshenv (it sets ZDOTDIR; .zshrc lives in xdg_config/zsh)
 	ln -sf $(cwd)/xdg_config/zsh/.zshenv $$HOME/.zshenv

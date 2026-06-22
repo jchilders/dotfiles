@@ -47,7 +47,8 @@ nvim --headless +Lazy! sync +qa  # Sync plugins headlessly
 - `config/misc-widgets.zsh` - Additional ZLE widgets
 - `config/exports.zsh` - Environment variables
 - `config/options.zsh` - Shell options and completions
-- `config/sources.zsh` - Sources external tools (mise, fzf, starship, etc.)
+- `config/path.zsh` - PATH setup (Homebrew prefix, etc.)
+- External tools (mise, zoxide, starship, fzf, etc.) are initialized directly in `.zshrc`
 
 ### Key Integration Points
 - `ctrl-o` prefix works in both zsh and neovim for consistent file/git operations

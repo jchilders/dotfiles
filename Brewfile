@@ -43,6 +43,7 @@ brew 'toilet' # ascii banners :)
 brew 'uv' # extremely fast Python package installer
 brew 'xz' # modern file compression
 brew 'yt-dlp' # audio/video downloader
+brew 'zoxide' # smarter cd; `z <dir>` jumps by frecency
 
 # mkcert and nss are used to generate locally trusted development certificates
 # needed for succesfully connecting locally via HTTPS
