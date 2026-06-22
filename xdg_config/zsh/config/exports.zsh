@@ -38,12 +38,7 @@ fi
 
 export HOMEBREW_NO_ENV_HINTS=1
 
-# Preferred editor for local and remote sessions
-if [[ -n $SSH_CONNECTION ]]; then
-  export EDITOR='vim'
-else
-  export EDITOR='nvim'
-fi
+export EDITOR='nvim'
 
 # Speed up new shells
 ABBR_AUTOLOAD=0
