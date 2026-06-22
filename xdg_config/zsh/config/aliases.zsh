@@ -65,6 +65,7 @@ function load-abbreviations() {
   abbr add be='bundle exec'
   abbr add bi='bundle install'
   abbr add dcom='docker-compose'
+  abbr add gst='git status'
   abbr add imgcat='timg'
 
   # Ruby and Rails helpers
