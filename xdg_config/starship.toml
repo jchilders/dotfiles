@@ -8,8 +8,13 @@ add_newline = true
 #   +   Staged
 #   $   Stashed changes
 format = """
-$directory($git_branch)($git_status)$python$ruby
+($hostname )$directory($git_branch)($git_status)$python$ruby
 $character """
+
+[hostname]
+ssh_only = true
+format = "[$hostname]($style)"
+style = "bold yellow"
 
 [character]
 success_symbol = "[➜](bold green)"
