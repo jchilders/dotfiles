@@ -134,15 +134,17 @@ zsh-cfg-clean: ## Unlink ~/.zshenv
 ##@ Claude
 
 CLAUDE_HOME := $(HOME)/.claude
-claude-cfg: ## Link Claude Code config (CLAUDE.md, settings.json, skills) into ~/.claude
+claude-cfg: ## Link Claude Code config (CLAUDE.md, settings.json, skills, hooks) into ~/.claude
 	@mkdir -p $(CLAUDE_HOME)
 	ln -sf $(cwd)/claude/CLAUDE.md     $(CLAUDE_HOME)/CLAUDE.md
 	ln -sf $(cwd)/claude/settings.json $(CLAUDE_HOME)/settings.json
 	@[ -L $(CLAUDE_HOME)/skills ] || rm -rf $(CLAUDE_HOME)/skills
 	ln -sf $(cwd)/claude/skills        $(CLAUDE_HOME)/skills
+	@[ -L $(CLAUDE_HOME)/hooks ] || rm -rf $(CLAUDE_HOME)/hooks
+	ln -sf $(cwd)/claude/hooks         $(CLAUDE_HOME)/hooks
 
 claude-cfg-clean: ## Unlink Claude Code config from ~/.claude
-	rm -f $(CLAUDE_HOME)/CLAUDE.md $(CLAUDE_HOME)/settings.json $(CLAUDE_HOME)/skills
+	rm -f $(CLAUDE_HOME)/CLAUDE.md $(CLAUDE_HOME)/settings.json $(CLAUDE_HOME)/skills $(CLAUDE_HOME)/hooks
 
 ##@ Misc
 

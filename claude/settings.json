@@ -11,13 +11,22 @@
       "Bash(gt:*)",
       "Bash(bd:*)",
       "Bash(bat:*)",
-      "Bash(eza:*)",
-      "Read(//Users/jchilders/work/flliver/patina-foundation-grants/grants/Krabby-Uno/Milestone14-Jetson-Orin-Installable-Stack/**)",
-      "Read(//Users/jchilders/work/flliver/patina-foundation-grants/grants/Krabby-Uno/Milestone17-Krab-E2E-Sensor/**)"
+      "Bash(eza:*)"
     ],
     "additionalDirectories": [
-      "/Users/jchilders/work/flliver/patina-foundation-grants/grants/Krabby-Uno/Milestone14-Jetson-Orin-Installable-Stack",
-      "/Users/jchilders/work/flliver/patina-foundation-grants/grants/Krabby-Uno/Milestone17-Krab-E2E-Sensor"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/no-redundant-cd.sh"
+          }
+        ]
+      }
     ]
   },
   "model": "opus[1m]",
