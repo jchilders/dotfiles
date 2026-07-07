@@ -13,9 +13,10 @@
       "Bash(bat:*)",
       "Bash(eza:*)"
     ],
-    "additionalDirectories": [
-    ]
+    "additionalDirectories": []
   },
+  "model": "claude-fable-5[1m]",
+  "disableClaudeAiConnectors": true,
   "hooks": {
     "PreToolUse": [
       {
@@ -29,7 +30,6 @@
       }
     ]
   },
-  "model": "opus[1m]",
   "enabledPlugins": {
     "code-simplifier@claude-plugins-official": true,
     "commit-commands@claude-plugins-official": true,
@@ -48,6 +48,7 @@
     }
   },
   "effortLevel": "high",
+  "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
   "skipWorkflowUsageWarning": true,
   "theme": "dark",

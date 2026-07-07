@@ -11,6 +11,9 @@ opt.smartindent = true
 
 opt.autoread = true -- reload files on external change
 opt.clipboard = "unnamedplus" -- clipboard yank
+if vim.env.SSH_TTY then
+  g.clipboard = "osc52" -- yank to local clipboard over SSH via terminal escape
+end
 opt.cursorline = true -- highlight current line
 opt.expandtab = true -- use spaces instead of tabs when indenting
 opt.fileformat = "unix"
