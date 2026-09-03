@@ -38,6 +38,7 @@ brew 'showkey' # type a key and see it echoed in the terminal
 brew 'starship' # robust shell prompt
 brew 'tealdeer' # `tldr`: man page supplement. brief desc, then examples
 brew 'timg' # terminal image/video viewer
+brew 'tree-sitter-cli' # parser generator CLI; required by nvim-treesitter (main branch)
 brew 'trippy' # ping/traceroute replacement
 brew 'toilet' # ascii banners :)
 brew 'uv' # extremely fast Python package installer

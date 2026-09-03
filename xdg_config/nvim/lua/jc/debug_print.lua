@@ -33,11 +33,21 @@ local templates = {
   },
 }
 
+-- Row a node starts on. Mirrors the old ts_utils.get_node_range(), which
+-- returned start_row first and so compared by start row in practice.
+local function start_row(node)
+  local row = node:start()
+  return row
+end
+
 -- Insert a debug print for the nearest variable or parameter(s).
 -- @param insert_above boolean: if true, insert above current line, otherwise below
 function M.insert_print_statement(insert_above)
-  local ts_utils = require("nvim-treesitter.ts_utils")
-  local current_node = ts_utils.get_node_at_cursor()
+  local current_node = vim.treesitter.get_node()
+  if not current_node then
+    print("No treesitter node under cursor")
+    return
+  end
   local original_node = current_node
   local param_list = nil
   local var_node = nil
@@ -74,7 +84,7 @@ function M.insert_print_statement(insert_above)
   end
 
   local log_stmt = ""
-  if param_list and (not var_node or ts_utils.get_node_range(param_list) > ts_utils.get_node_range(var_node)) then
+  if param_list and (not var_node or start_row(param_list) > start_row(var_node)) then
     local params = {}
     for child in param_list:iter_children() do
       if child:type() == "identifier" then

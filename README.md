@@ -5,6 +5,9 @@ configuration will allow you to do common things with very few keystrokes.
 After trying various combinations over the years I settled on
 zsh/neovim/wezterm and have customized them to work with each other.
 
+
+This is a change to README blah blah
+
 **Philosophy: "UNIX is an IDE."** This setup prioritizes efficiency through minimal keystrokes and seamless integration between terminal, editor, and git workflows.
 
 ![term_screenshot_left_active](https://github.com/user-attachments/assets/82f6231c-dbbb-4577-aec1-50dcee05b549)

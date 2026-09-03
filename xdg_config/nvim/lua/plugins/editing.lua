@@ -52,8 +52,19 @@ return {
   {
     "numToStr/Comment.nvim",
     enabled = true,
+    dependencies = {
+      -- Comment.nvim has no jsx/tsx support of its own; this picks the right
+      -- commentstring ({/* */} vs //) from the treesitter node under the cursor.
+      "JoosepAlviste/nvim-ts-context-commentstring",
+    },
     config = function()
-      require("Comment").setup()
+      -- We drive it through Comment.nvim's pre_hook, so skip its own autocmd.
+      vim.g.skip_ts_context_commentstring_module = true
+      require("ts_context_commentstring").setup({ enable_autocmd = false })
+
+      require("Comment").setup({
+        pre_hook = require("ts_context_commentstring.integrations.comment_nvim").create_pre_hook(),
+      })
 
       local ft = require("Comment.ft")
 
