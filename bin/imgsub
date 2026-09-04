@@ -1,0 +1,387 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# imgsub -- regex search and replace over image filenames and the metadata
+# embedded in those images. Vim-style: <search> is a regex, and <replace> can
+# reference capture groups as \1..\9 (\0 or \& for the whole match).
+#
+#   imgsub '100psi' '80psi' i/
+#   imgsub '\d{2,3}psi' '80psi' i/
+#   imgsub 'sunset' 'sunrise' i/
+#   imgsub '(\d+)x(\d+)' '\2x\1' i/
+#
+# A match is exactly what the regex says, as in vim. -w additionally requires
+# that it not be glued to surrounding letters or digits.
+
+require 'fileutils'
+require 'json'
+require 'open3'
+require 'optparse'
+require 'tempfile'
+
+# Keep warnings interleaved with the per-file report in the right order.
+$stdout.sync = true
+
+IMAGE_EXTS = %w[.png .jpg .jpeg .webp .tif .tiff .avif].freeze
+
+# Tag groups that aren't embedded metadata, so aren't ours to rewrite.
+SKIP_GROUPS = %w[ExifTool File Composite].freeze
+
+# exiftool is Perl: ~70ms of startup per invocation dwarfs the parsing, so
+# reads go out in batches (bounded to keep argv sane) and writes, which need
+# per-file arguments, run on a pool of threads instead.
+READ_BATCH = 200
+WRITE_WORKERS = 8
+
+# exiftool reads ComfyUI's PNG text chunks but ships no writable definition for
+# them, so define them here. (A1111's `parameters` chunk is already built in.)
+EXIFTOOL_CONFIG = <<~PERL
+  %Image::ExifTool::UserDefined = (
+    'Image::ExifTool::PNG::TextualData' => {
+      Prompt   => { Writable => 'string' },
+      Workflow => { Writable => 'string' },
+    },
+  );
+  1;
+PERL
+
+opts = {
+  dry_run: false,
+  names: true,
+  exif: true,
+  backup: false,
+  word: false,
+  touch: false
+}
+
+prog = File.basename($PROGRAM_NAME)
+
+parser = OptionParser.new do |o|
+  o.banner = "usage: #{prog} [options] <search> <replace> <path>..."
+  o.separator ''
+  o.separator '  <search>   regex, e.g. 100psi, \d{2,3}psi, (\d+)x(\d+), sunset'
+  o.separator '  <replace>  replacement; \1..\9 are capture groups, \0 the whole match'
+  o.separator '  <path>     image files, or directories to search recursively'
+  o.separator ''
+  o.on('-n', '--dry-run', 'show what would change, touch nothing')  { opts[:dry_run] = true }
+  o.on('--name-only', 'rename files, leave metadata alone')         { opts[:exif]  = false }
+  o.on('--exif-only', 'rewrite metadata, leave filenames alone')    { opts[:names] = false }
+  o.on('-b', '--backup', 'keep exiftool\'s *_original backups')     { opts[:backup] = true }
+  o.on('-w', '--word', 'skip matches glued to other letters/digits') { opts[:word] = true }
+  o.on('--touch', 'let metadata edits bump the file mtime')         { opts[:touch] = true }
+  o.on('-h', '--help', 'show this message') { puts o; exit 0 }
+  o.separator ''
+  o.separator 'examples:'
+  o.separator "  #{prog} '100psi' '80psi' i/            one exact value, everything under i/"
+  o.separator "  #{prog} '25lb' '50lb' tire.png         a single file"
+  o.separator "  #{prog} -n '\\d{2,3}psi' '80psi' i/     preview: any 2-3 digit psi value"
+  o.separator "  #{prog} '(100|110)psi' '80psi' i/      either of two values"
+  o.separator "  #{prog} 'sunset' 'sunrise' i/          any regex, not just number+unit"
+  o.separator "  #{prog} '(\\d+)x(\\d+)' '\\2x\\1' i/       reorder captured groups"
+  o.separator "  #{prog} -w '100psi' '80psi' i/         whole tokens only, skip 1100psi"
+  o.separator "  #{prog} --name-only '5mm' '8mm' i/     filenames only, leave metadata alone"
+  o.separator ''
+  o.separator 'By default <search> matches exactly what the regex says, as in vim.'
+  o.separator "Pass -w to skip a match glued to other letters or digits, so that"
+  o.separator "'100psi' then skips both 1100psi and 100psix."
+  o.separator ''
+  o.separator 'When a rename collides with an existing file the two are compared, and the'
+  o.separator 'source is deleted only if it is byte-identical. Same image with different'
+  o.separator 'metadata is reported and left alone.'
+end
+parser.parse!(ARGV)
+
+search, replace, *paths = ARGV
+if search.nil? || replace.nil? || paths.empty?
+  warn parser.help
+  exit 2
+end
+
+# Longest trailing run of letters is the unit; everything before it is the number.
+def split_token(str)
+  m = /\A(.*?)([A-Za-z]+)\z/.match(str)
+  m && [m[1], m[2]]
+end
+
+num_re, unit = split_token(search)
+new_num, new_unit = split_token(replace)
+
+# Only an advisory, and only when both sides really do look like <number><unit>:
+# an accidental unit swap is easy to miss in a big rename.
+if !num_re.to_s.empty? && /\A\d+\z/.match?(new_num.to_s) && unit != new_unit
+  warn "note: unit changes #{unit.inspect} -> #{new_unit.inspect}"
+end
+
+begin
+  body = Regexp.new(search)
+rescue RegexpError => e
+  abort "bad search regex #{search.inspect}: #{e.message}"
+end
+# -w keeps a match out of a longer token: 100psi in "1100psi", sun in "sunset".
+# Lookarounds, so they don't shift the capture-group numbers <replace> uses.
+pattern = opts[:word] ? /(?<![A-Za-z0-9])#{body}(?![A-Za-z0-9])/ : body
+replacement = replace
+
+files = paths.flat_map do |path|
+  if File.directory?(path)
+    Dir.glob(File.join(path, '**', '*'))
+       .reject { |f| f.delete_prefix(path).split(File::SEPARATOR).any? { |p| p.start_with?('.') } }
+       .select { |f| File.file?(f) && IMAGE_EXTS.include?(File.extname(f).downcase) }
+       .sort
+  elsif File.file?(path)
+    [path]
+  else
+    warn "skipping #{path}: not a file or directory"
+    []
+  end
+end
+
+if files.empty?
+  warn 'no image files matched'
+  exit 1
+end
+
+config = Tempfile.new(['imgsub-config', '.pl'])
+config.write(EXIFTOOL_CONFIG)
+config.flush
+
+# Where the two versions first diverge, so the before/after previews line up
+# even when the replacement expands backreferences.
+def first_diff(old, new)
+  limit = [old.length, new.length].min
+  at = 0
+  at += 1 while at < limit && old[at] == new[at]
+  at
+end
+
+# One-line preview around the change, so a 4KB prompt doesn't fill the screen.
+def snippet(str, at)
+  from = [at - 24, 0].max
+  text = str[from, 72].to_s.gsub(/\s+/, ' ')
+  "#{from.positive? ? '...' : ''}#{text}#{from + 72 < str.length ? '...' : ''}"
+end
+
+# Per-file progress on stderr, so a long exiftool sweep doesn't look hung.
+# Only drawn when stderr is a terminal; piped or redirected output stays clean.
+$progress = false
+
+def clear_progress
+  $stderr.print("\r\e[K") if $progress
+end
+
+def show_progress(index, total, file, label = nil)
+  return unless $progress
+
+  name = File.basename(file)
+  name = "#{name[0, 37]}..." if name.length > 40
+  $stderr.print("\r\e[K#{label}[#{index}/#{total}] #{name}")
+end
+
+# Deleting is only safe when the survivor already holds everything the victim
+# does, so byte equality is the bar -- nothing can be lost by dropping one of
+# two identical files.
+def duplicate?(a, b)
+  File.size(a) == File.size(b) && FileUtils.identical?(a, b)
+end
+
+# Same pixels, different tags: the usual reason a rename collides in a tree
+# this tool has already rewritten. Reported, never removed -- deleting it would
+# silently discard whatever metadata only that copy carries.
+def same_image_data?(a, b, config)
+  # -j, not -s3: with several files exiftool interleaves "======== path"
+  # headers into the plain output, which is fiddly to read back.
+  out, _err, status = Open3.capture3('exiftool', '-config', config, '-api', 'requestall=1',
+                                     '-j', '-ImageDataHash', a, b)
+  return false unless status.success?
+
+  hashes = JSON.parse(out).map { |tags| tags['ImageDataHash'] }.compact
+  hashes.length == 2 && hashes.uniq.one?
+rescue JSON::ParserError
+  false
+end
+
+# One exiftool call for the whole batch. exiftool echoes each path back
+# verbatim in SourceFile, so its results key straight back to what we passed.
+def read_tags_batch(paths, config)
+  out, err, status = Open3.capture3('exiftool', '-config', config, '-j', '-G', *paths)
+  # A bad file makes exiftool exit non-zero for the whole batch, so trust the
+  # JSON it did emit and let the caller account for whatever is missing.
+  parsed = out.strip.empty? ? [] : JSON.parse(out)
+  if parsed.empty? && !status.success?
+    clear_progress
+    warn "exiftool read failed: #{err.strip}"
+  end
+  parsed.each_with_object({}) { |tags, acc| acc[tags['SourceFile']] = tags }
+rescue JSON::ParserError => e
+  clear_progress
+  warn "could not parse exiftool output: #{e.message}"
+  {}
+end
+
+# Writes take per-file arguments so they can't batch, but they are independent
+# and Open3 releases the GVL while a subprocess runs, so a small pool converts
+# most of that startup cost into wall-clock savings. Returns file => error.
+def run_writes(jobs)
+  failures = {}
+  return failures if jobs.empty?
+
+  queue = jobs.dup
+  mutex = Mutex.new
+  done = 0
+  Array.new([WRITE_WORKERS, jobs.length].min) do
+    Thread.new do
+      loop do
+        job = mutex.synchronize { queue.shift }
+        break if job.nil?
+
+        file, args = job
+        _out, err, status = Open3.capture3(*args)
+        mutex.synchronize do
+          failures[file] = err.strip unless status.success?
+          done += 1
+          show_progress(done, jobs.length, file, 'writing ')
+        end
+      end
+    end
+  end.each(&:join)
+  failures
+end
+
+$progress = $stderr.tty? && files.length > 1
+$stderr.sync = true
+
+changed = 0
+errors = 0
+removed = 0
+seen = 0
+# dest => source, so two files renaming onto one name still collide even when
+# neither has reached the disk yet.
+planned = {}
+
+files.each_slice(READ_BATCH) do |batch|
+  tags_by_path = opts[:exif] ? read_tags_batch(batch, config.path) : {}
+  writes = []
+  pending = []
+  removals = []
+
+  batch.each do |file|
+    seen += 1
+    show_progress(seen, files.length, file)
+    edits = {}
+
+    if opts[:exif]
+      tags = tags_by_path[file]
+      # A batch keeps going past a bad file, so the per-file verdict comes from
+      # ExifTool:Error. Warnings are routine on valid images; only Error is fatal.
+      failure = tags.nil? ? 'no metadata returned' : tags['ExifTool:Error']
+      if failure
+        clear_progress
+        warn "#{file}: #{failure}, skipped"
+        errors += 1
+        next
+      end
+      tags.each do |key, value|
+        group, tag = key.split(':', 2)
+        next if tag.nil? || SKIP_GROUPS.include?(group)
+        next unless value.is_a?(String) && !value.start_with?('(Binary data')
+        next unless pattern.match?(value)
+
+        updated = value.gsub(pattern, replacement)
+        edits[key] = [value, updated] unless updated == value
+      end
+    end
+
+    # Substitute over the stem only: eating the extension would make the file
+    # invisible to the next run (.png -> .pn), which is never what's wanted.
+    base = File.basename(file)
+    ext = File.extname(base)
+    stem = base[0, base.length - ext.length]
+    new_base = opts[:names] ? stem.gsub(pattern, replacement) + ext : base
+    dest = File.join(File.dirname(file), new_base)
+    renaming = new_base != base
+
+    next if edits.empty? && !renaming
+
+    clear_progress
+    puts file
+    puts "  name  #{base} -> #{new_base}" if renaming
+    edits.each do |key, (old, new)|
+      puts "  #{key}"
+      at = first_diff(old, new)
+      puts "      - #{snippet(old, at)}"
+      puts "      + #{snippet(new, at)}"
+    end
+
+    # Bail before touching metadata, so a blocked rename can't half-apply.
+    if renaming && (File.exist?(dest) || planned.key?(dest))
+      # Whoever claimed the name first survives: already on disk, or queued
+      # earlier in this same run and not yet renamed.
+      rival = File.exist?(dest) ? dest : planned[dest]
+      clear_progress
+      if duplicate?(file, rival)
+        verb = opts[:dry_run] ? 'would remove' : 'removing'
+        puts "  #{verb} #{base}: byte-identical to #{File.basename(rival)}"
+        removals << file unless opts[:dry_run]
+        removed += 1
+      elsif same_image_data?(file, rival, config.path)
+        warn "  skipped: #{new_base} holds the same image with different metadata"
+        errors += 1
+      else
+        warn "  skipped: #{new_base} already exists and differs"
+        errors += 1
+      end
+      next
+    end
+    planned[dest] = file if renaming
+
+    if opts[:dry_run]
+      changed += 1
+      next
+    end
+
+    if edits.any?
+      args = ['exiftool', '-config', config.path, '-m', '-q']
+      args << '-overwrite_original' unless opts[:backup]
+      args << '-P' unless opts[:touch] # keep mtime so rimg's --sort new stays put
+      edits.each { |key, (_old, new)| args << "-#{key}=#{new}" }
+      args << file
+      writes << [file, args]
+    end
+    pending << [file, dest, renaming]
+  end
+
+  # Writes go out in parallel, then the renames: a file whose write failed keeps
+  # its old name, so a half-applied edit can't hide behind a fresh one.
+  failures = run_writes(writes)
+  pending.each do |file, dest, renaming|
+    if (message = failures[file])
+      clear_progress
+      warn "#{file}: metadata write failed: #{message}"
+      errors += 1
+      next
+    end
+    File.rename(file, dest) if renaming
+    changed += 1
+  end
+
+  removals.each do |victim|
+    File.delete(victim)
+  rescue SystemCallError => e
+    clear_progress
+    warn "#{victim}: could not remove: #{e.message}"
+    errors += 1
+    removed -= 1
+  end
+end
+
+clear_progress
+config.close!
+
+verb = opts[:dry_run] ? 'would change' : 'changed'
+summary = "#{verb} #{changed} of #{files.length} file#{'s' unless files.length == 1}"
+if removed.positive?
+  gone = opts[:dry_run] ? 'would remove' : 'removed'
+  summary += ", #{gone} #{removed} duplicate#{'s' unless removed == 1}"
+end
+puts summary
+exit(errors.zero? ? 0 : 1)
