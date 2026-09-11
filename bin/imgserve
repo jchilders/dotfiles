@@ -1,0 +1,330 @@
+#!/usr/bin/env python3
+"""Serve a directory of images/videos as a TikTok-style feed on the local network.
+
+Usage: imgserve [DIR] [-p PORT] [--flat]
+Zero dependencies — python3 stdlib only. Ctrl-C to stop.
+"""
+import argparse
+import json
+import mimetypes
+import re
+import socket
+import sys
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
+from urllib.parse import quote, unquote, urlparse
+
+IMG_EXT = {".jpg", ".jpeg", ".png", ".gif", ".webp", ".avif", ".bmp", ".svg", ".heic"}
+VID_EXT = {".mp4", ".webm", ".mov", ".m4v", ".ogv"}
+
+PAGE = """<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
+  body { background: #000; color: #ddd; font: 14px/1.4 -apple-system, sans-serif;
+         -webkit-tap-highlight-color: transparent; }
+
+  #bar { position: fixed; inset: 0 0 auto 0; z-index: 20; display: flex; align-items: center;
+         justify-content: flex-end; gap: 6px;
+         padding: calc(8px + env(safe-area-inset-top)) 10px 20px;
+         background: linear-gradient(#000a, #0000); pointer-events: none; }
+  #bar > * { pointer-events: auto; }
+  #bar button { background: none; border: none; color: #bbb; cursor: pointer;
+                font: inherit; font-size: 13px; padding: 6px 8px;
+                text-shadow: 0 1px 3px #000, 0 0 6px #000; }
+  #bar #menubtn { font-size: 19px; line-height: 1; padding: 2px 6px; }
+  #bar button.on { color: #fff; }
+
+  #menu { position: fixed; z-index: 25; right: 8px; top: calc(40px + env(safe-area-inset-top));
+          min-width: 150px; padding: 4px; border: 1px solid #333; border-radius: 10px;
+          background: #1c1c1cf5; box-shadow: 0 8px 24px #000a; }
+  #menu[hidden] { display: none; }
+  #menu .hdr { color: #888; font-size: 11px; letter-spacing: .05em; text-transform: uppercase;
+               padding: 6px 10px 3px; }
+  #menu button { display: block; width: 100%; text-align: left; background: none; border: none;
+                 color: #ddd; font: inherit; font-size: 13px; padding: 7px 10px;
+                 border-radius: 6px; cursor: pointer; }
+  #menu button:hover { background: #ffffff14; }
+  #menu button.on { color: #fff; }
+  #menu button.on::after { content: '\\2713'; float: right; }
+  #scrim { position: fixed; inset: 0; z-index: 24; }
+  #scrim[hidden] { display: none; }
+
+  #feed { height: 100dvh; overflow-y: scroll; scroll-snap-type: y mandatory;
+          overscroll-behavior-y: contain; scrollbar-width: none; }
+  #feed::-webkit-scrollbar { display: none; }
+  .slide { height: 100dvh; scroll-snap-align: start; scroll-snap-stop: always;
+           display: flex; align-items: center; justify-content: center; position: relative; }
+  .slide img, .slide video { max-width: 100vw; max-height: 100dvh; object-fit: contain;
+                             display: block; }
+  .slide.paused::after { content: '\\25B6'; position: absolute; font-size: 64px; color: #fffc;
+                         text-shadow: 0 2px 12px #000; pointer-events: none; }
+</style>
+<div id="feed"></div>
+<header id="bar">
+  <button id="menubtn" title="menu (s)">&#8801;</button>
+</header>
+<div id="scrim" hidden></div>
+<nav id="menu" hidden>
+  <div class="hdr">sort</div>
+  <button data-k="time">newest</button>
+  <button data-k="name">name</button>
+  <button data-k="rand">random</button>
+</nav>
+<script>
+const FILES = __FILES__;
+const feed = document.getElementById('feed');
+const menu = document.getElementById('menu');
+const scrim = document.getElementById('scrim');
+const WIN = 2;                       // slides kept loaded on each side
+let files = [], cur = 0, sortKey = 'rand';
+const mounted = new Set();
+
+const media = i => feed.children[i] && feed.children[i].firstChild;
+
+const io = new IntersectionObserver(es => {
+  for (const e of es) {
+    if (e.isIntersecting && e.intersectionRatio >= 0.55) {
+      const i = +e.target.dataset.i;
+      if (i !== cur) { cur = i; sync(); }
+    }
+  }
+}, { root: feed, threshold: [0.55] });
+
+function mount(i) {
+  const s = feed.children[i];
+  if (!s || s.firstChild) return;
+  const f = files[i];
+  let m;
+  if (f.v) {
+    m = document.createElement('video');
+    m.loop = true; m.playsInline = true; m.preload = 'auto';
+    m.muted = true; m.setAttribute('muted', '');   // required for inline autoplay
+  } else {
+    m = document.createElement('img');
+    m.decoding = 'async';
+  }
+  m.src = '/m/' + f.u;
+  s.append(m);
+  mounted.add(i);
+}
+
+function unmount(i) {
+  const s = feed.children[i];
+  if (!s) return;
+  const m = s.firstChild;
+  if (m && m.tagName === 'VIDEO') { m.pause(); m.removeAttribute('src'); m.load(); }
+  s.replaceChildren();
+  s.classList.remove('paused');
+  mounted.delete(i);
+}
+
+function sync() {
+  for (const i of [...mounted]) if (Math.abs(i - cur) > WIN) unmount(i);
+  for (let i = Math.max(0, cur - WIN); i <= Math.min(files.length - 1, cur + WIN); i++) mount(i);
+  for (const i of mounted) {
+    const m = media(i);
+    if (!m || m.tagName !== 'VIDEO') continue;
+    if (i === cur) m.play().catch(() => {});
+    else { m.pause(); if (i !== cur) m.currentTime = 0; }
+  }
+}
+
+function go(i, behavior) {
+  i = Math.max(0, Math.min(files.length - 1, i));
+  if (!feed.children[i]) return;
+  const top = i * feed.clientHeight;
+  if (behavior === 'instant') { feed.scrollTop = top; cur = i; sync(); }
+  else feed.scrollTo({ top: top, behavior: 'smooth' });
+}
+
+function render(keep) {
+  files = FILES.slice();
+  if (sortKey === 'rand') {
+    for (let i = files.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [files[i], files[j]] = [files[j], files[i]];
+    }
+  } else {
+    files.sort((a, b) => sortKey === 'time' ? b.t - a.t : a.p.localeCompare(b.p));
+  }
+  for (const b of menu.querySelectorAll('button')) {
+    b.className = b.dataset.k === sortKey ? 'on' : '';
+  }
+  mounted.clear();
+  feed.replaceChildren(...files.map((f, i) => {
+    const s = document.createElement('section');
+    s.className = 'slide';
+    s.dataset.i = i;
+    s.onclick = () => {
+      const m = media(i);
+      if (!m || m.tagName !== 'VIDEO') return;
+      if (m.paused) { m.play().catch(() => {}); s.classList.remove('paused'); }
+      else { m.pause(); s.classList.add('paused'); }
+    };
+    io.observe(s);
+    return s;
+  }));
+  const at = typeof keep === 'string' ? files.findIndex(f => f.p === keep) : 0;
+  go(Math.max(0, at), 'instant');
+}
+
+function showMenu(on) {
+  menu.hidden = scrim.hidden = !on;   // scrim swallows the dismissing tap
+  document.getElementById('menubtn').className = on ? 'on' : '';
+}
+scrim.onclick = () => showMenu(false);
+
+document.getElementById('menubtn').onclick = () => showMenu(menu.hidden);
+for (const b of menu.querySelectorAll('button')) {
+  b.onclick = () => {
+    showMenu(false);
+    sortKey = b.dataset.k;         // picking random again reshuffles
+    render(files[cur] && files[cur].p);
+  };
+}
+document.onkeydown = e => {
+  if (e.key === 'Escape') { showMenu(false); return; }
+  if (e.key === 's') { showMenu(menu.hidden); return; }
+  if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === 'j' || e.key === ' ') {
+    e.preventDefault(); go(cur + 1);
+  } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'k') {
+    e.preventDefault(); go(cur - 1);
+  }
+};
+render();
+</script>
+"""
+
+
+class Handler(BaseHTTPRequestHandler):
+    root: Path = Path(".")
+    recursive = False
+    protocol_version = "HTTP/1.1"
+
+    def log_message(self, *args):
+        pass
+
+    def do_GET(self):
+        path = unquote(urlparse(self.path).path)
+        if path == "/":
+            self.send_index()
+        elif path.startswith("/m/"):
+            self.send_media(path[3:])
+        else:
+            self.send_error(404)
+
+    def allowed(self, rel):
+        """Exposure policy, shared by the index and the media route."""
+        return (rel.parts
+                and not any(part.startswith(".") for part in rel.parts)
+                and (self.recursive or len(rel.parts) == 1)
+                and rel.suffix.lower() in IMG_EXT | VID_EXT)
+
+    def scan(self):
+        it = self.root.rglob("*") if self.recursive else self.root.iterdir()
+        out = []
+        for p in sorted(it):
+            rel = p.relative_to(self.root)
+            if not self.allowed(rel) or not p.is_file():
+                continue
+            out.append({"p": rel.as_posix(), "u": quote(rel.as_posix()),
+                        "v": rel.suffix.lower() in VID_EXT, "t": p.stat().st_mtime})
+        return out
+
+    def send_index(self):
+        files = json.dumps(self.scan()).replace("<", "\\u003c")
+        body = PAGE.replace("__FILES__", files).encode()
+        self.send_response(200)
+        self.send_header("Content-Type", "text/html; charset=utf-8")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
+    def send_media(self, rel):
+        relp = Path(rel)
+        if not self.allowed(relp):
+            self.send_error(404)
+            return
+        fpath = (self.root / relp).resolve()
+        if not fpath.is_relative_to(self.root.resolve()) or not fpath.is_file():
+            self.send_error(404)
+            return
+        size = fpath.stat().st_size
+        ctype = mimetypes.guess_type(fpath.name)[0] or "application/octet-stream"
+        start, end = 0, size - 1
+        rng = self.headers.get("Range")
+        m = re.match(r"bytes=(\d*)-(\d*)$", rng or "")
+        if m and (m[1] or m[2]):
+            if m[1]:
+                start = int(m[1])
+                if m[2]:
+                    end = min(int(m[2]), end)
+            else:  # suffix range: last N bytes
+                start = max(0, size - int(m[2]))
+            if start > end:
+                self.send_error(416)
+                return
+            self.send_response(206)
+            self.send_header("Content-Range", f"bytes {start}-{end}/{size}")
+        else:
+            self.send_response(200)
+        self.send_header("Content-Type", ctype)
+        self.send_header("Content-Length", str(end - start + 1))
+        self.send_header("Accept-Ranges", "bytes")
+        self.send_header("X-Content-Type-Options", "nosniff")
+        if relp.suffix.lower() == ".svg":   # renders in <img>, downloads if navigated to
+            self.send_header("Content-Disposition", "attachment")
+        self.end_headers()
+        try:
+            with open(fpath, "rb") as f:
+                f.seek(start)
+                left = end - start + 1
+                while left > 0:
+                    chunk = f.read(min(65536, left))
+                    if not chunk:
+                        break
+                    self.wfile.write(chunk)
+                    left -= len(chunk)
+        except ConnectionError:
+            pass
+
+
+class Server(ThreadingHTTPServer):
+    def handle_error(self, request, client_address):
+        # Browsers abort transfers constantly (video seeks, scrolling past a
+        # slide, closing a tab). Those arrive as a reset on a connection we are
+        # reading or writing; anything else still gets a traceback.
+        if not isinstance(sys.exc_info()[1], ConnectionError):
+            super().handle_error(request, client_address)
+
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    ap.add_argument("dir", nargs="?", default=".", help="directory to serve (default: .)")
+    ap.add_argument("-p", "--port", type=int, default=8918)
+    ap.add_argument("--flat", action="store_true", help="don't include subdirectories")
+    args = ap.parse_args()
+
+    root = Path(args.dir).expanduser()
+    if not root.is_dir():
+        sys.exit(f"imgserve: not a directory: {root}")
+    Handler.root = root
+    Handler.recursive = not args.flat
+
+    srv = Server(("0.0.0.0", args.port), Handler)
+    host = socket.gethostname().lower()
+    if not host.endswith(".local"):
+        host = host.split(".")[0] + ".local"
+    print(f"Serving {root.resolve()} at http://{host}:{args.port}  (Ctrl-C to stop)")
+    try:
+        srv.serve_forever()
+    except KeyboardInterrupt:
+        pass
+
+
+if __name__ == "__main__":
+    main()
