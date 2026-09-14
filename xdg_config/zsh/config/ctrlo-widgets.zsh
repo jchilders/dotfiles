@@ -89,7 +89,9 @@ function __eval_found_file {
 
 function __search_git_status_and_eval {
   __find_file_required "sorted_status" || return 1
-  found_file=$(echo "$found_file" | awk ' { print $NF } ')
+  # A rename is listed as "old -> new"; take the new name, and nothing else --
+  # splitting on whitespace would truncate any path containing a space.
+  found_file=${found_file##* -> }
   __eval_found_file $1
 }
 
@@ -192,7 +194,9 @@ bindkey -M viins '^oga' add_from_git_status
 # show diff of file selected from from git status
 function diff_from_git_status {
   __find_file_required "sorted_status" || return 1
-  found_file=$(echo "$found_file" | awk ' { print $NF } ')
+  # A rename is listed as "old -> new"; take the new name, and nothing else --
+  # splitting on whitespace would truncate any path containing a space.
+  found_file=${found_file##* -> }
 
   if [[ ! -e "$found_file" ]]; then
     echo "Deleted: $found_file"

@@ -17,10 +17,17 @@ class StatusLine
   # the git docs refer the "short-format status" field as `xy`. It indicates the status of the file in the index and the working tree.
   attr_reader :type, :xy
 
+  # Used to stop splitting a line once <path> is reached for a given v2 porcelain line, so that a path containing
+  # spaces stays intact.
+  PATH_INDEX = { '1' => 8, '2' => 9, 'u' => 10 }.freeze
+
   def initialize(str)
-    @line = str.split
+    index = PATH_INDEX.fetch(str[0, 1], 1)
+    @line = str.split(' ', index + 1)
     @type = @line[0]
     @xy = @type != '?' ? @line[1] : '??'
+    # A rename packs both names into the path field, separated by a tab.
+    @path, @old_path = @line[index].to_s.split("\t", 2)
   end
 
   def changed?
@@ -40,7 +47,7 @@ class StatusLine
   end
 
   def old_path
-    renamed? ? @line[-2] : ''
+    @old_path.to_s
   end
 
   def test_file?
@@ -48,11 +55,7 @@ class StatusLine
   end
 
   def path
-    if renamed?
-      "#{@line[-1]} -> #{@line[-2]}"
-    else
-      @line[-1]
-    end
+    renamed? ? "#{old_path} -> #{@path}" : @path
   end
 
   # @return [Time]
