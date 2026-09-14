@@ -17,12 +17,16 @@ require 'fileutils'
 require 'json'
 require 'open3'
 require 'optparse'
+require 'set'
 require 'tempfile'
 
 # Keep warnings interleaved with the per-file report in the right order.
 $stdout.sync = true
 
-IMAGE_EXTS = %w[.png .jpg .jpeg .webp .tif .tiff .avif].freeze
+IMAGE_EXTS = Set[
+  '.png', '.jpg', '.jpeg', '.webp', '.tif', '.tiff', '.avif', '.heic', '.heif',
+  '.arw', '.cr2', '.cr3', '.nef', '.dng', '.raf', '.orf', '.rw2'
+].freeze
 
 # Tag groups that aren't embedded metadata, so aren't ours to rewrite.
 SKIP_GROUPS = %w[ExifTool File Composite].freeze
@@ -35,15 +39,20 @@ WRITE_WORKERS = 8
 
 # exiftool reads ComfyUI's PNG text chunks but ships no writable definition for
 # them, so define them here. (A1111's `parameters` chunk is already built in.)
-EXIFTOOL_CONFIG = <<~PERL
-  %Image::ExifTool::UserDefined = (
-    'Image::ExifTool::PNG::TextualData' => {
-      Prompt   => { Writable => 'string' },
-      Workflow => { Writable => 'string' },
-    },
-  );
-  1;
-PERL
+# Other generators invent their own chunk names; those are picked up from the
+# write error and defined on demand, so the common case costs no extra call.
+PNG_TEXT_TAGS = %w[Prompt Workflow].freeze
+
+def exiftool_config(tags)
+  <<~PERL
+    %Image::ExifTool::UserDefined = (
+      'Image::ExifTool::PNG::TextualData' => {
+    #{tags.map { |t| "    '#{t}' => { Writable => 'string' }," }.join("\n")}
+      },
+    );
+    1;
+  PERL
+end
 
 opts = {
   dry_run: false,
@@ -51,7 +60,9 @@ opts = {
   exif: true,
   backup: false,
   word: false,
-  touch: false
+  touch: false,
+  icase: false,
+  jobs: WRITE_WORKERS
 }
 
 prog = File.basename($PROGRAM_NAME)
@@ -68,6 +79,12 @@ parser = OptionParser.new do |o|
   o.on('--exif-only', 'rewrite metadata, leave filenames alone')    { opts[:names] = false }
   o.on('-b', '--backup', 'keep exiftool\'s *_original backups')     { opts[:backup] = true }
   o.on('-w', '--word', 'skip matches glued to other letters/digits') { opts[:word] = true }
+  o.on('-i', '--ignore-case', 'match regardless of case')           { opts[:icase] = true }
+  o.on('-j JOBS', Integer, "parallel metadata writes (default: #{WRITE_WORKERS})") do |j|
+    abort 'jobs must be positive' unless j.positive?
+
+    opts[:jobs] = j
+  end
   o.on('--touch', 'let metadata edits bump the file mtime')         { opts[:touch] = true }
   o.on('-h', '--help', 'show this message') { puts o; exit 0 }
   o.separator ''
@@ -78,6 +95,7 @@ parser = OptionParser.new do |o|
   o.separator "  #{prog} '(100|110)psi' '80psi' i/      either of two values"
   o.separator "  #{prog} 'sunset' 'sunrise' i/          any regex, not just number+unit"
   o.separator "  #{prog} '(\\d+)x(\\d+)' '\\2x\\1' i/       reorder captured groups"
+  o.separator "  #{prog} -i 'SUNSET' 'sunrise' i/        ignore case while matching"
   o.separator "  #{prog} -w '100psi' '80psi' i/         whole tokens only, skip 1100psi"
   o.separator "  #{prog} --name-only '5mm' '8mm' i/     filenames only, leave metadata alone"
   o.separator ''
@@ -113,7 +131,7 @@ if !num_re.to_s.empty? && /\A\d+\z/.match?(new_num.to_s) && unit != new_unit
 end
 
 begin
-  body = Regexp.new(search)
+  body = Regexp.new(search, opts[:icase] ? Regexp::IGNORECASE : nil)
 rescue RegexpError => e
   abort "bad search regex #{search.inspect}: #{e.message}"
 end
@@ -142,7 +160,7 @@ if files.empty?
 end
 
 config = Tempfile.new(['imgsub-config', '.pl'])
-config.write(EXIFTOOL_CONFIG)
+config.write(exiftool_config(PNG_TEXT_TAGS))
 config.flush
 
 # Where the two versions first diverge, so the before/after previews line up
@@ -218,17 +236,43 @@ rescue JSON::ParserError => e
   {}
 end
 
+# Configs built for chunk names this run turned out to need, keyed by tag set
+# so a tree full of the same unknown chunk writes one config, not one per file.
+# The Tempfiles are held here to keep them off the finalizer until exit.
+$extra_configs = {}
+
+# A tag exiftool has no definition for is rejected by name, so the error says
+# exactly what to define. Only \w names are honoured: the rest of the config is
+# Perl, and these come out of file metadata.
+def extra_config(err, cache, mutex)
+  names = err.scan(/Tag '([^']+)' is not defined/).flatten
+             .map { |tag| tag.split(':', 2).last }
+             .select { |name| name.match?(/\A[A-Za-z_]\w*\z/) }
+             .uniq.sort
+  return nil if names.empty?
+
+  key = (PNG_TEXT_TAGS + names).uniq
+  mutex.synchronize do
+    cache[key] ||= begin
+      file = Tempfile.new(['imgsub-extra', '.pl'])
+      file.write(exiftool_config(key))
+      file.flush
+      file
+    end
+  end.path
+end
+
 # Writes take per-file arguments so they can't batch, but they are independent
 # and Open3 releases the GVL while a subprocess runs, so a small pool converts
 # most of that startup cost into wall-clock savings. Returns file => error.
-def run_writes(jobs)
+def run_writes(jobs, workers)
   failures = {}
   return failures if jobs.empty?
 
   queue = jobs.dup
   mutex = Mutex.new
   done = 0
-  Array.new([WRITE_WORKERS, jobs.length].min) do
+  Array.new([workers, jobs.length].min) do
     Thread.new do
       loop do
         job = mutex.synchronize { queue.shift }
@@ -236,6 +280,12 @@ def run_writes(jobs)
 
         file, args = job
         _out, err, status = Open3.capture3(*args)
+        # Second and last attempt, and only for the one thing a retry can fix.
+        if !status.success? && (config = extra_config(err, $extra_configs, mutex))
+          retried = args.dup
+          retried[args.index('-config') + 1] = config
+          _out, err, status = Open3.capture3(*retried)
+        end
         mutex.synchronize do
           failures[file] = err.strip unless status.success?
           done += 1
@@ -352,7 +402,7 @@ files.each_slice(READ_BATCH) do |batch|
 
   # Writes go out in parallel, then the renames: a file whose write failed keeps
   # its old name, so a half-applied edit can't hide behind a fresh one.
-  failures = run_writes(writes)
+  failures = run_writes(writes, opts[:jobs])
   pending.each do |file, dest, renaming|
     if (message = failures[file])
       clear_progress
@@ -376,6 +426,7 @@ end
 
 clear_progress
 config.close!
+$extra_configs.each_value(&:close!)
 
 verb = opts[:dry_run] ? 'would change' : 'changed'
 summary = "#{verb} #{changed} of #{files.length} file#{'s' unless files.length == 1}"

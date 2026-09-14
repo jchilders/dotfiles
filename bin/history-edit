@@ -1,0 +1,51 @@
+#!/usr/bin/env zsh
+
+# edit shell history interactively: opens $EDITOR on the history file, then
+# saves the result back and reloads it.
+
+emulate -L zsh
+setopt extendedglob
+
+if (( $# != 0 )); then
+  print -u2 "usage: history-edit"
+  return 1
+fi
+
+local editor=${VISUAL:-${EDITOR:-vi}}
+local histfile=${HISTFILE:-$HOME/.zsh_history}
+local tmp=${histfile}.edit
+
+if [[ ! -f $histfile ]]; then
+  print -u2 "history-edit: no history file at $histfile"
+  return 1
+fi
+
+# Flush current session to disk.
+fc -W
+
+cp "$histfile" "$tmp" || return 1
+
+local before=$(wc -l < "$tmp")
+${=editor} "$tmp" || { rm -f "$tmp"; return 1 }
+local after=$(wc -l < "$tmp")
+
+if ! [[ -s $tmp ]]; then
+  print -u2 "history-edit: result is empty, keeping original history"
+  rm -f "$tmp"
+  return 1
+fi
+
+if diff -q "$histfile" "$tmp" >/dev/null 2>&1; then
+  print "no changes"
+  rm -f "$tmp"
+  return 0
+fi
+
+mv "$tmp" "$histfile" || return 1
+print "removed $(( before - after )) entries"
+
+# Clear the in-memory history.
+fc -p
+
+# Reload the edited history.
+fc -R "$histfile"

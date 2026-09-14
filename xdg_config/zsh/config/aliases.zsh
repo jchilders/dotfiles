@@ -253,3 +253,6 @@ function vilm {
 
   $EDITOR $(print -l db/migrate/*.rb(oc) | head -1 | tr -d '\n')
 }
+
+# Sourced so the `fc -p`/`fc -R` reload affects the current shell.
+alias history-edit='. ~/bin/history-edit'
