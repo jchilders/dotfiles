@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Runs twitch_import every day at 07:00, pulling the last 3 hours of the most
+  recent hasanabi VOD. launchd does not expand ~, so every path is absolute,
+  and PATH is set explicitly because launchd agents do not read the shell
+  profile (ruby/bundle come from mise, yt-dlp/ffmpeg from homebrew).
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.jchilders.twitch-import</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>/Users/jchilders/work/jchilders/twitch_importer/twitch_import</string>
+    <string>--hours=3</string>
+    <string>https://www.twitch.tv/hasanabi/videos</string>
+    <string>--clean</string>
+  </array>
+
+  <key>WorkingDirectory</key>
+  <string>/Users/jchilders/work/jchilders/twitch_importer</string>
+
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PATH</key>
+    <string>/Users/jchilders/.local/share/mise/installs/ruby/latest/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+
+    <key>LANG</key>
+    <string>en_US.UTF-8</string>
+  </dict>
+
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Hour</key>
+    <integer>7</integer>
+    <key>Minute</key>
+    <integer>0</integer>
+  </dict>
+
+  <key>RunAtLoad</key>
+  <false/>
+
+  <key>StandardOutPath</key>
+  <string>/Users/jchilders/.local/state/twitch-import.out.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/jchilders/.local/state/twitch-import.err.log</string>
+</dict>
+</plist>

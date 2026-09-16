@@ -21,3 +21,5 @@ xdg_config/zsh/.zcompdump*
 xdg_config/zsh-abbr/
 .aider*
 .claude/
+claude/skills/synced/
+xdg_config/1Password/
