@@ -1,0 +1,8 @@
+{
+  "trustedcasks": [
+    "driceroland/tap/search"
+  ],
+  "trustedformulae": [
+    "olets/tap/zsh-abbr"
+  ]
+}

@@ -74,6 +74,9 @@ if OS.mac?
   cask 'font-space-mono-nerd-font'
   cask 'font-blex-mono-nerd-font'
   cask 'font-source-code-pro-for-powerline'
+
+  # Minimalist WebKit browser
+  cask 'driceroland/tap/search'
 end
 
 cask '1password-cli'
