@@ -23,6 +23,13 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
     vim.fn.getchar()
     os.exit(1)
   end
+  -- Pin to lazy-lock.json so a fresh install doesn't rewrite the lockfile
+  local ok, lock = pcall(function()
+    return vim.json.decode(table.concat(vim.fn.readfile(vim.fn.stdpath("config") .. "/lazy-lock.json"), "\n"))
+  end)
+  if ok and lock["lazy.nvim"] then
+    vim.fn.system({ "git", "-C", lazypath, "checkout", "--quiet", lock["lazy.nvim"].commit })
+  end
 end
 vim.opt.runtimepath:prepend(lazypath)
 

@@ -1,0 +1,15 @@
+# CLI tools for the devcontainer (Homebrew provides these on macOS)
+[tools]
+bat = "latest"
+delta = "latest"
+eza = "latest"
+fd = "latest"
+fzf = "latest"
+jq = "latest"
+lazygit = "latest"
+neovim = "latest"
+node = "lts" # some nvim plugins / LSPs expect it
+ripgrep = "latest"
+starship = "latest"
+tree-sitter = "latest"
+zoxide = "latest"

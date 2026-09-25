@@ -62,38 +62,30 @@ To undo the above:
 
 ## Try it out without installing
 
-### Docker Container
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/jchilders/dotfiles)
 
-Build and run a containerized version to test the dotfiles:
+Click the button to get a browser-based Linux environment with zsh, neovim, and
+the CLI tools already set up. Open a terminal (`` ctrl-` ``) and try `nvim`,
+`ctrl-o` bindings, `l`, `z`, etc. The first launch takes a few minutes to build.
+
+The macOS-only parts (system defaults, casks, WezTerm pane integration) aren't
+available there.
+
+### Locally
+
+Same environment as Codespaces, via the devcontainer CLI:
+
+```bash
+devcontainer up --workspace-folder .
+devcontainer exec --workspace-folder . zsh
+```
+
+Or build the Homebrew-based Docker image:
 
 ```bash
 docker build -t dotfiles-demo .
 docker run -it dotfiles-demo
 ```
-
-This creates a full Linux environment with most tools installed via Homebrew.
-
-### VS Code Devcontainer
-
-Open the project in VS Code and use the devcontainer:
-
-1. Install the "Dev Containers" extension in VS Code
-2. Open this repository in VS Code
-3. Press `Cmd+Shift+P` and select "Dev Containers: Reopen in Container"
-4. VS Code will build and open the devcontainer
-
-Or use the devcontainer CLI:
-
-```bash
-# Install devcontainer CLI
-npm install -g @devcontainers/cli
-
-# Build and run
-devcontainer up --workspace-folder .
-devcontainer exec --workspace-folder . /bin/zsh
-```
-
-The devcontainer includes most tools and provides a consistent development environment.
 
 Q: lol why are you using Make?
 
@@ -335,26 +327,6 @@ lets you `cd` to directories given just a partial path. Example:
 ➜ cd
 ➜ z pro # takes you to ~/work/proj1
 ```
-## Using a devcontainer
-
-Work in progress.
-
-```
-devcontainer build --workspace-folder . --image-name jc_dotfiles:latest
-docker ps -a
-devcontainer up --workspace-folder .
-devcontainer exec --workspace-folder . /bin/zsh
-```
-
-To stop/rebuild/restart the devcontainer:
-
-```
-docker ps -a
-docker rm jc_dotfiles
-devcontainer build --workspace-folder . --image-name jc_dotfiles:latest
-devcontainer up --workspace-folder .
-```
-
 # Troubleshooting
 
 ## Common Issues

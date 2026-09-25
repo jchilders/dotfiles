@@ -37,7 +37,11 @@ return {
     "HiPhish/rainbow-delimiters.nvim",
   },
   config = function()
-    require("nvim-treesitter").install(parsers)
+    local install = require("nvim-treesitter").install(parsers)
+    -- Headless (`make neovim-plugins`): finish installing before `+qa` exits
+    if #vim.api.nvim_list_uis() == 0 then
+      install:wait(300000)
+    end
 
     -- Indentation stayed off in the master-branch config, so no indentexpr here.
     vim.api.nvim_create_autocmd("FileType", {

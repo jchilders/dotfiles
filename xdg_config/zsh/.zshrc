@@ -80,16 +80,26 @@ fi
 # bun completions
 [ -s "$XDG_DATA_HOME/bun/_bun" ] && source "$XDG_DATA_HOME/bun/_bun"
 
+# Print a zsh plugin's path from Homebrew, or from /usr/share on Linux
+# (devcontainer). Callers source it at top level so its typesets stay global.
+function plugin-path() {
+  local f
+  for f in $HOMEBREW_PREFIX/share/$1 /usr/share/$1; do
+    [[ -f $f ]] && { print -r -- $f; return 0 }
+  done
+  return 1
+}
+
 # zsh-autosuggestions: must be after compinit (handled in options.zsh)
-[ -f $HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh ] \
-  && source $HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+plugin=$(plugin-path zsh-autosuggestions/zsh-autosuggestions.zsh) && source $plugin
 
 # zsh-abbr: must be sourced AFTER fzf and other tools that rebind keys
-if [[ -f $HOMEBREW_PREFIX/share/zsh-abbr/zsh-abbr.zsh ]]; then
-  source $HOMEBREW_PREFIX/share/zsh-abbr/zsh-abbr.zsh
+if plugin=$(plugin-path zsh-abbr/zsh-abbr.zsh); then
+  source $plugin
   load-abbreviations  # defined in aliases.zsh
 fi
 
 # zsh-syntax-highlighting: MUST be sourced last so it wraps all registered widgets
-[ -f $HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ] \
-  && source $HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+plugin=$(plugin-path zsh-syntax-highlighting/zsh-syntax-highlighting.zsh) && source $plugin
+unset plugin
+unfunction plugin-path
