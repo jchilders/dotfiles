@@ -5,11 +5,10 @@ FROM mcr.microsoft.com/devcontainers/base:ubuntu
 ARG DEBIAN_FRONTEND=noninteractive
 
 # zsh plugins come from apt here (Homebrew on macOS). build-essential is needed
-# to compile treesitter parsers; ruby and file are used by the ctrl-o widgets.
+# to compile treesitter parsers; file is used by the ctrl-o widgets.
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     file \
-    ruby \
     unzip \
     xclip \
     zsh-autosuggestions \

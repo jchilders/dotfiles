@@ -87,6 +87,57 @@ function __eval_found_file {
   zle accept-line
 }
 
+# Files from `git status`, most recently modified first. Staged files (index
+# changed, worktree clean) go last, and a rename is listed as "old -> new".
+# Returns 1 if there are no changes.
+function sorted_status {
+  zmodload -F zsh/stat b:zstat
+  local -a recs fields unstaged renamed staged
+  local rec type xy p mtime
+  # Not -z: that makes paths relative to the repo root instead of $PWD
+  recs=("${(@f)$(git -c core.quotePath=false status --porcelain=v2 2>/dev/null)}")
+
+  for rec in $recs; do
+    type=${rec[1]}
+    case $type in
+      # A path can contain spaces, so strip only the fields before it
+      1) fields=("${(@s: :)rec}"); xy=$fields[2]; p=${rec#* * * * * * * * } ;;
+      2) p=${rec#* * * * * * * * * } # "new<tab>old"
+         renamed+=("${p#*$'\t'} -> ${p%%$'\t'*}")
+         continue ;;
+      u) xy=; p=${rec#* * * * * * * * * * } ;;
+      \?) xy='??'; p=${rec#? } ;;
+      *) continue ;;
+    esac
+
+    # Zero-pad the mtime (0 for deleted files) so a numeric sort orders it
+    mtime=0
+    zstat -A mtime +mtime -- $p 2>/dev/null
+    if [[ $type == 1 && $xy == [ADMR]. ]]; then
+      staged+=("${(l:12::0:)mtime} $p")
+    else
+      unstaged+=("${(l:12::0:)mtime} $p")
+    fi
+  done
+
+  (( $#unstaged + $#renamed + $#staged )) || return 1
+  print -rl -- ${${(On)unstaged}#* } $renamed ${${(On)staged}#* }
+}
+
+# Local then remote branches other than the current one, each sorted by most
+# recent commit. The "origin/" prefix is dropped.
+function all_other_branches {
+  local refs
+  refs=$(git for-each-ref --sort=-committerdate \
+    --format='%(HEAD)%(refname:lstrip=1)' refs/heads refs/remotes 2>/dev/null) || return
+  local -a lines=("${(@f)refs}") locals remotes
+  local current=${${(M)lines:#\**}#\*heads/}
+  locals=(${${(M)lines:# heads/*}# heads/})
+  remotes=(${${${(M)lines:# remotes/*}# remotes/}#origin/})
+  local -a all=($locals $remotes)
+  print -rl -- ${(u)all:#(HEAD|${(b)current})}
+}
+
 function __search_git_status_and_eval {
   __find_file_required "sorted_status" || return 1
   # A rename is listed as "old -> new"; take the new name, and nothing else --
@@ -217,7 +268,6 @@ bindkey -M viins '^ogs' edit_from_git_status
 
 function switch_branch {
   # TODO: handle git worktrees
-  # all_other_branches is an executable script
   local branch=$(all_other_branches | fzf --tiebreak=index --cycle)
 
   if [[ '' != $branch ]]; then

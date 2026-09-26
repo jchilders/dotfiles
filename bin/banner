@@ -12,10 +12,6 @@ foreach font (
   echo
 }
 
-foreach val ($(rct)) {
-  echo "val: $val"
-}
-
 # foreach file ($(rg --files-with-matches AfterSaveFollow)) {
 #   sed -i '' 's/AfterSaveFollowUpJob/GeocodeAddressJob/g' $file
 # }
