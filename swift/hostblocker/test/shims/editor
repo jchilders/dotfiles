@@ -1,0 +1,4 @@
+#!/bin/sh
+# Fake editor: log only.
+HB_NAME=editor; . "$(dirname "$0")/_log"
+hb_log "$@"

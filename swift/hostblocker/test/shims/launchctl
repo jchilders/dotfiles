@@ -1,0 +1,4 @@
+#!/bin/sh
+# Fake launchctl: log only.
+HB_NAME=launchctl; . "$(dirname "$0")/_log"
+hb_log "$@"

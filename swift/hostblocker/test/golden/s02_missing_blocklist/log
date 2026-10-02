@@ -1,0 +1,14 @@
+== step 1 status: status
+== step 2 enable: enable
+== step 3 reload: reload
+== step 4 disable: disable
+sudo [pfctl] [-t] [blocked] [-T] [flush]
+pfctl [-t] [blocked] [-T] [flush]
+sudo [pfctl] [-f] [-]
+pfctl [-f] [-]
+    | # blocklist disabled
+sudo [tee] [<SANDBOX>/root/etc/hosts]
+sudo [dscacheutil] [-flushcache]
+dscacheutil [-flushcache]
+sudo [killall] [-HUP] [mDNSResponder]
+killall [-HUP] [mDNSResponder]

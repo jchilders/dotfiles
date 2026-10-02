@@ -1,0 +1,6 @@
+== step 1 edit: edit-config
+editor [<SANDBOX>/home/.config/hostblocker/blocked-domains]
+== step 2 edit-args: edit-config
+editor [--wait] [two words] [<SANDBOX>/home/.config/hostblocker/blocked-domains]
+== step 3 edit-empty: edit-config
+vi [<SANDBOX>/home/.config/hostblocker/blocked-domains]

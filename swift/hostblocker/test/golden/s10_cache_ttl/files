@@ -1,0 +1,3 @@
+./.config/hostblocker/blocked-domains
+./.local/share/hostblocker/dns_cache.db
+./.local/share/hostblocker/hostblocker-server

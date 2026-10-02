@@ -1,0 +1,11 @@
+#!/bin/sh
+# Fake sudo: log, refuse real system paths, then run the command unprivileged.
+HB_NAME=sudo; . "$(dirname "$0")/_log"
+hb_log "$@"
+for a in "$@"; do
+  case $a in
+    /etc/*|/private/etc/*|/Library/*|/System/*)
+      echo "HARNESS: refusing real system path: $a" >&2; exit 99 ;;
+  esac
+done
+exec "$@"

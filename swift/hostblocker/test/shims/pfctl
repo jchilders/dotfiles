@@ -1,0 +1,20 @@
+#!/bin/sh
+# Fake pfctl: table + ruleset kept in $HB_STATE. HB_PF_FAIL=load|replace fails that op.
+HB_NAME=pfctl; . "$(dirname "$0")/_log"
+hb_log "$@"
+table="$HB_STATE/pf_table"; rules="$HB_STATE/pf_rules"
+touch "$table"
+case "$*" in
+  "-f -")
+    hb_log_stdin; printf '%s' "$hb_stdin" > "$rules"
+    [ "$HB_PF_FAIL" = load ] && { echo "pfctl: syntax error" >&2; exit 1; }
+    echo "No ALTQ support in kernel" >&2 ;;
+  "-t blocked -T show") cat "$table" | sed 's/^/   /' ;;
+  "-t blocked -T flush") n=$(grep -c . "$table"); : > "$table"; echo "$n addresses deleted." >&2 ;;
+  "-t blocked -T replace"*)
+    [ "$HB_PF_FAIL" = replace ] && { echo "pfctl: Table does not exist." >&2; exit 1; }
+    shift 4; : > "$table"; for ip in "$@"; do echo "$ip" >> "$table"; done
+    echo "$# addresses added." >&2 ;;
+  "-E"|"-e") echo "pf enabled" >&2 ;;
+  *) echo "HARNESS: unexpected pfctl args: $*" >&2; exit 98 ;;
+esac

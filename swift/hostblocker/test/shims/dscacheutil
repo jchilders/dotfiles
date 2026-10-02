@@ -1,0 +1,4 @@
+#!/bin/sh
+# Fake dscacheutil: log only.
+HB_NAME=dscacheutil; . "$(dirname "$0")/_log"
+hb_log "$@"

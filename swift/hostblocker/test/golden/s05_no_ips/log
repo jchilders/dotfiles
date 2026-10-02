@@ -1,0 +1,52 @@
+== step 1 enable: enable
+sqlite3 [<SANDBOX>/home/.local/share/hostblocker/dns_cache.db] [CREATE TABLE IF NOT EXISTS dns_cache_v2 (
+  domain TEXT PRIMARY KEY,
+  ips TEXT,
+  timestamp INTEGER
+);
+]
+sudo [pfctl] [-t] [blocked] [-T] [show]
+pfctl [-t] [blocked] [-T] [show]
+sqlite3 [<SANDBOX>/home/.local/share/hostblocker/dns_cache.db] [SELECT ips
+FROM dns_cache_v2
+WHERE domain = 'nxdomain.example'
+  AND timestamp > <TS>;
+]
+dig [+short] [nxdomain.example]
+dig [+short] [AAAA] [nxdomain.example]
+sqlite3 [<SANDBOX>/home/.local/share/hostblocker/dns_cache.db] [SELECT ips
+FROM dns_cache_v2
+WHERE domain = 'v6only.example'
+  AND timestamp > <TS>;
+]
+dig [+short] [v6only.example]
+dig [+short] [AAAA] [v6only.example]
+sqlite3 [<SANDBOX>/home/.local/share/hostblocker/dns_cache.db] [INSERT OR REPLACE INTO dns_cache_v2 (domain, ips, timestamp)
+VALUES (
+  'v6only.example',
+  '2001:db8::1',
+  <TS>
+);
+]
+sudo [tee] [<SANDBOX>/root/etc/hosts]
+sudo [dscacheutil] [-flushcache]
+dscacheutil [-flushcache]
+sudo [killall] [-HUP] [mDNSResponder]
+killall [-HUP] [mDNSResponder]
+sudo [tee] [<SANDBOX>/root/Library/LaunchDaemons/local.hostblocker.plist]
+sudo [chmod] [644] [<SANDBOX>/root/Library/LaunchDaemons/local.hostblocker.plist]
+sudo [launchctl] [load] [-w] [<SANDBOX>/root/Library/LaunchDaemons/local.hostblocker.plist]
+launchctl [load] [-w] [<SANDBOX>/root/Library/LaunchDaemons/local.hostblocker.plist]
+sudo [pfctl] [-f] [-]
+pfctl [-f] [-]
+    | table <blocked> persist
+    | block drop out quick to <blocked>
+sudo [pfctl] [-t] [blocked] [-T] [replace] [2001:db8::1]
+pfctl [-t] [blocked] [-T] [replace] [2001:db8::1]
+== step 2 status: status
+sudo [pfctl] [-t] [blocked] [-T] [show]
+pfctl [-t] [blocked] [-T] [show]
+dig [+short] [nxdomain.example]
+dig [+short] [AAAA] [nxdomain.example]
+dig [+short] [v6only.example]
+dig [+short] [AAAA] [v6only.example]

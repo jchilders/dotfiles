@@ -1,0 +1,10 @@
+[1m[36m==>[0m [1mHostblocker[0m
+
+[1mUsage:[0m hostblocker <command>
+
+Commands:
+  [32menable[0m       Enable / update blocklist
+  [33mdisable[0m      Disable blocklist
+  [35mreload[0m       Re-resolve all domains and re-apply blocklist
+  [34mstatus[0m       Show blocked domains and their IPs
+  [36medit-config[0m  Open blocked-domains in $EDITOR

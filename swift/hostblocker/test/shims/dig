@@ -1,0 +1,10 @@
+#!/bin/sh
+# Fake dig: answers from $HB_FIXTURES/dns, lines of "<domain> <type> <answer>".
+# `dig +short [TYPE] domain`; CNAME answers are printed first, like real dig.
+HB_NAME=dig; . "$(dirname "$0")/_log"
+hb_log "$@"
+[ "$1" = +short ] || { echo "HARNESS: unexpected dig args: $*" >&2; exit 98; }
+if [ $# -eq 3 ]; then type=$2; domain=$3; else type=A; domain=$2; fi
+awk -v d="$domain" -v t="$type" '$1 == d && $2 == "CNAME" { print $3 } ' "$HB_FIXTURES/dns"
+awk -v d="$domain" -v t="$type" '$1 == d && $2 == t { print $3 }' "$HB_FIXTURES/dns"
+exit 0

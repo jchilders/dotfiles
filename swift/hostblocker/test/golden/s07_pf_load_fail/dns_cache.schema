@@ -1,0 +1,5 @@
+CREATE TABLE dns_cache_v2 (
+  domain TEXT PRIMARY KEY,
+  ips TEXT,
+  timestamp INTEGER
+);

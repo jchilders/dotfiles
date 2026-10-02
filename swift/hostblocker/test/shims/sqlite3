@@ -1,0 +1,6 @@
+#!/bin/sh
+# Logging passthrough to the real sqlite3. HB_SQLITE_FAIL=1 makes it fail.
+HB_NAME=sqlite3; . "$(dirname "$0")/_log"
+hb_log "$@"
+[ "$HB_SQLITE_FAIL" = 1 ] && { echo "Error: unable to open database \"$1\": unable to open database file" >&2; exit 1; }
+exec /usr/bin/sqlite3 "$@"

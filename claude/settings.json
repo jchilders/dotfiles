@@ -15,7 +15,7 @@
     ],
     "additionalDirectories": []
   },
-  "model": "opus[1m]",
+  "model": "opus",
   "disableClaudeAiConnectors": true,
   "hooks": {
     "PreToolUse": [
@@ -38,7 +38,8 @@
     "typescript-lsp@claude-plugins-official": true,
     "lua-lsp@claude-plugins-official": true,
     "clangd-lsp@claude-plugins-official": true,
-    "i-have-adhd@i-have-adhd": true
+    "i-have-adhd@i-have-adhd": true,
+    "ruby-lsp@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "beads-marketplace": {
@@ -55,6 +56,11 @@
     }
   },
   "effortLevel": "high",
+  "modelSettings": {
+    "claude-opus-5-5": {
+      "effortLevel": "high"
+    }
+  },
   "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
   "skipWorkflowUsageWarning": true,

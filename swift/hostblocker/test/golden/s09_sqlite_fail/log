@@ -1,0 +1,7 @@
+== step 1 enable: enable
+sqlite3 [<SANDBOX>/home/.local/share/hostblocker/dns_cache.db] [CREATE TABLE IF NOT EXISTS dns_cache_v2 (
+  domain TEXT PRIMARY KEY,
+  ips TEXT,
+  timestamp INTEGER
+);
+]

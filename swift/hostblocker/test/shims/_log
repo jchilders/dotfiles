@@ -1,0 +1,8 @@
+# sourced by shims: append "name args..." (+ stdin if HB_STDIN=1) to $HB_LOG
+hb_log() {
+  { printf '%s' "$HB_NAME"; for a in "$@"; do printf ' [%s]' "$a"; done; printf '\n'; } >> "$HB_LOG"
+}
+hb_log_stdin() {
+  hb_stdin=$(cat; printf x); hb_stdin=${hb_stdin%x}
+  printf '%s' "$hb_stdin" | sed 's/^/    | /' >> "$HB_LOG"
+}

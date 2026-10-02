@@ -1,0 +1,91 @@
+== step 1 enable: enable
+sqlite3 [<SANDBOX>/home/.local/share/hostblocker/dns_cache.db] [CREATE TABLE IF NOT EXISTS dns_cache_v2 (
+  domain TEXT PRIMARY KEY,
+  ips TEXT,
+  timestamp INTEGER
+);
+]
+sudo [pfctl] [-t] [blocked] [-T] [show]
+pfctl [-t] [blocked] [-T] [show]
+sqlite3 [<SANDBOX>/home/.local/share/hostblocker/dns_cache.db] [SELECT ips
+FROM dns_cache_v2
+WHERE domain = 'reddit.com'
+  AND timestamp > <TS>;
+]
+dig [+short] [reddit.com]
+dig [+short] [AAAA] [reddit.com]
+sqlite3 [<SANDBOX>/home/.local/share/hostblocker/dns_cache.db] [INSERT OR REPLACE INTO dns_cache_v2 (domain, ips, timestamp)
+VALUES (
+  'reddit.com',
+  '151.101.1.140,151.101.65.140,2a04:4e42::396',
+  <TS>
+);
+]
+sqlite3 [<SANDBOX>/home/.local/share/hostblocker/dns_cache.db] [SELECT ips
+FROM dns_cache_v2
+WHERE domain = 'o''reilly.com'
+  AND timestamp > <TS>;
+]
+dig [+short] [o'reilly.com]
+dig [+short] [AAAA] [o'reilly.com]
+sqlite3 [<SANDBOX>/home/.local/share/hostblocker/dns_cache.db] [INSERT OR REPLACE INTO dns_cache_v2 (domain, ips, timestamp)
+VALUES (
+  'o''reilly.com',
+  '10.0.0.1',
+  <TS>
+);
+]
+sqlite3 [<SANDBOX>/home/.local/share/hostblocker/dns_cache.db] [SELECT ips
+FROM dns_cache_v2
+WHERE domain = 'reddit.com'
+  AND timestamp > <TS>;
+]
+sqlite3 [<SANDBOX>/home/.local/share/hostblocker/dns_cache.db] [SELECT ips
+FROM dns_cache_v2
+WHERE domain = 'news.ycombinator.com'
+  AND timestamp > <TS>;
+]
+dig [+short] [news.ycombinator.com]
+dig [+short] [AAAA] [news.ycombinator.com]
+sqlite3 [<SANDBOX>/home/.local/share/hostblocker/dns_cache.db] [INSERT OR REPLACE INTO dns_cache_v2 (domain, ips, timestamp)
+VALUES (
+  'news.ycombinator.com',
+  '209.216.230.207',
+  <TS>
+);
+]
+sqlite3 [<SANDBOX>/home/.local/share/hostblocker/dns_cache.db] [SELECT ips
+FROM dns_cache_v2
+WHERE domain = 'a-very-long-subdomain.nxdomain.example'
+  AND timestamp > <TS>;
+]
+dig [+short] [a-very-long-subdomain.nxdomain.example]
+dig [+short] [AAAA] [a-very-long-subdomain.nxdomain.example]
+sudo [tee] [<SANDBOX>/root/etc/hosts]
+sudo [dscacheutil] [-flushcache]
+dscacheutil [-flushcache]
+sudo [killall] [-HUP] [mDNSResponder]
+killall [-HUP] [mDNSResponder]
+sudo [tee] [<SANDBOX>/root/Library/LaunchDaemons/local.hostblocker.plist]
+sudo [chmod] [644] [<SANDBOX>/root/Library/LaunchDaemons/local.hostblocker.plist]
+sudo [launchctl] [load] [-w] [<SANDBOX>/root/Library/LaunchDaemons/local.hostblocker.plist]
+launchctl [load] [-w] [<SANDBOX>/root/Library/LaunchDaemons/local.hostblocker.plist]
+sudo [pfctl] [-f] [-]
+pfctl [-f] [-]
+    | table <blocked> persist
+    | block drop out quick to <blocked>
+sudo [pfctl] [-t] [blocked] [-T] [replace] [151.101.1.140] [151.101.65.140] [2a04:4e42::396] [10.0.0.1] [209.216.230.207]
+pfctl [-t] [blocked] [-T] [replace] [151.101.1.140] [151.101.65.140] [2a04:4e42::396] [10.0.0.1] [209.216.230.207]
+== step 2 status: status
+sudo [pfctl] [-t] [blocked] [-T] [show]
+pfctl [-t] [blocked] [-T] [show]
+dig [+short] [reddit.com]
+dig [+short] [AAAA] [reddit.com]
+dig [+short] [o'reilly.com]
+dig [+short] [AAAA] [o'reilly.com]
+dig [+short] [reddit.com]
+dig [+short] [AAAA] [reddit.com]
+dig [+short] [news.ycombinator.com]
+dig [+short] [AAAA] [news.ycombinator.com]
+dig [+short] [a-very-long-subdomain.nxdomain.example]
+dig [+short] [AAAA] [a-very-long-subdomain.nxdomain.example]

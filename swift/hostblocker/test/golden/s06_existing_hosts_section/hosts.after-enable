@@ -1,0 +1,9 @@
+127.0.0.1	localhost
+
+
+10.0.0.5 nas.local
+
+# hostblocker-start
+127.0.0.1 reddit.com
+::1 reddit.com
+# hostblocker-end

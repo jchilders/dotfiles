@@ -1,0 +1,10 @@
+==> Hostblocker status
+[hostblocker] ENABLED
+  Blocking 5 IPs for 3 domains
+  <SANDBOX>/home/.config/hostblocker/blocked-domains
+
+DOMAIN                 IPS
+------                 ---
+reddit.com             151.101.1.140 • 151.101.65.140 • 2a04:4e42::396
+www.reddit.com         151.101.1.140 • 151.101.129.140
+news.ycombinator.com   209.216.230.207

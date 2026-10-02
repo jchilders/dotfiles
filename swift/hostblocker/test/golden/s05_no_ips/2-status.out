@@ -1,0 +1,9 @@
+==> Hostblocker status
+[hostblocker] ENABLED
+  Blocking 1 IP for 2 domains
+  <SANDBOX>/home/.config/hostblocker/blocked-domains
+
+DOMAIN                 IPS
+------                 ---
+nxdomain.example       (no A/AAAA records)
+v6only.example         2001:db8::1

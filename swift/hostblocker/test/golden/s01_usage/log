@@ -1,0 +1,5 @@
+== step 1 noargs: 
+== step 2 bogus: frobnicate
+== step 3 extra-args: status extra
+sudo [pfctl] [-t] [blocked] [-T] [show]
+pfctl [-t] [blocked] [-T] [show]

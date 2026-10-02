@@ -1,0 +1,9 @@
+[1m[34m==>[0m [1mHostblocker status[0m
+[1m[32m[hostblocker][0m [1mENABLED[0m
+  Blocking 3 IPs for 2 domains
+  [2m<SANDBOX>/home/.config/hostblocker/blocked-domains[0m
+
+[1m[36mDOMAIN                [0m [1m[36mIPS[0m
+[2m------                [0m [2m---[0m
+[1mreddit.com            [0m 151.101.1.140[2m • [0m151.101.65.140[2m • [0m2a04:4e42::396
+[1mnxdomain.example      [0m [2m[33m(no A/AAAA records)[0m

@@ -14,7 +14,6 @@
   <key>ProgramArguments</key>
   <array>
     <string>/Users/jchilders/work/jchilders/twitch_importer/twitch_import</string>
-    <string>--hours=3</string>
     <string>https://www.twitch.tv/hasanabi/videos</string>
     <string>--clean</string>
   </array>

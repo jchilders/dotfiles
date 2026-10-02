@@ -1,0 +1,6 @@
+==> Enabling blocklist
+CACHED  reddit.com
+RESOLVE news.ycombinator.com
+  209.216.230.207
+[hostblocker] Blocking active
+  Blocking 4 IPs for 2 domains from <SANDBOX>/home/.config/hostblocker/blocked-domains

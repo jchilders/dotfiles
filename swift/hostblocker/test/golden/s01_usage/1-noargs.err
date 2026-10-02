@@ -1,0 +1,10 @@
+==> Hostblocker
+
+Usage: hostblocker <command>
+
+Commands:
+  enable       Enable / update blocklist
+  disable      Disable blocklist
+  reload       Re-resolve all domains and re-apply blocklist
+  status       Show blocked domains and their IPs
+  edit-config  Open blocked-domains in $EDITOR

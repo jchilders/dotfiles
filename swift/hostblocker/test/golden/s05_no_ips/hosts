@@ -1,0 +1,16 @@
+##
+# Host Database
+#
+# localhost is used to configure the loopback interface
+# when the system is booting.  Do not change this entry.
+##
+127.0.0.1	localhost
+255.255.255.255	broadcasthost
+::1             localhost
+
+# hostblocker-start
+127.0.0.1 nxdomain.example
+::1 nxdomain.example
+127.0.0.1 v6only.example
+::1 v6only.example
+# hostblocker-end

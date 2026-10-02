@@ -1,0 +1,7 @@
+[1m[36m==>[0m [1mEnabling blocklist[0m
+[1m[35mRESOLVE[0m [1mreddit.com[0m
+  [2m151.101.1.140 151.101.65.140 2a04:4e42::396[0m
+[1m[35mRESOLVE[0m [1mnxdomain.example[0m
+  [2m[33mno A/AAAA records found[0m
+[1m[32m[hostblocker][0m [1mBlocking active[0m
+  Blocking 3 IPs for 1 domain from <SANDBOX>/home/.config/hostblocker/blocked-domains

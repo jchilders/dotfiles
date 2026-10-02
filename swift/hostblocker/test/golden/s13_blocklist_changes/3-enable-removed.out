@@ -1,0 +1,4 @@
+==> Enabling blocklist
+CACHED  reddit.com
+[hostblocker] Blocking active
+  Blocking 3 IPs for 1 domain from <SANDBOX>/home/.config/hostblocker/blocked-domains

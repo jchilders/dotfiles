@@ -146,6 +146,17 @@ claude-cfg: ## Link Claude Code config (CLAUDE.md, settings.json, skills, hooks)
 claude-cfg-clean: ## Unlink Claude Code config from ~/.claude
 	rm -f $(CLAUDE_HOME)/CLAUDE.md $(CLAUDE_HOME)/settings.json $(CLAUDE_HOME)/skills $(CLAUDE_HOME)/hooks
 
+##@ hostblocker
+
+HOSTBLOCKER_SRC := swift/hostblocker/hostblocker.swift
+hostblocker: ## Build hostblocker (Swift) into bin/
+	swiftc -O -o bin/hostblocker $(HOSTBLOCKER_SRC)
+
+hostblocker-test: ## Build hostblocker and check it against its recorded test results
+	@mkdir -p swift/hostblocker/.build
+	swiftc -O -o swift/hostblocker/.build/hostblocker $(HOSTBLOCKER_SRC)
+	swift/hostblocker/test/check.zsh
+
 ##@ Misc
 
 XCODE_INSTALLED := $(shell [ "$(IS_DARWIN)" = "1" ] && xcode-select -p 1>/dev/null; echo $$?)
